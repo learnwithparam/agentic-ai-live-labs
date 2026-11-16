@@ -15,11 +15,12 @@ function run(args: string[]) {
 }
 
 // Every case that does not force a pretend behaviour, so a real model can answer it.
+// The naive cases run live too. Only --model (a pretend habit) is left out.
 function liveCommands(file: string, lab: Lab): string[][] {
   const commands: string[][] = [];
   for (const item of lab.cases) {
     const flags = item.flags || {};
-    if (flags.model || flags.naive) continue;
+    if (flags.model) continue;
     const args = ["labs/" + file, "--question", item.question];
     for (const key of Object.keys(flags)) {
       args.push(`--${key}`);
@@ -43,19 +44,22 @@ for (const file of readdirSync("labs").sort()) {
   if (!matched) failed += 1;
 
   if (live) {
-    // Try each free case until one reaches the real model. A lab with none has nothing to prove.
+    // Run every case on the real model. A case passes when it exits cleanly with no error line.
+    // The real model may word things differently, so we do not compare the outcome word.
     let calls = 0;
-    let last = "";
-    for (const command of liveCommands(file, lab)) {
+    let passed = 0;
+    const failures: string[] = [];
+    const commands = liveCommands(file, lab);
+    for (const command of commands) {
       const real = run(command);
-      calls = real.text.split("live-call").length - 1;
-      last = real.text.trim().split("\n").slice(-2).join(" | ").slice(0, 200);
-      if (real.ok && calls > 0 && !real.text.includes("error:")) break;
-      calls = 0;
+      calls += real.text.split("live-call").length - 1;
+      if (real.ok && !real.text.includes("error:")) passed += 1;
+      else failures.push(command.slice(1, -1).join(" ") + " => " + real.text.trim().split("\n").slice(-2).join(" | ").slice(0, 160));
     }
-    if (calls > 0) line += `  live ok, ${calls} model calls`;
-    else {
-      line += `  live FAILED, no model call\n    ${last}`;
+    line += `  live ${passed}/${commands.length} cases, ${calls} model calls`;
+    if (failures.length > 0 || calls === 0) {
+      line += "  FAILED";
+      for (const item of failures) line += `\n    ${item}`;
       failed += 1;
     }
   }

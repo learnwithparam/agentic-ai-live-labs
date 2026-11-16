@@ -22,6 +22,8 @@ const grab = (text: string, label: string) => text.match(new RegExp(`${label}: (
 export function makeModel(behaviour: Behaviour = "ok"): CallLlm {
   return (messages, toolNames) => {
     const first = messages.find((message) => message.role === "user")!.content;
+    if (first.startsWith("PLAN:")) return { text: planFor(first) };
+    if (first.startsWith("MAIL:")) return { text: mailFor(first) };
     if (first.startsWith("TRY:")) return { text: tryFor(first) };
     if (first.startsWith("RULES:")) return { text: rulesFor(first) };
     if (first.startsWith("CONTEXT:")) return { text: contextFor(first) };
@@ -203,4 +205,25 @@ function tryFor(prompt: string): string {
     drug = close;
   }
   return `{"drug": "${drug}", "country": "${country}"}`;
+}
+
+// A model asked to plan a task. It lists the steps as JSON, using only the tools it was told about.
+function planFor(prompt: string): string {
+  const task = prompt.split("Task: ")[1] || "";
+  const lower = task.toLowerCase();
+  let drug = "Cardioza";
+  for (const id in APPROVED_DOCS) {
+    if (lower.includes(APPROVED_DOCS[id].drug.toLowerCase())) drug = APPROVED_DOCS[id].drug;
+  }
+  if (lower.includes("zorbex")) drug = "Zorbex";
+  const steps = [{ tool: "search", input: drug }, { tool: "draft", input: "reply to the doctor" }];
+  const address = task.split(" ").find((word) => word.includes("@")) || "dr.lee@example.com";
+  if (lower.includes("email")) steps.push({ tool: "send_email", input: address });
+  return JSON.stringify(steps);
+}
+
+// A model asked to write a reply from a source. It repeats the source in a polite note.
+function mailFor(prompt: string): string {
+  const source = prompt.split("SOURCE: ")[1] || "";
+  return `Dear doctor, ${source.replace(/\n/g, " ")}`;
 }

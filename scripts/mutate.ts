@@ -49,7 +49,7 @@ export const BREAKS: Break[] = [
   { lab: 17, file: "17-plan-then-act.ts", rule: "a tool we never gave is allowed",
     find: "if (!ALLOWED_TOOLS.includes(step.tool))", replace: "if (false)" },
   { lab: 17, file: "17-plan-then-act.ts", rule: "a failed step does not stop the rest",
-    find: "if (reply === NO_DOC) return", replace: "if (false) return" },
+    find: "if (reply === NO_DOC) return stopWith", replace: "if (false) return stopWith" },
   { lab: 18, file: "18-reflect-and-fix.ts", rule: "a wrong dose passes the check",
     find: "if (!dosesIn(source).includes(dose))", replace: "if (false)" },
   { lab: 18, file: "18-reflect-and-fix.ts", rule: "a draft without a citation passes",
