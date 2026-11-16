@@ -2,6 +2,7 @@
 //   --question "..."  run one question
 //   --demo            walk through every edge case, with a plain explanation for each
 //   (nothing)         interactive menu: pick an example by number, or type your own question
+import { makeLiveModel, LIVE_MODEL } from "./live";
 import { makeModel, type Behaviour } from "./model";
 import { badgeBlue, badgeGreen, badgeRed, bold, box, cyan, dim, field, green } from "./ui";
 import { print, red, rule, wrap, yellow } from "./ui";
@@ -19,7 +20,11 @@ export function flags(argv = process.argv.slice(2)): Record<string, string> {
   return out;
 }
 
-export const modelFrom = (f: Record<string, string>) => makeModel((f.model as Behaviour) ?? "ok");
+// --live uses a real model (see src/live.ts). Otherwise --model picks how the pretend model behaves.
+export function modelFrom(f: Record<string, string>) {
+  if (f.live) return makeLiveModel(f.live === "true" ? LIVE_MODEL : f.live);
+  return makeModel((f.model as Behaviour) ?? "ok");
+}
 
 // --approve y or n answers every gate. With no flag, a person types the answer.
 export function askFrom(f: Record<string, string>): Ask {
