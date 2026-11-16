@@ -58,4 +58,4 @@ Show the plan to the person, keep it with the run, and compare what ran with wha
 ## Read the code
 
 Open `labs/17-plan-then-act.ts`. Read the code from the top. It holds only the lesson.
-The screen output is in `show/`. You can skip it.
+The screen output is in `show/`. You do not need it to learn.

@@ -60,4 +60,4 @@ Pin on a schedule, alert on any change, and let only a named person re-approve a
 ## Read the code
 
 Open `labs/08-mcp-trust.ts`. Read the code from the top. It holds only the lesson.
-The screen output is in `show/`. You can skip it.
+The screen output is in `show/`. You do not need it to learn.

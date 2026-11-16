@@ -58,4 +58,4 @@ Count with the model's own counter, keep a reserve for the reply, and log what w
 ## Read the code
 
 Open `labs/10-context-budget.ts`. Read the code from the top. It holds only the lesson.
-The screen output is in `show/`. You can skip it.
+The screen output is in `show/`. You do not need it to learn.

@@ -60,4 +60,4 @@ Write every tool error for a reader that cannot ask questions, and count how oft
 ## Read the code
 
 Open `labs/16-error-feedback.ts`. Read the code from the top. It holds only the lesson.
-The screen output is in `show/`. You can skip it.
+The screen output is in `show/`. You do not need it to learn.

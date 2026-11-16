@@ -60,4 +60,4 @@ Start with a function. Move to MCP when a second team needs the tool. Use a comm
 ## Read the code
 
 Open `labs/09-three-doors.ts`. Read the code from the top. It holds only the lesson.
-The screen output is in `show/`. You can skip it.
+The screen output is in `show/`. You do not need it to learn.

@@ -62,4 +62,4 @@ Every tool gets a schema. Real systems use a schema library and the model API's 
 ## Read the code
 
 Open `labs/05-tool-schemas.ts`. Read the code from the top. It holds only the lesson.
-The screen output is in `show/`. You can skip it.
+The screen output is in `show/`. You do not need it to learn.

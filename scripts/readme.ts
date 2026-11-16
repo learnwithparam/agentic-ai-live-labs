@@ -50,7 +50,7 @@ export function pageFor(file: string, lab: Lab): string {
   }
   if (lab.production) out.push("## In production", "", lab.production, "");
   out.push("## Read the code", "", `Open \`labs/${file}\`. Read the code from the top. It holds only the lesson.`);
-  out.push("The screen output is in `show/`. You can skip it.", "");
+  out.push("The screen output is in `show/`. You do not need it to learn.", "");
   return out.join("\n");
 }
 

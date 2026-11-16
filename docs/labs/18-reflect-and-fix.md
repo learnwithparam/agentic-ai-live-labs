@@ -56,4 +56,4 @@ Check what code can check, like numbers and citations. Send the rest to a person
 ## Read the code
 
 Open `labs/18-reflect-and-fix.ts`. Read the code from the top. It holds only the lesson.
-The screen output is in `show/`. You can skip it.
+The screen output is in `show/`. You do not need it to learn.

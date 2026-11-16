@@ -60,4 +60,4 @@ Use the official MCP SDK, keep the server running, and add sign-in and a time li
 ## Read the code
 
 Open `labs/07-mcp-basics.ts`. Read the code from the top. It holds only the lesson.
-The screen output is in `show/`. You can skip it.
+The screen output is in `show/`. You do not need it to learn.

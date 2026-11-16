@@ -62,4 +62,4 @@ Score with embeddings as well as words, and log which chunk ids were sent on eve
 ## Read the code
 
 Open `labs/12-retrieval.ts`. Read the code from the top. It holds only the lesson.
-The screen output is in `show/`. You can skip it.
+The screen output is in `show/`. You do not need it to learn.

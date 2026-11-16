@@ -60,4 +60,4 @@ Set the limits per task, alert when a run hits one, and show the stop reason to 
 ## Read the code
 
 Open `labs/15-stop-conditions.ts`. Read the code from the top. It holds only the lesson.
-The screen output is in `show/`. You can skip it.
+The screen output is in `show/`. You do not need it to learn.
