@@ -65,6 +65,7 @@ export function replyFrom(response: any): Reply {
 function post(body: Record<string, unknown>): any {
   const key = (process.env.OPENROUTER_API_KEY || "").trim().replaceAll('"', "").replaceAll("'", "");
   if (!key) throw new Error("Set OPENROUTER_API_KEY to use --live.");
+  if (process.env.LIVE_TRACE) console.error("live-call");
   const file = join(mkdtempSync(join(tmpdir(), "live-")), "body.json");
   writeFileSync(file, JSON.stringify(body));
   const config = `url = "${ENDPOINT}"\nheader = "Authorization: Bearer ${key}"\nheader = "Content-Type: application/json"\n`;

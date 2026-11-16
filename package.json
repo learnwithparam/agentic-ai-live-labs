@@ -9,7 +9,9 @@
     "check": "bun test && bun scripts/readable.ts && bun scripts/plain-english.ts && bun scripts/plain-code.ts && bun scripts/commands.ts && bun scripts/path.ts --check && bun scripts/readme.ts --check && bun scripts/mutate.ts && bunx tsc -p .",
     "path": "bun scripts/path.ts",
     "mutate": "bun scripts/mutate.ts",
-    "plain": "bun scripts/plain-english.ts"
+    "plain": "bun scripts/plain-english.ts",
+    "verify": "bun scripts/verify.ts",
+    "verify:live": "bun scripts/verify.ts --live"
   },
   "devDependencies": {
     "@types/bun": "latest"

@@ -20,34 +20,6 @@ import { runLab } from "../src/runner";
 // A tool is a name plus a function. The model picks the name. Our code runs the function.
 export type Tool = { name: string; run(input: ToolInput): string };
 
-// Our one tool looks up approved documents. It needs two things to match.
-// The drug must be in the question. The document must be approved for the doctor's country.
-export function searchApprovedDocs(query: string, country: string): string {
-  const hits: string[] = [];
-  for (const id in APPROVED_DOCS) {
-    const doc = APPROVED_DOCS[id];
-    const rightCountry = doc.country === country;
-    const drugIsNamed = query.toLowerCase().includes(doc.drug.toLowerCase());
-    if (rightCountry && drugIsNamed) hits.push(`[${id}] ${doc.text}`);
-  }
-  if (hits.length === 0) return NO_DOC; // Nothing found. Say so. Never guess.
-  return hits.join("\n");
-}
-
-function searchTool(input: ToolInput): string {
-  return searchApprovedDocs(input.query, input.country);
-}
-
-// The model may use only the tools in this list. Any other name is refused.
-export const searchOnly: Tool[] = [{ name: "search_approved_docs", run: searchTool }];
-
-function findTool(tools: Tool[], name: string): Tool | undefined {
-  for (const tool of tools) {
-    if (tool.name === name) return tool;
-  }
-  return undefined;
-}
-
 export type Step = { kind: string; tool: string; input: string; result: string };
 export type LoopResult = { answer: string; steps: Step[]; stopped: boolean; path: string[] };
 
@@ -101,6 +73,35 @@ export function runAgentLoop(
   // Step 5: the model never finished. Stop it, so a loop can never run forever.
   path.push(`Step 5: stopped after ${maxSteps} rounds. The model did not give an answer.`);
   return { answer: "STOPPED: max loop steps reached.", steps, stopped: true, path };
+}
+
+// What the loop calls: the tool.
+// Our one tool looks up approved documents. It needs two things to match.
+// The drug must be in the question. The document must be approved for the doctor's country.
+export function searchApprovedDocs(query: string, country: string): string {
+  const hits: string[] = [];
+  for (const id in APPROVED_DOCS) {
+    const doc = APPROVED_DOCS[id];
+    const rightCountry = doc.country === country;
+    const drugIsNamed = query.toLowerCase().includes(doc.drug.toLowerCase());
+    if (rightCountry && drugIsNamed) hits.push(`[${id}] ${doc.text}`);
+  }
+  if (hits.length === 0) return NO_DOC; // Nothing found. Say so. Never guess.
+  return hits.join("\n");
+}
+
+function searchTool(input: ToolInput): string {
+  return searchApprovedDocs(input.query, input.country);
+}
+
+// The model may use only the tools in this list. Any other name is refused.
+export const searchOnly: Tool[] = [{ name: "search_approved_docs", run: searchTool }];
+
+function findTool(tools: Tool[], name: string): Tool | undefined {
+  for (const tool of tools) {
+    if (tool.name === name) return tool;
+  }
+  return undefined;
 }
 
 // Run the lab from the command line. The examples and the screen output are in the show file.
