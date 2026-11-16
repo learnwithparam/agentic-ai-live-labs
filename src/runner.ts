@@ -38,6 +38,11 @@ export type Lab = {
   file: string;
   title: string;
   about: string;
+  // Optional notes for newer labs. The readable gate requires them from lab 5 on.
+  terms?: string;      // 2 to 4 new words, with plain meanings
+  challenge?: string;  // the problem this lab solves
+  promise?: string;    // what a test proves
+  production?: string; // what this becomes in a real system
   cases: Case[];
   // Runs one question, prints what happened, and returns a short outcome word.
   // The demo and the tests compare that word with the case's expect.
@@ -65,6 +70,13 @@ export function checkCases(lab: Lab, base: Flags = {}) {
 function header(lab: Lab) {
   console.log();
   box(lab.title, wrap(lab.about), cyan);
+  const notes = [
+    ...(lab.terms ? field("Words", lab.terms, dim, 11) : []),
+    ...(lab.challenge ? field("Challenge", lab.challenge, yellow, 11) : []),
+    ...(lab.promise ? field("Promise", lab.promise, green, 11) : []),
+    ...(lab.production ? field("Production", lab.production, cyan, 11) : []),
+  ];
+  if (notes.length > 0) print(notes);
 }
 
 function runDemo(lab: Lab, base: Flags): boolean {

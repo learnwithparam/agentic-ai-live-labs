@@ -3,7 +3,7 @@
 // A lab file has two parts. PART 1 is the idea a learner reads. It may only use simple syntax.
 // PART 2 draws the colour output and is free to use more.
 // Names must be whole words everywhere. Sentences must be short everywhere.
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 const LONGEST_LINE = 100;
@@ -96,6 +96,16 @@ export function problemsIn(file: string, text: string): Problem[] {
   const isLab = partOne >= 0;
   const add = (index: number, message: string) => problems.push({ file, line: index + 1, message });
 
+  const number = Number(file.split("/").pop()?.slice(0, 2));
+  if (isLab && number >= 5) {
+    for (const field of ["terms", "challenge", "promise", "production"]) {
+      if (!text.includes(`  ${field}:`)) add(0, `lab ${number} needs a ${field} note`);
+    }
+    if (partTwo - partOne > 100) add(partOne, "PART 1 is over 100 lines; new labs stay short");
+    if (!existsSync(`tests/promises/${String(number).padStart(2, "0")}.test.ts`)) {
+      add(0, `lab ${number} needs tests/promises/${String(number).padStart(2, "0")}.test.ts`);
+    }
+  }
   if (isLab && partTwo < 0) add(0, "a lab needs a // PART 2: line");
   if (isLab && partTwo - partOne > LONGEST_PART_ONE) add(partOne, `PART 1 is over ${LONGEST_PART_ONE} lines`);
 

@@ -6,7 +6,8 @@
     "lab": "bun scripts/lab.ts",
     "test": "bun test",
     "readable": "bun scripts/readable.ts",
-    "check": "bun test && bun scripts/readable.ts && bunx tsc -p ."
+    "check": "bun test && bun scripts/readable.ts && bun scripts/path.ts --check && bunx tsc -p .",
+    "path": "bun scripts/path.ts"
   },
   "devDependencies": {
     "@types/bun": "latest"
