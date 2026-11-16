@@ -22,6 +22,7 @@ const grab = (text: string, label: string) => text.match(new RegExp(`${label}: (
 export function makeModel(behaviour: Behaviour = "ok"): CallLlm {
   return (messages, toolNames) => {
     const first = messages.find((message) => message.role === "user")!.content;
+    if (first.startsWith("CONTEXT:")) return { text: contextFor(first) };
     if (first.startsWith("CHUNKS:")) return { text: chunksFor(first) };
     if (first.startsWith("CHAT:")) return { text: chatFor(first) };
     if (first.startsWith("ANSWER:")) return { text: answerFrom(first) };
@@ -147,4 +148,15 @@ function chatFor(prompt: string): string {
 function chunksFor(prompt: string): string {
   const lines = prompt.split("\n").filter((line) => line.startsWith("[C-"));
   return lines.join(" ");
+}
+
+// A model asked to answer from the sources it was handed. It repeats the first fact line of each.
+function contextFor(prompt: string): string {
+  const lines = prompt.split("\n").slice(1);
+  const facts: string[] = [];
+  for (const line of lines) {
+    if (line.startsWith("[DOC-") || line.startsWith("DOCTOR PROFILE")) facts.push(line);
+  }
+  if (facts.length === 0) return "The sources I was given do not answer this.";
+  return facts.join(" ");
 }

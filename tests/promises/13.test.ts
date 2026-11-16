@@ -1,5 +1,6 @@
 import { expect, test } from "bun:test";
-import { costOf, pickSources, SOURCES } from "../../labs/13-pick-context";
+import { SOURCES } from "../../src/sources";
+import { costOf, pickSources } from "../../labs/13-pick-context";
 
 function names(question: string): string[] {
   return pickSources(question, SOURCES).map((source) => source.name);

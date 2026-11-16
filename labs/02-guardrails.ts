@@ -17,7 +17,7 @@ import { APPROVED_DOCS } from "../src/data";
 import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";
 import { runAgentLoop } from "./01-agent-loop"; // the loop from lab 1
-import { spotPrivate, splitSymbols } from "../src/phi";
+import { hidePrivate } from "../src/phi";
 
 export type Guarded = {
   clean: string;
@@ -62,29 +62,12 @@ export function answerUnguarded(note: string, country: string, callLlm: CallLlm)
 // One private piece we found: what kind it is, and the words themselves.
 export type Found = { label: string; text: string };
 
-// The input guardrail: walk through the words and swap every private piece for a token.
+// The input guardrail: swap every private piece for a token. The patterns live in src/phi.ts.
 export function redactPhi(raw: string): { clean: string; found: Found[] } {
-  const words = raw.split(" ");
-  const out: string[] = [];
-  const found: Found[] = [];
-  let position = 0;
-  while (position < words.length) {
-    const spot = spotPrivate(words, position);
-    if (spot === null) {
-      out.push(words[position]);
-      position++;
-      continue;
-    }
-    // Keep the symbols that sat in front of the piece and behind it, like ( and ,
-    const first = splitSymbols(words[position]);
-    const last = splitSymbols(words[position + spot.used - 1]);
-    const original = words.slice(position, position + spot.used).join(" ");
-    const text = original.slice(first.before.length, original.length - last.after.length);
-    found.push({ label: spot.label, text });
-    out.push(first.before + spot.token + last.after);
-    position += spot.used;
-  }
-  return { clean: out.join(" "), found };
+  const { clean, found } = hidePrivate(raw);
+  const pieces: Found[] = [];
+  for (const piece of found) pieces.push({ label: piece.label, text: piece.text });
+  return { clean, found: pieces };
 }
 
 // The kinds of private text we found, as a list of names.
