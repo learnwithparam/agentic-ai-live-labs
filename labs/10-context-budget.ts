@@ -1,8 +1,11 @@
 // Lab 10: The context budget
 //
-// A model reads a limited amount of text each turn. That limit is the window.
-// We count what goes in, keep what must stay, and drop the least useful parts first.
-// The PART 2 section only prints the result in colour.
+// Dr. Lee asks: "What is the Cardioza dose?" The model reads a prompt: our rules, a note about the
+// doctor, the approved documents, the chat so far, and the question. A model reads only a limited
+// amount of text each turn. That limit is the window. The prompt must fit. So we count what goes in,
+// keep what must stay, and drop the least useful parts first.
+// The run prints each step as it happens, with the same number as the step in the code.
+// The examples and the screen output are in show/10-context-budget.ts. You do not need them to learn.
 //
 // Run it (copy any line):
 //   bun labs/10-context-budget.ts --question "Cardioza dose" --naive --window 60
@@ -11,11 +14,8 @@
 //   bun labs/10-context-budget.ts --question "Cardioza dose" --window 40
 //   bun labs/10-context-budget.ts --demo
 
-import { runLab, type Lab } from "../src/runner";
-import { badgeGreen, badgeRed, badgeYellow, box, dim, field, green, print, red, rule, yellow } from "../src/ui";
-import { searchApprovedDocs } from "./01-agent-loop"; // the search from lab 1
-
-// PART 1: THE CORE LOGIC
+import type { CallLlm } from "../src/model";
+import { runLab } from "../src/runner";
 
 // A part of the prompt. "must" parts are never dropped.
 export type Part = { name: string; text: string; must: boolean };
@@ -26,6 +26,25 @@ export type Built = {
   dropped: string[];
   fits: boolean;
 };
+
+export type Asked = { built: Built; reply: string; log: string[] };
+
+// Fit the prompt to the window, then let the model answer from it. Read the steps in order.
+export function askWithinBudget(parts: Part[], budget: number, callLlm: CallLlm): Asked {
+  // Step 1: build the prompt. The must parts stay. The other parts are kept while they fit.
+  const built = buildPrompt(parts, budget);
+  const log = [`Step 1: the window is ${budget} tokens. The prompt uses ${built.used}.`];
+  const kept = built.kept.join(", ") || "nothing";
+  const dropped = built.dropped.join(", ") || "nothing";
+  log.push(`Step 2: kept ${kept}. Dropped ${dropped}.`);
+  if (!built.fits) return { built, reply: "", log };
+
+  // Step 3: the model answers from what is left in the prompt.
+  const reply = callLlm([{ role: "user", content: `ANSWER: ${built.prompt}` }], []);
+  const text = (reply.text || "").trim();
+  log.push(`Step 3: the model wrote: ${text}`);
+  return { built, reply: text, log };
+}
 
 // A rough count: one token is about four letters. Real systems use the model's own counter.
 export function countTokens(text: string): number {
@@ -63,83 +82,15 @@ export function buildPrompt(parts: Part[], budget: number): Built {
   return { prompt, used, kept, dropped, fits: true };
 }
 
-// The NAIVE way: join everything and let the window cut the oldest text, which comes first.
+// The naive way: join everything and let the window cut the oldest text, which comes first.
 export function naiveWindow(parts: Part[], budget: number): string {
   let all = "";
   for (const part of parts) all += part.text + "\n";
   return all.slice(Math.max(0, all.length - budget * 4));
 }
 
-// PART 2: HOW IT IS SHOWN (you can skip this)
-
-const RULES = "RULES: Use ONLY the approved documents. Cite their ids. Never share patient details.";
-const HISTORY = [
-  "Doctor: Hello, I am Dr. Lee. I work in cardiology.",
-  "Agent: Hello Dr. Lee. How can I help today?",
-  "Doctor: I have questions about the launch email I got last week.",
-  "Agent: Of course. Which product was it about?",
-].join("\n");
-
-function partsFor(question: string): Part[] {
-  return [
-    { name: "rules", text: RULES, must: true },
-    { name: "doctor", text: "DOCTOR: Dr. Lee, US, cardiology.", must: false },
-    { name: "documents", text: "DOCUMENTS:\n" + searchApprovedDocs(question, "US"), must: false },
-    { name: "history", text: "HISTORY:\n" + HISTORY, must: false },
-    { name: "question", text: `QUESTION: ${question}`, must: true },
-  ];
+// Run the lab from the command line. The examples and the screen output are in the show file.
+if (import.meta.main) {
+  const { lab } = await import("../show/10-context-budget");
+  runLab(lab);
 }
-
-export const lab: Lab = {
-  file: "10-context-budget.ts",
-  title: "Lab 10: the context budget",
-  about:
-    "Each example builds the prompt for one question under a token budget. Use --window 80 to change the budget. The prompt holds rules, a doctor note, documents, chat history and the question.",
-  terms: "context window = the most text a model reads at once. token = a small piece of text, about four letters. budget = the tokens we allow ourselves.",
-  challenge: "A prompt grows every turn. When it passes the window, something is cut, and nobody chooses what.",
-  promise: "The prompt never passes the budget, and the rules and the question are never dropped.",
-  production: "Count with the model's own counter, keep a reserve for the reply, and log what was dropped on every call.",
-  cases: [
-    { title: "NAIVE: let the window cut the oldest text", why: "The rules come first, so they are the oldest text. When the window is full, they are the first thing cut. The model now answers with no rules.", question: "Cardioza dose", flags: { naive: "true", window: "60" }, expect: "rules-lost" },
-    { title: "Plenty of room", why: "Everything fits, so everything is sent.", question: "Cardioza dose", flags: { window: "200" }, expect: "all-fit" },
-    { title: "A tighter window", why: "The chat history is the least useful part, so it goes first.", question: "Cardioza dose", flags: { window: "70" }, expect: "dropped: history" },
-    { title: "A tight window", why: "The documents also stop fitting. We keep the rules, the question and the small doctor note. The model has to refuse, which is safe.", question: "Cardioza dose", flags: { window: "40" }, expect: "dropped: documents, history" },
-    { title: "Two drugs, bigger documents", why: "Two documents are larger. The window drops the history and then the documents, and the doctor note survives.", question: "Cardioza and Neurovex dose", flags: { window: "60" }, expect: "dropped: documents, history" },
-    { title: "The must parts do not fit", why: "A budget of 10 cannot hold the rules and the question. We say so. We never send a prompt without its rules.", question: "Cardioza dose", flags: { window: "10" }, expect: "too-small" },
-    { title: "A very long question", why: "The question alone is bigger than the window. The doctor must shorten it. We do not cut it for them.", question: "Cardioza dose " + "please tell me more ".repeat(20), flags: { window: "80" }, expect: "too-small" },
-  ],
-  play(question, flags) {
-    const budget = Number(flags.window || 120);
-    const parts = partsFor(question);
-    print(field("Window", `${budget} tokens`));
-    if (flags.naive) return showNaive(parts, budget);
-    const built = buildPrompt(parts, budget);
-    rule("PROMPT PARTS");
-    for (const part of parts) {
-      const kept = built.kept.includes(part.name);
-      const badge = kept ? badgeGreen("KEPT") : badgeRed("DROPPED");
-      const size = `${countTokens(part.text)} tokens${part.must ? ", must stay" : ""}`;
-      console.log(`${badge} ${part.name.padEnd(10)} ${dim(size)}`);
-    }
-    if (!built.fits) {
-      box("TOO SMALL", [red(`The must parts need ${built.used} tokens. The window is ${budget}.`)], red);
-      return "too-small";
-    }
-    print(field("Used", `${built.used} of ${budget} tokens`, green));
-    if (built.dropped.length === 0) return "all-fit";
-    box("TRIMMED", [yellow(`Dropped: ${built.dropped.join(", ")}`)], yellow);
-    return `dropped: ${built.dropped.join(", ")}`;
-  },
-};
-
-function showNaive(parts: Part[], budget: number): string {
-  const seen = naiveWindow(parts, budget);
-  rule("WHAT THE MODEL READS");
-  console.log(dim(seen.trim()));
-  const lost = !seen.includes("Use ONLY");
-  const badge = lost ? badgeRed("RULES LOST") : badgeYellow("RULES KEPT");
-  box(badge, [yellow(lost ? "The rules were cut. No one was told." : "This time the rules survived.")], yellow);
-  return lost ? "rules-lost" : "rules-kept";
-}
-
-if (import.meta.main) runLab(lab);

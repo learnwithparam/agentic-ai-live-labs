@@ -22,6 +22,7 @@ const grab = (text: string, label: string) => text.match(new RegExp(`${label}: (
 export function makeModel(behaviour: Behaviour = "ok"): CallLlm {
   return (messages, toolNames) => {
     const first = messages.find((message) => message.role === "user")!.content;
+    if (first.startsWith("ANSWER:")) return { text: answerFrom(first) };
     if (first.startsWith("DRUG:")) return { text: drugFor(first) };
     if (first.startsWith("WRITE:")) return { text: writeFor(first) };
     if (first.startsWith("PICK:")) return { text: pickFor(first) };
@@ -122,4 +123,11 @@ function writeFor(prompt: string): string {
   const source = (prompt.split("SOURCE: ")[1] || "").split("\nQuestion:")[0].trim();
   if (source === NO_DOC || source === "" || source.startsWith("ERROR")) return "I found no approved source.";
   return source;
+}
+
+// A model asked to answer from the prompt it was given. It reads the documents in it, or says there are none.
+function answerFrom(prompt: string): string {
+  const lines = prompt.split("\n").filter((line) => line.startsWith("[DOC-"));
+  if (lines.length === 0) return "I found no approved source for this question.";
+  return lines.join(" ");
 }
