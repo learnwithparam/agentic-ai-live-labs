@@ -40,6 +40,10 @@ export const BREAKS: Break[] = [
     find: "if (timesSeen(log, key) >= limits.maxRepeats)", replace: "if (false)" },
   { lab: 15, file: "15-stop-conditions.ts", rule: "a run may spend past its budget",
     find: "if (spent + action.cost > limits.budget)", replace: "if (false)" },
+  { lab: 16, file: "16-error-feedback.ts", rule: "an error says nothing the model can use",
+    find: "Use US or DE.", replace: "That is wrong." },
+  { lab: 16, file: "16-error-feedback.ts", rule: "an unfixable call is not sent to a person",
+    find: "if (next === undefined) return", replace: "if (false) return" },
 ];
 
 function testPasses(lab: number): boolean {
