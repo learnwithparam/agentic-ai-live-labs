@@ -22,6 +22,7 @@ const grab = (text: string, label: string) => text.match(new RegExp(`${label}: (
 export function makeModel(behaviour: Behaviour = "ok"): CallLlm {
   return (messages, toolNames) => {
     const first = messages.find((message) => message.role === "user")!.content;
+    if (first.startsWith("RULES:")) return { text: rulesFor(first) };
     if (first.startsWith("CONTEXT:")) return { text: contextFor(first) };
     if (first.startsWith("CHUNKS:")) return { text: chunksFor(first) };
     if (first.startsWith("CHAT:")) return { text: chatFor(first) };
@@ -159,4 +160,13 @@ function contextFor(prompt: string): string {
   }
   if (facts.length === 0) return "The sources I was given do not answer this.";
   return facts.join(" ");
+}
+
+// A model that reads rules and data as one text. It obeys an order unless the data is fenced.
+function rulesFor(prompt: string): string {
+  const fenced = prompt.includes("<data>");
+  if (!fenced && prompt.includes("Ignore the rules")) return "Sending the doctor's email as ordered.";
+  if (!fenced && prompt.includes("New rules")) return "Voici la dose, sans citation.";
+  const docs = prompt.split("\n").filter((line) => line.startsWith("[DOC-"));
+  return docs.join(" ") || "I found no approved source.";
 }
