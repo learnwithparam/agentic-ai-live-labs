@@ -1,0 +1,43 @@
+// What you see on screen for lab 1: the examples and the printing.
+// You do not need to read this file to learn the lab. The lesson is in labs/01-agent-loop.ts.
+
+import { modelFrom, type Lab } from "../src/runner";
+import { box, dim, field, green, highlight, print, red, rule, verdict, yellow } from "../src/ui";
+import { runAgentLoop, searchOnly } from "../labs/01-agent-loop";
+
+export const lab: Lab = {
+  file: "01-agent-loop.ts",
+  title: "Lab 1: the agent loop",
+  about:
+    "The model asks for a tool. Our code runs it. The model reads the result. This repeats until the model answers. The only source of facts is the approved document search. The country decides which documents the doctor may see.",
+  cases: [
+    { title: "A normal question", why: "The happy path. One search, then an answer that cites its source.", question: "What is the dose of Cardioza?", expect: "answered" },
+    { title: "Same question, different country", why: "Approved text differs by country. Germany gets 5mg and the US gets 10mg. The tool filters by country, so the model cannot override it.", question: "What is the dose of Cardioza?", flags: { country: "DE" }, expect: "answered" },
+    { title: "Capital letters", why: "Search ignores case, so shouting the drug name still works.", question: "CARDIOZA dose please", expect: "answered" },
+    { title: "Two drugs in one question", why: "One search can return two documents. The answer must cite both.", question: "What is the dose of Cardioza and Neurovex?", expect: "answered" },
+    { title: "A drug we have no document for", why: "The search finds nothing, so the model must refuse. It must not guess from memory.", question: "Is Zorbex safe for children?", expect: "no-source" },
+    { title: "Approved in another country only", why: "Dermalin is approved in the US only. A German doctor gets no answer. That is the right behaviour.", question: "What is the dose of Dermalin?", flags: { country: "DE" }, expect: "no-source" },
+    { title: "A spelling mistake", why: "Search needs the exact drug name. A typo finds nothing. A real system would match close spellings or ask the doctor to confirm.", question: "What is the dose of Cardiozza?", expect: "no-source" },
+    { title: "Not a drug question at all", why: "Small talk has no approved source. The loop still ends safely.", question: "How are you today?", expect: "no-source" },
+    { title: "The loop hits its step limit", why: "We allow only 1 step. The model gets one tool call and no turn left to answer. A step limit stops a model that never finishes.", question: "What is the dose of Cardioza?", flags: { steps: "1" }, expect: "stopped" },
+  ],
+  play(question, flags) {
+    const country = flags.country || "US";
+    const maxSteps = Number(flags.steps || 5);
+    const result = runAgentLoop(question, country, modelFrom(flags), searchOnly, maxSteps);
+    print(field("Question", question));
+    rule("WHAT HAPPENED, STEP BY STEP");
+    for (const line of result.path) console.log(dim(line));
+    console.log();
+    if (result.stopped) {
+      box("STOPPED", [verdict.blocked("Step limit reached before the model answered.")], red);
+      return "stopped";
+    }
+    if (result.answer.includes("DOC-")) {
+      box("ANSWER", field("", highlight(result.answer), green, 0), green);
+      return "answered";
+    }
+    box("NO APPROVED SOURCE", field("", highlight(result.answer), yellow, 0), yellow);
+    return "no-source";
+  },
+};
