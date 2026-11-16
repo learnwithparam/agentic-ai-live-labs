@@ -22,6 +22,7 @@ const grab = (text: string, label: string) => text.match(new RegExp(`${label}: (
 export function makeModel(behaviour: Behaviour = "ok"): CallLlm {
   return (messages, toolNames) => {
     const first = messages.find((message) => message.role === "user")!.content;
+    if (first.startsWith("SHELL:")) return { text: shellFor(first) };
     if (first.startsWith("CALL:")) return { text: writeCall(first) };
     if (first.startsWith("AUDIT:")) return { text: audit(first) };
     if (first.startsWith("REVIEW:")) return { text: "Looks good. The draft is fine." };
@@ -84,4 +85,12 @@ function writeCall(prompt: string): string {
   }
   const country = question.includes("Germany") ? "de" : "us";
   return `{"drug": "${drug}", "country": "${country}"}`;
+}
+
+// A model asked to write a shell command. It maps a plain task to one command.
+function shellFor(prompt: string): string {
+  const task = (prompt.split("Task: ")[1] || "").toLowerCase();
+  if (task.includes("delete") || task.includes("remove")) return "rm notes.txt";
+  if (task.includes("dose") || task.includes("read")) return "cat doses.txt";
+  return "ls";
 }

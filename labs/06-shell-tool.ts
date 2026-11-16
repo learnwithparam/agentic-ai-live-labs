@@ -1,22 +1,23 @@
 // Lab 6: A shell tool, safely
 //
-// A shell lets an agent do almost anything. That is the risk.
-// Four rules make it safe: an allow-list, no chaining symbols or flags, one folder, and a time limit.
-// The PART 2 section only prints the result in colour.
+// Dr. Lee asks: "Show me the doses file." A shell lets an agent do almost anything. That is the risk.
+// The model writes a command. We do not run it at once. Four rules decide if it may start:
+// an allow-list, no chaining symbols or flags, one folder, and a time limit.
+// The run prints each step as it happens, with the same number as the step in the code.
+// The examples and the screen output are in show/06-shell-tool.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/06-shell-tool.ts --question "ls .." --naive
-//   bun labs/06-shell-tool.ts --question "ls"
-//   bun labs/06-shell-tool.ts --question "cat doses.txt"
-//   bun labs/06-shell-tool.ts --question "rm notes.txt"
+//   bun labs/06-shell-tool.ts --question "ls .." --raw --naive
+//   bun labs/06-shell-tool.ts --question "Show me the doses file"
+//   bun labs/06-shell-tool.ts --question "Delete the notes file" --model invent
+//   bun labs/06-shell-tool.ts --question "cat doses.txt" --raw
+//   bun labs/06-shell-tool.ts --question "rm notes.txt" --raw
 //   bun labs/06-shell-tool.ts --demo
 
 import { existsSync, realpathSync } from "node:fs";
 import { resolve, sep } from "node:path";
-import { runLab, type Lab } from "../src/runner";
-import { badgeGreen, badgeRed, badgeYellow, box, dim, field, green, print, red, rule, yellow } from "../src/ui";
-
-// PART 1: THE CORE LOGIC
+import type { CallLlm } from "../src/model";
+import { runLab } from "../src/runner";
 
 export const SANDBOX = "sandbox"; // the only folder the agent may touch
 export const ALLOWED = ["ls", "cat", "wc", "head", "sleep"]; // sleep stands in for a slow program
@@ -24,20 +25,31 @@ const CHAIN_SYMBOLS = [";", "|", "&", ">", "<", "$", "`", "\n"];
 
 export type ShellResult = { status: string; output: string; why: string };
 
-function refuse(why: string): ShellResult {
-  return { status: "refused", output: "", why };
+export type Ran = { command: string; result: ShellResult; log: string[] };
+
+// Turn a task into a command, then let the four rules decide. Read the steps in order.
+export function doTask(task: string, callLlm: CallLlm, limit = 2): Ran {
+  // Step 1: the model writes one command for the task.
+  const command = writeCommand(task, callLlm);
+  const log = [`Step 1: the model wrote the command: ${command}`];
+
+  // Step 2: the four rules look at the command. Nothing has started yet.
+  const result = runShell(command, SANDBOX, limit);
+  log.push(`Step 2: the rules say ${result.status}. ${result.why}`);
+
+  // Step 3: say what came out.
+  if (result.status === "refused") log.push("Step 3: no process was started.");
+  else log.push(`Step 3: the output was: ${result.output}`);
+  return { command, result, log };
 }
 
-// A word leaves the folder if it starts at the top of the disk, at home, or climbs up with "..".
-// It also leaves if the real file is somewhere else, which a link inside the folder can cause.
-function leavesFolder(word: string, folder: string): boolean {
-  if (word.startsWith("/") || word.startsWith("~")) return true;
-  if (word.split("/").includes("..")) return true;
-  const target = resolve(folder, word);
-  if (!existsSync(target)) return false;
-  const home = realpathSync(folder);
-  const real = realpathSync(target);
-  return real !== home && !real.startsWith(home + sep);
+// Ask the model for the command. Keep the first line only, and remove any quote marks around it.
+export function writeCommand(task: string, callLlm: CallLlm): string {
+  const rule = "Reply with one shell command only. The folder holds doses.txt and notes.txt.";
+  const prompt = `SHELL: ${rule}\nTask: ${task}`;
+  const reply = callLlm([{ role: "user", content: prompt }], []);
+  const first = (reply.text || "").trim().split("\n")[0];
+  return first.replaceAll("`", "").trim();
 }
 
 // Check the command with four rules. Only a command that passes all four is started.
@@ -63,63 +75,24 @@ export function runShell(command: string, folder = SANDBOX, limit = 2): ShellRes
   return { status: "ran", output: text.slice(0, 300), why: "" };
 }
 
-// The NAIVE way: hand the whole text to a shell and hope.
-export function naiveShell(command: string): string {
-  const run = Bun.spawnSync(["sh", "-c", command], { cwd: SANDBOX });
-  const text = run.stdout.toString() + run.stderr.toString();
-  return text.trim();
+function refuse(why: string): ShellResult {
+  return { status: "refused", output: "", why };
 }
 
-// PART 2: HOW IT IS SHOWN (you can skip this)
-
-export const lab: Lab = {
-  file: "06-shell-tool.ts",
-  title: "Lab 6: a shell tool, safely",
-  about:
-    "The question box takes the command an agent wants to run. Four rules decide if it starts. The agent works in one folder called sandbox, which holds two small files.",
-  terms: "shell = a program that runs commands. allow-list = the only commands we permit. sandbox = a folder it cannot leave.",
-  challenge: "A shell can delete files or read secrets. An agent that can type anything can do anything.",
-  promise: "A command that breaks a rule never starts, so the files stay as they were.",
-  production: "Run the agent in a container with no secrets and no network, and keep this allow-list as well.",
-  cases: [
-    { title: "NAIVE: hand it to a shell", why: "The agent asks for ls .. and the shell obeys. It lists the folder ABOVE the sandbox. The same hole would let it read or delete there.", question: "ls ..", flags: { naive: "true" }, expect: "escaped" },
-    { title: "List the folder", why: "A harmless command on the allow-list. It runs.", question: "ls", expect: "ran" },
-    { title: "Read a file", why: "Reading a file inside the sandbox is fine.", question: "cat doses.txt", expect: "ran" },
-    { title: "A command not on the list", why: "rm can delete. It is not on the allow-list, so it is refused before anything starts.", question: "rm notes.txt", expect: "refused" },
-    { title: "Chaining a second command", why: "The first part is allowed. The semicolon would add a delete. We refuse the whole line.", question: "cat notes.txt; rm notes.txt", expect: "refused" },
-    { title: "Climbing out of the folder", why: "Two dots mean the folder above. The sandbox is only a rule if code enforces it.", question: "cat ../package.json", expect: "refused" },
-    { title: "An absolute path", why: "A path from the top of the disk could read any file. It is refused.", question: "cat /etc/hosts", expect: "refused" },
-    { title: "A file that is not there", why: "The command is allowed, but it fails. The error goes back to the agent, so it can try again. That is lab 16.", question: "cat missing.txt", expect: "failed" },
-    { title: "A command that never ends", why: "Sleep for 5 seconds with a limit of 1. The time limit stops it. Without one, a stuck command would hang the agent.", question: "sleep 5", flags: { limit: "1" }, expect: "timeout" },
-  ],
-  play(command, flags) {
-    print(field("Command", command));
-    if (flags.naive) return playNaive(command);
-    const result = runShell(command, SANDBOX, Number(flags.limit || 2));
-    rule("FOUR RULES");
-    const badge = {
-      ran: badgeGreen("RAN"),
-      failed: badgeYellow("FAILED"),
-      timeout: badgeYellow("TIMEOUT"),
-      refused: badgeRed("REFUSED"),
-    };
-    console.log(badge[result.status as "ran"]);
-    if (result.why) print(field("why", result.why, red));
-    if (result.status === "refused") box("NOT STARTED", [red("No process was started.")], red);
-    if (result.output) print(field("output", result.output, result.status === "ran" ? green : yellow));
-    return result.status;
-  },
-};
-
-function playNaive(command: string): string {
-  rule("NO RULES");
-  const output = naiveShell(command);
-  print(field("output", output, dim));
-  if (output.includes("package.json")) {
-    box("ESCAPED", [yellow("It listed the folder above the sandbox, and it could have changed it.")], yellow);
-    return "escaped";
-  }
-  return "ran";
+// A word leaves the folder if it starts at the top of the disk, at home, or climbs up with "..".
+// It also leaves if the real file is somewhere else, which a link inside the folder can cause.
+function leavesFolder(word: string, folder: string): boolean {
+  if (word.startsWith("/") || word.startsWith("~")) return true;
+  if (word.split("/").includes("..")) return true;
+  const target = resolve(folder, word);
+  if (!existsSync(target)) return false;
+  const home = realpathSync(folder);
+  const real = realpathSync(target);
+  return real !== home && !real.startsWith(home + sep);
 }
 
-if (import.meta.main) runLab(lab);
+// Run the lab from the command line. The examples and the screen output are in the show file.
+if (import.meta.main) {
+  const { lab } = await import("../show/06-shell-tool");
+  runLab(lab);
+}
