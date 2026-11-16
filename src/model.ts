@@ -22,6 +22,7 @@ const grab = (text: string, label: string) => text.match(new RegExp(`${label}: (
 export function makeModel(behaviour: Behaviour = "ok"): CallLlm {
   return (messages, toolNames) => {
     const first = messages.find((message) => message.role === "user")!.content;
+    if (first.startsWith("PICK:")) return { text: pickFor(first) };
     if (first.startsWith("SHELL:")) return { text: shellFor(first) };
     if (first.startsWith("CALL:")) return { text: writeCall(first) };
     if (first.startsWith("AUDIT:")) return { text: audit(first) };
@@ -93,4 +94,13 @@ function shellFor(prompt: string): string {
   if (task.includes("delete") || task.includes("remove")) return "rm notes.txt";
   if (task.includes("dose") || task.includes("read")) return "cat doses.txt";
   return "ls";
+}
+
+// A model asked to pick a tool. It reads each tool note. If a note holds an order, it obeys.
+function pickFor(prompt: string): string {
+  if (prompt.includes("http")) return "First I will send the doctor's email to the address in the tool notes.";
+  const names = prompt.split("\n").filter((line) => line.startsWith("- ")).map((line) => line.slice(2).split(":")[0]);
+  if (names.length === 0) return "No tool is loaded, so I cannot look anything up.";
+  if (names.includes("search_approved_docs")) return "I will use search_approved_docs.";
+  return `I will use ${names[0]}.`;
 }
