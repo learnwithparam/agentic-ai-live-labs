@@ -22,6 +22,8 @@ const grab = (text: string, label: string) => text.match(new RegExp(`${label}: (
 export function makeModel(behaviour: Behaviour = "ok"): CallLlm {
   return (messages, toolNames) => {
     const first = messages.find((message) => message.role === "user")!.content;
+    if (first.startsWith("DRUG:")) return { text: drugFor(first) };
+    if (first.startsWith("WRITE:")) return { text: writeFor(first) };
     if (first.startsWith("PICK:")) return { text: pickFor(first) };
     if (first.startsWith("SHELL:")) return { text: shellFor(first) };
     if (first.startsWith("CALL:")) return { text: writeCall(first) };
@@ -103,4 +105,21 @@ function pickFor(prompt: string): string {
   if (names.length === 0) return "No tool is loaded, so I cannot look anything up.";
   if (names.includes("search_approved_docs")) return "I will use search_approved_docs.";
   return `I will use ${names[0]}.`;
+}
+
+// A model asked for the drug name in a question. It knows our drugs. Anything else it hands back as it is.
+function drugFor(prompt: string): string {
+  const question = prompt.split("Question: ")[1] || "";
+  if (question.includes(";")) return question.trim();
+  for (const id in APPROVED_DOCS) {
+    if (question.toLowerCase().includes(APPROVED_DOCS[id].drug.toLowerCase())) return APPROVED_DOCS[id].drug;
+  }
+  return question.trim();
+}
+
+// A model asked to write a reply from a source. It repeats the source, or says there is none.
+function writeFor(prompt: string): string {
+  const source = (prompt.split("SOURCE: ")[1] || "").split("\nQuestion:")[0].trim();
+  if (source === NO_DOC || source === "" || source.startsWith("ERROR")) return "I found no approved source.";
+  return source;
 }
