@@ -1,0 +1,59 @@
+// bun run mutate
+//
+// A test that never fails proves nothing. This breaks one rule in each lab on purpose,
+// runs that lab's promise test, and requires the test to FAIL. Then it puts the file back.
+// bun run check runs this, so a promise test that cannot catch its own rule cannot ship.
+import { readFileSync, writeFileSync } from "node:fs";
+
+type Break = { lab: number; file: string; rule: string; find: string; replace: string };
+
+export const BREAKS: Break[] = [
+  { lab: 5, file: "05-tool-schemas.ts", rule: "a rejected call still runs the tool",
+    find: 'if (verdict.status === "rejected") return', replace: "if (false) return" },
+  { lab: 6, file: "06-shell-tool.ts", rule: "any command may run",
+    find: "if (!ALLOWED.includes(words[0]))", replace: "if (false)" },
+  { lab: 6, file: "06-shell-tool.ts", rule: "a link may lead out of the folder",
+    find: "return real !== home && !real.startsWith(home + sep);", replace: "return false;" },
+  { lab: 7, file: "07-mcp-basics.ts", rule: "a tool error looks like an answer",
+    find: "if (reply.result.isError) return", replace: "if (false) return" },
+  { lab: 8, file: "08-mcp-trust.ts", rule: "a changed tool is still loaded",
+    find: "else if (pinned !== fingerprint(tool))", replace: "else if (false)" },
+  { lab: 8, file: "08-mcp-trust.ts", rule: "an unknown server is still read",
+    find: "if (!APPROVED_SERVERS.includes(manifest.server))", replace: "if (false)" },
+  { lab: 9, file: "09-three-doors.ts", rule: "an answer with no document id counts as cited",
+    find: 'if (answer.includes("[DOC-")) return "answered";\n  return "uncited";', replace: 'return "answered";' },
+  { lab: 10, file: "10-context-budget.ts", rule: "a part that does not fit is sent anyway",
+    find: "if (used + cost > budget) continue;", replace: "if (false) continue;" },
+];
+
+function testPasses(lab: number): boolean {
+  const name = String(lab).padStart(2, "0");
+  const run = Bun.spawnSync(["bun", "test", `tests/promises/${name}.test.ts`], { stdout: "ignore", stderr: "ignore" });
+  return run.exitCode === 0;
+}
+
+if (import.meta.main) {
+  let missed = 0;
+  for (const item of BREAKS) {
+    const path = `labs/${item.file}`;
+    const original = readFileSync(path, "utf8");
+    if (!original.includes(item.find)) {
+      console.error(`Lab ${item.lab}: cannot find the rule to break: ${item.find}`);
+      process.exit(1);
+    }
+    writeFileSync(path, original.replace(item.find, item.replace));
+    let survived = false;
+    try {
+      survived = testPasses(item.lab);
+    } finally {
+      writeFileSync(path, original);
+    }
+    if (survived) missed += 1;
+    console.log(`${survived ? "MISSED" : "caught"}  lab ${item.lab}: ${item.rule}`);
+  }
+  if (missed > 0) {
+    console.error(`${missed} broken rules were not caught by a promise test.`);
+    process.exit(1);
+  }
+  console.log("Every promise test fails when its rule is broken.");
+}

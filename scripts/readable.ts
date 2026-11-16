@@ -5,6 +5,7 @@
 // Names must be whole words everywhere. Sentences must be short everywhere.
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
+import { BREAKS } from "./mutate";
 
 const LONGEST_LINE = 100;
 const MOST_CALLS_IN_ONE_LINE = 3;
@@ -104,6 +105,9 @@ export function problemsIn(file: string, text: string): Problem[] {
     if (partTwo - partOne > 100) add(partOne, "PART 1 is over 100 lines; new labs stay short");
     if (!existsSync(`tests/promises/${String(number).padStart(2, "0")}.test.ts`)) {
       add(0, `lab ${number} needs tests/promises/${String(number).padStart(2, "0")}.test.ts`);
+    }
+    if (!BREAKS.some((item) => item.lab === number)) {
+      add(0, `lab ${number} needs a rule to break in scripts/mutate.ts, so its test is proven to bite`);
     }
   }
   if (isLab && partTwo < 0) add(0, "a lab needs a // PART 2: line");
