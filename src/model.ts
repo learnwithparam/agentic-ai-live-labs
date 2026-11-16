@@ -14,7 +14,8 @@ export type CallLlm = (messages: Message[], toolNames: string[]) => Reply;
 // ok: it follows the rules.
 // nocite: the answer is right, but it forgets the citation. A guardrail catches this.
 // invent: it cites a real document but states a wrong dose. Only a check against the document catches this.
-export type Behaviour = "ok" | "nocite" | "invent";
+// stubborn: it states a wrong dose, and when asked to fix it, it sends the same draft again.
+export type Behaviour = "ok" | "nocite" | "invent" | "stubborn";
 
 const grab = (text: string, label: string) => text.match(new RegExp(`${label}: ([^.\\n]+)`))?.[1]?.trim() ?? "";
 
@@ -22,6 +23,8 @@ export function makeModel(behaviour: Behaviour = "ok"): CallLlm {
   return (messages, toolNames) => {
     const first = messages.find((message) => message.role === "user")!.content;
     if (first.startsWith("AUDIT:")) return { text: audit(first) };
+    if (first.startsWith("REVIEW:")) return { text: "Looks good. The draft is fine." };
+    if (first.startsWith("FIX:")) return { text: fix(first, behaviour) };
 
     const country = grab(first, "Country");
     const hcpId = grab(first, "HCP");
@@ -41,12 +44,21 @@ export function makeModel(behaviour: Behaviour = "ok"): CallLlm {
     const lines = search.split("\n").map((line) => {
       const id = line.match(/^\[(DOC-\d+)\]/)![1];
       const body = line.replace(/^\[DOC-\d+\]\s*/, "");
-      const claim = behaviour === "invent" ? body.replace(/\d+mg/, "20mg") : body;
+      const claim = behaviour === "invent" || behaviour === "stubborn" ? body.replace(/\d+mg/, "20mg") : body;
       return behaviour === "nocite" ? claim : `${claim} [${id}]`;
     });
     const extra = result("check_recent_outreach");
     return { text: [...lines, ...(extra ? [extra] : [])].join(" ") };
   };
+}
+
+// A model asked to fix its draft. It rewrites the answer from the source and adds the citation.
+function fix(prompt: string, behaviour: Behaviour): string {
+  const draft = prompt.split("\nPROBLEMS:")[0].replace("FIX: ", "");
+  if (behaviour === "stubborn") return draft;
+  const source = prompt.split("SOURCE: ")[1].split("\n")[0];
+  const id = source.split(" ")[0];
+  return `${source.replace(`${id} `, "")} ${id}`;
 }
 
 // The compliance auditor. Each sentence that cites an id must appear word for word in that approved document.

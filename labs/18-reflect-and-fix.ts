@@ -18,7 +18,6 @@ import { runLab } from "../src/runner";
 import { runAgentLoop, searchApprovedDocs } from "./01-agent-loop"; // lab 1
 
 export const MOST_ROUNDS = 2;
-export type FixDraft = { (draft: string, problems: string[], source: string): string }; // the model
 export type Result = { outcome: string; draft: string; problems: string[]; path: string[] };
 
 // Answer a question, but check the draft first. Read the steps in order.
@@ -26,7 +25,6 @@ export function answerWithCheck(
   question: string,
   country: string,
   callLlm: CallLlm,
-  fixDraft: FixDraft,
 ): Result {
   const path: string[] = [];
 
@@ -51,7 +49,7 @@ export function answerWithCheck(
 
   // Step 5: tell the model what is wrong, and let it fix the draft. Then check again.
   for (let round = 1; round <= MOST_ROUNDS; round++) {
-    draft = fixDraft(draft, problems, source);
+    draft = askForFix(callLlm, draft, problems, source);
     path.push(`Step 5: fix round ${round}. The model rewrote it. ${draft}`);
     problems = findProblems(draft, source);
     path.push(`Step 4 again: checked the new draft. Problems: ${problems.join(", ") || "none"}`);
@@ -71,10 +69,19 @@ export function answerWithCheck(
 // The naive way: ask the same model if its draft is fine. It has no new facts, so it says yes.
 export function answerWithoutCheck(question: string, country: string, callLlm: CallLlm): Result {
   const draft = runAgentLoop(question, country, callLlm).answer;
+  const prompt = `REVIEW: ${draft} Is this draft correct?`;
+  const review = callLlm([{ role: "user", content: prompt }], []);
   const path = [`The model wrote a draft. ${draft}`];
-  path.push("We asked the same model: is this draft fine?");
-  path.push("The model said: looks good. Nothing was checked.");
+  path.push("We asked the same model: is this draft correct?");
+  path.push(`The model said: ${review.text}`);
   return { outcome: "self-approved", draft, problems: [], path };
+}
+
+// Ask the model to fix its draft. We send the draft, what is wrong, and the approved source.
+function askForFix(callLlm: CallLlm, draft: string, problems: string[], source: string): string {
+  const prompt = `FIX: ${draft}\nPROBLEMS: ${problems.join("; ")}\nSOURCE: ${source}`;
+  const reply = callLlm([{ role: "user", content: prompt }], []);
+  return reply.text || draft;
 }
 
 // The next two functions do the check in Step 4.
@@ -99,6 +106,7 @@ export function dosesIn(text: string): string[] {
   return found;
 }
 
+// Run the lab from the command line. The examples and the screen output are in the show file.
 if (import.meta.main) {
   const { lab } = await import("../show/18-reflect-and-fix");
   runLab(lab);

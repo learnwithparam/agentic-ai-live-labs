@@ -1,20 +1,18 @@
 import { expect, test } from "bun:test";
-import { makeModel } from "../../src/model";
+import { makeModel, type Behaviour, type CallLlm } from "../../src/model";
 import {
   answerWithCheck,
   answerWithoutCheck,
   dosesIn,
   findProblems,
   MOST_ROUNDS,
-  type FixDraft,
 } from "../../labs/18-reflect-and-fix";
-import { fixFromSource, ignoresProblems } from "../../show/18-reflect-and-fix";
 
 const DOSE = "What is the dose of Cardioza?";
 const SOURCE = "[DOC-101] Cardioza standard adult dose is 10mg once daily with food.";
 
-function run(behaviour: "ok" | "nocite" | "invent", fixer: FixDraft = fixFromSource, question = DOSE) {
-  return answerWithCheck(question, "US", makeModel(behaviour), fixer);
+function run(behaviour: Behaviour, question = DOSE) {
+  return answerWithCheck(question, "US", makeModel(behaviour));
 }
 
 // PROMISE: code checks every draft against the source. A fix gets two rounds at most.
@@ -31,16 +29,17 @@ test("lab 18: fixes pass the check, and the loop is capped", () => {
   expect(run("ok").outcome).toBe("accepted");
   expect(run("nocite").outcome).toBe("fixed");
   expect(run("invent").outcome).toBe("fixed");
-  let calls = 0;
-  const counting: FixDraft = (draft, problems, source) => {
-    calls += 1;
-    return ignoresProblems(draft, problems, source);
+  let fixes = 0;
+  const stubborn = makeModel("stubborn");
+  const counting: CallLlm = (messages, toolNames) => {
+    if (messages[0].content.startsWith("FIX:")) fixes += 1;
+    return stubborn(messages, toolNames);
   };
-  expect(run("invent", counting).outcome).toBe("gave-up");
-  expect(calls).toBe(MOST_ROUNDS);
+  expect(answerWithCheck(DOSE, "US", counting).outcome).toBe("gave-up");
+  expect(fixes).toBe(MOST_ROUNDS);
 });
 
 test("lab 18: with no source nothing is checked and no model fix is asked", () => {
-  const result = run("ok", fixFromSource, "Is Zorbex safe for children?");
+  const result = run("ok", "Is Zorbex safe for children?");
   expect(result).toMatchObject({ outcome: "no-source", draft: "" });
 });

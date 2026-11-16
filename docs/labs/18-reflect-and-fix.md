@@ -1,6 +1,6 @@
 # Lab 18: check the draft, then fix it
 
-Each example is a doctor's question. The pretend model writes a draft, and sometimes the draft is wrong. Pick how it behaves with --model: ok, nocite (forgets the citation) or invent (a wrong dose). Add --fixer ignores for a model that will not fix its draft.
+Each example is a doctor's question. The pretend model writes a draft, and sometimes the draft is wrong. Pick how it behaves with --model: ok, nocite (forgets the citation), invent (a wrong dose) or stubborn (a wrong dose that it will not fix).
 
 ## The problem
 
@@ -19,7 +19,7 @@ bun labs/18-reflect-and-fix.ts --question "What is the dose of Cardioza?" --mode
 bun labs/18-reflect-and-fix.ts --question "What is the dose of Cardioza?"
 bun labs/18-reflect-and-fix.ts --question "What is the dose of Cardioza?" --model nocite
 bun labs/18-reflect-and-fix.ts --question "What is the dose of Cardioza?" --model invent
-bun labs/18-reflect-and-fix.ts --question "What is the dose of Cardioza?" --model invent --fixer ignores
+bun labs/18-reflect-and-fix.ts --question "What is the dose of Cardioza?" --model stubborn
 bun labs/18-reflect-and-fix.ts --question "Is Zorbex safe for children?"
 bun labs/18-reflect-and-fix.ts --demo
 ```
@@ -36,7 +36,7 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 2 | A good draft | It cites the document and the dose matches. No fix is needed. | accepted | `bun labs/18-reflect-and-fix.ts --question "What is the dose of Cardioza?"` |
 | 3 | A missing citation | The check finds no citation. The model adds one, and the second check passes. | fixed | `bun labs/18-reflect-and-fix.ts --question "What is the dose of Cardioza?" --model nocite` |
 | 4 | A wrong dose | The check finds 20mg is not in the document. The model changes it to 10mg. | fixed | `bun labs/18-reflect-and-fix.ts --question "What is the dose of Cardioza?" --model invent` |
-| 5 | EDGE: a model that will not change | The model sends the same wrong draft twice. After two rounds we stop and give it to a person. | gave-up | `bun labs/18-reflect-and-fix.ts --question "What is the dose of Cardioza?" --model invent --fixer ignores` |
+| 5 | EDGE: a model that will not change | The model sends the same wrong draft twice. After two rounds we stop and give it to a person. | gave-up | `bun labs/18-reflect-and-fix.ts --question "What is the dose of Cardioza?" --model stubborn` |
 | 6 | No approved document | Zorbex has no approved document. With nothing to check against, there is no answer to give. | no-source | `bun labs/18-reflect-and-fix.ts --question "Is Zorbex safe for children?"` |
 
 ## The promise, and its test
