@@ -128,7 +128,7 @@ describe("every lab", async () => {
       expect(lab.file).toBe(file);
       expect(lab.cases.length).toBeGreaterThan(0);
       expect(silent(() => checkCases(lab))).toEqual([]);
-    });
+    }, 60000); // a lab may start a real service, which takes a few seconds
   }
 });
 
