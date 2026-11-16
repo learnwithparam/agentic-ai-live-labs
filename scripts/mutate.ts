@@ -21,7 +21,7 @@ export const BREAKS: Break[] = [
   { lab: 8, file: "08-mcp-trust.ts", rule: "an unknown server is still read",
     find: "if (!APPROVED_SERVERS.includes(manifest.server))", replace: "if (false)" },
   { lab: 9, file: "09-three-doors.ts", rule: "an answer with no document id counts as cited",
-    find: 'if (answer.includes("[DOC-")) return "answered";\n  return "uncited";', replace: 'return "answered";' },
+    find: 'if (answer.includes("DOC-")) return "answered";\n  return "uncited";', replace: 'return "answered";' },
   { lab: 10, file: "10-context-budget.ts", rule: "a part that does not fit is sent anyway",
     find: "if (used + cost > budget) continue;", replace: "if (false) continue;" },
   { lab: 11, file: "11-history-trimming.ts", rule: "a pinned fact is cut with the old chatter",
