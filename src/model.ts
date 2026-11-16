@@ -22,6 +22,7 @@ const grab = (text: string, label: string) => text.match(new RegExp(`${label}: (
 export function makeModel(behaviour: Behaviour = "ok"): CallLlm {
   return (messages, toolNames) => {
     const first = messages.find((message) => message.role === "user")!.content;
+    if (first.startsWith("CHUNKS:")) return { text: chunksFor(first) };
     if (first.startsWith("CHAT:")) return { text: chatFor(first) };
     if (first.startsWith("ANSWER:")) return { text: answerFrom(first) };
     if (first.startsWith("DRUG:")) return { text: drugFor(first) };
@@ -140,4 +141,10 @@ function chatFor(prompt: string): string {
   if (prompt.includes("penicillin")) parts.push("Remember the penicillin allergy.");
   if (parts.length === 0) return "I do not know your country, so I cannot pick a label.";
   return parts.join(" ");
+}
+
+// A model asked to answer from chunks. It repeats the chunks and cites their ids.
+function chunksFor(prompt: string): string {
+  const lines = prompt.split("\n").filter((line) => line.startsWith("[C-"));
+  return lines.join(" ");
 }

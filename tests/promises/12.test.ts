@@ -1,5 +1,6 @@
 import { expect, test } from "bun:test";
-import { CHUNKS, MINIMUM_SCORE, MOST_HITS, retrieve } from "../../labs/12-retrieval";
+import { CHUNKS } from "../../src/chunks";
+import { MINIMUM_SCORE, MOST_HITS, retrieve } from "../../labs/12-retrieval";
 
 const questions = [
   "Cardioza dose", "Cardioza side effects", "Neurovex dose and Cardioza dose",
