@@ -5,11 +5,11 @@
 // The PART 2 section only prints the result in colour. You can skip it.
 //
 // Run it (copy any line):
-//   bun run lab 16 --question "Cardioza in Germany" --naive
-//   bun run lab 16 --question "Cardioza in US"
-//   bun run lab 16 --question "Cardioza in Germany"
-//   bun run lab 16 --question "Cardiozza in US"
-//   bun run lab 16 --demo
+//   bun labs/16-error-feedback.ts --question "Cardioza in Germany" --naive
+//   bun labs/16-error-feedback.ts --question "Cardioza in US"
+//   bun labs/16-error-feedback.ts --question "Cardioza in Germany"
+//   bun labs/16-error-feedback.ts --question "Cardiozza in US"
+//   bun labs/16-error-feedback.ts --demo
 
 import { KNOWN_DRUGS, NO_DOC } from "../src/data";
 import { runLab, type Lab } from "../src/runner";
@@ -127,9 +127,3 @@ export const lab: Lab = {
 };
 
 if (import.meta.main) runLab(lab);
-// Run it (copy any line):
-//   bun run lab 16 --question "Cardioza in Germany" --naive
-//   bun run lab 16 --question "Cardioza in US"
-//   bun run lab 16 --question "Cardioza in Germany"
-//   bun run lab 16 --question "Cardiozza in US"
-//   bun run lab 16 --demo

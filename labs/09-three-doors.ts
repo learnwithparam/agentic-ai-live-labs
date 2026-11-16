@@ -5,11 +5,11 @@
 // The PART 2 section only prints the result in colour. You can skip it.
 //
 // Run it (copy any line):
-//   bun run lab 9 --question "Cardioza" --naive --door cli
-//   bun run lab 9 --question "Cardioza" --door function
-//   bun run lab 9 --question "Cardioza" --door mcp
-//   bun run lab 9 --question "Cardioza" --door all
-//   bun run lab 9 --demo
+//   bun labs/09-three-doors.ts --question "Cardioza" --naive --door cli
+//   bun labs/09-three-doors.ts --question "Cardioza" --door function
+//   bun labs/09-three-doors.ts --question "Cardioza" --door mcp
+//   bun labs/09-three-doors.ts --question "Cardioza" --door all
+//   bun labs/09-three-doors.ts --demo
 
 import { NO_DOC } from "../src/data";
 import { runLab, type Lab } from "../src/runner";
@@ -139,9 +139,3 @@ function showAll(drug: string, country: string, server: string): string {
 }
 
 if (import.meta.main) runLab(lab);
-// Run it (copy any line):
-//   bun run lab 9 --question "Cardioza" --naive --door cli
-//   bun run lab 9 --question "Cardioza" --door function
-//   bun run lab 9 --question "Cardioza" --door mcp
-//   bun run lab 9 --question "Cardioza" --door all
-//   bun run lab 9 --demo

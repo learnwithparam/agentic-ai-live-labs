@@ -15,18 +15,18 @@ history = the earlier turns of a chat. trim = leave out old turns. pinned fact =
 Copy any line into your terminal. Each one is a real example from this lab.
 
 ```bash
-bun run lab 11 --question "long" --naive --keep 4
-bun run lab 11 --question "short" --keep 4
-bun run lab 11 --question "long" --keep 4
-bun run lab 11 --question "two-facts" --keep 3
-bun run lab 11 --question "long" --keep 0
-bun run lab 11 --question "no-facts" --keep 4
-bun run lab 11 --question "long" --keep 50
-bun run lab 11 --question "empty" --keep 4
-bun run lab 11 --demo
+bun labs/11-history-trimming.ts --question "long" --naive --keep 4
+bun labs/11-history-trimming.ts --question "short" --keep 4
+bun labs/11-history-trimming.ts --question "long" --keep 4
+bun labs/11-history-trimming.ts --question "two-facts" --keep 3
+bun labs/11-history-trimming.ts --question "long" --keep 0
+bun labs/11-history-trimming.ts --question "no-facts" --keep 4
+bun labs/11-history-trimming.ts --question "long" --keep 50
+bun labs/11-history-trimming.ts --question "empty" --keep 4
+bun labs/11-history-trimming.ts --demo
 ```
 
-Run `bun run lab 11` with nothing else to pick an example from a menu.
+Run `bun labs/11-history-trimming.ts` with nothing else to pick an example from a menu.
 
 ## The cases
 
@@ -34,14 +34,14 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
-| 1 | NAIVE: keep only the last turns | The doctor said Germany in the first turn. That turn is old, so it is cut. The agent no longer knows which label to use. | fact-lost | `bun run lab 11 --question "long" --naive --keep 4` |
-| 2 | A short chat | The chat is shorter than the limit, so nothing is cut. | nothing-to-trim | `bun run lab 11 --question "short" --keep 4` |
-| 3 | A long chat, fact pinned | The old chatter is cut. The country turn stays, because it is pinned. | trimmed | `bun run lab 11 --question "long" --keep 4` |
-| 4 | Two pinned facts | Two old facts are pinned, one early and one in the middle. Both stay. | trimmed | `bun run lab 11 --question "two-facts" --keep 3` |
-| 5 | Facts only | We keep zero recent turns. Only the pinned facts remain. The current question is sent on its own, as in lab 10. | facts-only | `bun run lab 11 --question "long" --keep 0` |
-| 6 | A chat with no facts | Nothing is pinned, so only the last turns stay. This is safe, because nothing there was needed. | trimmed | `bun run lab 11 --question "no-facts" --keep 4` |
-| 7 | A limit larger than the chat | We allow 50 recent turns, and the chat has fewer. Nothing is cut. | nothing-to-trim | `bun run lab 11 --question "long" --keep 50` |
-| 8 | An empty chat | A new chat has no history. There is nothing to trim, and nothing breaks. | empty | `bun run lab 11 --question "empty" --keep 4` |
+| 1 | NAIVE: keep only the last turns | The doctor said Germany in the first turn. That turn is old, so it is cut. The agent no longer knows which label to use. | fact-lost | `bun labs/11-history-trimming.ts --question "long" --naive --keep 4` |
+| 2 | A short chat | The chat is shorter than the limit, so nothing is cut. | nothing-to-trim | `bun labs/11-history-trimming.ts --question "short" --keep 4` |
+| 3 | A long chat, fact pinned | The old chatter is cut. The country turn stays, because it is pinned. | trimmed | `bun labs/11-history-trimming.ts --question "long" --keep 4` |
+| 4 | Two pinned facts | Two old facts are pinned, one early and one in the middle. Both stay. | trimmed | `bun labs/11-history-trimming.ts --question "two-facts" --keep 3` |
+| 5 | Facts only | We keep zero recent turns. Only the pinned facts remain. The current question is sent on its own, as in lab 10. | facts-only | `bun labs/11-history-trimming.ts --question "long" --keep 0` |
+| 6 | A chat with no facts | Nothing is pinned, so only the last turns stay. This is safe, because nothing there was needed. | trimmed | `bun labs/11-history-trimming.ts --question "no-facts" --keep 4` |
+| 7 | A limit larger than the chat | We allow 50 recent turns, and the chat has fewer. Nothing is cut. | nothing-to-trim | `bun labs/11-history-trimming.ts --question "long" --keep 50` |
+| 8 | An empty chat | A new chat has no history. There is nothing to trim, and nothing breaks. | empty | `bun labs/11-history-trimming.ts --question "empty" --keep 4` |
 
 ## The promise, and its test
 

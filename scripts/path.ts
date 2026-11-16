@@ -42,7 +42,7 @@ function stepTable(path: Path, optional: boolean): string[] {
   for (const step of path.steps) {
     if (Boolean(step.optional) !== optional) continue;
     const lab = findLab(step.lab);
-    rows.push(`| ${lab.number}. ${lab.title} | \`bun run lab ${lab.number} --demo\` | ${step.note} |`);
+    rows.push(`| ${lab.number}. ${lab.title} | \`bun labs/${labFile(lab)} --demo\` | ${step.note} |`);
   }
   return rows;
 }

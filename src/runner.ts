@@ -51,8 +51,8 @@ export type Lab = {
 
 // The command a learner can copy to repeat one case.
 export function commandFor(lab: Lab, question: string, flags: Flags = {}): string {
-  let command = `bun run lab ${Number(lab.file.slice(0, 2))} --question "${question}"`;
-  for (const name in flags) command += ` --${name} ${flags[name]}`;
+  let command = `bun labs/${lab.file} --question "${question}"`;
+  for (const name in flags) command += flags[name] === "true" ? ` --${name}` : ` --${name} ${flags[name]}`;
   return command;
 }
 
@@ -111,7 +111,7 @@ function runMenu(lab: Lab, flags: Flags) {
   for (const [index, thisCase] of lab.cases.entries()) {
     console.log(`  ${cyan(String(index + 1).padStart(2))}  ${thisCase.title}`);
   }
-  console.log(dim(`\nTip: bun run lab ${number} --demo walks through every example and explains each one.`));
+  console.log(dim(`\nTip: bun labs/${lab.file} --demo walks through every example and explains each one.`));
   while (true) {
     const input = prompt(`\n${badgeBlue("?")} Pick 1-${lab.cases.length}, or type your own question (empty to quit): `);
     if (!input || !input.trim()) return;

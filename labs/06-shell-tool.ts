@@ -5,11 +5,11 @@
 // The PART 2 section only prints the result in colour. You can skip it.
 //
 // Run it (copy any line):
-//   bun run lab 6 --question "ls .." --naive
-//   bun run lab 6 --question "ls"
-//   bun run lab 6 --question "cat doses.txt"
-//   bun run lab 6 --question "rm notes.txt"
-//   bun run lab 6 --demo
+//   bun labs/06-shell-tool.ts --question "ls .." --naive
+//   bun labs/06-shell-tool.ts --question "ls"
+//   bun labs/06-shell-tool.ts --question "cat doses.txt"
+//   bun labs/06-shell-tool.ts --question "rm notes.txt"
+//   bun labs/06-shell-tool.ts --demo
 
 import { existsSync, realpathSync } from "node:fs";
 import { resolve, sep } from "node:path";
@@ -123,9 +123,3 @@ function playNaive(command: string): string {
 }
 
 if (import.meta.main) runLab(lab);
-// Run it (copy any line):
-//   bun run lab 6 --question "ls .." --naive
-//   bun run lab 6 --question "ls"
-//   bun run lab 6 --question "cat doses.txt"
-//   bun run lab 6 --question "rm notes.txt"
-//   bun run lab 6 --demo

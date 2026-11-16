@@ -5,11 +5,11 @@
 // The PART 2 section only prints the result in colour. You can skip it.
 //
 // Run it (copy any line):
-//   bun run lab 17 --question "send-reply" --naive
-//   bun run lab 17 --question "look-up"
-//   bun run lab 17 --question "send-reply"
-//   bun run lab 17 --question "send-reply" --approve
-//   bun run lab 17 --demo
+//   bun labs/17-plan-then-act.ts --question "send-reply" --naive
+//   bun labs/17-plan-then-act.ts --question "look-up"
+//   bun labs/17-plan-then-act.ts --question "send-reply"
+//   bun labs/17-plan-then-act.ts --question "send-reply" --approve
+//   bun labs/17-plan-then-act.ts --demo
 
 import { NO_DOC } from "../src/data";
 import { runLab, type Lab } from "../src/runner";

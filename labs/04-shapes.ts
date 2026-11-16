@@ -6,9 +6,12 @@
 //   3. MULTI-AGENT: a researcher drafts, an auditor checks, a person decides on any doubt.
 // The PART 2 section only prints the result in colour. You can skip it.
 //
-// Run it:   bun run lab 4                                     (menu of examples)
-//           bun run lab 4 --demo                              (every edge case, with a reason for each)
-//           bun run lab 4 --question "Cardioza dose" --shape multi --hcp H-1
+// Run it (copy any line):
+//   bun labs/04-shapes.ts --question "(not used by a workflow)" --shape workflow --hcp H-2
+//   bun labs/04-shapes.ts --question "(not used by a workflow)" --shape workflow --hcp H-9
+//   bun labs/04-shapes.ts --question "Cardioza dose" --shape agent --hcp H-1
+//   bun labs/04-shapes.ts --question "Cardioza dose" --shape agent --hcp H-2
+//   bun labs/04-shapes.ts --demo
 
 import { APPROVED_DOCS, CRM, EMAILS } from "../src/data";
 import type { CallLlm, ToolInput } from "../src/model";

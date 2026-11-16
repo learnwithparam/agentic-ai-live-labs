@@ -5,9 +5,12 @@
 //   GATE 2 fires after the model runs, when the reply fails the output check.
 // The PART 2 section only prints the result in colour. You can skip it.
 //
-// Run it:   bun run lab 3                                 (menu of examples)
-//           bun run lab 3 --demo                          (every edge case, with a reason for each)
-//           bun run lab 3 --question "Zorbex dose" --approve n     (answer the gate for me)
+// Run it (copy any line):
+//   bun labs/03-gates.ts --question "Cardioza dose"
+//   bun labs/03-gates.ts --question "Zorbex dose" --approve y
+//   bun labs/03-gates.ts --question "Zorbex dose" --approve n
+//   bun labs/03-gates.ts --question "Cardioza dose" --model nocite --approve y
+//   bun labs/03-gates.ts --demo
 
 import { APPROVED_DOCS, NO_DOC } from "../src/data";
 import type { CallLlm } from "../src/model";

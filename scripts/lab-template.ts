@@ -4,8 +4,9 @@
 // Read PART 1. It is short, and it is the whole idea.
 // The PART 2 section only prints the result in colour. You can skip it.
 //
-// Run it:   bun run lab 5            (a menu of examples)
-//           bun run lab 5 --demo     (every edge case, with a reason for each)
+// Run it (copy any line):
+//   bun labs/05-your-name.ts --question "an example question"
+//   bun labs/05-your-name.ts --demo
 
 import { modelFrom, runLab, type Lab } from "../src/runner";
 import { box, field, green, print } from "../src/ui";

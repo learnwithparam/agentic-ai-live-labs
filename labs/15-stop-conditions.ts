@@ -5,11 +5,11 @@
 // The PART 2 section only prints the result in colour. You can skip it.
 //
 // Run it (copy any line):
-//   bun run lab 15 --question "stuck" --naive
-//   bun run lab 15 --question "answers"
-//   bun run lab 15 --question "stuck"
-//   bun run lab 15 --question "wanders"
-//   bun run lab 15 --demo
+//   bun labs/15-stop-conditions.ts --question "stuck" --naive
+//   bun labs/15-stop-conditions.ts --question "answers"
+//   bun labs/15-stop-conditions.ts --question "stuck"
+//   bun labs/15-stop-conditions.ts --question "wanders"
+//   bun labs/15-stop-conditions.ts --demo
 
 import { runLab, type Lab } from "../src/runner";
 import { badgeGreen, badgeRed, badgeYellow, box, dim, field, green, print, red, rule, yellow } from "../src/ui";
@@ -124,9 +124,3 @@ export const lab: Lab = {
 };
 
 if (import.meta.main) runLab(lab);
-// Run it (copy any line):
-//   bun run lab 15 --question "stuck" --naive
-//   bun run lab 15 --question "answers"
-//   bun run lab 15 --question "stuck"
-//   bun run lab 15 --question "wanders"
-//   bun run lab 15 --demo

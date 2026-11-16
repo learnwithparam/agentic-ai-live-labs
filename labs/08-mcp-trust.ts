@@ -5,11 +5,11 @@
 // The PART 2 section only prints the result in colour. You can skip it.
 //
 // Run it (copy any line):
-//   bun run lab 8 --question "unknown-server" --naive
-//   bun run lab 8 --question "approved"
-//   bun run lab 8 --question "unknown-server"
-//   bun run lab 8 --question "rug-pull"
-//   bun run lab 8 --demo
+//   bun labs/08-mcp-trust.ts --question "unknown-server" --naive
+//   bun labs/08-mcp-trust.ts --question "approved"
+//   bun labs/08-mcp-trust.ts --question "unknown-server"
+//   bun labs/08-mcp-trust.ts --question "rug-pull"
+//   bun labs/08-mcp-trust.ts --demo
 
 import { createHash } from "node:crypto";
 import { runLab, type Lab } from "../src/runner";
@@ -149,9 +149,3 @@ function showNaive(manifest: Manifest): string {
 }
 
 if (import.meta.main) runLab(lab);
-// Run it (copy any line):
-//   bun run lab 8 --question "unknown-server" --naive
-//   bun run lab 8 --question "approved"
-//   bun run lab 8 --question "unknown-server"
-//   bun run lab 8 --question "rug-pull"
-//   bun run lab 8 --demo

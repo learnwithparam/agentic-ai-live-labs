@@ -1,5 +1,5 @@
 // bun run lab            lists the labs by track
-// bun run lab 3          runs lab 3 (add --demo, --question "..." and so on after it)
+// bun labs/03-gates.ts   runs one lab by its file (add --demo or --question "...")
 import { LABS, TRACKS } from "../src/roadmap";
 import { isReady, labFile } from "./path";
 import { bold, cyan, dim } from "../src/ui";

@@ -5,11 +5,11 @@
 // The PART 2 section only prints the result in colour. You can skip it.
 //
 // Run it (copy any line):
-//   bun run lab 7 --question "Cardioza dose" --naive
-//   bun run lab 7 --question "(not used)" --show wire
-//   bun run lab 7 --question "Cardioza dose" --hcp H-1
-//   bun run lab 7 --question "Cardioza dose" --hcp H-2 --country DE
-//   bun run lab 7 --demo
+//   bun labs/07-mcp-basics.ts --question "Cardioza dose" --naive
+//   bun labs/07-mcp-basics.ts --question "(not used)" --show wire
+//   bun labs/07-mcp-basics.ts --question "Cardioza dose" --hcp H-1
+//   bun labs/07-mcp-basics.ts --question "Cardioza dose" --hcp H-2 --country DE
+//   bun labs/07-mcp-basics.ts --demo
 
 import { CRM } from "../src/data";
 import { modelFrom, runLab, type Lab } from "../src/runner";
@@ -162,9 +162,3 @@ function showWire(script: string): string {
 }
 
 if (import.meta.main) runLab(lab);
-// Run it (copy any line):
-//   bun run lab 7 --question "Cardioza dose" --naive
-//   bun run lab 7 --question "(not used)" --show wire
-//   bun run lab 7 --question "Cardioza dose" --hcp H-1
-//   bun run lab 7 --question "Cardioza dose" --hcp H-2 --country DE
-//   bun run lab 7 --demo

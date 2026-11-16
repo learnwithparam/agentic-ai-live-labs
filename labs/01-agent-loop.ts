@@ -3,8 +3,12 @@
 // Read PART 1. It is short, and it is the whole idea.
 // The PART 2 section only prints the result in colour. You can skip it.
 //
-// Run it:   bun run lab 1            (a menu of examples)
-//           bun run lab 1 --demo     (every edge case, with a reason for each)
+// Run it (copy any line):
+//   bun labs/01-agent-loop.ts --question "What is the dose of Cardioza?"
+//   bun labs/01-agent-loop.ts --question "What is the dose of Cardioza?" --country DE
+//   bun labs/01-agent-loop.ts --question "CARDIOZA dose please"
+//   bun labs/01-agent-loop.ts --question "What is the dose of Cardioza and Neurovex?"
+//   bun labs/01-agent-loop.ts --demo
 
 import { APPROVED_DOCS, NO_DOC } from "../src/data";
 import type { CallLlm, Message, ToolInput } from "../src/model";

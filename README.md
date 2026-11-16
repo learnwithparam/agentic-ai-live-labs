@@ -24,10 +24,10 @@ Each lab is one file. Open it and read PART 1. That is the whole idea, in plain 
 ## Three ways to run any lab
 
 ```bash
-bun run lab             # list the labs
-bun run lab 1          # menu: pick an example by number, or type your own question
-bun run lab 1 --demo   # every edge case in order, with a "Why" for each
-bun run lab 1 --question "Is Zorbex safe for children?"   # one question
+bun labs/01-agent-loop.ts                                  # menu: pick an example, or type your own
+bun labs/01-agent-loop.ts --demo                           # every edge case in order, with a "Why"
+bun labs/01-agent-loop.ts --question "Is Zorbex safe for children?"   # one question
+bun run lab                                                # list every lab and its file
 ```
 
 `--demo` is the fastest way to learn. Every case shows why it behaves as it does and the exact command to repeat it, then marks it EXPECTED or SURPRISE. Colour turns off when output is piped or `NO_COLOR` is set. `FORCE_COLOR=1` turns it on.
@@ -68,11 +68,11 @@ Every lab follows the same shape, so you can add as many as you like.
 
 1. Copy `scripts/lab-template.ts` to `labs/05-your-name.ts`.
 2. Write the idea in PART 1 as plain functions. Write the examples in `cases`. Add edge cases.
-3. Run `bun run lab 5 --demo`, then `bun run check`.
+3. Run `bun labs/05-your-name.ts --demo`, then `bun run check`.
 
 `bun run check` runs three things. The tests find every file in `labs/` by themselves and run all its cases. The readable gate (`scripts/readable.ts`) fails a lab whose PART 1 breaks the plain style. It bans regex, arrow functions, `.map`, spread, `?.`, `??` and ternaries. It bans short names, lines over 100 characters and sentences over 25 words. The plain English check (`scripts/plain-english.ts`) holds every page to reading grade 6. The type check runs last.
 
-For example, add `bun run lab 5 --question "Cardioza"` to a page, and the page must still read easily.
+For example, add `bun labs/05-your-name.ts --question "Cardioza"` to a page, and the page must still read easily.
 
 ## What this does not do
 

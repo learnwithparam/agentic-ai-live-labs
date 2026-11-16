@@ -5,11 +5,11 @@
 // The PART 2 section only prints the result in colour. You can skip it.
 //
 // Run it (copy any line):
-//   bun run lab 11 --question "long" --naive --keep 4
-//   bun run lab 11 --question "short" --keep 4
-//   bun run lab 11 --question "long" --keep 4
-//   bun run lab 11 --question "two-facts" --keep 3
-//   bun run lab 11 --demo
+//   bun labs/11-history-trimming.ts --question "long" --naive --keep 4
+//   bun labs/11-history-trimming.ts --question "short" --keep 4
+//   bun labs/11-history-trimming.ts --question "long" --keep 4
+//   bun labs/11-history-trimming.ts --question "two-facts" --keep 3
+//   bun labs/11-history-trimming.ts --demo
 
 import { runLab, type Lab } from "../src/runner";
 import { badgeGreen, badgeRed, badgeYellow, box, dim, field, green, print, red, rule, yellow } from "../src/ui";
@@ -139,9 +139,3 @@ function showNaive(scene: Scene, keep: number): string {
 }
 
 if (import.meta.main) runLab(lab);
-// Run it (copy any line):
-//   bun run lab 11 --question "long" --naive --keep 4
-//   bun run lab 11 --question "short" --keep 4
-//   bun run lab 11 --question "long" --keep 4
-//   bun run lab 11 --question "two-facts" --keep 3
-//   bun run lab 11 --demo

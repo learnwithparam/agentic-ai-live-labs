@@ -5,11 +5,11 @@
 // The PART 2 section only prints the result in colour. You can skip it.
 //
 // Run it (copy any line):
-//   bun run lab 14 --question "injected" --naive
-//   bun run lab 14 --question "clean"
-//   bun run lab 14 --question "injected"
-//   bun run lab 14 --question "breakout"
-//   bun run lab 14 --demo
+//   bun labs/14-instructions-vs-data.ts --question "injected" --naive
+//   bun labs/14-instructions-vs-data.ts --question "clean"
+//   bun labs/14-instructions-vs-data.ts --question "injected"
+//   bun labs/14-instructions-vs-data.ts --question "breakout"
+//   bun labs/14-instructions-vs-data.ts --demo
 
 import { runLab, type Lab } from "../src/runner";
 import { badgeGreen, badgeRed, badgeYellow, box, dim, field, green, print, red, rule, yellow } from "../src/ui";
@@ -118,9 +118,3 @@ function showNaive(scene: Scene): string {
 }
 
 if (import.meta.main) runLab(lab);
-// Run it (copy any line):
-//   bun run lab 14 --question "injected" --naive
-//   bun run lab 14 --question "clean"
-//   bun run lab 14 --question "injected"
-//   bun run lab 14 --question "breakout"
-//   bun run lab 14 --demo

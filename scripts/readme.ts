@@ -13,9 +13,9 @@ function cell(text: string): string {
 }
 
 // The command that runs one case by itself.
-export function commandFor(number: number, item: Case): string {
-  let command = `bun run lab ${number} --question "${item.question}"`;
-  if (item.question.length > 50) return `bun run lab ${number} --demo`;
+export function commandFor(file: string, item: Case): string {
+  let command = `bun labs/${file} --question "${item.question}"`;
+  if (item.question.length > 50) return `bun labs/${file} --demo`;
   const flags = item.flags || {};
   for (const key of Object.keys(flags)) {
     const value = flags[key];
@@ -31,15 +31,15 @@ export function pageFor(file: string, lab: Lab): string {
   if (lab.terms) out.push("## New words", "", lab.terms, "");
   out.push("## Run it", "", "Copy any line into your terminal. Each one is a real example from this lab.", "");
   out.push("```bash");
-  lab.cases.forEach((item) => out.push(commandFor(number, item)));
-  out.push(`bun run lab ${number} --demo`, "```", "");
-  out.push(`Run \`bun run lab ${number}\` with nothing else to pick an example from a menu.`, "");
+  lab.cases.forEach((item) => out.push(commandFor(file, item)));
+  out.push(`bun labs/${file} --demo`, "```", "");
+  out.push(`Run \`bun labs/${file}\` with nothing else to pick an example from a menu.`, "");
   const naive = lab.cases[0].title.startsWith("NAIVE");
   out.push("## The cases", "");
   if (naive) out.push("Case 1 is the naive way. Read what goes wrong, then read the rest.", "");
   out.push("| # | Case | Why it matters | Result | Run it alone |", "| --- | --- | --- | --- | --- |");
   lab.cases.forEach((item, index) => {
-    const row = [String(index + 1), item.title, item.why, item.expect, `\`${commandFor(number, item)}\``];
+    const row = [String(index + 1), item.title, item.why, item.expect, `\`${commandFor(file, item)}\``];
     out.push(`| ${row.map(cell).join(" | ")} |`);
   });
   out.push("");

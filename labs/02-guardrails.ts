@@ -5,8 +5,12 @@
 //   OUTPUT guardrail: block any reply that does not cite an approved document.
 // The PART 2 section only prints the result in colour. You can skip it.
 //
-// Run it:   bun run lab 2            (a menu of examples)
-//           bun run lab 2 --demo     (every edge case, with a reason for each)
+// Run it (copy any line):
+//   bun labs/02-guardrails.ts --demo
+//   bun labs/02-guardrails.ts --demo
+//   bun labs/02-guardrails.ts --question "Cardioza dose"
+//   bun labs/02-guardrails.ts --demo
+//   bun labs/02-guardrails.ts --demo
 
 import { APPROVED_DOCS } from "../src/data";
 import { modelFrom, runLab, type Lab } from "../src/runner";

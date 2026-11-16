@@ -5,11 +5,11 @@
 // The PART 2 section only prints the result in colour. You can skip it.
 //
 // Run it (copy any line):
-//   bun run lab 10 --question "Cardioza dose" --naive --window 60
-//   bun run lab 10 --question "Cardioza dose" --window 200
-//   bun run lab 10 --question "Cardioza dose" --window 70
-//   bun run lab 10 --question "Cardioza dose" --window 40
-//   bun run lab 10 --demo
+//   bun labs/10-context-budget.ts --question "Cardioza dose" --naive --window 60
+//   bun labs/10-context-budget.ts --question "Cardioza dose" --window 200
+//   bun labs/10-context-budget.ts --question "Cardioza dose" --window 70
+//   bun labs/10-context-budget.ts --question "Cardioza dose" --window 40
+//   bun labs/10-context-budget.ts --demo
 
 import { runLab, type Lab } from "../src/runner";
 import { badgeGreen, badgeRed, badgeYellow, box, dim, field, green, print, red, rule, yellow } from "../src/ui";
@@ -143,9 +143,3 @@ function showNaive(parts: Part[], budget: number): string {
 }
 
 if (import.meta.main) runLab(lab);
-// Run it (copy any line):
-//   bun run lab 10 --question "Cardioza dose" --naive --window 60
-//   bun run lab 10 --question "Cardioza dose" --window 200
-//   bun run lab 10 --question "Cardioza dose" --window 70
-//   bun run lab 10 --question "Cardioza dose" --window 40
-//   bun run lab 10 --demo

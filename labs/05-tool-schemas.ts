@@ -5,11 +5,11 @@
 // The PART 2 section only prints the result in colour. You can skip it.
 //
 // Run it (copy any line):
-//   bun run lab 5 --question "{"drug": "Cardioza", "country": "us"}" --naive
-//   bun run lab 5 --question "{"drug": "Cardioza", "country": "US", "limit": 2}"
-//   bun run lab 5 --question "{"drug": "Cardioza", "country": "us"}"
-//   bun run lab 5 --demo
-//   bun run lab 5 --demo
+//   bun labs/05-tool-schemas.ts --question "{"drug": "Cardioza", "country": "us"}" --naive
+//   bun labs/05-tool-schemas.ts --question "{"drug": "Cardioza", "country": "US", "limit": 2}"
+//   bun labs/05-tool-schemas.ts --question "{"drug": "Cardioza", "country": "us"}"
+//   bun labs/05-tool-schemas.ts --demo
+//   bun labs/05-tool-schemas.ts --demo
 
 import { NO_DOC } from "../src/data";
 import { runLab, type Lab } from "../src/runner";
@@ -176,9 +176,3 @@ function playNaive(raw: string): string {
 }
 
 if (import.meta.main) runLab(lab);
-// Run it (copy any line):
-//   bun run lab 5 --question "{"drug": "Cardioza", "country": "us"}" --naive
-//   bun run lab 5 --question "{"drug": "Cardioza", "country": "US", "limit": 2}"
-//   bun run lab 5 --question "{"drug": "Cardioza", "country": "us"}"
-//   bun run lab 5 --demo
-//   bun run lab 5 --demo
