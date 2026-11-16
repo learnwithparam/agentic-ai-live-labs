@@ -92,15 +92,23 @@ function proseOn(line: string): string {
 export function problemsIn(file: string, text: string): Problem[] {
   const problems: Problem[] = [];
   const lines = text.split("\n");
-  const partTwo = lines.findIndex((line) => line.startsWith("// PART 2:"));
-  const partOne = lines.findIndex((line) => line.startsWith("// PART 1:"));
+  let partTwo = lines.findIndex((line) => line.startsWith("// PART 2:"));
+  let partOne = lines.findIndex((line) => line.startsWith("// PART 1:"));
+  // A lab with a show/ file holds only the lesson. The lesson runs from the last import to the runner.
+  const hasShowFile = /\/\d\d-[^/]*$/.test(file) && text.includes('"../show/');
+  if (hasShowFile) {
+    partOne = lines.findLastIndex((line) => line.startsWith("import "));
+    partTwo = lines.findIndex((line) => line.startsWith("if (import.meta.main)"));
+  }
   const isLab = partOne >= 0;
+  const showPath = `show/${file.split("/").pop()}`;
+  const notes = hasShowFile && existsSync(showPath) ? readFileSync(showPath, "utf8") : text;
   const add = (index: number, message: string) => problems.push({ file, line: index + 1, message });
 
   const number = Number(file.split("/").pop()?.slice(0, 2));
   if (isLab && number >= 5) {
     for (const field of ["terms", "challenge", "promise", "production"]) {
-      if (!text.includes(`  ${field}:`)) add(0, `lab ${number} needs a ${field} note`);
+      if (!notes.includes(`  ${field}:`)) add(0, `lab ${number} needs a ${field} note`);
     }
     if (partTwo - partOne > 100) add(partOne, "PART 1 is over 100 lines; new labs stay short");
     if (!existsSync(`tests/promises/${String(number).padStart(2, "0")}.test.ts`)) {
@@ -110,7 +118,7 @@ export function problemsIn(file: string, text: string): Problem[] {
       add(0, `lab ${number} needs a rule to break in scripts/mutate.ts, so its test is proven to bite`);
     }
   }
-  if (isLab && partTwo < 0) add(0, "a lab needs a // PART 2: line");
+  if (isLab && partTwo < 0) add(0, "a lab needs a // PART 2: line, or a show/ file");
   if (isLab && partTwo - partOne > LONGEST_PART_ONE) add(partOne, `PART 1 is over ${LONGEST_PART_ONE} lines`);
 
   for (const [index, line] of lines.entries()) {
@@ -133,7 +141,7 @@ export function problemsIn(file: string, text: string): Problem[] {
 }
 
 if (import.meta.main) {
-  const folders = ["labs", "src", "scripts"];
+  const folders = ["labs", "show", "src", "scripts"];
   const problems: Problem[] = [];
   for (const folder of folders) {
     for (const name of readdirSync(folder)) {

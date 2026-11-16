@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { readdirSync } from "node:fs";
+import { existsSync, readdirSync } from "node:fs";
 import { APPROVED_DOCS } from "../src/data";
 import { makeModel } from "../src/model";
 import { checkCases, type Lab } from "../src/runner";
@@ -118,7 +118,8 @@ describe("lab 4: shapes", () => {
 describe("every lab", async () => {
   const files = readdirSync("labs").filter((name) => /^\d\d-.*\.ts$/.test(name));
   for (const file of files) {
-    const { lab } = (await import(`../labs/${file}`)) as { lab: Lab };
+    const place = existsSync(`show/${file}`) ? "show" : "labs";
+    const { lab } = (await import(`../${place}/${file}`)) as { lab: Lab };
     test(`${file}: exports a lab and all ${lab.cases.length} cases behave as explained`, () => {
       expect(lab.file).toBe(file);
       expect(lab.cases.length).toBeGreaterThan(0);

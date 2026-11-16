@@ -59,5 +59,5 @@ Start with a function. Move to MCP when a second team needs the tool. Use a comm
 
 ## Read the code
 
-Open `labs/09-three-doors.ts`. Read PART 1 only. It is the whole idea.
-PART 2 only draws the colours, so skip it.
+Open `labs/09-three-doors.ts`. Read the code from the top. It holds only the lesson.
+The screen output is in `show/`. You can skip it.

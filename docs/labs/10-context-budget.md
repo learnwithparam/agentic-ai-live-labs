@@ -57,5 +57,5 @@ Count with the model's own counter, keep a reserve for the reply, and log what w
 
 ## Read the code
 
-Open `labs/10-context-budget.ts`. Read PART 1 only. It is the whole idea.
-PART 2 only draws the colours, so skip it.
+Open `labs/10-context-budget.ts`. Read the code from the top. It holds only the lesson.
+The screen output is in `show/`. You can skip it.

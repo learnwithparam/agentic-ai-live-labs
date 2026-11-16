@@ -59,5 +59,5 @@ Write every tool error for a reader that cannot ask questions, and count how oft
 
 ## Read the code
 
-Open `labs/16-error-feedback.ts`. Read PART 1 only. It is the whole idea.
-PART 2 only draws the colours, so skip it.
+Open `labs/16-error-feedback.ts`. Read the code from the top. It holds only the lesson.
+The screen output is in `show/`. You can skip it.

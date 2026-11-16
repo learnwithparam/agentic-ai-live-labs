@@ -2,9 +2,9 @@
 //
 // Dr. Lee asks for the Cardioza dose. The model writes a draft. The draft might be wrong.
 // So we check the draft before we show it. If it is wrong, the model gets two tries to fix it.
-// Read the function answerWithCheck in PART 1. Its steps are numbered 1 to 7.
+// Read the function answerWithCheck. Its steps are numbered 1 to 7.
 // When you run the lab, the output uses the same step numbers.
-// PART 2 only shows the result on screen. You can skip it.
+// The pretend model and the screen output are in show/18-reflect-and-fix.ts. You can skip them.
 //
 // Run it (copy any line):
 //   bun labs/18-reflect-and-fix.ts --question "What is the dose of Cardioza?" --model invent --naive
@@ -15,11 +15,8 @@
 
 import { NO_DOC } from "../src/data";
 import type { CallLlm } from "../src/model";
-import { modelFrom, runLab, type Lab } from "../src/runner";
-import { badgeGreen, badgeRed, badgeYellow, box, dim, field, print, red, rule, yellow } from "../src/ui";
+import { runLab } from "../src/runner";
 import { runAgentLoop, searchApprovedDocs } from "./01-agent-loop"; // lab 1
-
-// PART 1: THE CORE LOGIC
 
 export const MOST_ROUNDS = 2;
 export type FixDraft = { (draft: string, problems: string[], source: string): string }; // the model
@@ -103,49 +100,7 @@ export function dosesIn(text: string): string[] {
   return found;
 }
 
-// PART 2: HOW IT IS SHOWN (you can skip this)
-
-// A pretend model fixing a draft. It rewrites the answer from the document and adds the citation.
-export const fixFromSource: FixDraft = (draft, problems, source) => {
-  const id = source.split(" ")[0];
-  const text = source.split("\n")[0].replace(`${id} `, "");
-  return `${text} ${id}`;
-};
-
-// A pretend model that does not listen. It sends the same draft again.
-export const ignoresProblems: FixDraft = (draft) => draft;
-
-export const lab: Lab = {
-  file: "18-reflect-and-fix.ts",
-  title: "Lab 18: check the draft, then fix it",
-  about:
-    "Each example is a doctor's question. The pretend model writes a draft, and sometimes the draft is wrong. Pick how it behaves with --model: ok, nocite (forgets the citation) or invent (a wrong dose). Add --fixer ignores for a model that will not fix its draft.",
-  terms: "draft = the first answer. check = plain code that compares the draft with the document. round = one fix and one more check.",
-  challenge: "A model that grades its own work has no new facts. It says the draft looks good, even when the dose is wrong.",
-  promise: "Code checks every draft against the source. A fix gets two rounds at most. With no source there is nothing to check.",
-  production: "Check what code can check, like numbers and citations. Send the rest to a person, and keep every round in the log.",
-  cases: [
-    { title: "NAIVE: ask the model if it is fine", why: "The model writes 20mg. The document says 10mg. We ask the model if the draft is fine. It has no new facts, so it says yes.", question: "What is the dose of Cardioza?", flags: { model: "invent", naive: "true" }, expect: "self-approved" },
-    { title: "A good draft", why: "It cites the document and the dose matches. No fix is needed.", question: "What is the dose of Cardioza?", expect: "accepted" },
-    { title: "A missing citation", why: "The check finds no citation. The model adds one, and the second check passes.", question: "What is the dose of Cardioza?", flags: { model: "nocite" }, expect: "fixed" },
-    { title: "A wrong dose", why: "The check finds 20mg is not in the document. The model changes it to 10mg.", question: "What is the dose of Cardioza?", flags: { model: "invent" }, expect: "fixed" },
-    { title: "EDGE: a model that will not change", why: "The model sends the same wrong draft twice. After two rounds we stop and give it to a person.", question: "What is the dose of Cardioza?", flags: { model: "invent", fixer: "ignores" }, expect: "gave-up" },
-    { title: "No approved document", why: "Zorbex has no approved document. With nothing to check against, there is no answer to give.", question: "Is Zorbex safe for children?", expect: "no-source" },
-  ],
-  play(question, flags) {
-    const country = flags.country || "US";
-    const callLlm = modelFrom(flags);
-    const fixDraft = flags.fixer === "ignores" ? ignoresProblems : fixFromSource;
-    print(field("Question", question));
-    const result = flags.naive ? answerWithoutCheck(question, country, callLlm) : answerWithCheck(question, country, callLlm, fixDraft);
-    rule("WHAT HAPPENED, STEP BY STEP");
-    for (const line of result.path) console.log(dim(line));
-    if (result.outcome === "self-approved") box(badgeRed("LOOKS GOOD"), [red("The model approved a draft with a wrong dose.")], red);
-    else if (result.outcome === "gave-up") box(badgeYellow("GAVE UP"), [yellow(`Still wrong: ${result.problems.join(", ")}. A person decides.`)], yellow);
-    else if (result.outcome === "no-source") box(badgeYellow("NO SOURCE"), [yellow("Nothing to check against, so nothing to say.")], yellow);
-    else box(badgeGreen(result.outcome.toUpperCase()), [result.draft], yellow);
-    return result.outcome;
-  },
-};
-
-if (import.meta.main) runLab(lab);
+if (import.meta.main) {
+  const { lab } = await import("../show/18-reflect-and-fix");
+  runLab(lab);
+}

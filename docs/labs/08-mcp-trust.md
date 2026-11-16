@@ -59,5 +59,5 @@ Pin on a schedule, alert on any change, and let only a named person re-approve a
 
 ## Read the code
 
-Open `labs/08-mcp-trust.ts`. Read PART 1 only. It is the whole idea.
-PART 2 only draws the colours, so skip it.
+Open `labs/08-mcp-trust.ts`. Read the code from the top. It holds only the lesson.
+The screen output is in `show/`. You can skip it.

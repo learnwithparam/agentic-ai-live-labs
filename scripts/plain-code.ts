@@ -5,7 +5,7 @@ import { join, relative } from "node:path";
 import { problemsIn, readingGrade, sentencesOf } from "./plain-english";
 
 const ROOT = process.cwd();
-const FOLDERS = ["labs", "src"];
+const FOLDERS = ["labs", "show", "src"];
 const FIELDS = ["about", "terms", "challenge", "promise", "production", "why", "title"];
 
 function isCommand(line: string): boolean {
@@ -33,7 +33,8 @@ function commentText(code: string): string {
 // Text fields such as about: "..." that a learner reads on screen.
 function fieldText(code: string): string {
   const found: string[] = [];
-  for (const line of code.split("\n")) {
+  const joined = code.replace(/(\w+):\s*\n\s*"/g, '$1: "');
+  for (const line of joined.split("\n")) {
     for (const name of FIELDS) {
       const start = line.indexOf(`${name}: "`);
       if (start < 0) continue;

@@ -37,5 +37,5 @@ Run `bun labs/04-shapes.ts` with nothing else to pick an example from a menu.
 
 ## Read the code
 
-Open `labs/04-shapes.ts`. Read PART 1 only. It is the whole idea.
-PART 2 only draws the colours, so skip it.
+Open `labs/04-shapes.ts`. Read the code from the top. It holds only the lesson.
+The screen output is in `show/`. You can skip it.

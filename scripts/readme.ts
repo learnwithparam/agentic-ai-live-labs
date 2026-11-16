@@ -49,8 +49,8 @@ export function pageFor(file: string, lab: Lab): string {
     out.push("To see the test do its job, break the rule in PART 1 on purpose. The test must fail. Then undo it.", "");
   }
   if (lab.production) out.push("## In production", "", lab.production, "");
-  out.push("## Read the code", "", `Open \`labs/${file}\`. Read PART 1 only. It is the whole idea.`);
-  out.push("PART 2 only draws the colours, so skip it.", "");
+  out.push("## Read the code", "", `Open \`labs/${file}\`. Read the code from the top. It holds only the lesson.`);
+  out.push("The screen output is in `show/`. You can skip it.", "");
   return out.join("\n");
 }
 
@@ -58,7 +58,8 @@ async function pages(): Promise<Record<string, string>> {
   const result: Record<string, string> = {};
   for (const file of readdirSync("labs").sort()) {
     if (!/^\d\d-.*\.ts$/.test(file)) continue;
-    const loaded = await import(`../labs/${file}`);
+    const place = existsSync(`show/${file}`) ? "show" : "labs";
+    const loaded = await import(`../${place}/${file}`);
     result[`${FOLDER}/${file.replace(".ts", ".md")}`] = pageFor(file, loaded.lab);
   }
   return result;

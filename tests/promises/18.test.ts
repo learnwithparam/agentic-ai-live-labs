@@ -5,11 +5,10 @@ import {
   answerWithoutCheck,
   dosesIn,
   findProblems,
-  fixFromSource,
-  ignoresProblems,
   MOST_ROUNDS,
   type FixDraft,
 } from "../../labs/18-reflect-and-fix";
+import { fixFromSource, ignoresProblems } from "../../show/18-reflect-and-fix";
 
 const DOSE = "What is the dose of Cardioza?";
 const SOURCE = "[DOC-101] Cardioza standard adult dose is 10mg once daily with food.";

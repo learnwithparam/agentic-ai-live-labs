@@ -61,5 +61,5 @@ Score with embeddings as well as words, and log which chunk ids were sent on eve
 
 ## Read the code
 
-Open `labs/12-retrieval.ts`. Read PART 1 only. It is the whole idea.
-PART 2 only draws the colours, so skip it.
+Open `labs/12-retrieval.ts`. Read the code from the top. It holds only the lesson.
+The screen output is in `show/`. You can skip it.
