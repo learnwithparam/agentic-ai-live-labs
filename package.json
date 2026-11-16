@@ -6,11 +6,15 @@
     "lab": "bun scripts/lab.ts",
     "test": "bun test",
     "readable": "bun scripts/readable.ts",
-    "check": "bun test && bun scripts/readable.ts && bun scripts/path.ts --check && bun scripts/readme.ts --check && bun scripts/mutate.ts && bunx tsc -p .",
+    "check": "bun test && bun scripts/readable.ts && bun scripts/plain-english.ts && bun scripts/path.ts --check && bun scripts/readme.ts --check && bun scripts/mutate.ts && bunx tsc -p .",
     "path": "bun scripts/path.ts",
-    "mutate": "bun scripts/mutate.ts"
+    "mutate": "bun scripts/mutate.ts",
+    "plain": "bun scripts/plain-english.ts"
   },
   "devDependencies": {
     "@types/bun": "latest"
+  },
+  "plainEnglish": {
+    "grade": 6
   }
 }

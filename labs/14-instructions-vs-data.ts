@@ -4,9 +4,12 @@
 // So a document or an email can hide an order. We fence the data, and hold back lines that give orders.
 // The PART 2 section only prints the result in colour. You can skip it.
 //
-// Run it:   bun run lab 14            (a menu of examples)
-//           bun run lab 14 --demo     (every edge case, with a reason for each)
-//           bun run lab 14 --naive    (the same menu, with the data pasted straight in)
+// Run it (copy any line):
+//   bun run lab 14 --question "injected" --naive
+//   bun run lab 14 --question "clean"
+//   bun run lab 14 --question "injected"
+//   bun run lab 14 --question "breakout"
+//   bun run lab 14 --demo
 
 import { runLab, type Lab } from "../src/runner";
 import { badgeGreen, badgeRed, badgeYellow, box, dim, field, green, print, red, rule, yellow } from "../src/ui";

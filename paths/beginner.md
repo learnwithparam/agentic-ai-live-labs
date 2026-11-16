@@ -4,7 +4,7 @@
 
 **Goal:** Read and change a small agent, and fix the common problems.
 
-**Time:** 6 hours for the main steps, about 30 minutes a lab.
+**Time:** 6 hours for the main steps, about half an hour a lab.
 
 ## How to work
 

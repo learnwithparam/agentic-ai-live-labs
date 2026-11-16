@@ -4,9 +4,12 @@
 // A model can get stuck, wander, or spend too much. So the loop itself needs three limits.
 // The PART 2 section only prints the result in colour. You can skip it.
 //
-// Run it:   bun run lab 15            (a menu of examples)
-//           bun run lab 15 --demo     (every edge case, with a reason for each)
-//           bun run lab 15 --naive    (the same menu, with a loop that has no limits)
+// Run it (copy any line):
+//   bun run lab 15 --question "stuck" --naive
+//   bun run lab 15 --question "answers"
+//   bun run lab 15 --question "stuck"
+//   bun run lab 15 --question "wanders"
+//   bun run lab 15 --demo
 
 import { runLab, type Lab } from "../src/runner";
 import { badgeGreen, badgeRed, badgeYellow, box, dim, field, green, print, red, rule, yellow } from "../src/ui";

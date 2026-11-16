@@ -4,9 +4,12 @@
 // A schema says what a good call looks like. Code checks the call BEFORE the tool runs.
 // The PART 2 section only prints the result in colour. You can skip it.
 //
-// Run it:   bun run lab 5            (a menu of examples)
-//           bun run lab 5 --demo     (every edge case, with a reason for each)
-//           bun run lab 5 --naive    (the same menu, with no check at all)
+// Run it (copy any line):
+//   bun run lab 5 --question "{"drug": "Cardioza", "country": "us"}" --naive
+//   bun run lab 5 --question "{"drug": "Cardioza", "country": "US", "limit": 2}"
+//   bun run lab 5 --question "{"drug": "Cardioza", "country": "us"}"
+//   bun run lab 5 --demo
+//   bun run lab 5 --demo
 
 import { NO_DOC } from "../src/data";
 import { runLab, type Lab } from "../src/runner";

@@ -4,7 +4,7 @@
 
 **Goal:** Explain an agent, a guardrail, a gate and a context window in plain words.
 
-**Time:** 2 hours for the main steps, about 20 minutes a lab.
+**Time:** 2 hours for the main steps, about a short sit-down a lab.
 
 ## How to work
 

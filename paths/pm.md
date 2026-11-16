@@ -4,7 +4,7 @@
 
 **Goal:** Ask the right questions of your team, and know what a good answer sounds like.
 
-**Time:** 3 hours for the main steps, about 15 minutes a lab.
+**Time:** 3 hours for the main steps, about a quick coffee a lab.
 
 ## How to work
 

@@ -4,9 +4,12 @@
 // score each chunk against the question, and send only the best ones from the right country.
 // The PART 2 section only prints the result in colour. You can skip it.
 //
-// Run it:   bun run lab 12            (a menu of examples)
-//           bun run lab 12 --demo     (every edge case, with a reason for each)
-//           bun run lab 12 --naive    (the same menu, with no country filter)
+// Run it (copy any line):
+//   bun run lab 12 --question "Cardioza dose" --naive --country DE
+//   bun run lab 12 --question "Cardioza dose" --country US
+//   bun run lab 12 --question "Cardioza dose" --country DE
+//   bun run lab 12 --question "Cardioza side effects" --country US
+//   bun run lab 12 --demo
 
 import { runLab, type Lab } from "../src/runner";
 import { badgeGreen, badgeRed, badgeYellow, box, dim, field, green, print, red, rule, yellow } from "../src/ui";

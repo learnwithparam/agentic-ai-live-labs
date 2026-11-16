@@ -4,7 +4,7 @@
 
 **Goal:** Design the context, the loop and the checks around a model, and test them.
 
-**Time:** 11 hours for the main steps, about 30 minutes a lab.
+**Time:** 11 hours for the main steps, about half an hour a lab.
 
 ## How to work
 

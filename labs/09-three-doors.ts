@@ -4,9 +4,12 @@
 // The answer should be the same. The cost, the risk and the shape of the answer are not.
 // The PART 2 section only prints the result in colour. You can skip it.
 //
-// Run it:   bun run lab 9            (a menu of examples)
-//           bun run lab 9 --demo     (every edge case, with a reason for each)
-//           bun run lab 9 --naive    (the same menu, always using the shell)
+// Run it (copy any line):
+//   bun run lab 9 --question "Cardioza" --naive --door cli
+//   bun run lab 9 --question "Cardioza" --door function
+//   bun run lab 9 --question "Cardioza" --door mcp
+//   bun run lab 9 --question "Cardioza" --door all
+//   bun run lab 9 --demo
 
 import { NO_DOC } from "../src/data";
 import { runLab, type Lab } from "../src/runner";

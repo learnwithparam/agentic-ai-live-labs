@@ -4,9 +4,12 @@
 // The server is a separate program (src/mcp-server.ts). You read only the CLIENT here.
 // The PART 2 section only prints the result in colour. You can skip it.
 //
-// Run it:   bun run lab 7            (a menu of examples)
-//           bun run lab 7 --demo     (every edge case, with a reason for each)
-//           bun run lab 7 --naive    (the same menu, with a hard-coded tool list)
+// Run it (copy any line):
+//   bun run lab 7 --question "Cardioza dose" --naive
+//   bun run lab 7 --question "(not used)" --show wire
+//   bun run lab 7 --question "Cardioza dose" --hcp H-1
+//   bun run lab 7 --question "Cardioza dose" --hcp H-2 --country DE
+//   bun run lab 7 --demo
 
 import { CRM } from "../src/data";
 import { modelFrom, runLab, type Lab } from "../src/runner";

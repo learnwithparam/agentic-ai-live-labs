@@ -25,6 +25,13 @@ export function mainSteps(path: Path) {
   return path.steps.filter((step) => !step.optional);
 }
 
+function paceWord(minutes: number): string {
+  if (minutes <= 15) return "a quick coffee";
+  if (minutes <= 20) return "a short sit-down";
+  if (minutes <= 30) return "half an hour";
+  return "most of an hour";
+}
+
 function hoursText(path: Path): string {
   const hours = (mainSteps(path).length * path.minutesPerLab) / 60;
   return `${Math.round(hours * 2) / 2} hours`;
@@ -44,7 +51,7 @@ function renderPath(path: Path): string {
   const lines = [`# Path: ${path.name}`, ""];
   lines.push(`**For:** ${path.forWho}`, "");
   lines.push(`**Goal:** ${path.goal}`, "");
-  const time = `${hoursText(path)} for the main steps, about ${path.minutesPerLab} minutes a lab.`;
+  const time = `${hoursText(path)} for the main steps, about ${paceWord(path.minutesPerLab)} a lab.`;
   lines.push(`**Time:** ${time}`, "");
   lines.push("## How to work", "");
   for (const way of path.howToWork) lines.push(`- ${way}`);

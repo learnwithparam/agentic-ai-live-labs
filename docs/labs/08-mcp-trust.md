@@ -12,11 +12,21 @@ pin = remember what a tool looked like when approved. rug pull = a tool changes 
 
 ## Run it
 
+Copy any line into your terminal. Each one is a real example from this lab.
+
 ```bash
-bun run lab 8          # a menu: pick an example
-bun run lab 8 --demo   # every case, each with its reason
-bun run lab 8 --naive  # the same menu, the naive way (case 1)
+bun run lab 8 --question "unknown-server" --naive
+bun run lab 8 --question "approved"
+bun run lab 8 --question "unknown-server"
+bun run lab 8 --question "rug-pull"
+bun run lab 8 --question "new-tool"
+bun run lab 8 --question "typo-fix"
+bun run lab 8 --question "bad-but-pinned"
+bun run lab 8 --question "re-approved" --reapprove
+bun run lab 8 --demo
 ```
+
+Run `bun run lab 8` with nothing else to pick an example from a menu.
 
 ## The cases
 
@@ -24,14 +34,14 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
-| 1 | NAIVE: trust every description | The server hides an order inside a tool description. With no check, the order goes straight into the prompt, and the model may follow it. | `poisoned` | `bun run lab 8 --question "unknown-server" --naive` |
-| 2 | An approved server, unchanged | Right server, and both tools match their pins. Both are loaded. | `trusted` | `bun run lab 8 --question "approved"` |
-| 3 | A server nobody approved | The name is not on the list. We do not even read its tools. | `blocked` | `bun run lab 8 --question "unknown-server"` |
-| 4 | A rug pull | The server was approved, then one tool quietly gained a hidden order. Its fingerprint no longer matches the pin, so it is held back. | `changed` | `bun run lab 8 --question "rug-pull"` |
-| 5 | A new tool appears | A tool that can send email shows up. Nobody reviewed it, so it is not loaded. The old tools still work. | `new` | `bun run lab 8 --question "new-tool"` |
-| 6 | A harmless fix is also held | Even a one word fix changes the fingerprint. We are strict on purpose. Re-approving takes one step. | `changed` | `bun run lab 8 --question "typo-fix"` |
-| 7 | EDGE: an order that was approved by mistake | A person pinned a tool that already held an order. The word scan still catches it. It is a rule list, so a cleverer order could slip past. That is why a person reviews too. | `trap` | `bun run lab 8 --question "bad-but-pinned"` |
-| 8 | A person re-approves | After a review the new text is pinned. The tool is trusted again. | `trusted` | `bun run lab 8 --question "re-approved" --reapprove` |
+| 1 | NAIVE: trust every description | The server hides an order inside a tool description. With no check, the order goes straight into the prompt, and the model may follow it. | poisoned | `bun run lab 8 --question "unknown-server" --naive` |
+| 2 | An approved server, unchanged | Right server, and both tools match their pins. Both are loaded. | trusted | `bun run lab 8 --question "approved"` |
+| 3 | A server nobody approved | The name is not on the list. We do not even read its tools. | blocked | `bun run lab 8 --question "unknown-server"` |
+| 4 | A rug pull | The server was approved, then one tool quietly gained a hidden order. Its fingerprint no longer matches the pin, so it is held back. | changed | `bun run lab 8 --question "rug-pull"` |
+| 5 | A new tool appears | A tool that can send email shows up. Nobody reviewed it, so it is not loaded. The old tools still work. | new | `bun run lab 8 --question "new-tool"` |
+| 6 | A harmless fix is also held | Even a one word fix changes the fingerprint. We are strict on purpose. Re-approving takes one step. | changed | `bun run lab 8 --question "typo-fix"` |
+| 7 | EDGE: an order that was approved by mistake | A person pinned a tool that already held an order. The word scan still catches it. It is a rule list, so a cleverer order could slip past. That is why a person reviews too. | trap | `bun run lab 8 --question "bad-but-pinned"` |
+| 8 | A person re-approves | After a review the new text is pinned. The tool is trusted again. | trusted | `bun run lab 8 --question "re-approved" --reapprove` |
 
 ## The promise, and its test
 

@@ -4,9 +4,12 @@
 // So whoever writes it can give the model orders. We check each server and pin each tool.
 // The PART 2 section only prints the result in colour. You can skip it.
 //
-// Run it:   bun run lab 8            (a menu of examples)
-//           bun run lab 8 --demo     (every edge case, with a reason for each)
-//           bun run lab 8 --naive    (the same menu, with no check at all)
+// Run it (copy any line):
+//   bun run lab 8 --question "unknown-server" --naive
+//   bun run lab 8 --question "approved"
+//   bun run lab 8 --question "unknown-server"
+//   bun run lab 8 --question "rug-pull"
+//   bun run lab 8 --demo
 
 import { createHash } from "node:crypto";
 import { runLab, type Lab } from "../src/runner";

@@ -4,9 +4,12 @@
 // Four rules make it safe: an allow-list, no chaining symbols or flags, one folder, and a time limit.
 // The PART 2 section only prints the result in colour. You can skip it.
 //
-// Run it:   bun run lab 6            (a menu of examples)
-//           bun run lab 6 --demo     (every edge case, with a reason for each)
-//           bun run lab 6 --naive    (the same menu, with no rules at all)
+// Run it (copy any line):
+//   bun run lab 6 --question "ls .." --naive
+//   bun run lab 6 --question "ls"
+//   bun run lab 6 --question "cat doses.txt"
+//   bun run lab 6 --question "rm notes.txt"
+//   bun run lab 6 --demo
 
 import { existsSync, realpathSync } from "node:fs";
 import { resolve, sep } from "node:path";

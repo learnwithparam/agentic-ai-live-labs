@@ -4,9 +4,12 @@
 // Most questions need only one. We pick the sources a question needs, and load nothing else.
 // The PART 2 section only prints the result in colour. You can skip it.
 //
-// Run it:   bun run lab 13            (a menu of examples)
-//           bun run lab 13 --demo     (every edge case, with a reason for each)
-//           bun run lab 13 --naive    (the same menu, loading every source every time)
+// Run it (copy any line):
+//   bun run lab 13 --question "What is the Cardioza dose?" --naive
+//   bun run lab 13 --question "What is the Cardioza dose?"
+//   bun run lab 13 --question "Which email was sent to me last?"
+//   bun run lab 13 --question "Given my profile, what is the label?"
+//   bun run lab 13 --demo
 
 import { APPROVED_DOCS, EMAILS } from "../src/data";
 import { runLab, type Lab } from "../src/runner";

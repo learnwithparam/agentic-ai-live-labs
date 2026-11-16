@@ -4,9 +4,12 @@
 // We count what goes in, keep what must stay, and drop the least useful parts first.
 // The PART 2 section only prints the result in colour. You can skip it.
 //
-// Run it:   bun run lab 10            (a menu of examples)
-//           bun run lab 10 --demo     (every edge case, with a reason for each)
-//           bun run lab 10 --naive    (the same menu, cutting the oldest text)
+// Run it (copy any line):
+//   bun run lab 10 --question "Cardioza dose" --naive --window 60
+//   bun run lab 10 --question "Cardioza dose" --window 200
+//   bun run lab 10 --question "Cardioza dose" --window 70
+//   bun run lab 10 --question "Cardioza dose" --window 40
+//   bun run lab 10 --demo
 
 import { runLab, type Lab } from "../src/runner";
 import { badgeGreen, badgeRed, badgeYellow, box, dim, field, green, print, red, rule, yellow } from "../src/ui";

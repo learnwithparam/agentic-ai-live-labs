@@ -70,7 +70,9 @@ Every lab follows the same shape, so you can add as many as you like.
 2. Write the idea in PART 1 as plain functions. Write the examples in `cases`. Add edge cases.
 3. Run `bun run lab 5 --demo`, then `bun run check`.
 
-`bun run check` runs three things. The tests find every file in `labs/` by themselves and run all its cases. The readable gate (`scripts/readable.ts`) fails a lab whose PART 1 uses regex, arrow functions, `.map`, spread, `?.`, `??` or ternaries, uses a short or abbreviated name, has a line over 100 characters, or has a sentence over 25 words. The type check runs last.
+`bun run check` runs three things. The tests find every file in `labs/` by themselves and run all its cases. The readable gate (`scripts/readable.ts`) fails a lab whose PART 1 breaks the plain style. It bans regex, arrow functions, `.map`, spread, `?.`, `??` and ternaries. It bans short names, lines over 100 characters and sentences over 25 words. The plain English check (`scripts/plain-english.ts`) holds every page to reading grade 6. The type check runs last.
+
+For example, add `bun run lab 5 --question "Cardioza"` to a page, and the page must still read easily.
 
 ## What this does not do
 

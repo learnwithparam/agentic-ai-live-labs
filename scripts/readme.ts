@@ -29,15 +29,17 @@ export function pageFor(file: string, lab: Lab): string {
   const out: string[] = [`# ${lab.title}`, "", lab.about, ""];
   if (lab.challenge) out.push("## The problem", "", lab.challenge, "");
   if (lab.terms) out.push("## New words", "", lab.terms, "");
-  out.push("## Run it", "", "```bash", `bun run lab ${number}          # a menu: pick an example`);
-  out.push(`bun run lab ${number} --demo   # every case, each with its reason`);
+  out.push("## Run it", "", "Copy any line into your terminal. Each one is a real example from this lab.", "");
+  out.push("```bash");
+  lab.cases.forEach((item) => out.push(commandFor(number, item)));
+  out.push(`bun run lab ${number} --demo`, "```", "");
+  out.push(`Run \`bun run lab ${number}\` with nothing else to pick an example from a menu.`, "");
   const naive = lab.cases[0].title.startsWith("NAIVE");
-  if (naive) out.push(`bun run lab ${number} --naive  # the same menu, the naive way (case 1)`);
-  out.push("```", "", "## The cases", "");
+  out.push("## The cases", "");
   if (naive) out.push("Case 1 is the naive way. Read what goes wrong, then read the rest.", "");
   out.push("| # | Case | Why it matters | Result | Run it alone |", "| --- | --- | --- | --- | --- |");
   lab.cases.forEach((item, index) => {
-    const row = [String(index + 1), item.title, item.why, `\`${item.expect}\``, `\`${commandFor(number, item)}\``];
+    const row = [String(index + 1), item.title, item.why, item.expect, `\`${commandFor(number, item)}\``];
     out.push(`| ${row.map(cell).join(" | ")} |`);
   });
   out.push("");

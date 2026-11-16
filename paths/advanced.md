@@ -4,7 +4,7 @@
 
 **Goal:** Harden a multi-agent system: trust, recovery, cost, audit and release.
 
-**Time:** 10 hours for the main steps, about 40 minutes a lab.
+**Time:** 10 hours for the main steps, about most of an hour a lab.
 
 ## How to work
 

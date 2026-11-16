@@ -4,9 +4,12 @@
 // If the error is just "ERROR", the model repeats the same mistake. And some mistakes only a person can fix.
 // The PART 2 section only prints the result in colour. You can skip it.
 //
-// Run it:   bun run lab 16            (a menu of examples)
-//           bun run lab 16 --demo     (every edge case, with a reason for each)
-//           bun run lab 16 --naive    (the same menu, with errors that say nothing)
+// Run it (copy any line):
+//   bun run lab 16 --question "Cardioza in Germany" --naive
+//   bun run lab 16 --question "Cardioza in US"
+//   bun run lab 16 --question "Cardioza in Germany"
+//   bun run lab 16 --question "Cardiozza in US"
+//   bun run lab 16 --demo
 
 import { KNOWN_DRUGS, NO_DOC } from "../src/data";
 import { runLab, type Lab } from "../src/runner";
