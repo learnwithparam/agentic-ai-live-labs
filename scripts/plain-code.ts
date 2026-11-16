@@ -55,7 +55,7 @@ function codeFiles(): string[] {
   return files;
 }
 
-const EMPTY_PHRASES = ["whole idea", "top to bottom", "skim", "helpers", "core logic"];
+const EMPTY_PHRASES = ["whole idea", "top to bottom", "skim", "helpers", "core logic", "read the function", "read part"];
 
 // Shouting and empty talk say nothing. A comment says what the next lines do.
 function styleProblems(code: string): string[] {

@@ -1,6 +1,6 @@
 // LAB 7: MCP BASICS
 //
-// Read PART 1. MCP lets an agent ask a SERVER what tools it has, then call them.
+// MCP lets an agent ask a SERVER what tools it has, then call them.
 // The server is a separate program (src/mcp-server.ts). You read only the CLIENT here.
 // The PART 2 section only prints the result in colour. You can skip it.
 //

@@ -1,6 +1,6 @@
 // LAB 1: THE AGENT LOOP
 //
-// Read PART 1. It is short. The model asks for a tool, the code runs it, and this repeats.
+// It is short. The model asks for a tool, the code runs it, and this repeats.
 // The PART 2 section only prints the result in colour. You can skip it.
 //
 // Run it (copy any line):

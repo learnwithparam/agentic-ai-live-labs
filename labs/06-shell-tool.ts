@@ -1,6 +1,6 @@
 // LAB 6: A SHELL TOOL, SAFELY
 //
-// Read PART 1. A shell lets an agent do almost anything. That is the risk.
+// A shell lets an agent do almost anything. That is the risk.
 // Four rules make it safe: an allow-list, no chaining symbols or flags, one folder, and a time limit.
 // The PART 2 section only prints the result in colour. You can skip it.
 //

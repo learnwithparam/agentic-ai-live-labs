@@ -1,6 +1,6 @@
 // LAB 10: THE CONTEXT BUDGET
 //
-// Read PART 1. A model reads a limited amount of text each turn. That limit is the window.
+// A model reads a limited amount of text each turn. That limit is the window.
 // We count what goes in, keep what must stay, and drop the least useful parts first.
 // The PART 2 section only prints the result in colour. You can skip it.
 //

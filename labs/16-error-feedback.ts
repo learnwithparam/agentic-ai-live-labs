@@ -1,6 +1,6 @@
 // LAB 16: GIVING THE MODEL A USEFUL ERROR
 //
-// Read PART 1. Tools fail. If the error says what was wrong and what is valid, the model can fix it.
+// Tools fail. If the error says what was wrong and what is valid, the model can fix it.
 // If the error only says "ERROR", the model repeats the same mistake. And some mistakes only a person can fix.
 // The PART 2 section only prints the result in colour. You can skip it.
 //

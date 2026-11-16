@@ -1,6 +1,6 @@
 // LAB 12: RETRIEVAL, FINDING THE RIGHT PIECES
 //
-// Read PART 1. We cannot send every document to the model. We cut them into small chunks,
+// We cannot send every document to the model. We cut them into small chunks,
 // score each chunk against the question, and send only the best ones from the right country.
 // The PART 2 section only prints the result in colour. You can skip it.
 //

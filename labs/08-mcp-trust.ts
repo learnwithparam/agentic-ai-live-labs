@@ -1,6 +1,6 @@
 // LAB 8: TRUSTING AN MCP SERVER
 //
-// Read PART 1. A tool description is text that goes into the model's prompt.
+// A tool description is text that goes into the model's prompt.
 // So whoever writes it can give the model orders. We check each server and pin each tool.
 // The PART 2 section only prints the result in colour. You can skip it.
 //

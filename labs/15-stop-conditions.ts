@@ -1,6 +1,6 @@
 // LAB 15: WHEN THE LOOP MUST STOP
 //
-// Read PART 1. An agent loop asks the model what to do, runs it, and asks again.
+// An agent loop asks the model what to do, runs it, and asks again.
 // A model can get stuck, wander, or spend too much. So the loop itself needs three limits.
 // The PART 2 section only prints the result in colour. You can skip it.
 //

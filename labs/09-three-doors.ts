@@ -1,6 +1,6 @@
 // LAB 9: FUNCTION, CLI OR MCP
 //
-// Read PART 1. One job, three doors: a plain function, a shell command, and an MCP server.
+// One job, three doors: a plain function, a shell command, and an MCP server.
 // The answer should be the same. The cost, the risk and the shape of the answer are not.
 // The PART 2 section only prints the result in colour. You can skip it.
 //

@@ -1,6 +1,6 @@
 // LAB 17: WRITE THE PLAN FIRST, THEN ACT
 //
-// Read PART 1. An agent can act one step at a time and find out too late that a step was a bad idea.
+// An agent can act one step at a time and find out too late that a step was a bad idea.
 // Or it can write the whole plan first. Then the code checks the plan before anything runs.
 // The PART 2 section only prints the result in colour. You can skip it.
 //

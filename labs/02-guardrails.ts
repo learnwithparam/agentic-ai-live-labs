@@ -1,6 +1,6 @@
 // LAB 2: GUARDRAILS AND PHI REDACTION
 //
-// Read PART 1. Two guardrails wrap the model:
+// Two guardrails wrap the model:
 //   INPUT guardrail:  hide personal details BEFORE the model sees the note.
 //   OUTPUT guardrail: block any reply that does not cite an approved document.
 // The PART 2 section only prints the result in colour. You can skip it.

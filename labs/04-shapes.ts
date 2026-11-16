@@ -1,6 +1,6 @@
 // LAB 4: WORKFLOW, ONE AGENT, MULTI-AGENT
 //
-// Read PART 1. The same job built three ways:
+// The same job built three ways:
 //   1. WORKFLOW:    plain code decides every step. No model.
 //   2. ONE AGENT:   one model picks among several tools.
 //   3. MULTI-AGENT: a researcher drafts, an auditor checks, a person decides on any doubt.

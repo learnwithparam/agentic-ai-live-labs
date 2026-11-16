@@ -1,6 +1,6 @@
 // LAB 5: TOOL SCHEMAS AND STRUCTURED OUTPUT
 //
-// Read PART 1. A model writes its tool call as text. Text can be wrong.
+// A model writes its tool call as text. Text can be wrong.
 // A schema says what a good call looks like. Code checks the call BEFORE the tool runs.
 // The PART 2 section only prints the result in colour. You can skip it.
 //

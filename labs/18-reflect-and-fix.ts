@@ -2,8 +2,7 @@
 //
 // Dr. Lee asks for the Cardioza dose. The model writes a draft. The draft might be wrong.
 // So we check the draft before we show it. If it is wrong, the model gets two tries to fix it.
-// Read the function answerWithCheck. Its steps are numbered 1 to 7.
-// When you run the lab, the output uses the same step numbers.
+// The run prints each step as it happens, with the same number as the step in the code.
 // The pretend model and the screen output are in show/18-reflect-and-fix.ts. You can skip them.
 //
 // Run it (copy any line):

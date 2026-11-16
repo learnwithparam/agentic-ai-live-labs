@@ -1,6 +1,6 @@
 // LAB 13: PICKING WHAT GOES IN
 //
-// Read PART 1. We have three sources of facts: documents, the doctor's profile, and past emails.
+// We have three sources of facts: documents, the doctor's profile, and past emails.
 // Most questions need only one. We pick the sources a question needs, and load nothing else.
 // The PART 2 section only prints the result in colour. You can skip it.
 //
