@@ -40,6 +40,16 @@ export function buildBody(messages: Message[], toolNames: string[], model: strin
   return body;
 }
 
+// A real model changes small marks from run to run: bold stars, odd hyphens, odd brackets.
+// Put them back to plain marks here once, so no lab has to guard against them.
+export function cleanText(text: string): string {
+  const marks: [string, string][] = [["*", ""], ["\u2011", "-"], ["\u2010", "-"], ["\u00a0", " "]];
+  const brackets: [string, string][] = [["\u3010", "["], ["\u3011", "]"], ["\u202f", " "]];
+  let clean = text;
+  for (const [from, to] of marks.concat(brackets)) clean = clean.replaceAll(from, to);
+  return clean;
+}
+
 export function replyFrom(response: any): Reply {
   if (response.error) throw new Error(`The model call failed: ${JSON.stringify(response.error)}`);
   const message = response.choices[0].message;
@@ -48,7 +58,7 @@ export function replyFrom(response: any): Reply {
     const args = JSON.parse(call.function.arguments || "{}");
     return { toolCall: { name: call.function.name, args: { query: "", country: "", hcpId: "none", ...args } } };
   }
-  return { text: String(message.content || "").trim() };
+  return { text: cleanText(String(message.content || "")).trim() };
 }
 
 // The key goes to curl through its config on stdin, never on the command line.

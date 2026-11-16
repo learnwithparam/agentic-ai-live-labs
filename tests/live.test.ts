@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { buildBody, replyFrom, toChatMessages } from "../src/live";
+import { buildBody, cleanText, replyFrom, toChatMessages } from "../src/live";
 
 test("live: tool results go to the model as text, and the key is never in the body", () => {
   const messages = [
@@ -22,4 +22,8 @@ test("live: a tool call and a text answer both become a reply", () => {
   expect(replyFrom(call).toolCall?.args.query).toBe("Cardioza");
   expect(replyFrom({ choices: [{ message: { content: " Hello " } }] }).text).toBe("Hello");
   expect(() => replyFrom({ error: { message: "bad" } })).toThrow("The model call failed");
+});
+
+test("live: odd marks from a real model become plain marks", () => {
+  expect(cleanText("**10\u00a0mg** (see \u3010DOC\u2011101\u3011)")).toBe("10 mg (see [DOC-101])");
 });
