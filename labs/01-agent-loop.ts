@@ -1,7 +1,7 @@
-// LAB 1: THE AGENT LOOP
+// Lab 1: The agent loop
 //
 // It is short. The model asks for a tool, the code runs it, and this repeats.
-// The PART 2 section only prints the result in colour. You can skip it.
+// The PART 2 section only prints the result in colour.
 //
 // Run it (copy any line):
 //   bun labs/01-agent-loop.ts --question "What is the dose of Cardioza?"

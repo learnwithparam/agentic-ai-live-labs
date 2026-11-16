@@ -1,8 +1,8 @@
-// LAB 13: PICKING WHAT GOES IN
+// Lab 13: Picking what goes in
 //
 // We have three sources of facts: documents, the doctor's profile, and past emails.
 // Most questions need only one. We pick the sources a question needs, and load nothing else.
-// The PART 2 section only prints the result in colour. You can skip it.
+// The PART 2 section only prints the result in colour.
 //
 // Run it (copy any line):
 //   bun labs/13-pick-context.ts --question "What is the Cardioza dose?" --naive

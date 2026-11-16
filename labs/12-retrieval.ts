@@ -1,8 +1,8 @@
-// LAB 12: RETRIEVAL, FINDING THE RIGHT PIECES
+// Lab 12: Retrieval, finding the right pieces
 //
 // We cannot send every document to the model. We cut them into small chunks,
 // score each chunk against the question, and send only the best ones from the right country.
-// The PART 2 section only prints the result in colour. You can skip it.
+// The PART 2 section only prints the result in colour.
 //
 // Run it (copy any line):
 //   bun labs/12-retrieval.ts --question "Cardioza dose" --naive --country DE

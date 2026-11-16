@@ -1,8 +1,8 @@
-// LAB 5: TOOL SCHEMAS AND STRUCTURED OUTPUT
+// Lab 5: Tool schemas and structured output
 //
 // A model writes its tool call as text. Text can be wrong.
 // A schema says what a good call looks like. Code checks the call BEFORE the tool runs.
-// The PART 2 section only prints the result in colour. You can skip it.
+// The PART 2 section only prints the result in colour.
 //
 // Run it (copy any line):
 //   bun labs/05-tool-schemas.ts --question "{"drug": "Cardioza", "country": "us"}" --naive

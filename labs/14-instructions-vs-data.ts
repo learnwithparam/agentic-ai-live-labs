@@ -1,8 +1,8 @@
-// LAB 14: INSTRUCTIONS VERSUS DATA
+// Lab 14: Rules are not facts
 //
 // A model reads rules and facts as one stream of text. It cannot tell them apart.
-// So a document or an email can hide an order. We fence the data, and hold back lines that give orders.
-// The PART 2 section only prints the result in colour. You can skip it.
+// So a document or an email can hide an order. We fence the facts. We hold back any line that gives an order.
+// The PART 2 section only prints the result in colour.
 //
 // Run it (copy any line):
 //   bun labs/14-instructions-vs-data.ts --question "injected" --naive

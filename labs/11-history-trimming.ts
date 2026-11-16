@@ -1,8 +1,8 @@
-// LAB 11: TRIMMING THE CHAT HISTORY
+// Lab 11: Trimming the chat history
 //
 // A long chat does not fit in the window, so old turns must go.
 // But some old turns hold a fact we still need, like the doctor's country. We pin those.
-// The PART 2 section only prints the result in colour. You can skip it.
+// The PART 2 section only prints the result in colour.
 //
 // Run it (copy any line):
 //   bun labs/11-history-trimming.ts --question "long" --naive --keep 4

@@ -1,8 +1,8 @@
-// LAB 9: FUNCTION, CLI OR MCP
+// Lab 9: Function, cli or mcp
 //
 // One job, three doors: a plain function, a shell command, and an MCP server.
 // The answer should be the same. The cost, the risk and the shape of the answer are not.
-// The PART 2 section only prints the result in colour. You can skip it.
+// The PART 2 section only prints the result in colour.
 //
 // Run it (copy any line):
 //   bun labs/09-three-doors.ts --question "Cardioza" --naive --door cli

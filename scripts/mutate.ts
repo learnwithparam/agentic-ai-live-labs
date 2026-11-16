@@ -53,7 +53,7 @@ export const BREAKS: Break[] = [
   { lab: 18, file: "18-reflect-and-fix.ts", rule: "a wrong dose passes the check",
     find: "if (!dosesIn(source).includes(dose))", replace: "if (false)" },
   { lab: 18, file: "18-reflect-and-fix.ts", rule: "a draft without a citation passes",
-    find: 'if (!draft.includes("[DOC-"))', replace: "if (false)" },
+    find: 'if (!text.includes("DOC-"))', replace: "if (false)" },
   { lab: 18, file: "18-reflect-and-fix.ts", rule: "fix rounds have no limit",
     find: "round <= MOST_ROUNDS", replace: "round <= 99" },
 ];

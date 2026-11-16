@@ -1,8 +1,8 @@
-// LAB 17: WRITE THE PLAN FIRST, THEN ACT
+// Lab 17: Write the plan first, then act
 //
 // An agent can act one step at a time and find out too late that a step was a bad idea.
 // Or it can write the whole plan first. Then the code checks the plan before anything runs.
-// The PART 2 section only prints the result in colour. You can skip it.
+// The PART 2 section only prints the result in colour.
 //
 // Run it (copy any line):
 //   bun labs/17-plan-then-act.ts --question "send-reply" --naive

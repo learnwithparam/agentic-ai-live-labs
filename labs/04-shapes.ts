@@ -1,10 +1,10 @@
-// LAB 4: WORKFLOW, ONE AGENT, MULTI-AGENT
+// Lab 4: Three ways to build one job
 //
 // The same job built three ways:
 //   1. WORKFLOW:    plain code decides every step. No model.
 //   2. ONE AGENT:   one model picks among several tools.
 //   3. MULTI-AGENT: a researcher drafts, an auditor checks, a person decides on any doubt.
-// The PART 2 section only prints the result in colour. You can skip it.
+// The PART 2 section only prints the result in colour.
 //
 // Run it (copy any line):
 //   bun labs/04-shapes.ts --question "(not used by a workflow)" --shape workflow --hcp H-2

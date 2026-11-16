@@ -10,7 +10,7 @@ const FIELDS = ["about", "terms", "challenge", "promise", "production", "why", "
 
 function isCommand(line: string): boolean {
   const text = line.replace("//", "").trim();
-  const isMarker = text.startsWith("LAB ") || text.startsWith("PART ");
+  const isMarker = text.startsWith("PART ");
   return isMarker || text.startsWith("bun ") || text.startsWith("Run it");
 }
 
@@ -55,7 +55,7 @@ function codeFiles(): string[] {
   return files;
 }
 
-const EMPTY_PHRASES = ["whole idea", "top to bottom", "skim", "helpers", "core logic", "read the function", "read part"];
+const EMPTY_PHRASES = ["whole idea", "top to bottom", "skim", "skip", "helpers", "core logic", "read the function", "read part"];
 
 // Shouting and empty talk say nothing. A comment says what the next lines do.
 function styleProblems(code: string): string[] {
@@ -66,7 +66,7 @@ function styleProblems(code: string): string[] {
     const text = trimmed.replace("//", "").trim();
     const letters = text.replace(/[^A-Za-z]/g, "");
     const shouting = letters.length > 8 && letters === letters.toUpperCase();
-    const allowed = text.startsWith("LAB ") || text.startsWith("PART ");
+    const allowed = text.startsWith("PART ");
     if (shouting && !allowed) found.push(`shouting comment "${text}": write a plain sentence`);
     for (const phrase of EMPTY_PHRASES) {
       if (text.toLowerCase().includes(phrase)) found.push(`empty phrase "${phrase}" in "${text}"`);

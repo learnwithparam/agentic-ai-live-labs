@@ -1,9 +1,9 @@
-// LAB 3: HUMAN IN THE LOOP GATES
+// Lab 3: Human in the loop gates
 //
 // A gate stops the run and asks a person.
 //   GATE 1 fires before the model runs, when there is no approved document.
 //   GATE 2 fires after the model runs, when the reply fails the output check.
-// The PART 2 section only prints the result in colour. You can skip it.
+// The PART 2 section only prints the result in colour.
 //
 // Run it (copy any line):
 //   bun labs/03-gates.ts --question "Cardioza dose"

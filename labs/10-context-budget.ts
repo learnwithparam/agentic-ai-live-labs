@@ -1,8 +1,8 @@
-// LAB 10: THE CONTEXT BUDGET
+// Lab 10: The context budget
 //
 // A model reads a limited amount of text each turn. That limit is the window.
 // We count what goes in, keep what must stay, and drop the least useful parts first.
-// The PART 2 section only prints the result in colour. You can skip it.
+// The PART 2 section only prints the result in colour.
 //
 // Run it (copy any line):
 //   bun labs/10-context-budget.ts --question "Cardioza dose" --naive --window 60

@@ -1,8 +1,8 @@
-// LAB 16: GIVING THE MODEL A USEFUL ERROR
+// Lab 16: Giving the model a useful error
 //
 // Tools fail. If the error says what was wrong and what is valid, the model can fix it.
 // If the error only says "ERROR", the model repeats the same mistake. And some mistakes only a person can fix.
-// The PART 2 section only prints the result in colour. You can skip it.
+// The PART 2 section only prints the result in colour.
 //
 // Run it (copy any line):
 //   bun labs/16-error-feedback.ts --question "Cardioza in Germany" --naive

@@ -1,8 +1,8 @@
-// LAB 6: A SHELL TOOL, SAFELY
+// Lab 6: A shell tool, safely
 //
 // A shell lets an agent do almost anything. That is the risk.
 // Four rules make it safe: an allow-list, no chaining symbols or flags, one folder, and a time limit.
-// The PART 2 section only prints the result in colour. You can skip it.
+// The PART 2 section only prints the result in colour.
 //
 // Run it (copy any line):
 //   bun labs/06-shell-tool.ts --question "ls .." --naive

@@ -1,8 +1,8 @@
-// LAB 8: TRUSTING AN MCP SERVER
+// Lab 8: Trusting an mcp server
 //
 // A tool description is text that goes into the model's prompt.
 // So whoever writes it can give the model orders. We check each server and pin each tool.
-// The PART 2 section only prints the result in colour. You can skip it.
+// The PART 2 section only prints the result in colour.
 //
 // Run it (copy any line):
 //   bun labs/08-mcp-trust.ts --question "unknown-server" --naive
