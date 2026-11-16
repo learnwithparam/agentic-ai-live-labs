@@ -1,13 +1,15 @@
 // LAB 6: A SHELL TOOL, SAFELY
 //
 // Read PART 1. A shell lets an agent do almost anything. That is the risk.
-// Four rules make it safe: an allow-list, no chaining symbols, one folder, and a time limit.
+// Four rules make it safe: an allow-list, no chaining symbols or flags, one folder, and a time limit.
 // The PART 2 section only prints the result in colour. You can skip it.
 //
 // Run it:   bun run lab 6            (a menu of examples)
 //           bun run lab 6 --demo     (every edge case, with a reason for each)
 //           bun run lab 6 --naive    (the same menu, with no rules at all)
 
+import { existsSync, realpathSync } from "node:fs";
+import { resolve, sep } from "node:path";
 import { runLab, type Lab } from "../src/runner";
 import { badgeGreen, badgeRed, badgeYellow, box, dim, field, green, print, red, rule, yellow } from "../src/ui";
 
@@ -24,9 +26,15 @@ function refuse(why: string): ShellResult {
 }
 
 // A word leaves the folder if it starts at the top of the disk, at home, or climbs up with "..".
-function leavesFolder(word: string): boolean {
+// It also leaves if the real file is somewhere else, which a link inside the folder can cause.
+function leavesFolder(word: string, folder: string): boolean {
   if (word.startsWith("/") || word.startsWith("~")) return true;
-  return word.split("/").includes("..");
+  if (word.split("/").includes("..")) return true;
+  const target = resolve(folder, word);
+  if (!existsSync(target)) return false;
+  const home = realpathSync(folder);
+  const real = realpathSync(target);
+  return real !== home && !real.startsWith(home + sep);
 }
 
 // Check the command with four rules. Only a command that passes all four is started.
@@ -37,7 +45,8 @@ export function runShell(command: string, folder = SANDBOX, limit = 2): ShellRes
   const words = command.trim().split(" ");
   if (!ALLOWED.includes(words[0])) return refuse(`${words[0]} is not on the allow-list`);
   for (const word of words.slice(1)) {
-    if (leavesFolder(word)) return refuse(`${word} leaves the folder`);
+    if (word.startsWith("-")) return refuse(`${word} is a flag, and flags change a command`);
+    if (leavesFolder(word, folder)) return refuse(`${word} leaves the folder`);
   }
 
   // We pass the words as a list. No shell reads them, so nothing can be added to the command.

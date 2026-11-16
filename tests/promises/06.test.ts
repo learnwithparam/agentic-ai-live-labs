@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { existsSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { runShell } from "../../labs/06-shell-tool";
@@ -27,3 +27,11 @@ test("lab 6: refused commands change nothing", () => {
 test("lab 6: a slow command is stopped", () => {
   expect(runShell("sleep 5", "sandbox", 1).status).toBe("timeout");
 });
+
+test("lab 6: a link inside the folder cannot lead out, and flags are refused", () => {
+  const folder = mkdtempSync(join(tmpdir(), "lab6-"));
+  symlinkSync("/etc", join(folder, "door"));
+  expect(runShell("ls door", folder).status).toBe("refused");
+  expect(runShell("ls -R", folder).status).toBe("refused");
+});
+
