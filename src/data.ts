@@ -1,5 +1,8 @@
 // All data here is invented. Cardioza, Neurovex and Dermalin are not real drugs.
 
+// What search returns when nothing in the approved list matches.
+export const NO_DOC = "NO_APPROVED_DOC_FOUND";
+
 export type Doc = { drug: string; country: string; text: string };
 
 export const APPROVED_DOCS: Record<string, Doc> = {

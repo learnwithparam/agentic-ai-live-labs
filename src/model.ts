@@ -1,8 +1,8 @@
+// PRETEND MODEL. You do not need to read this file.
 // A stand-in for a real model, so every lab runs offline with no key.
 // The loop only needs one thing from a model: given the messages and tool names, return a tool call or text.
 // Swap callLlm for a real provider and nothing else changes.
-import { APPROVED_DOCS, KNOWN_DRUGS } from "./data";
-import { NO_DOC } from "./tools";
+import { APPROVED_DOCS, NO_DOC } from "./data";
 
 export type Message = { role: "system" | "user" | "tool"; content: string; name?: string };
 export type ToolCall = { name: string; args: Record<string, string> };
@@ -59,5 +59,3 @@ function audit(prompt: string): string {
   }
   return "PASS";
 }
-
-export const drugsIn = (text: string) => KNOWN_DRUGS.filter((d) => text.toLowerCase().includes(d.toLowerCase()));

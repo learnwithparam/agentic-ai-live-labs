@@ -1,13 +1,17 @@
 import { describe, expect, test } from "bun:test";
 import { APPROVED_DOCS } from "../src/data";
-import { redactPhi, verifyOutput } from "../src/guardrails";
-import { handleHcpInquiry } from "../src/inquiry";
-import { runAgentLoop } from "../src/loop";
 import { makeModel } from "../src/model";
-import { hcpContextWorkflow, multiAgentPipeline, singleHcpAgent } from "../src/shapes";
+import { checkCases } from "../src/runner";
+import { lab1, runAgentLoop } from "../labs/01-agent-loop";
+import { lab2, redactPhi, verifyOutput } from "../labs/02-guardrails";
+import { handleHcpInquiry, lab3 } from "../labs/03-gates";
+import { hcpContextWorkflow, lab4, multiAgentPipeline, singleHcpAgent } from "../labs/04-shapes";
 
 const yes = () => "y";
 const no = () => "n";
+const ids = Object.keys(APPROVED_DOCS);
+
+// Gates and labs print to the terminal. Tests keep that quiet.
 const silent = <T>(fn: () => T): T => {
   const log = console.log;
   console.log = () => {};
@@ -29,13 +33,13 @@ describe("lab 1: agent loop", () => {
     expect(runAgentLoop("Cardioza dose", "DE", makeModel()).answer).toContain("5mg");
   });
   test("stops at max steps", () => {
-    const stuck = () => ({ toolCall: { name: "search_approved_docs", args: {} } });
+    const stuck = () => ({ toolCall: { name: "search_approved_docs", args: { query: "x", country: "US" } } });
     expect(runAgentLoop("x", "US", stuck, { maxSteps: 3 }).stopped).toBe(true);
   });
   test("refuses a tool that is not on the list", () => {
     const sneaky = () => ({ toolCall: { name: "get_hcp_profile", args: { hcpId: "H-1" } } });
     const r = runAgentLoop("x", "US", sneaky, { maxSteps: 1 });
-    expect(r.steps[0].detail).toContain("TOOL_NOT_ALLOWED");
+    expect(r.steps[0]).toMatchObject({ kind: "tool", result: "TOOL_NOT_ALLOWED: get_hcp_profile" });
   });
 });
 
@@ -50,7 +54,6 @@ describe("lab 2: guardrails", () => {
     expect(redactPhi("Cardioza dose").found).toEqual([]);
   });
   test("blocks a reply with no citation or an unknown one", () => {
-    const ids = new Set(Object.keys(APPROVED_DOCS));
     expect(verifyOutput("10mg daily", ids).ok).toBe(false);
     expect(verifyOutput("10mg daily [DOC-999]", ids).ok).toBe(false);
     expect(verifyOutput("10mg daily [DOC-101]", ids).ok).toBe(true);
@@ -59,8 +62,7 @@ describe("lab 2: guardrails", () => {
 
 describe("lab 3: gates", () => {
   test("approved question is sent with no gate", () => {
-    const o = silent(() => handleHcpInquiry("Cardioza dose", "US", makeModel(), no));
-    expect(o.status).toBe("SENT");
+    expect(silent(() => handleHcpInquiry("Cardioza dose", "US", makeModel(), no)).status).toBe("SENT");
   });
   test("no approved document opens gate 1", () => {
     expect(silent(() => handleHcpInquiry("Zorbex dose", "US", makeModel(), yes)).status).toBe("SENT_AFTER_HUMAN_APPROVAL");
@@ -83,8 +85,13 @@ describe("lab 3: gates", () => {
 describe("lab 4: shapes", () => {
   test("workflow joins records with no model", () => {
     const r = hcpContextWorkflow("H-2");
-    expect(r.profile.country).toBe("DE");
+    expect(r.profile?.country).toBe("DE");
     expect(r.allowedDocs).toEqual(["DOC-102: Cardioza"]);
+  });
+  test("workflow handles an unknown doctor", () => {
+    const r = hcpContextWorkflow("H-9");
+    expect(r.profile).toBeUndefined();
+    expect(r.allowedDocs).toEqual([]);
   });
   test("one agent picks three tools", () => {
     const r = singleHcpAgent("Cardioza dose", "H-1", makeModel());
@@ -96,8 +103,17 @@ describe("lab 4: shapes", () => {
   });
   test("auditor catches a wrong dose that has a valid citation", () => {
     const draft = runAgentLoop("Cardioza dose", "US", makeModel("invent")).answer;
-    expect(verifyOutput(draft, new Set(Object.keys(APPROVED_DOCS))).ok).toBe(true);
+    expect(verifyOutput(draft, ids).ok).toBe(true); // the citation check is fooled
     const r = silent(() => multiAgentPipeline("Cardioza dose", "US", makeModel("invent"), no));
-    expect(r.reply).toBe("REJECTED_BY_COMPLIANCE");
+    expect(r.reply).toBe("REJECTED_BY_COMPLIANCE"); // the auditor is not
   });
+});
+
+// Every edge case shown to learners must really behave the way its explanation says.
+describe("edge cases shown in --demo", () => {
+  for (const lab of [lab1, lab2, lab3, lab4]) {
+    test(`${lab.file}: all ${lab.cases.length} cases behave as explained`, () => {
+      expect(silent(() => checkCases(lab))).toEqual([]);
+    });
+  }
 });
