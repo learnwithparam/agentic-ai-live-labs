@@ -14,15 +14,14 @@ function run(args: string[]) {
   return { ok: done.exitCode === 0, text };
 }
 
-// Every case that does not force a pretend behaviour, so a real model can answer it.
-// The naive cases run live too. Only --model (a pretend habit) is left out.
+// Every case runs live. A pretend habit (--model) is dropped, so the real model answers instead.
 function liveCommands(file: string, lab: Lab): string[][] {
   const commands: string[][] = [];
   for (const item of lab.cases) {
     const flags = item.flags || {};
-    if (flags.model) continue;
     const args = ["labs/" + file, "--question", item.question];
     for (const key of Object.keys(flags)) {
+      if (key === "model") continue;
       args.push(`--${key}`);
       if (flags[key] !== "true") args.push(flags[key]);
     }

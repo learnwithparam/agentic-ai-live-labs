@@ -3,10 +3,9 @@ import { makeModel, type Behaviour, type CallLlm } from "../../src/model";
 import {
   answerWithCheck,
   answerWithoutCheck,
-  dosesIn,
-  findProblems,
   MOST_ROUNDS,
 } from "../../labs/18-reflect-and-fix";
+import { dosesIn, findProblems } from "../../src/draft-check";
 
 const DOSE = "What is the dose of Cardioza?";
 const SOURCE = "[DOC-101] Cardioza standard adult dose is 10mg once daily with food.";

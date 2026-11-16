@@ -16,6 +16,7 @@ import { NO_DOC } from "../src/data";
 import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";
 import { runAgentLoop, searchApprovedDocs } from "./01-agent-loop"; // lab 1
+import { findProblems } from "../src/draft-check"; // the check in Step 4
 
 export const MOST_ROUNDS = 2;
 export type Result = { outcome: string; draft: string; problems: string[]; log: string[] };
@@ -43,6 +44,7 @@ export function answerWithCheck(
   log.push(`Step 3: the model wrote a draft. ${draft}`);
 
   // Step 4: check the draft with plain code and the document. We do not ask the model.
+  // The check is in src/draft-check.ts.
   let problems = findProblems(draft, source);
   log.push(`Step 4: checked the draft. Problems: ${problems.join(", ") || "none"}`);
   if (problems.length === 0) return { outcome: "accepted", draft, problems, log };
@@ -67,14 +69,18 @@ export function answerWithCheck(
 }
 
 // The naive way: ask the same model if its draft is fine. It has no new facts, so it says yes.
+// We also run our check on the draft, only to show what the model missed.
 export function answerWithoutCheck(question: string, country: string, callLlm: CallLlm): Result {
   const draft = runAgentLoop(question, country, callLlm).answer;
   const prompt = `REVIEW: ${draft} Is this draft correct?`;
   const review = callLlm([{ role: "user", content: prompt }], []);
+  const missed = findProblems(draft, searchApprovedDocs(question, country));
+
   const log = [`The model wrote a draft. ${draft}`];
   log.push("We asked the same model: is this draft correct?");
   log.push(`The model said: ${review.text}`);
-  return { outcome: "self-approved", draft, problems: [], log };
+  log.push(`Our check, which the model never saw, finds: ${missed.join(", ") || "nothing"}`);
+  return { outcome: "self-approved", draft, problems: missed, log };
 }
 
 // Ask the model to fix its draft. We send the draft, what is wrong, and the approved source.
@@ -82,35 +88,6 @@ function askForFix(callLlm: CallLlm, draft: string, problems: string[], source: 
   const prompt = `FIX: ${draft}\nPROBLEMS: ${problems.join("; ")}\nSOURCE: ${source}`;
   const reply = callLlm([{ role: "user", content: prompt }], []);
   return reply.text || draft;
-}
-
-// The next three functions do the check in Step 4.
-
-// A real model adds stars, odd hyphens and spaces. Take them out before checking.
-function tidy(text: string): string {
-  const plain = text.replaceAll("*", "").replaceAll("\u2011", "-");
-  return plain.replaceAll("\u00a0", " ").replaceAll("\u202f", " ").replaceAll(" mg", "mg");
-}
-
-// List what is wrong with a draft. An empty list means the draft is good.
-export function findProblems(draft: string, source: string): string[] {
-  const problems: string[] = [];
-  const text = tidy(draft);
-  if (!text.includes("DOC-")) problems.push("no citation");
-  for (const dose of dosesIn(text)) {
-    if (!dosesIn(source).includes(dose)) problems.push(`dose ${dose} is not in the source`);
-  }
-  return problems;
-}
-
-// Every dose in a text. "Take 10mg daily." gives ["10mg"].
-export function dosesIn(text: string): string[] {
-  const found: string[] = [];
-  for (const word of text.split(" ")) {
-    const clean = word.replaceAll(".", "").replaceAll(",", "");
-    if (clean.endsWith("mg")) found.push(clean);
-  }
-  return found;
 }
 
 // Run the lab from the command line. The examples and the screen output are in the show file.
