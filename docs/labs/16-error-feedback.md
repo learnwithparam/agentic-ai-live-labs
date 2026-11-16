@@ -1,6 +1,6 @@
 # Lab 16: a useful error
 
-Each example is a question like Cardioza in Germany. The pretend model first writes the call exactly as typed. Then it fixes the call from the error, up to 3 tries.
+Each example is a question like Cardioza in Germany. The model writes the tool call, reads each error, and fixes the call, up to 3 tries.
 
 ## The problem
 

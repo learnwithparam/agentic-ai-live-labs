@@ -2,7 +2,7 @@
 // A stand-in for a real model, so every lab runs offline with no key.
 // The loop only needs one thing from a model: given the messages and tool names, return a tool call or text.
 // Swap callLlm for a real provider and nothing else changes.
-import { APPROVED_DOCS, NO_DOC } from "./data";
+import { APPROVED_DOCS, KNOWN_DRUGS, NO_DOC } from "./data";
 
 export type Message = { role: "system" | "user" | "tool"; content: string; name?: string };
 export type ToolInput = { query: string; country: string; hcpId: string };
@@ -22,6 +22,7 @@ const grab = (text: string, label: string) => text.match(new RegExp(`${label}: (
 export function makeModel(behaviour: Behaviour = "ok"): CallLlm {
   return (messages, toolNames) => {
     const first = messages.find((message) => message.role === "user")!.content;
+    if (first.startsWith("TRY:")) return { text: tryFor(first) };
     if (first.startsWith("RULES:")) return { text: rulesFor(first) };
     if (first.startsWith("CONTEXT:")) return { text: contextFor(first) };
     if (first.startsWith("CHUNKS:")) return { text: chunksFor(first) };
@@ -176,4 +177,30 @@ function rulesFor(prompt: string): string {
   if (!fenced && prompt.includes("New rules")) return "Voici la dose, sans citation.";
   const docs = prompt.split("\n").filter((line) => line.startsWith("[DOC-"));
   return docs.join(" ") || "I found no approved source.";
+}
+
+// A model asked to write a tool call, and to fix it when the tool says it was wrong.
+// It reads the hint in the error. It never changes what the doctor meant, so it says ASK instead.
+function tryFor(prompt: string): string {
+  const question = (prompt.split("Question: ")[1] || "").split("\n")[0];
+  const parts = question.split(" in ");
+  let drug = parts[0].trim();
+  let country = (parts[1] || "US").trim();
+  const said = prompt.split("The tool said: ")[1];
+  if (said === undefined) return `{"drug": "${drug}", "country": "${country}"}`;
+  const last = prompt.split("Your last call: ")[1].split("\n")[0];
+  const before = JSON.parse(last);
+  drug = before.drug;
+  country = before.country;
+  if (said.includes("Use US or DE")) {
+    const codes: Record<string, string> = { germany: "DE", "united states": "US", usa: "US" };
+    const code = codes[country.toLowerCase()];
+    if (code === undefined) return "ASK: I cannot pick a country for the doctor.";
+    country = code;
+  } else if (said.includes("Known drugs")) {
+    const close = KNOWN_DRUGS.find((name) => name.slice(0, 5).toLowerCase() === drug.slice(0, 5).toLowerCase());
+    if (close === undefined) return "ASK: I do not know this drug.";
+    drug = close;
+  }
+  return `{"drug": "${drug}", "country": "${country}"}`;
 }

@@ -43,7 +43,7 @@ export const BREAKS: Break[] = [
   { lab: 16, file: "16-error-feedback.ts", rule: "an error says nothing the model can use",
     find: "Use US or DE.", replace: "That is wrong." },
   { lab: 16, file: "16-error-feedback.ts", rule: "an unfixable call is not sent to a person",
-    find: "if (next === undefined) return", replace: "if (false) return" },
+    find: "if (guess === undefined) {", replace: "if (false) {" },
   { lab: 17, file: "17-plan-then-act.ts", rule: "a risky step runs without a person",
     find: "if (checked.risky.length > 0 && !approved)", replace: "if (false)" },
   { lab: 17, file: "17-plan-then-act.ts", rule: "a tool we never gave is allowed",

@@ -1,8 +1,11 @@
 import { expect, test } from "bun:test";
-import { doseTool, MAX_TRIES, naiveTool, parseAsk, pretendFix, runWithFeedback } from "../../labs/16-error-feedback";
+import { makeModel } from "../../src/model";
+import { doseTool, naiveTool, runWithFeedback } from "../../labs/16-error-feedback";
+
+const MAX_TRIES = 3;
 
 function run(question: string, naive = false) {
-  return runWithFeedback(parseAsk(question), pretendFix, naive ? naiveTool : doseTool, MAX_TRIES);
+  return runWithFeedback(question, makeModel(), naive ? naiveTool : doseTool, MAX_TRIES);
 }
 
 // PROMISE: an error says what is valid, retries are capped, and a call that cannot be fixed goes to a person.
