@@ -5,7 +5,7 @@ import { makeModel } from "../src/model";
 import { checkCases, type Lab } from "../src/runner";
 import { searchOnly, runAgentLoop } from "../labs/01-agent-loop";
 import { redactPhi, verifyOutput } from "../labs/02-guardrails";
-import { handleHcpInquiry } from "../labs/03-gates";
+import { handleHcpInquiry, handleWithoutGate } from "../labs/03-gates";
 import { hcpContextWorkflow, multiAgentPipeline, singleHcpAgent } from "../labs/04-shapes";
 import { problemsIn } from "../scripts/readable";
 
@@ -73,7 +73,11 @@ describe("lab 3: gates", () => {
   test("a reply with no citation opens gate 2", () => {
     const outcome = silent(() => handleHcpInquiry("Cardioza dose", "US", makeModel("nocite"), no));
     expect(outcome.status).toBe("BLOCKED_BY_REVIEWER");
-    expect(outcome.path).toContain("gate 2: output guardrail failed");
+    expect(outcome.path.join(" ")).toContain("Gate 2 stops the run");
+  });
+  test("with no gate, an uncited reply is sent", () => {
+    const outcome = handleWithoutGate("Cardioza dose", "US", makeModel("nocite"));
+    expect(outcome.status).toBe("SENT_UNCHECKED");
   });
   test("patient details never reach the model", () => {
     let seen = "";
