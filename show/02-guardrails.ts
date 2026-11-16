@@ -36,8 +36,8 @@ export const lab: Lab = {
       spans.push({ start, end: start + item.text.length });
     }
     print(field("Note", mark(note, spans, (text) => bold(red(text))), dim, 8));
-    rule("WHAT HAPPENED, STEP BY STEP");
-    for (const line of result.path) console.log(dim(line));
+    rule("LOG, STEP BY STEP");
+    for (const line of result.log) console.log(dim(line));
     console.log();
     if (flags.naive) {
       const words = result.found.length;

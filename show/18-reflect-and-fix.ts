@@ -27,8 +27,8 @@ export const lab: Lab = {
     const callLlm = modelFrom(flags);
     print(field("Question", question));
     const result = flags.naive ? answerWithoutCheck(question, country, callLlm) : answerWithCheck(question, country, callLlm);
-    rule("WHAT HAPPENED, STEP BY STEP");
-    for (const line of result.path) console.log(dim(line));
+    rule("LOG, STEP BY STEP");
+    for (const line of result.log) console.log(dim(line));
     if (result.outcome === "self-approved") box(badgeRed("LOOKS GOOD"), [red("The model approved a draft with a wrong dose.")], red);
     else if (result.outcome === "gave-up") box(badgeYellow("GAVE UP"), [yellow(`Still wrong: ${result.problems.join(", ")}. A person decides.`)], yellow);
     else if (result.outcome === "no-source") box(badgeYellow("NO SOURCE"), [yellow("Nothing to check against, so nothing to say.")], yellow);

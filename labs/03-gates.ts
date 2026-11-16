@@ -24,7 +24,7 @@ import { labelsOf, redactPhi, verifyOutput } from "./02-guardrails"; // the guar
 export type Outcome = {
   status: string; // SENT, SENT_AFTER_HUMAN_APPROVAL, BLOCKED_BY_REVIEWER or SENT_UNCHECKED
   reply: string;
-  path: string[]; // what happened, in order, so you can read the story
+  log: string[]; // what happened, in order, so you can read the story
 };
 
 // Handle one question from a doctor. Read the steps in order. Two steps can stop the run at a gate.
@@ -34,43 +34,43 @@ export function handleHcpInquiry(
   callLlm: CallLlm,
   ask: Ask,
 ): Outcome {
-  const path: string[] = [];
+  const log: string[] = [];
 
   // Step 1: hide the patient details (lab 2).
   const { clean, found } = redactPhi(question);
-  path.push(`Step 1: hid ${found.length} private pieces ${labelsOf(found).join(", ")}.`);
+  log.push(`Step 1: hid ${found.length} private pieces ${labelsOf(found).join(", ")}.`);
 
   // Step 2: is there an approved document at all? If not, gate 1 stops the run before the model.
   if (searchApprovedDocs(clean, country) === NO_DOC) {
-    path.push("Step 2: no approved document. Gate 1 stops the run. A person decides.");
+    log.push("Step 2: no approved document. Gate 1 stops the run. A person decides.");
     const draft = "Escalating to Medical Affairs: no approved label data for this query.";
     const approved = humanApprovalGate("No approved document", clean, draft, ask);
-    return decide(approved, draft, path);
+    return decide(approved, draft, log);
   }
-  path.push("Step 2: an approved document exists. No gate yet.");
+  log.push("Step 2: an approved document exists. No gate yet.");
 
   // Step 3: the model answers, with the loop from lab 1.
   const { answer } = runAgentLoop(clean, country, callLlm);
-  path.push(`Step 3: the model wrote: ${answer}`);
+  log.push(`Step 3: the model wrote: ${answer}`);
 
   // Step 4: check the reply (lab 2). If it fails, gate 2 stops the run. A person decides.
   const check = verifyOutput(answer, Object.keys(APPROVED_DOCS));
   if (!check.ok) {
-    path.push(`Step 4: ${check.reason} Gate 2 stops the run. A person decides.`);
+    log.push(`Step 4: ${check.reason} Gate 2 stops the run. A person decides.`);
     const approved = humanApprovalGate(check.reason, clean, answer, ask);
-    return decide(approved, answer, path);
+    return decide(approved, answer, log);
   }
 
   // Step 5: nothing wrong, so the reply goes out.
-  path.push("Step 4: the reply cites an approved document.\nStep 5: sent.");
-  return { status: "SENT", reply: answer, path };
+  log.push("Step 4: the reply cites an approved document.\nStep 5: sent.");
+  return { status: "SENT", reply: answer, log };
 }
 
 // The same job with no gate. Whatever the model writes goes out.
 export function handleWithoutGate(question: string, country: string, callLlm: CallLlm): Outcome {
   const { answer } = runAgentLoop(question, country, callLlm);
-  const path = [`Step 1: the model wrote: ${answer}`, "Step 2: no gate and no check. Sent."];
-  return { status: "SENT_UNCHECKED", reply: answer, path };
+  const log = [`Step 1: the model wrote: ${answer}`, "Step 2: no gate and no check. Sent."];
+  return { status: "SENT_UNCHECKED", reply: answer, log };
 }
 
 // The gate. Show a person what they need, then ask yes or no.
@@ -88,13 +88,13 @@ export function humanApprovalGate(
 }
 
 // After a gate: if the person said yes, send the draft. If not, send nothing.
-function decide(approved: boolean, draft: string, path: string[]): Outcome {
+function decide(approved: boolean, draft: string, log: string[]): Outcome {
   if (approved) {
-    path.push("Step 5: the person approved. Sent.");
-    return { status: "SENT_AFTER_HUMAN_APPROVAL", reply: draft, path };
+    log.push("Step 5: the person approved. Sent.");
+    return { status: "SENT_AFTER_HUMAN_APPROVAL", reply: draft, log };
   }
-  path.push("Step 5: the person said no. Nothing was sent.");
-  return { status: "BLOCKED_BY_REVIEWER", reply: "", path };
+  log.push("Step 5: the person said no. Nothing was sent.");
+  return { status: "BLOCKED_BY_REVIEWER", reply: "", log };
 }
 
 // Run the lab from the command line. The examples and the screen output are in the show file.

@@ -26,8 +26,8 @@ export const lab: Lab = {
     const maxSteps = Number(flags.steps || 5);
     const result = runAgentLoop(question, country, modelFrom(flags), searchOnly, maxSteps);
     print(field("Question", question));
-    rule("WHAT HAPPENED, STEP BY STEP");
-    for (const line of result.path) console.log(dim(line));
+    rule("LOG, STEP BY STEP");
+    for (const line of result.log) console.log(dim(line));
     console.log();
     if (result.stopped) {
       box("STOPPED", [verdict.blocked("Step limit reached before the model answered.")], red);

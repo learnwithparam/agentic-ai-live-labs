@@ -21,7 +21,7 @@ import { runLab } from "../src/runner";
 export type Tool = { name: string; run(input: ToolInput): string };
 
 export type Step = { kind: string; tool: string; input: string; result: string };
-export type LoopResult = { answer: string; steps: Step[]; stopped: boolean; path: string[] };
+export type LoopResult = { answer: string; steps: Step[]; stopped: boolean; log: string[] };
 
 // Answer a question with the loop. Read the steps in order. Step 2 and Step 3 repeat.
 export function runAgentLoop(
@@ -32,7 +32,7 @@ export function runAgentLoop(
   maxSteps = 5,
   hcpId = "none",
 ): LoopResult {
-  const path: string[] = [];
+  const log: string[] = [];
   const steps: Step[] = [];
   const toolNames: string[] = [];
   for (const tool of tools) toolNames.push(tool.name);
@@ -42,37 +42,42 @@ export function runAgentLoop(
     { role: "system", content: "Use ONLY the approved documents. Cite their ids." },
     { role: "user", content: `Country: ${country}. HCP: ${hcpId}. Question: ${question}` },
   ];
-  path.push(`Step 1: started with the question "${question}" for country ${country}.`);
+  log.push(`Step 1: started with the question "${question}" for country ${country}.`);
 
   for (let round = 1; round <= maxSteps; round++) {
     // Step 2: ask the model what to do next.
     const reply = callLlm(messages, toolNames);
 
     if (reply.toolCall) {
-      // Step 3: the model wants a tool. Run it, then show the model the result.
+      // Step 3: the model wants a tool. Find it. A tool we did not give it is refused.
       const call = reply.toolCall;
       const tool = findTool(tools, call.name);
       let result = `TOOL_NOT_ALLOWED: ${call.name}`;
       if (tool) result = tool.run(call.args);
+
+      // Show the model what the tool returned, so its next answer can use it.
       const input = `query="${call.args.query}" country=${call.args.country}`;
       steps.push({ kind: "tool", tool: call.name, input, result });
       messages.push({ role: "tool", name: call.name, content: result });
-      path.push(`Step 2: asked the model. It wants the tool ${call.name}.`);
-      path.push(`Step 3: ran the tool with ${input}. It returned: ${result}`);
+
+      // Write down what happened, for the log.
+      log.push(`Step 2: asked the model. It wants the tool ${call.name}.`);
+      log.push(`Step 3: ran the tool with ${input}. It returned: ${result}`);
       continue;
     }
 
     // Step 4: the model gave an answer. We are done.
     const answer = reply.text || "";
     steps.push({ kind: "answer", tool: "", input: "", result: answer });
-    path.push("Step 2: asked the model. It gave an answer.");
-    path.push(`Step 4: done. The answer is: ${answer}`);
-    return { answer, steps, stopped: false, path };
+
+    log.push("Step 2: asked the model. It gave an answer.");
+    log.push(`Step 4: done. The answer is: ${answer}`);
+    return { answer, steps, stopped: false, log };
   }
 
   // Step 5: the model never finished. Stop it, so a loop can never run forever.
-  path.push(`Step 5: stopped after ${maxSteps} rounds. The model did not give an answer.`);
-  return { answer: "STOPPED: max loop steps reached.", steps, stopped: true, path };
+  log.push(`Step 5: stopped after ${maxSteps} rounds. The model did not give an answer.`);
+  return { answer: "STOPPED: max loop steps reached.", steps, stopped: true, log };
 }
 
 // What the loop calls: the tool.

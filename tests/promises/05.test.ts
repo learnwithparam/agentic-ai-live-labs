@@ -1,5 +1,6 @@
 import { expect, test } from "bun:test";
-import { callWithSchema, searchSchema } from "../../labs/05-tool-schemas";
+import { callWithSchema } from "../../labs/05-tool-schemas";
+import { searchSchema } from "../../src/schema";
 
 // PROMISE: a call that fails the schema never reaches the tool.
 test("lab 5: rejected calls never run the tool", () => {

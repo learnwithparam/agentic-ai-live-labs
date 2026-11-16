@@ -24,39 +24,39 @@ export type Guarded = {
   found: Found[];
   answer: string;
   check: Check;
-  path: string[];
+  log: string[];
 };
 
 // Answer a doctor's note with a guardrail on each side of the model. Read the steps in order.
 export function answerSafely(note: string, country: string, callLlm: CallLlm): Guarded {
-  const path: string[] = [];
+  const log: string[] = [];
 
   // Step 1: hide the private details. The model must never see them.
   const { clean, found } = redactPhi(note);
-  path.push(`Step 1: hid ${found.length} private pieces (${labelsOf(found).join(", ")}).`);
-  path.push(`        The model will read: ${clean}`);
+  log.push(`Step 1: hid ${found.length} private pieces (${labelsOf(found).join(", ")}).`);
+  log.push(`        The model will read: ${clean}`);
 
   // Step 2: let the model answer the clean note. This is the loop from lab 1.
   const answer = runAgentLoop(clean, country, callLlm).answer;
-  path.push(`Step 2: the model wrote a reply: ${answer}`);
+  log.push(`Step 2: the model wrote a reply: ${answer}`);
 
   // Step 3: check the reply. It must cite an approved document.
   const check = verifyOutput(answer, Object.keys(APPROVED_DOCS));
 
   // Step 4: send the reply, or block it.
-  if (check.ok) path.push("Step 3: the reply cites an approved document.\nStep 4: sent.");
-  else path.push(`Step 3: ${check.reason}\nStep 4: not sent.`);
-  return { clean, found, answer, check, path };
+  if (check.ok) log.push("Step 3: the reply cites an approved document.\nStep 4: sent.");
+  else log.push(`Step 3: ${check.reason}\nStep 4: not sent.`);
+  return { clean, found, answer, check, log };
 }
 
 // The same job with no guardrails. The model reads everything, and its reply goes out unchecked.
 export function answerUnguarded(note: string, country: string, callLlm: CallLlm): Guarded {
-  const path = [`Step 1: sent the note as it is. The model will read: ${note}`];
+  const log = [`Step 1: sent the note as it is. The model will read: ${note}`];
   const answer = runAgentLoop(note, country, callLlm).answer;
-  path.push(`Step 2: the model wrote a reply: ${answer}`);
-  path.push("Step 3: no check. Step 4: sent.");
+  log.push(`Step 2: the model wrote a reply: ${answer}`);
+  log.push("Step 3: no check. Step 4: sent.");
   const found = redactPhi(note).found;
-  return { clean: note, found, answer, check: { ok: true, reason: "" }, path };
+  return { clean: note, found, answer, check: { ok: true, reason: "" }, log };
 }
 
 // One private piece we found: what kind it is, and the words themselves.

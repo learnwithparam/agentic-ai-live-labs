@@ -22,6 +22,7 @@ const grab = (text: string, label: string) => text.match(new RegExp(`${label}: (
 export function makeModel(behaviour: Behaviour = "ok"): CallLlm {
   return (messages, toolNames) => {
     const first = messages.find((message) => message.role === "user")!.content;
+    if (first.startsWith("CALL:")) return { text: writeCall(first) };
     if (first.startsWith("AUDIT:")) return { text: audit(first) };
     if (first.startsWith("REVIEW:")) return { text: "Looks good. The draft is fine." };
     if (first.startsWith("FIX:")) return { text: fix(first, behaviour) };
@@ -72,4 +73,15 @@ function audit(prompt: string): string {
     if (!APPROVED_DOCS[id]?.text.includes(sentence)) return `FAIL: claim does not match ${id}: "${sentence}"`;
   }
   return "PASS";
+}
+
+// A model asked to write a tool call. It finds the drug in the question. It writes the country in lower case, a common slip.
+function writeCall(prompt: string): string {
+  const question = prompt.split("Question: ")[1] || "";
+  let drug = "Zorbex";
+  for (const id in APPROVED_DOCS) {
+    if (question.toLowerCase().includes(APPROVED_DOCS[id].drug.toLowerCase())) drug = APPROVED_DOCS[id].drug;
+  }
+  const country = question.includes("Germany") ? "de" : "us";
+  return `{"drug": "${drug}", "country": "${country}"}`;
 }

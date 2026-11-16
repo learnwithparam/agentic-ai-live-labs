@@ -18,7 +18,7 @@ import { runLab } from "../src/runner";
 import { runAgentLoop, searchApprovedDocs } from "./01-agent-loop"; // lab 1
 
 export const MOST_ROUNDS = 2;
-export type Result = { outcome: string; draft: string; problems: string[]; path: string[] };
+export type Result = { outcome: string; draft: string; problems: string[]; log: string[] };
 
 // Answer a question, but check the draft first. Read the steps in order.
 export function answerWithCheck(
@@ -26,44 +26,44 @@ export function answerWithCheck(
   country: string,
   callLlm: CallLlm,
 ): Result {
-  const path: string[] = [];
+  const log: string[] = [];
 
   // Step 1: find the approved document. The check needs it.
   const source = searchApprovedDocs(question, country);
-  path.push(`Step 1: searched the approved documents. Found ${source.split("\n")[0]}`);
+  log.push(`Step 1: searched the approved documents. Found ${source.split("\n")[0]}`);
 
   // Step 2: no document means nothing to check against. Say so. Never guess.
   if (source === NO_DOC) {
-    path.push("Step 2: no approved document, so there is nothing to check against. Stop.");
-    return { outcome: "no-source", draft: "", problems: [], path };
+    log.push("Step 2: no approved document, so there is nothing to check against. Stop.");
+    return { outcome: "no-source", draft: "", problems: [], log };
   }
 
   // Step 3: the model writes a first draft (lab 1's agent loop).
   let draft = runAgentLoop(question, country, callLlm).answer;
-  path.push(`Step 3: the model wrote a draft. ${draft}`);
+  log.push(`Step 3: the model wrote a draft. ${draft}`);
 
   // Step 4: check the draft with plain code and the document. We do not ask the model.
   let problems = findProblems(draft, source);
-  path.push(`Step 4: checked the draft. Problems: ${problems.join(", ") || "none"}`);
-  if (problems.length === 0) return { outcome: "accepted", draft, problems, path };
+  log.push(`Step 4: checked the draft. Problems: ${problems.join(", ") || "none"}`);
+  if (problems.length === 0) return { outcome: "accepted", draft, problems, log };
 
   // Step 5: tell the model what is wrong, and let it fix the draft. Then check again.
   for (let round = 1; round <= MOST_ROUNDS; round++) {
     draft = askForFix(callLlm, draft, problems, source);
-    path.push(`Step 5: fix round ${round}. The model rewrote it. ${draft}`);
+    log.push(`Step 5: fix round ${round}. The model rewrote it. ${draft}`);
     problems = findProblems(draft, source);
-    path.push(`Step 4 again: checked the new draft. Problems: ${problems.join(", ") || "none"}`);
+    log.push(`Step 4 again: checked the new draft. Problems: ${problems.join(", ") || "none"}`);
 
     // Step 6: a clean draft is done.
     if (problems.length === 0) {
-      path.push("Step 6: the draft is clean. Done.");
-      return { outcome: "fixed", draft, problems, path };
+      log.push("Step 6: the draft is clean. Done.");
+      return { outcome: "fixed", draft, problems, log };
     }
   }
 
   // Step 7: still wrong after two rounds. Stop. A person decides.
-  path.push("Step 7: still wrong after the last round. A person decides.");
-  return { outcome: "gave-up", draft, problems, path };
+  log.push("Step 7: still wrong after the last round. A person decides.");
+  return { outcome: "gave-up", draft, problems, log };
 }
 
 // The naive way: ask the same model if its draft is fine. It has no new facts, so it says yes.
@@ -71,10 +71,10 @@ export function answerWithoutCheck(question: string, country: string, callLlm: C
   const draft = runAgentLoop(question, country, callLlm).answer;
   const prompt = `REVIEW: ${draft} Is this draft correct?`;
   const review = callLlm([{ role: "user", content: prompt }], []);
-  const path = [`The model wrote a draft. ${draft}`];
-  path.push("We asked the same model: is this draft correct?");
-  path.push(`The model said: ${review.text}`);
-  return { outcome: "self-approved", draft, problems: [], path };
+  const log = [`The model wrote a draft. ${draft}`];
+  log.push("We asked the same model: is this draft correct?");
+  log.push(`The model said: ${review.text}`);
+  return { outcome: "self-approved", draft, problems: [], log };
 }
 
 // Ask the model to fix its draft. We send the draft, what is wrong, and the approved source.

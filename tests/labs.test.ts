@@ -73,7 +73,7 @@ describe("lab 3: gates", () => {
   test("a reply with no citation opens gate 2", () => {
     const outcome = silent(() => handleHcpInquiry("Cardioza dose", "US", makeModel("nocite"), no));
     expect(outcome.status).toBe("BLOCKED_BY_REVIEWER");
-    expect(outcome.path.join(" ")).toContain("Gate 2 stops the run");
+    expect(outcome.log.join(" ")).toContain("Gate 2 stops the run");
   });
   test("with no gate, an uncited reply is sent", () => {
     const outcome = handleWithoutGate("Cardioza dose", "US", makeModel("nocite"));

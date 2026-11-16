@@ -1,68 +1,72 @@
 // Lab 5: Tool schemas and structured output
 //
-// A model writes its tool call as text. Text can be wrong.
-// A schema says what a good call looks like. Code checks the call BEFORE the tool runs.
-// The PART 2 section only prints the result in colour.
+// Dr. Lee asks: "What is the Cardioza dose in the US?" The model must turn that into a tool call.
+// It writes the call as text. Text can be wrong: a small letter where a capital belongs, a field
+// missing, a number written as a word. A schema says what a good call looks like.
+// Code checks the call before the tool runs.
+// The run prints each step as it happens, with the same number as the step in the code.
+// The examples and the screen output are in show/05-tool-schemas.ts. You do not need them to learn.
 //
 // Run it (copy any line):
 //   bun labs/05-tool-schemas.ts --question "{"drug": "Cardioza", "country": "us"}" --naive
-//   bun labs/05-tool-schemas.ts --question "{"drug": "Cardioza", "country": "US", "limit": 2}"
+//   bun labs/05-tool-schemas.ts --question "What is the Cardioza dose in the US?"
 //   bun labs/05-tool-schemas.ts --question "{"drug": "Cardioza", "country": "us"}"
-//   bun labs/05-tool-schemas.ts --demo
+//   bun labs/05-tool-schemas.ts --question "{"drug": "Cardioza", "country": "FR"}"
 //   bun labs/05-tool-schemas.ts --demo
 
 import { NO_DOC } from "../src/data";
-import { runLab, type Lab } from "../src/runner";
-import { badgeGreen, badgeRed, badgeYellow, bold, box, dim, field, green, highlight } from "../src/ui";
-import { print, red, rule, yellow } from "../src/ui";
+import type { CallLlm } from "../src/model";
+import { runLab } from "../src/runner";
 import { searchApprovedDocs } from "./01-agent-loop"; // the search tool from lab 1
+import { isInSchema, reject, searchSchema, tidy } from "../src/schema"; // the schema and its small fixes
+import type { Args, Field, Verdict } from "../src/schema";
 
-// PART 1: THE CORE LOGIC
+export type Called = { raw: string; verdict: Verdict; result: string; log: string[] };
 
-// One input of the tool. "allowed" lists the only values it accepts. Numbers have a range.
-export type Field = {
-  name: string; kind: string; required: boolean;
-  allowed?: string[]; low?: number; high?: number;
-};
+// Turn a question into a checked tool call. Read the steps in order.
+export function searchWithSchema(question: string, callLlm: CallLlm): Called {
+  // Step 1: the model writes the tool call as text.
+  const raw = writeCall(question, callLlm);
+  const log = [`Step 1: the model wrote the call: ${raw}`];
 
-export const searchSchema: Field[] = [
-  { name: "drug", kind: "text", required: true },
-  { name: "country", kind: "text", required: true, allowed: ["US", "DE"] },
-  { name: "limit", kind: "number", required: false, low: 1, high: 5 },
-];
+  // Step 2: check the call against the schema. The tool has not run yet.
+  const { verdict, result } = callWithSchema(raw, searchSchema, searchTool);
+  log.push(`Step 2: the check says ${verdict.status}.`);
+  for (const note of verdict.notes) log.push(`        ${note}`);
 
-export type Args = Record<string, string | number>;
-export type Verdict = { status: string; args: Args; notes: string[] };
-function reject(note: string): Verdict {
-  return { status: "rejected", args: {}, notes: [note] };
+  // Step 3: the tool runs only when the call passed.
+  if (verdict.status === "rejected") log.push("Step 3: the tool did not run.");
+  else log.push(`Step 3: the tool ran and found: ${result}`);
+  return { raw, verdict, result, log };
 }
 
-// Fix a field if the fix is obvious and safe. Otherwise return the value unchanged.
-function tidy(field: Field, value: unknown, notes: string[]): unknown {
-  const isNumberText = typeof value === "string" && value.trim() !== "" && !isNaN(Number(value));
-  if (field.kind === "number" && isNumberText) {
-    notes.push(`${field.name}: text "${value}" became the number ${Number(value)}`);
-    return Number(value);
-  }
-  if (field.allowed && typeof value === "string") {
-    for (const choice of field.allowed) {
-      if (choice.toLowerCase() === value.toLowerCase() && choice !== value) {
-        notes.push(`${field.name}: "${value}" became "${choice}"`);
-        return choice;
-      }
-    }
-  }
-  return value;
+// Ask the model for the call. A model may add words around it, so keep only the braces and what is inside.
+export function writeCall(question: string, callLlm: CallLlm): string {
+  const rule = "Reply with one JSON object only. Fields: drug, country (US or DE), limit (1 to 5).";
+  const prompt = `CALL: ${rule}\nQuestion: ${question}`;
+  const reply = callLlm([{ role: "user", content: prompt }], []);
+  const text = reply.text || "";
+  const start = text.indexOf("{");
+  const end = text.lastIndexOf("}");
+  if (start < 0 || end < start) return text;
+  return text.slice(start, end + 1);
 }
 
-function isInSchema(name: string, schema: Field[]): boolean {
-  for (const field of schema) {
-    if (field.name === name) return true;
-  }
-  return false;
+// Check first. The tool runs only when the call passed.
+export type RunTool = { (args: Args): string };
+
+export function callWithSchema(raw: string, schema: Field[], run: RunTool) {
+  const verdict = checkToolCall(raw, schema);
+  if (verdict.status === "rejected") return { verdict, result: "" };
+  return { verdict, result: run(verdict.args) };
 }
 
-// THE CHECK. Parse the text, then test every field against the schema.
+// The tool itself.
+export function searchTool(args: Args): string {
+  return searchApprovedDocs(String(args.drug), String(args.country));
+}
+
+// The check. Parse the text, then test every field against the schema.
 export function checkToolCall(raw: string, schema: Field[]): Verdict {
   let parsed: Record<string, unknown> = {};
   try {
@@ -98,81 +102,8 @@ export function checkToolCall(raw: string, schema: Field[]): Verdict {
   return { status: "ok", args, notes };
 }
 
-export type RunTool = { (args: Args): string };
-
-// Check first. The tool runs only when the call passed.
-export function callWithSchema(raw: string, schema: Field[], run: RunTool) {
-  const verdict = checkToolCall(raw, schema);
-  if (verdict.status === "rejected") return { verdict, result: "" };
-  return { verdict, result: run(verdict.args) };
+// Run the lab from the command line. The examples and the screen output are in the show file.
+if (import.meta.main) {
+  const { lab } = await import("../show/05-tool-schemas");
+  runLab(lab);
 }
-
-// The tool itself, and the NAIVE way: trust the text and run it.
-export function searchTool(args: Args): string {
-  return searchApprovedDocs(String(args.drug), String(args.country));
-}
-
-export function naiveCall(raw: string): string {
-  const parsed = JSON.parse(raw);
-  return searchApprovedDocs(parsed.drug, parsed.country);
-}
-
-// PART 2: HOW IT IS SHOWN (you can skip this)
-
-const GOOD = '{"drug": "Cardioza", "country": "US", "limit": 2}';
-
-export const lab: Lab = {
-  file: "05-tool-schemas.ts",
-  title: "Lab 5: tool schemas and structured output",
-  about:
-    "The question box takes the text a model wrote as its tool call. A schema checks it first. A good call runs. An easy fix is made and noted. A bad call is rejected, and the tool never runs.",
-  terms: "schema = the shape of a good call. JSON = text that holds fields. reject = refuse to run.",
-  challenge: "A model writes tool calls as text. A small mistake can fail with no error at all.",
-  promise: "A call that fails the schema never reaches the tool.",
-  production: "Every tool gets a schema. Real systems use a schema library and the model API's own tool format.",
-  cases: [
-    { title: "NAIVE: trust the text", why: "The country is written in lower case. With no check, the search finds nothing and nobody is told why. It looks like there is no approved document.", question: '{"drug": "Cardioza", "country": "us"}', flags: { naive: "true" }, expect: "silent-miss" },
-    { title: "A good call", why: "Every field is right. The tool runs.", question: GOOD, expect: "ok" },
-    { title: "Easy fix: lower case country", why: "The fix is safe, so we make it and write a note. The same call now finds the document.", question: '{"drug": "Cardioza", "country": "us"}', expect: "repaired" },
-    { title: "Easy fix: a number written as text", why: "The limit is the text 3. We turn it into the number 3 and note it.", question: '{"drug": "Cardioza", "country": "DE", "limit": "3"}', expect: "repaired" },
-    { title: "Extra field the schema does not know", why: "A field called delete_all is dropped and noted. The tool never sees it.", question: '{"drug": "Cardioza", "country": "US", "delete_all": true}', expect: "repaired" },
-    { title: "Missing field", why: "No drug, so there is nothing to search. We reject. We do not guess.", question: '{"country": "US"}', expect: "rejected" },
-    { title: "A country we do not serve", why: "FR is not in the allowed list. A wrong country could show the wrong label, so we reject.", question: '{"drug": "Cardioza", "country": "FR"}', expect: "rejected" },
-    { title: "Number out of range", why: "A limit of 99 is above the top of the range, which is 5.", question: '{"drug": "Cardioza", "country": "US", "limit": 99}', expect: "rejected" },
-    { title: "Not JSON at all", why: "The model wrote a sentence. There is no call to run.", question: "Please search for Cardioza in the US", expect: "rejected" },
-  ],
-  play(raw, flags) {
-    print(field("Model wrote", dim(raw)));
-    if (flags.naive) return playNaive(raw);
-    const { verdict, result } = callWithSchema(raw, searchSchema, searchTool);
-    rule("SCHEMA CHECK");
-    const badge = { ok: badgeGreen("OK"), repaired: badgeYellow("REPAIRED"), rejected: badgeRed("REJECTED") };
-    console.log(badge[verdict.status as "ok"]);
-    for (const note of verdict.notes) print(field("note", note, verdict.status === "rejected" ? red : yellow));
-    if (verdict.status === "rejected") {
-      box("TOOL NOT RUN", [red("The call failed the schema. Nothing was searched.")], red);
-    } else {
-      print(field("args", JSON.stringify(verdict.args), dim));
-      print(field("result", highlight(result), result === NO_DOC ? red : green));
-    }
-    return verdict.status;
-  },
-};
-
-function playNaive(raw: string): string {
-  rule("NO CHECK");
-  try {
-    const result = naiveCall(raw);
-    print(field("result", highlight(result), result === NO_DOC ? red : green));
-    if (result === NO_DOC) {
-      box("SILENT MISS", [yellow("No error. The call looked fine, yet nothing was found."), bold("Why? Look at the country.")], yellow);
-      return "silent-miss";
-    }
-    return "ran";
-  } catch {
-    box("CRASH", [red("The text was not JSON, so the run crashed.")], red);
-    return "crashed";
-  }
-}
-
-if (import.meta.main) runLab(lab);

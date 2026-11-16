@@ -32,8 +32,8 @@ export const lab: Lab = {
     const outcome = flags.naive
       ? handleWithoutGate(question, country, callLlm)
       : handleHcpInquiry(question, country, callLlm, ask);
-    rule("WHAT HAPPENED, STEP BY STEP");
-    for (const line of outcome.path) console.log(dim(line));
+    rule("LOG, STEP BY STEP");
+    for (const line of outcome.log) console.log(dim(line));
     console.log();
     if (outcome.status === "SENT_UNCHECKED") box("SENT WITH NO CHECK", [red("An uncited reply reached the doctor.")], red);
     else if (outcome.status === "SENT") box("SENT", field("", highlight(outcome.reply), green, 0), green);
