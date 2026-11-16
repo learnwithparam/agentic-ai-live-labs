@@ -22,6 +22,7 @@ const grab = (text: string, label: string) => text.match(new RegExp(`${label}: (
 export function makeModel(behaviour: Behaviour = "ok"): CallLlm {
   return (messages, toolNames) => {
     const first = messages.find((message) => message.role === "user")!.content;
+    if (first.startsWith("CHAT:")) return { text: chatFor(first) };
     if (first.startsWith("ANSWER:")) return { text: answerFrom(first) };
     if (first.startsWith("DRUG:")) return { text: drugFor(first) };
     if (first.startsWith("WRITE:")) return { text: writeFor(first) };
@@ -130,4 +131,13 @@ function answerFrom(prompt: string): string {
   const lines = prompt.split("\n").filter((line) => line.startsWith("[DOC-"));
   if (lines.length === 0) return "I found no approved source for this question.";
   return lines.join(" ");
+}
+
+// A model asked a question about a chat. It can use only the turns it was shown.
+function chatFor(prompt: string): string {
+  const parts: string[] = [];
+  if (prompt.includes("Germany")) parts.push("You work in Germany, so use the German label.");
+  if (prompt.includes("penicillin")) parts.push("Remember the penicillin allergy.");
+  if (parts.length === 0) return "I do not know your country, so I cannot pick a label.";
+  return parts.join(" ");
 }
