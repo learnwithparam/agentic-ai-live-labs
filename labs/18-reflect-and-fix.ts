@@ -1,9 +1,10 @@
 // LAB 18: CHECK THE DRAFT, THEN FIX IT
 //
-// The story: Dr. Lee asks for the Cardioza dose. The model writes a draft. What if the draft is wrong?
-// Read PART 1 from top to bottom. It is one function, answerWithCheck, in seven numbered steps.
-// The run prints the same seven steps, so you can follow the code and the output together.
-// The PART 2 section only prints the result in colour. You can skip it.
+// Dr. Lee asks for the Cardioza dose. The model writes a draft. The draft might be wrong.
+// So we check the draft before we show it. If it is wrong, the model gets two tries to fix it.
+// Read the function answerWithCheck in PART 1. Its steps are numbered 1 to 7.
+// When you run the lab, the output uses the same step numbers.
+// PART 2 only shows the result on screen. You can skip it.
 //
 // Run it (copy any line):
 //   bun labs/18-reflect-and-fix.ts --question "What is the dose of Cardioza?" --model invent --naive
@@ -24,7 +25,7 @@ export const MOST_ROUNDS = 2;
 export type FixDraft = { (draft: string, problems: string[], source: string): string }; // the model
 export type Result = { outcome: string; draft: string; problems: string[]; path: string[] };
 
-// THE WHOLE IDEA, from top to bottom.
+// Answer a question, but check the draft first. Read the steps in order.
 export function answerWithCheck(
   question: string,
   country: string,
@@ -71,7 +72,7 @@ export function answerWithCheck(
   return { outcome: "gave-up", draft, problems, path };
 }
 
-// THE NAIVE WAY: ask the same model if its draft is fine. It has no new facts, so it says yes.
+// The naive way: ask the same model if its draft is fine. It has no new facts, so it says yes.
 export function answerWithoutCheck(question: string, country: string, callLlm: CallLlm): Result {
   const draft = runAgentLoop(question, country, callLlm).answer;
   const path = [`The model wrote a draft. ${draft}`];
@@ -80,7 +81,7 @@ export function answerWithoutCheck(question: string, country: string, callLlm: C
   return { outcome: "self-approved", draft, problems: [], path };
 }
 
-// THE CHECK. Small helpers that Step 4 uses. Skim them.
+// The next two functions do the check in Step 4.
 
 // List what is wrong with a draft. An empty list means the draft is good.
 export function findProblems(draft: string, source: string): string[] {

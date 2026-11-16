@@ -10,9 +10,10 @@ export type ToolCall = { name: string; args: ToolInput };
 export type Reply = { toolCall?: ToolCall; text?: string };
 export type CallLlm = (messages: Message[], toolNames: string[]) => Reply;
 
-// ok      = follows the rules
-// nocite  = gives a right answer but forgets to cite (the output guardrail catches this)
-// invent  = cites a real id but states a wrong dose (only an auditor catches this)
+// How the pretend model behaves.
+// ok: it follows the rules.
+// nocite: the answer is right, but it forgets the citation. A guardrail catches this.
+// invent: it cites a real document but states a wrong dose. Only a check against the document catches this.
 export type Behaviour = "ok" | "nocite" | "invent";
 
 const grab = (text: string, label: string) => text.match(new RegExp(`${label}: ([^.\\n]+)`))?.[1]?.trim() ?? "";

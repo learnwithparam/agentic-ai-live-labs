@@ -1,7 +1,7 @@
 // LAB 16: GIVING THE MODEL A USEFUL ERROR
 //
 // Read PART 1. Tools fail. If the error says what was wrong and what is valid, the model can fix it.
-// If the error is just "ERROR", the model repeats the same mistake. And some mistakes only a person can fix.
+// If the error only says "ERROR", the model repeats the same mistake. And some mistakes only a person can fix.
 // The PART 2 section only prints the result in colour. You can skip it.
 //
 // Run it (copy any line):
@@ -95,13 +95,13 @@ export const lab: Lab = {
   file: "16-error-feedback.ts",
   title: "Lab 16: a useful error",
   about:
-    "Each example is a question like Cardioza in Germany. The pretend model first writes the call just as typed. Then it fixes the call from the error, up to 3 tries.",
+    "Each example is a question like Cardioza in Germany. The pretend model first writes the call exactly as typed. Then it fixes the call from the error, up to 3 tries.",
   terms: "retry = try the call again. hint = what the error says is valid. ask a person = stop, because only they know what was meant.",
   challenge: "A bare ERROR gives the model nothing to fix. It repeats itself until the loop runs out.",
   promise: "An error says what is valid, retries are capped, and a call that cannot be fixed goes to a person.",
   production: "Write every tool error for a reader that cannot ask questions, and count how often each error appears.",
   cases: [
-    { title: "NAIVE: an error that says nothing", why: "The country is Germany, which the tool does not accept. The error is just ERROR, so the model sends the same call three times and gives up.", question: "Cardioza in Germany", flags: { naive: "true" }, expect: "gave-up" },
+    { title: "NAIVE: an error that says nothing", why: "The country is Germany, which the tool does not accept. The error only says ERROR, so the model sends the same call three times and gives up.", question: "Cardioza in Germany", flags: { naive: "true" }, expect: "gave-up" },
     { title: "A call that works", why: "Nothing to fix. One try.", question: "Cardioza in US", expect: "answered" },
     { title: "A country spelled out", why: "The error says to use US or DE. The model maps Germany to DE and tries again.", question: "Cardioza in Germany", expect: "fixed" },
     { title: "A drug with a typo", why: "The error lists the known drugs. The model picks the one that looks like its typo.", question: "Cardiozza in US", expect: "fixed" },

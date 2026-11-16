@@ -1,6 +1,6 @@
 // LAB 1: THE AGENT LOOP
 //
-// Read PART 1. It is short, and it is the whole idea.
+// Read PART 1. It is short. The model asks for a tool, the code runs it, and this repeats.
 // The PART 2 section only prints the result in colour. You can skip it.
 //
 // Run it (copy any line):
@@ -54,7 +54,7 @@ function findTool(tools: Tool[], name: string): Tool | undefined {
   return undefined;
 }
 
-// THE AGENT LOOP
+// The loop: ask the model, run the tool it picks, and stop when it gives an answer.
 //   1. Ask the model what to do next.
 //   2. If it wants a tool, run the tool and show the model the result. Then go back to 1.
 //   3. If it gives an answer, we are done.

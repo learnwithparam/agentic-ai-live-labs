@@ -77,7 +77,7 @@ export function multiAgentPipeline(question: string, country: string, callLlm: C
   const draft = runAgentLoop(question, country, callLlm).answer;
   trace.push({ who: "researcher", text: draft });
 
-  // Agent 2, the auditor, checks that each cited sentence matches its document word for word.
+  // Agent 2 is the auditor. It checks that each sentence matches its document.
   const auditReply = callLlm([{ role: "user", content: `AUDIT: ${draft}` }], []);
   const verdictText = auditReply.text || "FAIL";
   trace.push({ who: "auditor", text: verdictText });

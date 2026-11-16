@@ -1,6 +1,6 @@
 # Lab 16: a useful error
 
-Each example is a question like Cardioza in Germany. The pretend model first writes the call just as typed. Then it fixes the call from the error, up to 3 tries.
+Each example is a question like Cardioza in Germany. The pretend model first writes the call exactly as typed. Then it fixes the call from the error, up to 3 tries.
 
 ## The problem
 
@@ -34,7 +34,7 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
-| 1 | NAIVE: an error that says nothing | The country is Germany, which the tool does not accept. The error is just ERROR, so the model sends the same call three times and gives up. | gave-up | `bun labs/16-error-feedback.ts --question "Cardioza in Germany" --naive` |
+| 1 | NAIVE: an error that says nothing | The country is Germany, which the tool does not accept. The error only says ERROR, so the model sends the same call three times and gives up. | gave-up | `bun labs/16-error-feedback.ts --question "Cardioza in Germany" --naive` |
 | 2 | A call that works | Nothing to fix. One try. | answered | `bun labs/16-error-feedback.ts --question "Cardioza in US"` |
 | 3 | A country spelled out | The error says to use US or DE. The model maps Germany to DE and tries again. | fixed | `bun labs/16-error-feedback.ts --question "Cardioza in Germany"` |
 | 4 | A drug with a typo | The error lists the known drugs. The model picks the one that looks like its typo. | fixed | `bun labs/16-error-feedback.ts --question "Cardiozza in US"` |

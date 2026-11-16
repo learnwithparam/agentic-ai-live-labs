@@ -55,7 +55,7 @@ export function box(title: string, lines: string[], color: (s: string) => string
 export const rule = (label = "") =>
   console.log(dim(`\n${label ? `── ${label} ` : ""}${"─".repeat(Math.max(0, WIDTH - (label ? label.length + 4 : 0)))}`));
 
-// Colour approved citation ids and redaction tokens inside a sentence.
+// Colour each citation in a sentence.
 export function highlight(text: string): string {
   return text
     .replace(/\[DOC-\d+\]/g, (match) => bold(cyan(match)))
