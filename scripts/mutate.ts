@@ -50,6 +50,12 @@ export const BREAKS: Break[] = [
     find: "if (!ALLOWED_TOOLS.includes(step.tool))", replace: "if (false)" },
   { lab: 17, file: "17-plan-then-act.ts", rule: "a failed step does not stop the rest",
     find: "if (reply === NO_DOC) return", replace: "if (false) return" },
+  { lab: 18, file: "18-reflect-and-fix.ts", rule: "a wrong dose passes the check",
+    find: "if (!allowed.includes(dose))", replace: "if (false)" },
+  { lab: 18, file: "18-reflect-and-fix.ts", rule: "a draft without a citation passes",
+    find: 'if (!draft.includes("[DOC-"))', replace: "if (false)" },
+  { lab: 18, file: "18-reflect-and-fix.ts", rule: "fix rounds have no limit",
+    find: "return { outcome: \"gave-up\", rounds: MOST_ROUNDS", replace: "return { outcome: \"fixed\", rounds: MOST_ROUNDS" },
 ];
 
 function testPasses(lab: number): boolean {
