@@ -1,8 +1,10 @@
-// Lab 7: Mcp basics
+// Lab 7: MCP basics
 //
-// MCP lets an agent ask a SERVER what tools it has, then call them.
-// The server is a separate program (src/mcp-server.ts). You read only the CLIENT here.
-// The PART 2 section only prints the result in colour.
+// Dr. Lee asks about Cardioza. Our agent has no tools of its own. It asks a server what tools it has.
+// Then it uses them. MCP is the standard way to do that: messages of JSON in, messages of JSON out.
+// The server is a separate program (src/mcp-server.ts). You read only the client here.
+// The run prints each step as it happens, with the same number as the step in the code.
+// The examples and the screen output are in show/07-mcp-basics.ts. You do not need them to learn.
 //
 // Run it (copy any line):
 //   bun labs/07-mcp-basics.ts --question "Cardioza dose" --naive
@@ -11,14 +13,34 @@
 //   bun labs/07-mcp-basics.ts --question "Cardioza dose" --hcp H-2 --country DE
 //   bun labs/07-mcp-basics.ts --demo
 
-import { CRM } from "../src/data";
-import { modelFrom, runLab, type Lab } from "../src/runner";
-import { badgeBlue, bold, box, cyan, dim, field, green, highlight, print, red, rule, yellow } from "../src/ui";
-import { runAgentLoop, searchOnly, type Tool } from "./01-agent-loop"; // the loop from lab 1
-
-// PART 1: THE CORE LOGIC
+import type { CallLlm } from "../src/model";
+import { runLab } from "../src/runner";
+import { runAgentLoop, type Tool } from "./01-agent-loop"; // the loop from lab 1
 
 export const SERVER = "src/mcp-server.ts";
+
+export type Asked = { answer: string; tools: string[]; log: string[] };
+
+// Answer a question with tools that come from a server. Read the steps in order.
+export function askWithMcp(
+  question: string,
+  country: string,
+  hcp: string,
+  callLlm: CallLlm,
+  script = SERVER,
+): Asked {
+  // Step 1: ask the server what tools it has. Nothing is written into the agent.
+  const tools = mcpTools(script);
+  const names: string[] = [];
+  for (const tool of tools) names.push(tool.name);
+  const log = [`Step 1: the server has these tools: ${names.join(", ") || "none"}.`];
+  if (tools.length === 0) return { answer: "", tools: names, log };
+
+  // Step 2: run the loop from lab 1 with those tools. The model picks which to call.
+  const result = runAgentLoop(question, country, callLlm, tools, 5, hcp);
+  for (const line of result.log) log.push(line);
+  return { answer: result.answer, tools: names, log };
+}
 
 // Every MCP message is JSON with an id, a method and some params.
 export function rpc(id: number | undefined, method: string, params: object = {}) {
@@ -83,82 +105,8 @@ export function mcpTools(script = SERVER): Tool[] {
   return tools;
 }
 
-// PART 2: HOW IT IS SHOWN (you can skip this)
-
-export const lab: Lab = {
-  file: "07-mcp-basics.ts",
-  title: "Lab 7: MCP basics",
-  about:
-    "The agent from lab 1 gets its tools from a real MCP server, started as a separate program. Nothing is hard-coded. Use --hcp H-1, H-2 or H-3 to pick the doctor.",
-  terms: "MCP = a standard way for an agent to find and call tools. server = the program that owns the tools. JSON-RPC = the message format.",
-  challenge: "Every new tool means new glue code in every agent. Tool lists go out of date.",
-  promise: "The agent learns its tools from the server, so a new server tool needs no agent change.",
-  production: "Use the official MCP SDK, keep the server running, and add sign-in and a time limit to every call.",
-  cases: [
-    { title: "NAIVE: a hard-coded tool list", why: "The agent copied one tool into its own code. The server has more. The agent cannot use them, and nobody gets an error.", question: "Cardioza dose", flags: { naive: "true" }, expect: "out-of-date" },
-    { title: "See the messages", why: "This is all MCP is: lines of JSON in, lines of JSON out. Read the method names and the tool list.", question: "(not used)", flags: { show: "wire" }, expect: "listed" },
-    { title: "The agent uses the server's tools", why: "The agent finds three tools, then calls them one by one. The answer cites its document.", question: "Cardioza dose", flags: { hcp: "H-1" }, expect: "answered" },
-    { title: "Another country", why: "Same server, a German doctor. The search tool filters by country, so the dose is 5mg.", question: "Cardioza dose", flags: { hcp: "H-2", country: "DE" }, expect: "answered" },
-    { title: "No approved document", why: "The server says nothing was found. The agent refuses to guess.", question: "Zorbex dose", expect: "no-source" },
-    { title: "A tool reports an error", why: "Doctor H-9 does not exist. The server marks the result as an error, and the client passes it on as text.", question: "Cardioza dose", flags: { hcp: "H-9" }, expect: "tool-error" },
-    { title: "A tool the server does not have", why: "The agent asks for delete_everything. The server answers with a protocol error. The call goes nowhere.", question: "anything", flags: { tool: "delete_everything" }, expect: "tool-error" },
-    { title: "The server is not there", why: "The path is wrong, so nothing answers. The client finds no tools and says so, instead of hanging.", question: "Cardioza dose", flags: { script: "src/missing-server.ts" }, expect: "no-server" },
-  ],
-  play(question, flags) {
-    const script = flags.script || SERVER;
-    const hcpId = flags.hcp || "H-1";
-    const country = flags.country || (CRM[hcpId] ? CRM[hcpId].country : "US");
-    if (flags.naive) return showNaive(script);
-    if (flags.show === "wire") return showWire(script);
-    if (flags.tool) {
-      const result = callMcpTool(flags.tool, { query: question, country, hcpId }, script);
-      print(field("call", flags.tool, cyan));
-      print(field("result", result, result.startsWith("ERROR") ? red : green));
-      return result.startsWith("ERROR") ? "tool-error" : "ran";
-    }
-    const tools = mcpTools(script);
-    print(field("Server", script));
-    if (tools.length === 0) {
-      box("NO SERVER", [red("No tools were found. Is the server there?")], red);
-      return "no-server";
-    }
-    print(field("Tools", tools.map((tool) => tool.name).join(", "), cyan));
-    const result = runAgentLoop(question, country, modelFrom(flags), tools, 5, hcpId);
-    let failed = false;
-    for (const [index, step] of result.steps.entries()) {
-      if (step.kind === "answer") continue;
-      if (step.result.startsWith("ERROR")) failed = true;
-      console.log(`${badgeBlue(`STEP ${index + 1}`)} ${bold(step.tool)}`);
-      print(field("  result", highlight(step.result), step.result.startsWith("ERROR") ? red : dim));
-    }
-    console.log();
-    if (failed) {
-      box("A TOOL FAILED", [yellow(result.answer)], yellow);
-      return "tool-error";
-    }
-    const cited = result.answer.includes("[DOC-");
-    box(cited ? "ANSWER" : "NO APPROVED SOURCE", field("", highlight(result.answer), cited ? green : yellow, 0), cited ? green : yellow);
-    return cited ? "answered" : "no-source";
-  },
-};
-
-function showNaive(script: string): string {
-  const fixed = searchOnly.map((tool) => tool.name);
-  const real = discoverTools(script);
-  print(field("hard-coded", fixed.join(", "), yellow));
-  print(field("on server", real.join(", "), cyan));
-  const missing = real.filter((name) => !fixed.includes(name));
-  box("OUT OF DATE", [yellow(`The agent cannot use: ${missing.join(", ")}`)], yellow);
-  return missing.length > 0 ? "out-of-date" : "same";
+// Run the lab from the command line. The examples and the screen output are in the show file.
+if (import.meta.main) {
+  const { lab } = await import("../show/07-mcp-basics");
+  runLab(lab);
 }
-
-function showWire(script: string): string {
-  const requests = HELLO.concat([rpc(2, "tools/list")]);
-  rule("WE SEND");
-  for (const request of requests) console.log(dim(JSON.stringify(request).slice(0, 90)));
-  rule("THE SERVER ANSWERS");
-  for (const line of talk(requests, script)) console.log(highlight(line.slice(0, 90)) + dim(" ..."));
-  return "listed";
-}
-
-if (import.meta.main) runLab(lab);
