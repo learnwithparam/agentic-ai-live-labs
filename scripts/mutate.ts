@@ -26,6 +26,16 @@ export const BREAKS: Break[] = [
     find: "if (used + cost > budget) continue;", replace: "if (false) continue;" },
   { lab: 11, file: "11-history-trimming.ts", rule: "a pinned fact is cut with the old chatter",
     find: "if (turn.fact || index >= firstRecent)", replace: "if (index >= firstRecent)" },
+  { lab: 12, file: "12-retrieval.ts", rule: "a chunk from another country is searched",
+    find: "if (chunk.country !== country) continue;", replace: "if (false) continue;" },
+  { lab: 12, file: "12-retrieval.ts", rule: "a weak match is sent",
+    find: "if (score >= MINIMUM_SCORE) hits.push", replace: "if (score >= 1) hits.push" },
+  { lab: 13, file: "13-pick-context.ts", rule: "every source is loaded for every question",
+    find: "if (text.includes(keyword)) return true;", replace: "return true;" },
+  { lab: 14, file: "14-instructions-vs-data.ts", rule: "an order line reaches the prompt",
+    find: "if (hasOrder(line)) {", replace: "if (false) {" },
+  { lab: 14, file: "14-instructions-vs-data.ts", rule: "data can close its own fence",
+    find: 'line.replaceAll("</data>", "[/data]")', replace: "line" },
 ];
 
 function testPasses(lab: number): boolean {
