@@ -36,6 +36,10 @@ export const BREAKS: Break[] = [
     find: "if (hasOrder(line)) {", replace: "if (false) {" },
   { lab: 14, file: "14-instructions-vs-data.ts", rule: "data can close its own fence",
     find: 'line.replaceAll("</data>", "[/data]")', replace: "line" },
+  { lab: 15, file: "15-stop-conditions.ts", rule: "a stuck model may repeat forever",
+    find: "if (timesSeen(log, key) >= limits.maxRepeats)", replace: "if (false)" },
+  { lab: 15, file: "15-stop-conditions.ts", rule: "a run may spend past its budget",
+    find: "if (spent + action.cost > limits.budget)", replace: "if (false)" },
 ];
 
 function testPasses(lab: number): boolean {
