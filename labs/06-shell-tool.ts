@@ -123,3 +123,9 @@ function playNaive(command: string): string {
 }
 
 if (import.meta.main) runLab(lab);
+// Run it (copy any line):
+//   bun run lab 6 --question "ls .." --naive
+//   bun run lab 6 --question "ls"
+//   bun run lab 6 --question "cat doses.txt"
+//   bun run lab 6 --question "rm notes.txt"
+//   bun run lab 6 --demo

@@ -103,3 +103,9 @@ function showNaive(everything: number): string {
 }
 
 if (import.meta.main) runLab(lab);
+// Run it (copy any line):
+//   bun run lab 13 --question "What is the Cardioza dose?" --naive
+//   bun run lab 13 --question "What is the Cardioza dose?"
+//   bun run lab 13 --question "Which email was sent to me last?"
+//   bun run lab 13 --question "Given my profile, what is the label?"
+//   bun run lab 13 --demo

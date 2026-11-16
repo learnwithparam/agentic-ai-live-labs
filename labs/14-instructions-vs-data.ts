@@ -118,3 +118,9 @@ function showNaive(scene: Scene): string {
 }
 
 if (import.meta.main) runLab(lab);
+// Run it (copy any line):
+//   bun run lab 14 --question "injected" --naive
+//   bun run lab 14 --question "clean"
+//   bun run lab 14 --question "injected"
+//   bun run lab 14 --question "breakout"
+//   bun run lab 14 --demo

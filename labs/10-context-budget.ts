@@ -143,3 +143,9 @@ function showNaive(parts: Part[], budget: number): string {
 }
 
 if (import.meta.main) runLab(lab);
+// Run it (copy any line):
+//   bun run lab 10 --question "Cardioza dose" --naive --window 60
+//   bun run lab 10 --question "Cardioza dose" --window 200
+//   bun run lab 10 --question "Cardioza dose" --window 70
+//   bun run lab 10 --question "Cardioza dose" --window 40
+//   bun run lab 10 --demo

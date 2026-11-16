@@ -176,3 +176,9 @@ function playNaive(raw: string): string {
 }
 
 if (import.meta.main) runLab(lab);
+// Run it (copy any line):
+//   bun run lab 5 --question "{"drug": "Cardioza", "country": "us"}" --naive
+//   bun run lab 5 --question "{"drug": "Cardioza", "country": "US", "limit": 2}"
+//   bun run lab 5 --question "{"drug": "Cardioza", "country": "us"}"
+//   bun run lab 5 --demo
+//   bun run lab 5 --demo

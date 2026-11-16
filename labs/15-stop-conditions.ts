@@ -124,3 +124,9 @@ export const lab: Lab = {
 };
 
 if (import.meta.main) runLab(lab);
+// Run it (copy any line):
+//   bun run lab 15 --question "stuck" --naive
+//   bun run lab 15 --question "answers"
+//   bun run lab 15 --question "stuck"
+//   bun run lab 15 --question "wanders"
+//   bun run lab 15 --demo

@@ -127,3 +127,9 @@ export const lab: Lab = {
 };
 
 if (import.meta.main) runLab(lab);
+// Run it (copy any line):
+//   bun run lab 16 --question "Cardioza in Germany" --naive
+//   bun run lab 16 --question "Cardioza in US"
+//   bun run lab 16 --question "Cardioza in Germany"
+//   bun run lab 16 --question "Cardiozza in US"
+//   bun run lab 16 --demo

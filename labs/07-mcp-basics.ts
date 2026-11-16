@@ -162,3 +162,9 @@ function showWire(script: string): string {
 }
 
 if (import.meta.main) runLab(lab);
+// Run it (copy any line):
+//   bun run lab 7 --question "Cardioza dose" --naive
+//   bun run lab 7 --question "(not used)" --show wire
+//   bun run lab 7 --question "Cardioza dose" --hcp H-1
+//   bun run lab 7 --question "Cardioza dose" --hcp H-2 --country DE
+//   bun run lab 7 --demo

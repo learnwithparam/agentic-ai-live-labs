@@ -142,3 +142,9 @@ function showNaive(question: string, country: string): string {
 }
 
 if (import.meta.main) runLab(lab);
+// Run it (copy any line):
+//   bun run lab 12 --question "Cardioza dose" --naive --country DE
+//   bun run lab 12 --question "Cardioza dose" --country US
+//   bun run lab 12 --question "Cardioza dose" --country DE
+//   bun run lab 12 --question "Cardioza side effects" --country US
+//   bun run lab 12 --demo

@@ -149,3 +149,9 @@ function showNaive(manifest: Manifest): string {
 }
 
 if (import.meta.main) runLab(lab);
+// Run it (copy any line):
+//   bun run lab 8 --question "unknown-server" --naive
+//   bun run lab 8 --question "approved"
+//   bun run lab 8 --question "unknown-server"
+//   bun run lab 8 --question "rug-pull"
+//   bun run lab 8 --demo

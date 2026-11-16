@@ -139,3 +139,9 @@ function showNaive(scene: Scene, keep: number): string {
 }
 
 if (import.meta.main) runLab(lab);
+// Run it (copy any line):
+//   bun run lab 11 --question "long" --naive --keep 4
+//   bun run lab 11 --question "short" --keep 4
+//   bun run lab 11 --question "long" --keep 4
+//   bun run lab 11 --question "two-facts" --keep 3
+//   bun run lab 11 --demo

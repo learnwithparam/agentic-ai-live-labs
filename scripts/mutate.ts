@@ -44,6 +44,12 @@ export const BREAKS: Break[] = [
     find: "Use US or DE.", replace: "That is wrong." },
   { lab: 16, file: "16-error-feedback.ts", rule: "an unfixable call is not sent to a person",
     find: "if (next === undefined) return", replace: "if (false) return" },
+  { lab: 17, file: "17-plan-then-act.ts", rule: "a risky step runs without a person",
+    find: "if (checked.risky.length > 0 && !approved)", replace: "if (false)" },
+  { lab: 17, file: "17-plan-then-act.ts", rule: "a tool we never gave is allowed",
+    find: "if (!ALLOWED_TOOLS.includes(step.tool))", replace: "if (false)" },
+  { lab: 17, file: "17-plan-then-act.ts", rule: "a failed step does not stop the rest",
+    find: "if (reply === NO_DOC) return", replace: "if (false) return" },
 ];
 
 function testPasses(lab: number): boolean {

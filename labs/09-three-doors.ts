@@ -139,3 +139,9 @@ function showAll(drug: string, country: string, server: string): string {
 }
 
 if (import.meta.main) runLab(lab);
+// Run it (copy any line):
+//   bun run lab 9 --question "Cardioza" --naive --door cli
+//   bun run lab 9 --question "Cardioza" --door function
+//   bun run lab 9 --question "Cardioza" --door mcp
+//   bun run lab 9 --question "Cardioza" --door all
+//   bun run lab 9 --demo
