@@ -11,18 +11,19 @@ bun install
 bun test
 ```
 
-Expect: `20 pass`
+Expect: `22 pass`
 
 ## How to read this repo
 
-Each lab is one file. Open it and read PART 1, the top 40 to 60 lines. That is the whole idea, in plain code with comments. PART 2 below it only prints the result in colour, so skip it. Labs build on each other: lab 3 imports the loop from lab 1 and the guardrails from lab 2, with a comment on each import.
+Each lab is one file. Open it and read PART 1. That is the whole idea, in plain code with comments. PART 2 below it only prints the result in colour, so skip it. Labs build on each other: lab 3 imports the loop from lab 1 and the guardrails from lab 2, with a comment on each import.
 
 ## Three ways to run any lab
 
 ```bash
-bun labs/01-agent-loop.ts          # menu: pick an example by number, or type your own question
-bun labs/01-agent-loop.ts --demo   # every edge case in order, with a "Why" for each
-bun labs/01-agent-loop.ts --question "Is Zorbex safe for children?"   # one question
+bun run lab             # list the labs
+bun run lab 1          # menu: pick an example by number, or type your own question
+bun run lab 1 --demo   # every edge case in order, with a "Why" for each
+bun run lab 1 --question "Is Zorbex safe for children?"   # one question
 ```
 
 `--demo` is the fastest way to learn. Every case shows why it behaves as it does and the exact command to repeat it, then marks it EXPECTED or SURPRISE. Colour turns off when output is piped or `NO_COLOR` is set. `FORCE_COLOR=1` turns it on.
@@ -49,6 +50,16 @@ To use a real provider, replace `makeModel` with a function that takes messages 
 Lab 3 and lab 4 take `--approve y` or `--approve n` to answer a gate without typing. Lab 4 takes `--shape workflow|agent|multi` and `--hcp H-1|H-2|H-3` (US cardiology, DE cardiology, US neurology).
 
 Other files: `src/data.ts` holds the invented documents, doctors and emails. `src/ui.ts` and `src/runner.ts` draw the colour and run the menu and demo.
+
+## Add a lab
+
+Every lab follows the same shape, so you can add as many as you like.
+
+1. Copy `scripts/lab-template.ts` to `labs/05-your-name.ts`.
+2. Write the idea in PART 1 as plain functions. Write the examples in `cases`. Add edge cases.
+3. Run `bun run lab 5 --demo`, then `bun run check`.
+
+`bun run check` runs three things. The tests find every file in `labs/` by themselves and run all its cases. The readable gate (`scripts/readable.ts`) fails a lab whose PART 1 uses regex, arrow functions, `.map`, spread, `?.`, `??` or ternaries, uses a short or abbreviated name, has a line over 100 characters, or has a sentence over 25 words. The type check runs last.
 
 ## What this does not do
 

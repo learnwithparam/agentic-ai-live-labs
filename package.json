@@ -3,11 +3,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "lab1": "bun labs/01-agent-loop.ts",
-    "lab2": "bun labs/02-guardrails.ts",
-    "lab3": "bun labs/03-gates.ts",
-    "lab4": "bun labs/04-shapes.ts",
-    "test": "bun test"
+    "lab": "bun scripts/lab.ts",
+    "test": "bun test",
+    "readable": "bun scripts/readable.ts",
+    "check": "bun test && bun scripts/readable.ts && bunx tsc -p ."
   },
   "devDependencies": {
     "@types/bun": "latest"

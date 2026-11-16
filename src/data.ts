@@ -26,4 +26,4 @@ export const EMAILS: Record<string, string[]> = {
   "H-3": ["Neurovex study summary, 1 day ago"],
 };
 
-export const KNOWN_DRUGS = [...new Set(Object.values(APPROVED_DOCS).map((d) => d.drug))];
+export const KNOWN_DRUGS = [...new Set(Object.values(APPROVED_DOCS).map((doc) => doc.drug))];

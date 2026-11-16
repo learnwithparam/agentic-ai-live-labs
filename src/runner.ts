@@ -3,7 +3,8 @@
 //   --demo            walk through every edge case, with a plain explanation for each
 //   (nothing)         interactive menu: pick an example by number, or type your own question
 import { makeModel, type Behaviour } from "./model";
-import { badgeBlue, badgeGreen, badgeRed, bold, box, cyan, dim, field, green, red, rule, wrap, yellow } from "./ui";
+import { badgeBlue, badgeGreen, badgeRed, bold, box, cyan, dim, field, green } from "./ui";
+import { print, red, rule, wrap, yellow } from "./ui";
 
 // PLUMBING. You do not need to read this file. The lab files hold the logic.
 // A gate asks a person a question and gets text back. null means no answer.
@@ -38,20 +39,25 @@ export type Lab = {
   title: string;
   about: string;
   cases: Case[];
-  // Runs one question, prints what happened, and returns a short outcome word for the case to be checked against.
-  play: (question: string, f: Flags, ask: Ask) => string;
+  // Runs one question, prints what happened, and returns a short outcome word.
+  // The demo and the tests compare that word with the case's expect.
+  play: (question: string, flags: Flags, ask: Ask) => string;
 };
 
-export const commandFor = (lab: Lab, question: string, f: Flags = {}) =>
-  `bun labs/${lab.file} --question "${question}"${Object.entries(f).map(([k, v]) => ` --${k} ${v}`).join("")}`;
+// The command a learner can copy to repeat one case.
+export function commandFor(lab: Lab, question: string, flags: Flags = {}): string {
+  let command = `bun run lab ${Number(lab.file.slice(0, 2))} --question "${question}"`;
+  for (const name in flags) command += ` --${name} ${flags[name]}`;
+  return command;
+}
 
 // Runs every case and returns the ones whose outcome was not the expected one.
 export function checkCases(lab: Lab, base: Flags = {}) {
   const failures: { title: string; expect: string; got: string }[] = [];
-  for (const c of lab.cases) {
-    const f = { ...base, ...c.flags };
-    const got = lab.play(c.question, f, askFrom(f));
-    if (got !== c.expect) failures.push({ title: c.title, expect: c.expect, got });
+  for (const thisCase of lab.cases) {
+    const caseFlags = { ...base, ...thisCase.flags };
+    const got = lab.play(thisCase.question, caseFlags, askFrom(caseFlags));
+    if (got !== thisCase.expect) failures.push({ title: thisCase.title, expect: thisCase.expect, got });
   }
   return failures;
 }
@@ -63,57 +69,62 @@ function header(lab: Lab) {
 
 function runDemo(lab: Lab, base: Flags): boolean {
   header(lab);
-  let good = 0;
-  lab.cases.forEach((c, i) => {
-    const f = { ...base, ...c.flags };
-    rule(`Case ${i + 1} of ${lab.cases.length}`);
-    console.log(`${bold(c.title)}\n`);
-    for (const l of field("Why", c.why, yellow)) console.log(l);
-    for (const l of field("Run it", commandFor(lab, c.question, c.flags), dim)) console.log(l);
+  let matched = 0;
+  for (const [index, thisCase] of lab.cases.entries()) {
+    const caseFlags = { ...base, ...thisCase.flags };
+    rule(`Case ${index + 1} of ${lab.cases.length}`);
+    console.log(`${bold(thisCase.title)}\n`);
+    print(field("Why", thisCase.why, yellow));
+    print(field("Run it", commandFor(lab, thisCase.question, thisCase.flags), dim));
     console.log();
-    const got = lab.play(c.question, f, askFrom(f));
-    const same = got === c.expect;
-    good += same ? 1 : 0;
-    console.log(`\n${same ? badgeGreen("EXPECTED") : badgeRed("SURPRISE")} ${same ? green(`outcome: ${got}`) : red(`wanted ${c.expect}, got ${got}`)}`);
-  });
+    const got = lab.play(thisCase.question, caseFlags, askFrom(caseFlags));
+    if (got === thisCase.expect) {
+      matched++;
+      console.log(`\n${badgeGreen("EXPECTED")} ${green(`outcome: ${got}`)}`);
+    } else {
+      console.log(`\n${badgeRed("SURPRISE")} ${red(`wanted ${thisCase.expect}, got ${got}`)}`);
+    }
+  }
   rule();
-  const all = good === lab.cases.length;
-  console.log(`${all ? badgeGreen("DONE") : badgeRed("FAILED")} ${good} of ${lab.cases.length} cases behaved as expected.\n`);
-  return all;
+  const allMatched = matched === lab.cases.length;
+  const badge = allMatched ? badgeGreen("DONE") : badgeRed("FAILED");
+  console.log(`${badge} ${matched} of ${lab.cases.length} cases behaved as expected.\n`);
+  return allMatched;
 }
 
-function runMenu(lab: Lab, f: Flags) {
+function runMenu(lab: Lab, flags: Flags) {
+  const number = Number(lab.file.slice(0, 2));
   header(lab);
   console.log(bold("Examples"));
-  lab.cases.forEach((c, i) => console.log(`  ${cyan(String(i + 1).padStart(2))}  ${c.title}`));
-  console.log(dim(`\nTip: bun labs/${lab.file} --demo walks through every example and explains each one.`));
-  for (;;) {
+  for (const [index, thisCase] of lab.cases.entries()) {
+    console.log(`  ${cyan(String(index + 1).padStart(2))}  ${thisCase.title}`);
+  }
+  console.log(dim(`\nTip: bun run lab ${number} --demo walks through every example and explains each one.`));
+  while (true) {
     const input = prompt(`\n${badgeBlue("?")} Pick 1-${lab.cases.length}, or type your own question (empty to quit): `);
-    if (!input?.trim()) return;
-    const n = Number(input);
-    const picked = Number.isInteger(n) ? lab.cases[n - 1] : undefined;
-    if (Number.isInteger(n) && !picked) {
-      console.log(red(`  No example ${n}. Pick 1 to ${lab.cases.length}.`));
+    if (!input || !input.trim()) return;
+    const picked = lab.cases[Number(input) - 1];
+    if (Number.isInteger(Number(input)) && !picked) {
+      console.log(red(`  No example ${input}. Pick 1 to ${lab.cases.length}.`));
       continue;
     }
-    const run = { ...f, ...picked?.flags };
-    const question = picked ? picked.question : input;
+    const runFlags = { ...flags, ...(picked ? picked.flags : {}) };
     if (picked) {
       console.log(`\n${bold(picked.title)}`);
-      for (const l of field("Why", picked.why, yellow)) console.log(l);
+      print(field("Why", picked.why, yellow));
     }
     console.log();
-    lab.play(question, run, askFrom(run));
+    lab.play(picked ? picked.question : input, runFlags, askFrom(runFlags));
   }
 }
 
 export function runLab(lab: Lab) {
-  const f = flags();
-  if (f.demo) {
-    const ok = runDemo(lab, { ...f, demo: "" });
-    if (!ok) process.exit(1);
-  } else if (f.question) {
+  const flagsFromUser = flags();
+  if (flagsFromUser.demo) {
+    const allMatched = runDemo(lab, { ...flagsFromUser, demo: "" });
+    if (!allMatched) process.exit(1);
+  } else if (flagsFromUser.question) {
     console.log();
-    lab.play(f.question, f, askFrom(f));
-  } else runMenu(lab, f);
+    lab.play(flagsFromUser.question, flagsFromUser, askFrom(flagsFromUser));
+  } else runMenu(lab, flagsFromUser);
 }

@@ -1,45 +1,47 @@
 import { describe, expect, test } from "bun:test";
+import { readdirSync } from "node:fs";
 import { APPROVED_DOCS } from "../src/data";
 import { makeModel } from "../src/model";
-import { checkCases } from "../src/runner";
-import { lab1, runAgentLoop } from "../labs/01-agent-loop";
-import { lab2, redactPhi, verifyOutput } from "../labs/02-guardrails";
-import { handleHcpInquiry, lab3 } from "../labs/03-gates";
-import { hcpContextWorkflow, lab4, multiAgentPipeline, singleHcpAgent } from "../labs/04-shapes";
+import { checkCases, type Lab } from "../src/runner";
+import { searchOnly, runAgentLoop } from "../labs/01-agent-loop";
+import { redactPhi, verifyOutput } from "../labs/02-guardrails";
+import { handleHcpInquiry } from "../labs/03-gates";
+import { hcpContextWorkflow, multiAgentPipeline, singleHcpAgent } from "../labs/04-shapes";
+import { problemsIn } from "../scripts/readable";
 
 const yes = () => "y";
 const no = () => "n";
 const ids = Object.keys(APPROVED_DOCS);
 
-// Gates and labs print to the terminal. Tests keep that quiet.
-const silent = <T>(fn: () => T): T => {
+// Labs print to the terminal. Tests keep that quiet.
+function silent<T>(work: () => T): T {
   const log = console.log;
   console.log = () => {};
   try {
-    return fn();
+    return work();
   } finally {
     console.log = log;
   }
-};
+}
 
 describe("lab 1: agent loop", () => {
   test("searches then answers with a citation", () => {
-    const r = runAgentLoop("What is the dose of Cardioza?", "US", makeModel());
-    expect(r.steps.map((s) => s.kind)).toEqual(["tool", "answer"]);
-    expect(r.answer).toContain("10mg");
-    expect(r.answer).toContain("[DOC-101]");
+    const result = runAgentLoop("What is the dose of Cardioza?", "US", makeModel());
+    expect(result.steps.map((step) => step.kind)).toEqual(["tool", "answer"]);
+    expect(result.answer).toContain("10mg");
+    expect(result.answer).toContain("[DOC-101]");
   });
   test("uses the country's own document", () => {
     expect(runAgentLoop("Cardioza dose", "DE", makeModel()).answer).toContain("5mg");
   });
   test("stops at max steps", () => {
-    const stuck = () => ({ toolCall: { name: "search_approved_docs", args: { query: "x", country: "US" } } });
-    expect(runAgentLoop("x", "US", stuck, { maxSteps: 3 }).stopped).toBe(true);
+    const stuck = () => ({ toolCall: { name: "search_approved_docs", args: { query: "x", country: "US", hcpId: "none" } } });
+    expect(runAgentLoop("x", "US", stuck, searchOnly, 3).stopped).toBe(true);
   });
   test("refuses a tool that is not on the list", () => {
-    const sneaky = () => ({ toolCall: { name: "get_hcp_profile", args: { hcpId: "H-1" } } });
-    const r = runAgentLoop("x", "US", sneaky, { maxSteps: 1 });
-    expect(r.steps[0]).toMatchObject({ kind: "tool", result: "TOOL_NOT_ALLOWED: get_hcp_profile" });
+    const sneaky = () => ({ toolCall: { name: "get_hcp_profile", args: { query: "x", country: "US", hcpId: "H-1" } } });
+    const result = runAgentLoop("x", "US", sneaky, searchOnly, 1);
+    expect(result.steps[0]).toMatchObject({ kind: "tool", result: "TOOL_NOT_ALLOWED: get_hcp_profile" });
   });
 });
 
@@ -69,13 +71,16 @@ describe("lab 3: gates", () => {
     expect(silent(() => handleHcpInquiry("Zorbex dose", "US", makeModel(), no)).status).toBe("BLOCKED_BY_REVIEWER");
   });
   test("a reply with no citation opens gate 2", () => {
-    const o = silent(() => handleHcpInquiry("Cardioza dose", "US", makeModel("nocite"), no));
-    expect(o.status).toBe("BLOCKED_BY_REVIEWER");
-    expect(o.path).toContain("gate 2: output guardrail failed");
+    const outcome = silent(() => handleHcpInquiry("Cardioza dose", "US", makeModel("nocite"), no));
+    expect(outcome.status).toBe("BLOCKED_BY_REVIEWER");
+    expect(outcome.path).toContain("gate 2: output guardrail failed");
   });
   test("patient details never reach the model", () => {
     let seen = "";
-    const spy = (m: { content: string }[]) => ((seen = m.map((x) => x.content).join(" ")), { text: "x [DOC-101]" });
+    const spy = (messages: { content: string }[]) => {
+      seen = messages.map((message) => message.content).join(" ");
+      return { text: "x [DOC-101]" };
+    };
     silent(() => handleHcpInquiry("Cardioza dose Patient: Jane Doe SSN 123-45-6789", "US", spy as never, no));
     expect(seen).not.toContain("123-45-6789");
     expect(seen).not.toContain("Jane");
@@ -84,19 +89,19 @@ describe("lab 3: gates", () => {
 
 describe("lab 4: shapes", () => {
   test("workflow joins records with no model", () => {
-    const r = hcpContextWorkflow("H-2");
-    expect(r.profile?.country).toBe("DE");
-    expect(r.allowedDocs).toEqual(["DOC-102: Cardioza"]);
+    const result = hcpContextWorkflow("H-2");
+    expect(result.profile?.country).toBe("DE");
+    expect(result.allowedDocs).toEqual(["DOC-102: Cardioza"]);
   });
   test("workflow handles an unknown doctor", () => {
-    const r = hcpContextWorkflow("H-9");
-    expect(r.profile).toBeUndefined();
-    expect(r.allowedDocs).toEqual([]);
+    const result = hcpContextWorkflow("H-9");
+    expect(result.profile).toBeUndefined();
+    expect(result.allowedDocs).toEqual([]);
   });
   test("one agent picks three tools", () => {
-    const r = singleHcpAgent("Cardioza dose", "H-1", makeModel());
-    expect(r.steps.filter((s) => s.kind === "tool").length).toBe(3);
-    expect(r.answer).toContain("Recent outreach");
+    const result = singleHcpAgent("Cardioza dose", "H-1", makeModel());
+    expect(result.steps.filter((step) => step.kind === "tool").length).toBe(3);
+    expect(result.answer).toContain("Recent outreach");
   });
   test("auditor passes a true draft", () => {
     expect(silent(() => multiAgentPipeline("Cardioza dose", "US", makeModel(), no)).reply).toContain("10mg");
@@ -104,16 +109,33 @@ describe("lab 4: shapes", () => {
   test("auditor catches a wrong dose that has a valid citation", () => {
     const draft = runAgentLoop("Cardioza dose", "US", makeModel("invent")).answer;
     expect(verifyOutput(draft, ids).ok).toBe(true); // the citation check is fooled
-    const r = silent(() => multiAgentPipeline("Cardioza dose", "US", makeModel("invent"), no));
-    expect(r.reply).toBe("REJECTED_BY_COMPLIANCE"); // the auditor is not
+    const result = silent(() => multiAgentPipeline("Cardioza dose", "US", makeModel("invent"), no));
+    expect(result.reply).toBe("REJECTED_BY_COMPLIANCE"); // the auditor is not
   });
 });
 
-// Every edge case shown to learners must really behave the way its explanation says.
-describe("edge cases shown in --demo", () => {
-  for (const lab of [lab1, lab2, lab3, lab4]) {
-    test(`${lab.file}: all ${lab.cases.length} cases behave as explained`, () => {
+// Every lab file in labs/ is found by itself. A new lab needs no change here.
+describe("every lab", async () => {
+  const files = readdirSync("labs").filter((name) => /^\d\d-.*\.ts$/.test(name));
+  for (const file of files) {
+    const { lab } = (await import(`../labs/${file}`)) as { lab: Lab };
+    test(`${file}: exports a lab and all ${lab.cases.length} cases behave as explained`, () => {
+      expect(lab.file).toBe(file);
+      expect(lab.cases.length).toBeGreaterThan(0);
       expect(silent(() => checkCases(lab))).toEqual([]);
     });
   }
+});
+
+describe("the readable gate", () => {
+  test("flags a short name, an arrow and a regex in PART 1", () => {
+    const text = "// PART 1: x\nconst q = items.map((item) => item);\nconst r = text.match(/a/);\n// PART 2: y\n";
+    const messages = problemsIn("x.ts", text).map((problem) => problem.message).join("|");
+    expect(messages).toContain("too short");
+    expect(messages).toContain("not allowed in PART 1");
+  });
+  test("accepts plain code", () => {
+    const text = "// PART 1: x\nfunction add(first: number, second: number) {\n  return first + second;\n}\n// PART 2: y\n";
+    expect(problemsIn("x.ts", text)).toEqual([]);
+  });
 });

@@ -1,0 +1,39 @@
+// LAB N: TITLE
+//
+// Copy this file to labs/05-your-name.ts, then fill it in. `bun run check` tests it for you.
+// Read PART 1. It is short, and it is the whole idea.
+// The PART 2 section only prints the result in colour. You can skip it.
+//
+// Run it:   bun run lab 5            (a menu of examples)
+//           bun run lab 5 --demo     (every edge case, with a reason for each)
+
+import { modelFrom, runLab, type Lab } from "../src/runner";
+import { box, field, green, print } from "../src/ui";
+
+// PART 1: THE CORE LOGIC
+// Write plain functions with whole-word names. Use for loops and if statements.
+
+export function doTheJob(question: string): string {
+  return `You asked: ${question}`;
+}
+
+// PART 2: HOW IT IS SHOWN (you can skip this)
+
+export const lab: Lab = {
+  file: "05-your-name.ts",
+  title: "Lab 5: your title",
+  about: "One or two short sentences about what this lab shows.",
+  cases: [
+    // Give each case a title, a plain reason, a question and the outcome word play() returns.
+    // Add edge cases too: a missing thing, a wrong country, a spelling mistake.
+    { title: "A normal question", why: "The happy path.", question: "hello", expect: "done" },
+  ],
+  play(question, flags) {
+    modelFrom(flags); // the pretend model, if you need it
+    print(field("Question", question));
+    box("RESULT", field("", doTheJob(question), green, 0), green);
+    return "done";
+  },
+};
+
+if (import.meta.main) runLab(lab);

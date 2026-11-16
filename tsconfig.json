@@ -6,7 +6,14 @@
     "strict": true,
     "noEmit": true,
     "skipLibCheck": true,
-    "types": ["bun"]
+    "types": [
+      "bun"
+    ]
   },
-  "include": ["src", "labs", "tests"]
+  "include": [
+    "labs",
+    "scripts",
+    "src",
+    "tests"
+  ]
 }
