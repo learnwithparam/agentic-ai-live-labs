@@ -7,7 +7,7 @@ import { join } from "node:path";
 import type { CallLlm, Message, Reply } from "./model";
 
 export const LIVE_MODEL = "nvidia/nemotron-3.5-lightning";
-const ENDPOINT = "https://openrouter.ai/api/v1/chat/completions";
+const ENDPOINT = process.env.OPENROUTER_URL || "https://openrouter.ai/api/v1/chat/completions";
 
 const TOOL_TEXT: Record<string, string> = {
   search_approved_docs: "Find the approved documents for a drug in one country.",
@@ -53,7 +53,7 @@ export function replyFrom(response: any): Reply {
 
 // The key goes to curl through its config on stdin, never on the command line.
 function post(body: Record<string, unknown>): any {
-  const key = process.env.OPENROUTER_API_KEY;
+  const key = (process.env.OPENROUTER_API_KEY || "").trim().replaceAll('"', "").replaceAll("'", "");
   if (!key) throw new Error("Set OPENROUTER_API_KEY to use --live.");
   const file = join(mkdtempSync(join(tmpdir(), "live-")), "body.json");
   writeFileSync(file, JSON.stringify(body));
