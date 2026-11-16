@@ -32,6 +32,7 @@ export function makeModel(behaviour: Behaviour = "ok"): CallLlm {
     if (first.startsWith("ANSWER:")) return { text: answerFrom(first) };
     if (first.startsWith("DRUG:")) return { text: drugFor(first) };
     if (first.startsWith("WRITE:")) return { text: writeFor(first) };
+    if (first.startsWith("SELECT:")) return { text: selectFor(first) };
     if (first.startsWith("PICK:")) return { text: pickFor(first) };
     if (first.startsWith("SHELL:")) return { text: shellFor(first) };
     if (first.startsWith("CALL:")) return { text: writeCall(first) };
@@ -226,4 +227,14 @@ function planFor(prompt: string): string {
 function mailFor(prompt: string): string {
   const source = prompt.split("SOURCE: ")[1] || "";
   return `Dear doctor, ${source.replace(/\n/g, " ")}`;
+}
+
+// A model asked which sources a question needs. It reads the question and names the sources.
+function selectFor(prompt: string): string {
+  const question = (prompt.split("Question: ")[1] || "").toLowerCase();
+  const wanted: string[] = [];
+  if (/dose|side effect|storage|label/.test(question)) wanted.push("documents");
+  if (/my profile|who am i|specialty/.test(question)) wanted.push("profile");
+  if (/email/.test(question) && !question.includes("never")) wanted.push("emails");
+  return wanted.join(", ") || "NONE";
 }

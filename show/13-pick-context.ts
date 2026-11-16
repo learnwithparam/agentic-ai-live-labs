@@ -21,10 +21,10 @@ export const lab: Lab = {
     { title: "A dose question", why: "Only the documents are loaded. The profile and the emails stay on the shelf.", question: "What is the Cardioza dose?", expect: "picked" },
     { title: "An email question", why: "Only the emails are loaded.", question: "Which email was sent to me last?", expect: "picked" },
     { title: "Two needs in one question", why: "The question needs the profile and the documents, so both are loaded. The emails are not.", question: "Given my profile, what is the label?", expect: "picked" },
-    { title: "Capital letters", why: "Words are lower-cased before matching, so shouting changes nothing.", question: "DOSE???", expect: "picked" },
-    { title: "Small talk", why: "No keyword matches. We load nothing, and the agent asks what the doctor needs.", question: "Hello there", expect: "unclear" },
-    { title: "EDGE: a word used in another way", why: "A doctor jokes about a email. The word list cannot tell a joke from a request, so it loads the emails. Keyword rules are crude, and a model chooses better.", question: "I never read my email anyway", expect: "picked" },
-    { title: "An empty question", why: "Nothing to match, so nothing is loaded.", question: "", expect: "unclear" },
+    { title: "Capital letters", why: "The model reads the meaning, so shouting changes nothing.", question: "DOSE???", expect: "picked" },
+    { title: "Small talk", why: "No source helps. We load nothing, and the agent asks what the doctor needs.", question: "Hello there", expect: "unclear" },
+    { title: "EDGE: a word used in another way", why: "A doctor jokes about email. A word list would load the emails. The model reads the meaning, so it can load nothing.", question: "I never read my email anyway", expect: "unclear" },
+    { title: "An empty question", why: "No question means no source helps, so nothing is loaded.", question: "", expect: "unclear" },
   ],
   play(question, flags) {
     print(field("Question", question || "(empty)"));

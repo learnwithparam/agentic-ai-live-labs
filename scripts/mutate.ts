@@ -31,7 +31,7 @@ export const BREAKS: Break[] = [
   { lab: 12, file: "12-retrieval.ts", rule: "a weak match is sent",
     find: "if (score >= MINIMUM_SCORE) hits.push", replace: "if (score >= 1) hits.push" },
   { lab: 13, file: "13-pick-context.ts", rule: "every source is loaded for every question",
-    find: "if (text.includes(keyword)) return true;", replace: "return true;" },
+    find: "if (reply.includes(source.name))", replace: "if (true)" },
   { lab: 14, file: "14-instructions-vs-data.ts", rule: "an order line reaches the prompt",
     find: "if (hasOrder(line)) {", replace: "if (false) {" },
   { lab: 14, file: "14-instructions-vs-data.ts", rule: "data can close its own fence",

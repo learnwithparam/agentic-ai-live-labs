@@ -18,22 +18,21 @@ import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";
 import { countTokens } from "./10-context-budget"; // the counter from lab 10
 
-export type Source = { name: string; keywords: string[]; text: string };
+export type Source = { name: string; about: string; text: string };
 
-function mentions(question: string, keywords: string[]): boolean {
-  const text = question.toLowerCase();
-  for (const keyword of keywords) {
-    if (text.includes(keyword)) return true;
-  }
-  return false;
-}
+// The model picks. We list each source with one line about it, and it names the ones the question needs.
+// The words around the names do not matter. We keep a source only when its name is in the reply.
+export function pickSources(question: string, sources: Source[], callLlm: CallLlm): Source[] {
+  const shelf: string[] = [];
+  for (const source of sources) shelf.push(`- ${source.name}: ${source.about}`);
+  const rule = "Reply with the names of the sources the question needs, separated by commas. " +
+    "Reply NONE if no source helps.";
+  const prompt = `SELECT: ${rule}\nSources:\n${shelf.join("\n")}\nQuestion: ${question}`;
+  const reply = (callLlm([{ role: "user", content: prompt }], []).text || "").toLowerCase();
 
-// A source is picked when the question holds one of its keywords.
-// This word list is crude. In production the model picks, using a tool (lab 5).
-export function pickSources(question: string, sources: Source[]): Source[] {
   const picked: Source[] = [];
   for (const source of sources) {
-    if (mentions(question, source.keywords)) picked.push(source);
+    if (reply.includes(source.name)) picked.push(source);
   }
   return picked;
 }
@@ -48,8 +47,8 @@ export type Picked = { picked: Source[]; reply: string; log: string[] };
 
 // Pick the sources a question needs, then let the model answer from them. Read the steps in order.
 export function answerFromPicked(question: string, sources: Source[], callLlm: CallLlm): Picked {
-  // Step 1: pick the sources whose keywords the question holds.
-  const picked = pickSources(question, sources);
+  // Step 1: the model picks the sources the question needs.
+  const picked = pickSources(question, sources, callLlm);
   const names: string[] = [];
   for (const source of picked) names.push(source.name);
   const cost = costOf(picked);
