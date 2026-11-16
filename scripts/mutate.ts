@@ -24,6 +24,8 @@ export const BREAKS: Break[] = [
     find: 'if (answer.includes("[DOC-")) return "answered";\n  return "uncited";', replace: 'return "answered";' },
   { lab: 10, file: "10-context-budget.ts", rule: "a part that does not fit is sent anyway",
     find: "if (used + cost > budget) continue;", replace: "if (false) continue;" },
+  { lab: 11, file: "11-history-trimming.ts", rule: "a pinned fact is cut with the old chatter",
+    find: "if (turn.fact || index >= firstRecent)", replace: "if (index >= firstRecent)" },
 ];
 
 function testPasses(lab: number): boolean {
