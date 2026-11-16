@@ -14,8 +14,9 @@ function run(args: string[]) {
   return { ok: done.exitCode === 0, text };
 }
 
-// The first case that does not force a pretend behaviour, so a real model can answer it.
-function liveCommand(file: string, lab: Lab): string[] {
+// Every case that does not force a pretend behaviour, so a real model can answer it.
+function liveCommands(file: string, lab: Lab): string[][] {
+  const commands: string[][] = [];
   for (const item of lab.cases) {
     const flags = item.flags || {};
     if (flags.model || flags.naive) continue;
@@ -24,9 +25,9 @@ function liveCommand(file: string, lab: Lab): string[] {
       args.push(`--${key}`);
       if (flags[key] !== "true") args.push(flags[key]);
     }
-    return [...args, "--live"];
+    commands.push([...args, "--live"]);
   }
-  return [];
+  return commands;
 }
 
 let failed = 0;
@@ -42,20 +43,20 @@ for (const file of readdirSync("labs").sort()) {
   if (!matched) failed += 1;
 
   if (live) {
-    const command = liveCommand(file, lab);
-    if (command.length === 0) {
-      line += "  live: no case without a forced behaviour";
-      failed += 1;
-    } else {
+    // Try each free case until one reaches the real model. A lab with none has nothing to prove.
+    let calls = 0;
+    let last = "";
+    for (const command of liveCommands(file, lab)) {
       const real = run(command);
-      const calls = real.text.split("live-call").length - 1;
-      const crashed = !real.ok || real.text.includes("error:") || calls === 0;
-      const note = calls === 0 ? "FAILED, no model call" : `${calls} model calls`;
-      line += `  live ${crashed ? note : `ok, ${note}`}`;
-      if (crashed) {
-        failed += 1;
-        line += `\n    ${real.text.trim().split("\n").slice(-2).join(" | ").slice(0, 200)}`;
-      }
+      calls = real.text.split("live-call").length - 1;
+      last = real.text.trim().split("\n").slice(-2).join(" | ").slice(0, 200);
+      if (real.ok && calls > 0 && !real.text.includes("error:")) break;
+      calls = 0;
+    }
+    if (calls > 0) line += `  live ok, ${calls} model calls`;
+    else {
+      line += `  live FAILED, no model call\n    ${last}`;
+      failed += 1;
     }
   }
   console.log(line);

@@ -63,7 +63,7 @@ function fix(prompt: string, behaviour: Behaviour): string {
 
 // The compliance auditor. Each sentence that cites an id must appear word for word in that approved document.
 function audit(prompt: string): string {
-  const draft = prompt.replace(/^AUDIT:\s*/, "");
+  const draft = prompt.replace(/^AUDIT:\s*/, "").split("\nSOURCE:")[0];
   const claims = draft.match(/[^\[]*?\[DOC-\d+\]/g) ?? [];
   if (claims.length === 0) return "FAIL: no cited claims to check.";
   for (const claim of claims) {
