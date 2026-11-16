@@ -15,7 +15,7 @@ export type CallLlm = (messages: Message[], toolNames: string[]) => Reply;
 // nocite: the answer is right, but it forgets the citation. A guardrail catches this.
 // invent: it cites a real document but states a wrong dose. Only a check against the document catches this.
 // stubborn: it states a wrong dose, and when asked to fix it, it sends the same draft again.
-export type Behaviour = "ok" | "nocite" | "invent" | "stubborn";
+export type Behaviour = "ok" | "nocite" | "invent" | "stubborn" | "stuck" | "wanders";
 
 const grab = (text: string, label: string) => text.match(new RegExp(`${label}: ([^.\\n]+)`))?.[1]?.trim() ?? "";
 
@@ -40,6 +40,13 @@ export function makeModel(behaviour: Behaviour = "ok"): CallLlm {
     const hcpId = grab(first, "HCP");
     const question = first.split("Question: ")[1] ?? first;
     const done = new Set(messages.filter((message) => message.role === "tool").map((message) => message.name));
+
+    // stuck: the same search again and again. wanders: new words every time.
+    const searched = messages.filter((message) => message.role === "tool").length;
+    if (behaviour === "stuck" || behaviour === "wanders") {
+      const query = behaviour === "stuck" ? question : `${question} topic ${searched}`;
+      return { toolCall: { name: "search_approved_docs", args: { query, country, hcpId } } };
+    }
 
     // The model picks the next tool it has not used yet, in this order.
     for (const name of ["get_hcp_profile", "search_approved_docs", "check_recent_outreach"]) {
