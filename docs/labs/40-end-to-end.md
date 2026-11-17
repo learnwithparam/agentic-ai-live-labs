@@ -56,6 +56,20 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 5 | EDGE: the document was withdrawn | DOC-101 is withdrawn, and no other approved document is left. The bot says it has no approved source. That is true, so it goes out. The old dose never does. | sent | `bun run lab end-to-end --question "What is the dose of Cardioza for Dr. Lee?" --withdraw DOC-101` |
 | 6 | EDGE: a doctor we do not know | H-9 is not in the CRM, so the run stops at step 1. | refused | `bun run lab end-to-end --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-9` |
 
+## Stuck points
+
+**Correct run:** Send the note through every guard. Only a checked reply, or one a person approved, goes out.
+
+**Common wrong turn:** Trusting one guard. Each guard works alone, so one missing guard is still a hole.
+
+**Hint to give:** Which guard would stop this risk, and did it run?
+
+| What you see | What it means | Fix |
+| --- | --- | --- |
+| The demo prints outcome: sent-unchecked on the NAIVE case | No guard ran before the send | Run every guard before the reply is sent |
+| The reply is held for a person | A guard blocked it | Read which guard blocked it, then decide at the gate |
+| The record shows an edit | A line in the record changed | Find the line with the edit, and restore it from the saved copy |
+
 ## The promise, and its test
 
 Private details never reach the model. Only a checked reply goes out, or one a person approved. Every step is in a record that shows any edit.

@@ -52,6 +52,20 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 4 | Nothing withdrawn | The second ask is served from the saved answer. It is fast, and it is still approved. | cache | `bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?"` |
 | 5 | EDGE: withdrawn during the run | There is no saved answer. The document is withdrawn after the search and before the send. The last check catches it. | blocked | `bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?" --late DOC-101` |
 
+## Stuck points
+
+**Correct run:** Check the withdrawal list on every answer, even a saved one. A withdrawn document is never sent.
+
+**Common wrong turn:** Serving the saved answer. The cache never looks at the document again, so the old dose goes out.
+
+**Hint to give:** Does the cache check the withdrawal list before it replies?
+
+| What you see | What it means | Fix |
+| --- | --- | --- |
+| The demo prints outcome: stale on the NAIVE case | The saved answer went out after withdrawal | Check the withdrawal list on every cached reply |
+| The answer is refused after withdrawal | The document is withdrawn now | This is correct. Ask for a current document |
+| A US answer reaches a German doctor | The country filter was skipped | Filter by country on every reply, cached or not |
+
 ## The promise, and its test
 
 A withdrawn document is never sent, even from the cache. That holds for a saved answer, and for an answer made a moment before. A US answer never reaches a German doctor.

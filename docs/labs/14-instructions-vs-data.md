@@ -51,6 +51,20 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 4 | A document that tries to close the fence | It writes a closing tag, then new rules. We turn the tag into harmless text, so the new rules stay inside the data. | fenced | `bun run lab instructions-vs-data --question "What is the dose of Cardioza?" --document breakout` |
 | 5 | EDGE: an order with no order words | No word on our list appears, so the scan sees nothing. This is the limit of a word list. The gates lab's gate and the identity and scopes lab's scopes are the next defence. | slipped | `bun run lab instructions-vs-data --question "What is the dose of Cardioza?" --document subtle` |
 
+## Stuck points
+
+**Correct run:** Put each document inside a data fence. A line with an order is held out of the prompt.
+
+**Common wrong turn:** Pasting the document next to the rules. The hidden order looks like a rule, so the model may obey it.
+
+**Hint to give:** Can the data close its own fence, or can only our code do that?
+
+| What you see | What it means | Fix |
+| --- | --- | --- |
+| The demo prints outcome: obeyed on the NAIVE case | The hidden order reached the model as a rule | Fence each document, and scan it for orders first |
+| A line is marked held | The line held an order, so it was kept out | This is correct. Check the held line by hand |
+| A closing fence tag appears inside the data | The data tried to close its own fence | Drop the tag from inside the data |
+
 ## The promise, and its test
 
 A line with an order is held out of the prompt. Data can never close its own fence.

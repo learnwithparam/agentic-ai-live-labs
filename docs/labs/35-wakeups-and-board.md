@@ -50,6 +50,20 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 3 | A webhook arrives twice | The same label event is delivered two times. The second delivery is ignored. | once | `bun run lab wakeups-and-board --demo` |
 | 4 | EDGE: the model fails | The model is down. The board shows a failed card, so a person can see it. | failed | `bun run lab wakeups-and-board --question "Check the Cardioza dose for Dr. Lee every day." --times 0 --fail` |
 
+## Stuck points
+
+**Correct run:** Run each job once per slot, using its key. Every run appears on the board as a card.
+
+**Common wrong turn:** Letting every wakeup run. A tick at hour 0 and hour 5 on the same day does the work twice.
+
+**Hint to give:** Which key would show that this slot already ran?
+
+| What you see | What it means | Fix |
+| --- | --- | --- |
+| The demo prints outcome: duplicates on the NAIVE case | The job ran twice in one day | Make each slot one key, and run a key only once |
+| A card says failed | The run failed | Read the card. Fix the cause, then wake the bot again |
+| A webhook is skipped | Its id was seen before | This is correct. A repeat is safe to skip |
+
 ## The promise, and its test
 
 A key runs once, so the job is idempotent. Every run is a card on the board, and a failed run is a card that says failed.

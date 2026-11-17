@@ -59,6 +59,20 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 7 | A bad drug name through the shell | The name hides a second command. The function door would only find nothing. The shell door must rely on the shell tool lab's rules, and they refuse it. | door-error | `bun run lab three-doors --question "What is the dose of Cardioza; rm notes.txt?" --door cli` |
 | 8 | The MCP server is down | The function door has nothing to start, so it cannot be down. The MCP door fails with a clear error. | door-error | `bun run lab three-doors --question "What is the dose of Cardioza?" --door mcp --script src/missing-server.ts` |
 
+## Stuck points
+
+**Correct run:** Run the same lookup through each door. Compare the time, and whether the answer can be cited.
+
+**Common wrong turn:** Using the shell door for everything. Its answer has no document id, so it cannot be checked.
+
+**Hint to give:** Which door gives an answer that the output check can read?
+
+| What you see | What it means | Fix |
+| --- | --- | --- |
+| The demo prints outcome: uncited on the NAIVE case | The shell answer has no document id | Use the function or MCP door when the answer must be cited |
+| The MCP door is slower | A server has to start first | This is the cost of MCP. Use it when a second team needs the tool |
+| The shell door reads the wrong country | It filters by hand, not in the tool | Move the country rule into the tool itself |
+
 ## The promise, and its test
 
 The function door and the MCP door give the same cited answer. The shell door's answer is caught as uncited.

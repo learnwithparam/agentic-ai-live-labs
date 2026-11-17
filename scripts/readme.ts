@@ -6,6 +6,7 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { GLOSSARY, type Word } from "../src/glossary";
 import { PICTURES } from "../src/pictures";
+import { STUCK } from "../src/stuck";
 import { LABS, TRACKS, slugFromFile } from "../src/roadmap";
 import { shellWord } from "../src/runner";
 import type { Case, Lab } from "../src/runner";
@@ -40,6 +41,20 @@ export function wordOf(id: string): Word {
   return entry;
 }
 
+// The stuck points, in the teach format. A missing entry is an error, never a blank section.
+export function stuckSection(name: string): string[] {
+  const entry = STUCK[name];
+  if (!entry) throw new Error(`No stuck points for "${name}". Add them to src/stuck.ts.`);
+  const out = ["## Stuck points", ""];
+  out.push(`**Correct run:** ${entry.correct}`, "");
+  out.push(`**Common wrong turn:** ${entry.wrong}`, "");
+  out.push(`**Hint to give:** ${entry.hint}`, "");
+  out.push("| What you see | What it means | Fix |", "| --- | --- | --- |");
+  for (const [see, means, fix] of entry.rows) out.push(`| ${cell(see)} | ${cell(means)} | ${cell(fix)} |`);
+  out.push("");
+  return out;
+}
+
 // The picture of the lab's story. Every lab needs one, so a page is never missing it.
 export function pictureOf(file: string): string {
   const slug = slugFromFile(file);
@@ -72,6 +87,7 @@ export function pageFor(file: string, lab: Lab): string {
     out.push(`| ${row.map(cell).join(" | ")} |`);
   });
   out.push("");
+  out.push(...stuckSection(name));
   if (lab.promise) {
     out.push("## The promise, and its test", "", lab.promise, "");
     out.push("```bash", `bun test tests/promises/${file.slice(0, 2)}.test.ts`, "```", "");

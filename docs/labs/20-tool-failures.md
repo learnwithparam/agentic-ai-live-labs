@@ -57,6 +57,20 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 6 | EDGE: the service says no | France is not a country we serve. The service answers 400. Trying again cannot help, so we stop at once. | rejected | `bun run lab tool-failures --question "What is the dose of Cardioza?" --country FR` |
 | 7 | EDGE: empty search words | The input check stops an empty query before any call is made. | bad-input | `bun run lab tool-failures --question "What is the dose of Cardioza?" --empty` |
 
+## Stuck points
+
+**Correct run:** Stop each call at its timeout. Retry a transient failure with a growing backoff, but never retry a no.
+
+**Common wrong turn:** One try with no time limit. It hangs on a slow service, and gives up on the first flaky error.
+
+**Hint to give:** Which failure is worth another try, and which one is a clear no?
+
+| What you see | What it means | Fix |
+| --- | --- | --- |
+| The demo prints outcome: unavailable on the NAIVE case | One try gave up on a flaky error | Retry transient failures with a backoff |
+| A call stops at the time limit | The service was too slow | This is correct. Raise the timeout only with a reason |
+| The same no is sent again and again | A no was retried | Stop retrying a no at once |
+
 ## The promise, and its test
 
 Bad input never leaves our code. A slow call stops at its timeout. A transient failure is retried, with a backoff. A no is never tried again.

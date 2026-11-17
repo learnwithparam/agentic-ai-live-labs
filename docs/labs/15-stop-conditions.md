@@ -58,6 +58,20 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 6 | One step only | We allow one round. The model wants a second one, so we stop it, even though it was close to an answer. | max-steps | `bun run lab stop-conditions --question "What is the dose of Cardioza?" --steps 1` |
 | 7 | A fair retry | Two identical calls are allowed. A model that retries once and then answers is fine. Here the limit is raised to show the rule. | max-steps | `bun run lab stop-conditions --question "What is the dose of Zorbex?" --model stuck --repeats 9 --steps 3` |
 
+## Stuck points
+
+**Correct run:** Stop at the first limit reached, whether a step, a repeat or the budget. The run says why it stopped.
+
+**Common wrong turn:** Trusting the model to stop. A stuck model repeats one call and never says it is done.
+
+**Hint to give:** Which limit would stop this loop, and when?
+
+| What you see | What it means | Fix |
+| --- | --- | --- |
+| The demo prints outcome: never-stopped on the NAIVE case | No limit of our own was set | Set a step limit, a repeat limit and a budget |
+| The run prints a stop reason | A limit was hit before the answer | Read the reason. Raise a limit only if the task needs it |
+| The same call repeats with --model stuck | The repeat limit was not reached in time | Lower --repeats so the stuck call stops sooner |
+
 ## The promise, and its test
 
 A run always stops within its steps and its budget, and says why it stopped.

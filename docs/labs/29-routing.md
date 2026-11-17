@@ -53,6 +53,20 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 5 | EDGE: a message that fits no specialist | An invoice question is not the job of either bot. It goes to a person. | human | `bun run lab routing --question "Can you tell me why my last invoice was wrong?" --hcp H-1` |
 | 6 | EDGE: the doctor tells the router where to go | She asks for the answer bot, but the danger word wins. | human | `bun run lab routing --demo` |
 
+## Stuck points
+
+**Correct run:** The router sends each message to one specialist. A danger word, or an unknown route, goes to a person.
+
+**Common wrong turn:** One bot for every message. It answers a rash message with a dose.
+
+**Hint to give:** Which message must never reach the answer bot?
+
+| What you see | What it means | Fix |
+| --- | --- | --- |
+| The demo prints outcome: unsafe on the NAIVE case | The rash message reached the answer bot | Send messages with a danger word to a person |
+| A message goes to the fallback | No rule fits it | This is correct. A person reads it |
+| The outreach bot gets a dose question | The route rule is too wide | Narrow the route rule to its own kind of message |
+
 ## The promise, and its test
 
 A message with a danger word always goes to a person. Any route not on our list goes to a person. The other messages reach the specialist that fits.

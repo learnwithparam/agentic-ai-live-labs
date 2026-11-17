@@ -61,6 +61,20 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 9 | Multi-agent: a person overrides | Same wrong draft, but the reviewer says yes. The gate is only as good as the person behind it. | approved by person | `bun run lab shapes --question "What is the dose of Cardioza?" --shape multi --hcp H-1 --model invent --approve y` |
 | 10 | Multi-agent: nothing to audit | The researcher finds no source, so the draft has no cited claim. The auditor fails it and a person decides. | rejected | `bun run lab shapes --question "What is the dose of Zorbex?" --shape multi --hcp H-1 --approve n` |
 
+## Stuck points
+
+**Correct run:** Pick the simplest shape that works. Use a workflow for fixed steps, and an auditor when a mistake is costly.
+
+**Common wrong turn:** Building many agents for a job that a fixed workflow does. Each extra agent adds cost and places for mistakes.
+
+**Hint to give:** Do the steps ever change? If not, what does an agent add?
+
+| What you see | What it means | Fix |
+| --- | --- | --- |
+| The demo prints outcome: answered on the NAIVE case | One agent wrote a wrong dose, and nothing checked it | Add an auditor, or move to many agents |
+| The workflow answers with no model call | Plain code did the work | Use a workflow when the steps never change |
+| A doctor with no document gets no-source | The agent refused, and nothing double checked it | This is correct. Refusing is safe |
+
 ## The promise, and its test
 
 Pick the simplest shape that does the job. When a wrong answer is costly, an auditor checks it and a person decides on any doubt.

@@ -56,6 +56,20 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 5 | EDGE: both models fail | Neither answer passes the check. We send nothing, and a person looks at it. | refused | `bun run lab model-routing --question "What is the dose of Cardioza?" --small nocite --big nocite` |
 | 6 | EDGE: no approved document | There is no source for Zorbex. The small model says so, and no dose is made up. That is a good answer. | small | `bun run lab model-routing --question "What is the dose of Zorbex?"` |
 
+## Stuck points
+
+**Correct run:** The small model answers first. Only a failed check sends the question to the strong model.
+
+**Common wrong turn:** Always using the strong model. It works, but it costs about ten times more than it needs.
+
+**Hint to give:** Which answers need the strong model, and how would we know?
+
+| What you see | What it means | Fix |
+| --- | --- | --- |
+| The demo prints outcome: always-big on the NAIVE case | The strong model answered every question | Try the small model first, then check its answer |
+| The small answer is not sent | It failed the check | This is correct. The check stopped a bad answer |
+| Nothing is sent after both fail | Neither answer passed the check | This is correct. A person should decide |
+
 ## The promise, and its test
 
 The small model answers first. An answer that fails the check is never sent. The strong model is asked only after a failed check. If both fail, nothing is sent.

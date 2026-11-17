@@ -1,6 +1,6 @@
 # Act for the user
 
-Each example is one doctor asking the bot a question. The bot can act for a user, with that user's rights. Pick the doctor with --hcp: H-1 is Dr Lee in the US, and H-2 is Dr Weber in Germany.
+Each example is one doctor asking the bot a question. The bot can act for a user, with that user's rights. Pick the doctor with --hcp: H-1 is Dr Lee (US), H-2 is Dr Weber (Germany).
 
 ## The story in one picture
 
@@ -54,6 +54,20 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 5 | EDGE: a doctor who is not in the CRM | The token is real, but nobody by that id exists. Nothing is searched. | denied | `bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp H-9` |
 | 6 | EDGE: a token changed to another doctor | Someone edits Dr. Weber's token to say H-1. The signature breaks, so nothing runs. | denied | `bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp H-2 --forge` |
 | 7 | EDGE: a bot that may not read documents | The report bot's token has no docs.read, even for a real doctor. | denied | `bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp H-1 --bot report` |
+
+## Stuck points
+
+**Correct run:** The bot searches only the country of the doctor its token names. The doctor's rights limit the bot.
+
+**Common wrong turn:** Using the bot's own service key. It searches the wrong country, so a German doctor gets the US label.
+
+**Hint to give:** Whose rights should the search use: the bot's or the doctor's?
+
+| What you see | What it means | Fix |
+| --- | --- | --- |
+| The demo prints outcome: wrong-label on the NAIVE case | The service key searched the US | Pass the delegation token, and search by its country |
+| A bad token answers nothing | The token is not valid for this doctor | Issue a fresh token when the doctor signs in |
+| Typing another country changes nothing | The country comes from the token, not the question | This is correct. The token wins |
 
 ## The promise, and its test
 

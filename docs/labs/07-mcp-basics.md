@@ -57,6 +57,20 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 7 | A tool the server does not have | The agent asks for delete_everything. The server answers with a protocol error. The call goes nowhere. | tool-error | `bun run lab mcp-basics --question "What is the dose of Cardioza?" --tool delete_everything` |
 | 8 | The server is not there | The path is wrong, so nothing answers. The client finds no tools and says so, instead of hanging. | no-server | `bun run lab mcp-basics --question "What is the dose of Cardioza?" --script src/missing-server.ts` |
 
+## Stuck points
+
+**Correct run:** The agent asks the server for its tools when it starts, then calls them. Nothing is copied into the code.
+
+**Common wrong turn:** Copying the tool list into the code. New server tools are then never used, and nobody gets an error.
+
+**Hint to give:** Where should the agent learn its tool list from?
+
+| What you see | What it means | Fix |
+| --- | --- | --- |
+| The demo prints outcome: out-of-date on the NAIVE case | The agent used a list copied from the server | Ask the server for its tools when the agent starts |
+| The result is marked as an error | The server reported a failure, such as an unknown doctor | Read the error text, then fix the input |
+| The server runs but no tools appear | The client never asked for the tool list | Ask for the list first, then call a tool |
+
 ## The promise, and its test
 
 The agent learns its tools from the server, so a new server tool needs no agent change.

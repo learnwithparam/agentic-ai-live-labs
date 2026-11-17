@@ -59,6 +59,20 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 7 | EDGE: a token with a changed scope | Someone edits the answer bot's token to add email.send. The signature no longer matches, so every call is refused. | denied | `bun run lab identity-and-scopes --question "What is the dose of Cardioza?" --bot answer --forge` |
 | 8 | EDGE: an old token | The token lasted five minutes and that time has passed. A stolen token stops working on its own. | denied | `bun run lab identity-and-scopes --question "What is the dose of Cardioza?" --bot answer --expired` |
 
+## Stuck points
+
+**Correct run:** Check each bot's signed token, and run only the tools its scopes name.
+
+**Common wrong turn:** Sharing one key for every bot. Any bot can then do anything, including email it should not send.
+
+**Hint to give:** Which scope does this tool need, and does the token list it?
+
+| What you see | What it means | Fix |
+| --- | --- | --- |
+| The demo prints outcome: overreach on the NAIVE case | The answer bot sent an email | Give each bot its own token with only its scopes |
+| A tool call is refused | The token is missing the scope, or has expired | Issue a new token with the scope the tool needs |
+| A token is refused after an edit | The signature no longer matches | Never edit a token. Issue a new one |
+
 ## The promise, and its test
 
 A tool call runs only when the token is real and not expired. The token must list the scope the tool needs. Least privilege means a bot never does more than its list.

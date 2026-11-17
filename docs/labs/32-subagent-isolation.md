@@ -51,6 +51,20 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 5 | EDGE: the helper makes up a dose | The helper writes a dose that no approved document has. The main agent checks the report and refuses it. | no-answer | `bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1 --model invent` |
 | 6 | EDGE: the helper gets stuck | The helper never finishes. The main agent gets a short failure note, not the helper's whole log. | no-answer | `bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1 --model stuck` |
 
+## Stuck points
+
+**Correct run:** The helper reads the noisy search. The main agent keeps only the short report, then checks it.
+
+**Common wrong turn:** Letting the main agent read everything. Its context fills with old drafts, and it may copy a wrong dose.
+
+**Hint to give:** Which text does the main agent really need to answer?
+
+| What you see | What it means | Fix |
+| --- | --- | --- |
+| The demo prints outcome: flooded on the NAIVE case | The main agent read all of the search | Hand the noisy search to a helper |
+| The report is cut to the limit | The helper wrote more than the limit | This is correct. Read the report, not the log |
+| A made-up dose is refused | The check found a dose the source does not have | This is correct. The check did its job |
+
 ## The promise, and its test
 
 The helper reads the noise, and the main agent keeps only a short report. It checks the report against the approved source before it answers.

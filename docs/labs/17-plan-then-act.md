@@ -56,6 +56,20 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 6 | EDGE: a plan that is too long | A typed plan of six steps is over our limit of five. A long plan is a sign the model is lost. | rejected | `bun run lab plan-then-act --demo` |
 | 7 | EDGE: the first step finds nothing | There is no approved document for Zorbex. The draft would be made up, so the run stops. | stopped | `bun run lab plan-then-act --question "Look up the Zorbex dose and write a reply"` |
 
+## Stuck points
+
+**Correct run:** Check the whole plan before any step runs. A risky step waits for a person, and a failed step stops the rest.
+
+**Common wrong turn:** Running each step as it is written. The email goes out before anyone sees the plan was wrong.
+
+**Hint to give:** Which step can never be undone? Should it run before a person checks?
+
+| What you see | What it means | Fix |
+| --- | --- | --- |
+| The demo prints outcome: ran-unchecked on the NAIVE case | The plan ran with no check | Check the plan before the first step |
+| The run waits at a risky step | The step cannot be undone, so a person decides | Approve the step, or stop the plan |
+| The plan stops at one step | A failed step stops the rest | This is correct. Fix that step, then run again |
+
 ## The promise, and its test
 
 A plan is checked before it runs. A risky step needs a person. A failed step stops the rest.

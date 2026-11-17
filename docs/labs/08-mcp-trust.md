@@ -58,6 +58,20 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 7 | EDGE: an order that was approved by mistake | A person pinned a tool that already held an order. The word scan still catches it. It is a rule list, so a cleverer order could slip past. That is why a person reviews too. | trap | `bun run lab mcp-trust --question "What is the dose of Cardioza?" --server bad-but-pinned` |
 | 8 | A person re-approves | After a review the new text is pinned. The tool is trusted again. | trusted | `bun run lab mcp-trust --question "What is the dose of Cardioza?" --server re-approved --reapprove` |
 
+## Stuck points
+
+**Correct run:** Load only tools that are approved and match their pin. Anything new, changed or unapproved is held back.
+
+**Common wrong turn:** Trusting every description. A server can hide an order inside a tool description.
+
+**Hint to give:** What changed since the pin was saved? Compare the fingerprint.
+
+| What you see | What it means | Fix |
+| --- | --- | --- |
+| The demo prints outcome: poisoned on the NAIVE case | The hidden order reached the prompt | Check each tool's fingerprint against its pin before loading |
+| A tool is held with the outcome changed | Its fingerprint no longer matches the pin | A person must review it and approve it again |
+| A server is blocked before its tools are read | The server is not on the approved list | Add it to the list only after a review |
+
 ## The promise, and its test
 
 A tool that is unapproved, new, changed or carrying an order is never loaded. A changed tool shows a new fingerprint.

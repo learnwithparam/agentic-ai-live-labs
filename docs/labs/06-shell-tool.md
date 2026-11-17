@@ -62,6 +62,20 @@ Run `bun run lab shell-tool` with nothing else to pick an example from a menu.
 | 10 | A file that is not there | The command is allowed, but it fails. The error goes back to the agent, so it can try again. That is the error feedback lab. | failed | `bun run lab shell-tool --question "Can you show me what is in the doses file?" --command 'cat missing.txt'` |
 | 11 | A command that never ends | Sleep for 5 seconds with a limit of 1. The time limit stops it. Without one, a stuck command would hang the agent. | timeout | `bun run lab shell-tool --question "Can you show me what is in the doses file?" --command 'sleep 5' --limit 1` |
 
+## Stuck points
+
+**Correct run:** Only allow-listed commands run, inside the sandbox folder. Anything else is refused before it starts.
+
+**Common wrong turn:** Trusting the model to stay in the folder. A shell obeys a path that climbs out, and reads files outside.
+
+**Hint to give:** Which rule would stop a command that leaves the sandbox?
+
+| What you see | What it means | Fix |
+| --- | --- | --- |
+| The demo prints outcome: escaped on the NAIVE case | The command ran outside the sandbox | Check the real path of each file against the folder |
+| The demo prints outcome: refused | The command is not on the allow-list | This is correct. Do not add rm to the list |
+| A command runs when the list is empty | The allow-list check was skipped | Run the allow-list check first, before anything starts |
+
 ## The promise, and its test
 
 A command that breaks a rule never starts, so the files stay as they were.

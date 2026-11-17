@@ -62,6 +62,20 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 9 | Number out of range | A limit of 99 is above the top of the range, which is 5. | rejected | `bun run lab tool-schemas --question "What is the Cardioza dose in the US?" --call '{"drug": "Cardioza", "country": "US", "limit": 99}'` |
 | 10 | Not JSON at all | The model wrote a sentence. There is no call to run. | rejected | `bun run lab tool-schemas --question "What is the Cardioza dose in the US?" --call 'Please search for Cardioza in the US'` |
 
+## Stuck points
+
+**Correct run:** The schema checks each call first, and a bad call is rejected. A fixable call is repaired and noted.
+
+**Common wrong turn:** Trusting the model's text. A lower case country finds nothing, and nobody is told why.
+
+**Hint to give:** Which field does the schema expect, and what did the model write instead?
+
+| What you see | What it means | Fix |
+| --- | --- | --- |
+| The demo prints outcome: silent-miss on the NAIVE case | The search quietly found nothing | Check every call against the schema before the tool runs |
+| A note says a field was changed | The fix was made and noted | Read the note. It shows what the schema changed |
+| A call with an unknown field still runs | The schema did not reject the extra field | Drop or reject any field the schema does not know |
+
 ## The promise, and its test
 
 A call that fails the schema never reaches the tool.

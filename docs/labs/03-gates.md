@@ -61,6 +61,20 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 8 | Approved in another country only | Dermalin is approved in the US only. A German doctor hits gate 1. | BLOCKED_BY_REVIEWER | `bun run lab gates --question "What is the dose of Dermalin?" --country DE --approve n` |
 | 9 | Small talk | No drug, no document. The safe default is to stop and ask a person. | BLOCKED_BY_REVIEWER | `bun run lab gates --question "Hello there, can you help me today?" --approve n` |
 
+## Stuck points
+
+**Correct run:** Stop the run at the gate. A person says yes or no, and the demo prints the outcome.
+
+**Common wrong turn:** Treating a missing answer as yes. With no answer the gate says no, so the reply is blocked.
+
+**Hint to give:** What should happen if nobody answers? Which way should the default go?
+
+| What you see | What it means | Fix |
+| --- | --- | --- |
+| The demo prints outcome: SENT_UNCHECKED on the NAIVE case | No gate ran, so the uncited reply was sent | Add a gate before every send that may be wrong |
+| The gate prints a box with Reason and Draft | The person sees what the model wrote | Read the reason first, then approve or reject |
+| A reply is sent with --approve y and no one read it | The answer was typed in advance, not read | Use a real person's answer for the gate |
+
 ## The promise, and its test
 
 We escalate to a person when there is no approved document or no source. Nothing goes out until a person says yes. No answer means no.

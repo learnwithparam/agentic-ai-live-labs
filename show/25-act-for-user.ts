@@ -14,7 +14,7 @@ export const lab: Lab = {
   file: "25-act-for-user.ts",
   title: "Act for the user",
   about:
-    "Each example is one doctor asking the bot a question. The bot can act for a user, with that user's rights. Pick the doctor with --hcp: H-1 is Dr Lee in the US, and H-2 is Dr Weber in Germany.",
+    "Each example is one doctor asking the bot a question. The bot can act for a user, with that user's rights. Pick the doctor with --hcp: H-1 is Dr Lee (US), H-2 is Dr Weber (Germany).",
   terms: ["act-for-user", "delegation", "service-key"],
   challenge: "A bot on a service key answers as the key allows. No person is on that key, so nobody is named. A German doctor who asks about the US label gets the wrong dose for her.",
   promise: "The bot searches only the country of the doctor its token names. What the doctor or the model types cannot change it. A bad token answers nothing.",

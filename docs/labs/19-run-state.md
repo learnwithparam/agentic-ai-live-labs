@@ -50,6 +50,20 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 4 | EDGE: a run that went quiet | A run saved one step, then its program died. The record still says running. Ten minutes of silence means stalled. | stalled | `bun run lab run-state --question "What is the dose of Cardioza?" --stalled` |
 | 5 | EDGE: a run that never existed | Asking about an id we never saved gives a clear answer, not a crash. | unknown | `bun run lab run-state --question "What is the dose of Cardioza?" --ask --run R-nothing` |
 
+## Stuck points
+
+**Correct run:** Write the run record before the first step, and save it after each step. Read it back from disk to check it.
+
+**Common wrong turn:** Keeping only a printed log. When the program ends, nothing is left to read.
+
+**Hint to give:** What could someone read after the program has stopped?
+
+| What you see | What it means | Fix |
+| --- | --- | --- |
+| The demo prints outcome: no-record on the NAIVE case | Nothing was saved to disk | Save the record to disk after each step |
+| The run shows as stalled | No step finished for too long | Check the step that is waiting, and restart it |
+| A failed run has no reason | The reason was not saved | Save the reason with the failed status |
+
 ## The promise, and its test
 
 Every run has a record from its first step. The record is saved after every step. A quiet run is called stalled.

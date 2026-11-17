@@ -55,6 +55,20 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 6 | The must parts do not fit | A budget of 10 cannot hold the rules and the question. We say so. We never send a prompt without its rules. | too-small | `bun run lab context-budget --question "What is the dose of Cardioza?" --window 10` |
 | 7 | A very long question | The question alone is bigger than the window. The doctor must shorten it. We do not cut it for them. | too-small | `bun run lab context-budget --demo` |
 
+## Stuck points
+
+**Correct run:** Count each part, keep the must parts, and cut the least useful part first. The demo prints what was dropped.
+
+**Common wrong turn:** Letting the window cut from the top. The rules are the oldest text, so they are lost first.
+
+**Hint to give:** Which part does the model need most? Keep that one.
+
+| What you see | What it means | Fix |
+| --- | --- | --- |
+| The demo prints outcome: rules-lost on the NAIVE case | The oldest text, the rules, was cut | Keep the rules and the question as must parts |
+| The demo prints outcome: too-small | The must parts do not fit the budget | Raise the window, or shorten the note. Never send without the rules |
+| The reply is a refusal | The documents were cut, so there is no source | This is safe. Refusing beats guessing |
+
 ## The promise, and its test
 
 The prompt never passes the budget, and the rules and the question are never dropped.

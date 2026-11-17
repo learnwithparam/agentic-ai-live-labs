@@ -54,6 +54,20 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 4 | EDGE: one system is stuck | The emails system never answers. The lead stops it at the deadline and sends the rest. | partial | `bun run lab parallel-workers --question "Please prepare a call brief for Dr. Lee." --hcp H-1 --stuck emails` |
 | 5 | EDGE: one worker crashes | The profile worker dies. The brief names the missing part, and the other two come through. | partial | `bun run lab parallel-workers --question "Please prepare a call brief for Dr. Lee." --hcp H-1 --crash profile` |
 
+## Stuck points
+
+**Correct run:** Start all workers at once. Stop a late worker at the deadline, and send the brief with the parts that came back.
+
+**Common wrong turn:** Running the systems one after another. A stuck system then holds up the whole brief.
+
+**Hint to give:** What happens to the brief if one system never answers?
+
+| What you see | What it means | Fix |
+| --- | --- | --- |
+| The demo prints outcome: slow on the NAIVE case | The systems ran one after another | Start all workers at the same time |
+| A part is missing from the brief | That worker missed the deadline | This is correct. Say which part is missing |
+| A worker crashed | The crash is named in the brief | Read the name, then fix that system |
+
 ## The promise, and its test
 
 All workers start at once. A worker that is late is stopped at the deadline, and one that crashes is named. The brief goes out with the parts that came back.

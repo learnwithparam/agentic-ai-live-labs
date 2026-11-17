@@ -51,6 +51,20 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 4 | EDGE: a fact for another country | Dr. Lee is in the US and Dr. Weber is in Germany. The US fact is not used for Dr. Weber. | clean | `bun run lab shared-memory --question "What is the dose of Cardioza for Dr. Weber?" --hcp H-1 --then H-2` |
 | 5 | EDGE: no approved document | There is no approved document for Zorbex. Nothing is saved, and the second bot says so too. | no-answer | `bun run lab shared-memory --question "What is the dose of Zorbex for Dr. Lee?" --hcp H-1` |
 
+## Stuck points
+
+**Correct run:** Save a fact only when it passes the dose check. Each fact keeps the source it came from.
+
+**Common wrong turn:** Saving whatever a bot says. The next bot reads the wrong dose and repeats it.
+
+**Hint to give:** Who checked this fact, and where did it come from?
+
+| What you see | What it means | Fix |
+| --- | --- | --- |
+| The demo prints outcome: poisoned on the NAIVE case | A made-up dose was saved and reused | Check each fact before it is saved |
+| A fact is not saved | It failed the dose check | This is correct. Ask the approved source again |
+| A saved fact has no source | The writer did not record the source | Save the source with every fact |
+
 ## The promise, and its test
 
 A fact is saved only if it passes the dose check. Each fact keeps its provenance, which is the source it came from.

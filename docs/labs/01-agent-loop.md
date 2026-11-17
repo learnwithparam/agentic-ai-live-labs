@@ -58,6 +58,20 @@ Run `bun run lab agent-loop` with nothing else to pick an example from a menu.
 | 8 | Not a drug question at all | Small talk has no approved source. The loop still ends safely. | no-source | `bun run lab agent-loop --question "Hi there, how are you doing today?"` |
 | 9 | The loop hits its step limit | We allow only 1 step. The model gets one tool call and no turn left to answer. A step limit stops a model that never finishes. | stopped | `bun run lab agent-loop --question "What is the dose of Cardioza?" --steps 1` |
 
+## Stuck points
+
+**Correct run:** Run the search, read the result, then answer with its document id.
+
+**Common wrong turn:** Expecting the model to answer from memory. It has no approved facts there, so it guesses or refuses.
+
+**Hint to give:** Which step gives the model its facts? Find that line in the code.
+
+| What you see | What it means | Fix |
+| --- | --- | --- |
+| The demo prints outcome: stopped on the step-limit case | The loop hit its step limit before the model answered | Find the step where the model never finishes, or raise --steps |
+| The demo prints outcome: no-source | The search found no approved document | Check the drug name and the country. Refusing is correct |
+| The log shows STOPPED after several rounds | The model asked for a tool every round | Read the log. Each round should bring new information |
+
 ## Read the code
 
 Open `labs/01-agent-loop.ts`. Read the code from the top. It holds only the lesson.

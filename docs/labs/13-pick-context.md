@@ -57,6 +57,20 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 7 | EDGE: a word used in another way | A doctor jokes about email. A word list would load the emails. The model reads the meaning, so it can load nothing. | unclear | `bun run lab pick-context --question "I never read my email anyway"` |
 | 8 | An empty question | No question means no source helps, so nothing is loaded. | unclear | `bun run lab pick-context --question ""` |
 
+## Stuck points
+
+**Correct run:** Load only the sources that the question's keywords need. A question with no keyword loads nothing.
+
+**Common wrong turn:** Loading every source. The model then sees private emails that the question did not need.
+
+**Hint to give:** Which source does a dose question need, and which one does it not?
+
+| What you see | What it means | Fix |
+| --- | --- | --- |
+| The demo prints outcome: overloaded on the NAIVE case | Every source was loaded, emails included | Load a source only when a keyword asks for it |
+| The agent asks for more context | No keyword matched, so nothing was loaded | This is correct. Ask the person which source they need |
+| The profile appears in a dose answer | The profile was loaded with no reason | Check the keyword rule for that source |
+
 ## The promise, and its test
 
 A question loads only the sources whose keyword it holds. A question with no keyword loads nothing, and the agent asks.

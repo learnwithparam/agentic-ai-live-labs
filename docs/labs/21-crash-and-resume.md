@@ -54,6 +54,20 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 4 | EDGE: a kill between the send and the ledger | The email went out but the ledger line was not written. The restart tries Dr. Weber again, and the outbox refuses the key. | ok | `bun run lab crash-and-resume --question "Email the Cardioza update to three doctors" --scenario between` |
 | 5 | EDGE: run a finished job again | Every doctor is in the ledger. The second run does nothing at all. | ok | `bun run lab crash-and-resume --question "Email the Cardioza update to three doctors" --scenario done` |
 
+## Stuck points
+
+**Correct run:** Record each finished step in the ledger. After a kill, restart from the ledger and skip what was sent.
+
+**Common wrong turn:** Starting again from the top. The first doctors get the same email twice.
+
+**Hint to give:** Where does the program record what it already did?
+
+| What you see | What it means | Fix |
+| --- | --- | --- |
+| The demo prints outcome: duplicates on the NAIVE case | Doctors got the email twice after a restart | Read the ledger before each send |
+| A send carries an idempotency key | The key stops the same send twice | Keep each key, and never change it |
+| The job finishes but sends again | The ledger line was not written | Write the ledger line right after each send |
+
 ## The promise, and its test
 
 After a kill and a restart, every doctor has exactly one email. A step in the ledger is never done again. An idempotency key stops a send from happening twice.

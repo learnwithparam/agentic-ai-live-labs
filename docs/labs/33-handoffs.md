@@ -55,6 +55,20 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 5 | EDGE: a message that fits no bot | The intake bot has no bot for an invoice, so a person gets it at once. | human | `bun run lab handoffs --question "Please call me back about my last invoice." --hcp H-1` |
 | 6 | EDGE: the hop limit is tiny | The limit is zero hops. Even the first handoff is refused, though nothing is wrong. | stopped | `bun run lab handoffs --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1 --limit 0` |
 
+## Stuck points
+
+**Correct run:** Put each message in an envelope, and stop it at the hop limit or a repeat. Then send it to a person.
+
+**Common wrong turn:** Passing messages with no count. The bots send the message back and forth for ever.
+
+**Hint to give:** How would a bot know it has seen this message before?
+
+| What you see | What it means | Fix |
+| --- | --- | --- |
+| The demo prints outcome: looped on the NAIVE case | No envelope, so no count or path | Add an envelope with a hop count and a path |
+| The message is stopped at the limit | The hop limit was reached | Read the path, then fix the loop |
+| A bot is met twice | The loop breaker fired | This is correct. A person gets the list of bots |
+
 ## The promise, and its test
 
 Every message travels in an envelope. It stops at the hop limit, or when it meets a bot twice. Then a person gets it, with the list of bots it met.

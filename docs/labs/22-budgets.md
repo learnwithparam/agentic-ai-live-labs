@@ -54,6 +54,20 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 5 | EDGE: handed on too many times | This run is the third hand-over, and the cap is three hops. It is refused before any money is spent. | hop-cap | `bun run lab budgets --question "What is the dose of Cardioza?" --hops 3` |
 | 6 | EDGE: many runs in one day | Each run is small. The ledger on disk adds them up. The day cap stops the second run in a row. | day-cap | `bun run lab budgets --question "What is the dose of Cardioza?" --again 3 --day 1` |
 
+## Stuck points
+
+**Correct run:** Check the worst case before each call. Refuse a call that would pass the run cap or the day cap.
+
+**Common wrong turn:** Counting tokens and calling that a budget. A count of tokens does not stop a money bill.
+
+**Hint to give:** What is the most this call can cost, and which cap does it meet?
+
+| What you see | What it means | Fix |
+| --- | --- | --- |
+| The demo prints outcome: never-stopped on the NAIVE case | No money cap in the code | Add a run cap and a day cap, checked before each call |
+| A call is refused before any money is spent | Its worst case passed a cap | This is correct. Raise a cap only with a reason |
+| A run is refused as too many hops | The hop limit was reached | Shorten the hand-overs, or raise the hop limit |
+
 ## The promise, and its test
 
 A call never starts if its worst case would pass a cap. What a call really cost is written to disk. A run with too many hops is refused.

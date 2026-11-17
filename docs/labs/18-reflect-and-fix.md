@@ -1,6 +1,6 @@
 # Check the draft, then fix it
 
-Each example is a doctor's question. The pretend model writes a draft, and sometimes the draft is wrong. Pick how it acts with --model: ok, nocite (no citation), invent (a wrong dose) or stubborn (a wrong dose it will not fix). Each fix is one round.
+Each example is a doctor's question. The pretend model writes a draft, and sometimes the draft is wrong. Pick how it acts with --model. Use ok, nocite (no citation), invent (a wrong dose) or stubborn (a wrong dose it will not fix). Each fix is one round.
 
 ## The story in one picture
 
@@ -52,6 +52,20 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 4 | A wrong dose | The check finds 20mg is not in the document. The model changes it to 10mg. | fixed | `bun run lab reflect-and-fix --question "What is the dose of Cardioza?" --model invent` |
 | 5 | EDGE: a model that will not change | The model sends the same wrong draft twice. After two rounds we stop and give it to a person. | gave-up | `bun run lab reflect-and-fix --question "What is the dose of Cardioza?" --model stubborn` |
 | 6 | No approved document | Zorbex has no approved document. With nothing to check against, there is no answer to give. | no-source | `bun run lab reflect-and-fix --question "Is Zorbex safe for children?"` |
+
+## Stuck points
+
+**Correct run:** Check each draft in code against the source. A fix gets two rounds at most, then a person decides.
+
+**Common wrong turn:** Asking the model if its draft is fine. It has no new facts, so it says yes.
+
+**Hint to give:** What can code check that the model cannot judge by itself?
+
+| What you see | What it means | Fix |
+| --- | --- | --- |
+| The demo prints outcome: self-approved on the NAIVE case | The model approved its own wrong dose | Check the dose and the citation in code, not with the model |
+| The log shows round 1, round 2, then a person | The fix limit was reached | This is correct. A person decides when the fixes fail |
+| A draft with no source is passed | The check had no source to compare with | With no source, stop and ask. Do not pass it |
 
 ## The promise, and its test
 

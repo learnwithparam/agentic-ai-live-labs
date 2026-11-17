@@ -54,6 +54,20 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 5 | A question that needs no hook | A plain dose search. No hook has anything to say, and the answer comes through. | clean | `bun run lab hooks --question "What is the dose of Cardioza?"` |
 | 6 | EDGE: a hook that crashes | A buggy hook throws an error. We do not let the call through. Every call is blocked. | blocked | `bun run lab hooks --demo` |
 
+## Stuck points
+
+**Correct run:** Run a before hook on every call and an after hook on every output. A hook that crashes blocks the call.
+
+**Common wrong turn:** Writing the rule only in the prompt. The model can ignore it and email the note.
+
+**Hint to give:** Where could a check run that the model cannot skip?
+
+| What you see | What it means | Fix |
+| --- | --- | --- |
+| The demo prints outcome: leaked on the NAIVE case | No hook ran, and the note was emailed | Add a before hook that checks each email |
+| A call is blocked by a hook | The before hook said no | This is correct. Read the hook name in the log |
+| Every call is blocked | A hook crashed, and fail closed blocks the call | Fix the crash. Do not remove the hook |
+
 ## The promise, and its test
 
 Every tool call passes the before hooks, and every output passes the after hooks. A hook that crashes blocks the call, which is fail closed.

@@ -60,6 +60,20 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 8 | No approved source, so no citation | The model refuses, and a refusal has no citation either. The guardrail blocks it. In the gates lab that sends it to a person. | 0 masked, blocked | `bun run lab guardrails --question "What is the dose of Zorbex?"` |
 | 9 | EDGE: wrong dose, valid citation | The model says 20mg and cites the real document. A citation check cannot see that the claim is wrong. Only a check of the claim itself can. That is the shapes lab. | 0 masked, passed | `bun run lab guardrails --question "What is the dose of Cardioza?" --model invent` |
 
+## Stuck points
+
+**Correct run:** Hide the private details before the model reads them. The demo prints 3 masked, passed.
+
+**Common wrong turn:** Checking only the reply. The model has already read the private details, so they can leak in its words.
+
+**Hint to give:** Which text does the model read first: the raw note or the hidden note?
+
+| What you see | What it means | Fix |
+| --- | --- | --- |
+| The demo prints outcome: leaked 3 on the NAIVE case | The raw note reached the model | Run the input guardrail before the model is called |
+| A private detail appears in the reply | The output guardrail did not catch it | Add the pattern to the rules, and check the output too |
+| A name with no label is not hidden | The name finder did not see it | Check the name finder for this kind of name |
+
 ## The promise, and its test
 
 The model only ever reads the hidden version of a note. A reply with no approved source is blocked.

@@ -58,6 +58,20 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 7 | A drug nobody knows | Zorbex is not close to any known drug. Guessing could be dangerous, so a person decides. | ask-person | `bun run lab error-feedback --question "What is the dose of Zorbex in the US?"` |
 | 8 | Valid call, no document | Dermalin has no German document. That is not an error, so there is no retry. The answer is no source. | no-source | `bun run lab error-feedback --question "What is the dose of Dermalin in Germany?"` |
 
+## Stuck points
+
+**Correct run:** Return an error that says what is valid, so the model can fix its call. A call that cannot be fixed goes to a person.
+
+**Common wrong turn:** Returning a bare ERROR. The model repeats the same call until it runs out of tries.
+
+**Hint to give:** What would the model need to read to change its call?
+
+| What you see | What it means | Fix |
+| --- | --- | --- |
+| The demo prints outcome: gave-up on the NAIVE case | The same call was sent three times | Send the valid countries in the error text |
+| The model fixed its call, and the tool ran | The error said what was wrong | This is correct. The hint did its job |
+| A retry never stops | The retry cap is missing | Cap the retries, then ask a person |
+
 ## The promise, and its test
 
 An error says what is valid. Retries are capped. A call that cannot be fixed means we ask a person.

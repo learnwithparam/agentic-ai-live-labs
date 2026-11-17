@@ -51,6 +51,20 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 4 | EDGE: the wrong country | Dr. Weber is in Germany. DOC-101 is the US label, so its dose is not for him. | blocked | `bun run lab fact-checker --demo` |
 | 5 | EDGE: only the last sentence is bad | The first sentences are good. The last one is a new claim. It is found, and it is the only one named. | blocked | `bun run lab fact-checker --demo` |
 
+## Stuck points
+
+**Correct run:** Check each sentence. A claim needs a citation, a document for this country, and the document's own words.
+
+**Common wrong turn:** Asking the model if the draft is fine. It has no new facts, so it says yes to a claim with no source.
+
+**Hint to give:** Which words in the document say this, word for word?
+
+| What you see | What it means | Fix |
+| --- | --- | --- |
+| The demo prints outcome: self-approved on the NAIVE case | The model approved a claim that no document makes | Check each claim against the document in code |
+| The email is blocked | One sentence failed the check | Read the blocked sentence, then fix or remove it |
+| A claim has a citation but still fails | The words do not match the document | Quote the document word for word |
+
 ## The promise, and its test
 
 Every sentence is checked. A claim needs a citation, a document for this country, and the document's own words. One bad sentence blocks the email.

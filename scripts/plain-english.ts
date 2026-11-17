@@ -368,11 +368,18 @@ export function strictTextOf(markdown: string): string {
     .join("\n");
 }
 
+// Only real sentences are graded. A table cell or a diagram label of fewer than 8 words is a fragment,
+// and a short fragment makes every grade look low. So the grade counts the cells that are sentences.
+export const SENTENCE_CELL_WORDS = 8;
+
+export function sentenceLinesOf(markdown: string): string[] {
+  return strictTextOf(markdown)
+    .split("\n")
+    .filter((line) => line.trim().split(/\s+/).length >= SENTENCE_CELL_WORDS);
+}
+
 export function strictGradeOf(markdown: string): number {
-  const sentences = strictTextOf(markdown)
-    .split(/\n+/)
-    .flatMap((line) => line.split(/(?<=[.!?:])\s+/))
-    .filter((sentence) => sentence.trim() !== "");
+  const sentences = sentenceLinesOf(markdown).flatMap((line) => line.split(/(?<=[.!?])\s+/));
   return readingGrade(sentences);
 }
 
@@ -417,8 +424,17 @@ export function teachProblems(file: string, markdown: string, gradeLimit: number
   const prose = textOutsideCode(markdown);
   if (/;\s/.test(prose)) problems.push({ file, message: "semicolon in prose: use a full stop or a comma" });
   if (/\u2014/.test(markdown)) problems.push({ file, message: "em dash: use a full stop or a comma" });
+  for (const line of strictTextOf(markdown).split("\n")) {
+    for (const sentence of line.split(/(?<=[.!?])\s+/)) {
+      const count = sentence.split(/\s+/).length;
+      if (count > configuredNumber("longest", LONGEST_SENTENCE)) {
+        problems.push({ file, message: `${count}-word cell or label "${sentence.slice(0, 40)}..."; split it` });
+      }
+    }
+  }
+  for (const problem of hardWordProblems(file, strictTextOf(markdown))) problems.push(problem);
   const grade = strictGradeOf(markdown);
-  if (grade > gradeLimit) problems.push({ file, message: `strict grade ${grade.toFixed(1)} (tables, headings and labels count), above ${gradeLimit}` });
+  if (grade > gradeLimit) problems.push({ file, message: `grade ${grade.toFixed(1)} over the sentences in tables and labels, above ${gradeLimit}` });
   return problems;
 }
 

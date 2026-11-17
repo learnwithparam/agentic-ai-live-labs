@@ -55,6 +55,20 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 5 | EDGE: the end is cut off | The answer line is removed. The chain is still fine, but the last fingerprint is not the saved one. | caught | `bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp H-2 --tamper cut` |
 | 6 | EDGE: the whole file is rewritten | Someone edits a line and works every fingerprint out again. The chain is fine, but the head is not the saved one. | caught | `bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp H-2 --tamper rewrite` |
 
+## Stuck points
+
+**Correct run:** Write each step with a fingerprint of the one before it. Check the chain against the saved head.
+
+**Common wrong turn:** Trusting a plain log. Someone can edit it to tell any story, and nothing shows the edit.
+
+**Hint to give:** If one line changed, which fingerprint would stop matching?
+
+| What you see | What it means | Fix |
+| --- | --- | --- |
+| The demo prints outcome: unnoticed on the NAIVE case | The edit in the plain log was not seen | Chain each line to the one before, and check the head |
+| The check reports a broken line | A line was changed, removed or cut | Restore the file from the saved copy, then find who changed it |
+| The head matches but the check fails | The head was saved where the trace is kept | Save the head somewhere with a different owner |
+
 ## The promise, and its test
 
 Every step is written down. Each line holds a fingerprint of the line before it. The chain is checked against the saved head, and it finds any edit.

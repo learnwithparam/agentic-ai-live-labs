@@ -51,6 +51,20 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 3 | One doctor | A job for one doctor is one worker and one chain. | all-sent | `bun run lab chain-and-delegate --question "Write the Cardioza update for Dr. Weber please." --hcps H-2` |
 | 4 | EDGE: one worker has nothing to write from | There is no German Neurovex document. Dr. Weber's worker holds its letter, and the other two still go. | partial | `bun run lab chain-and-delegate --demo` |
 
+## Stuck points
+
+**Correct run:** Split the job, give each doctor to a worker, and pass each result along the chain. Each letter uses its doctor's country.
+
+**Common wrong turn:** One search for all doctors. The others get the wrong country's label.
+
+**Hint to give:** Which country should this doctor's letter use?
+
+| What you see | What it means | Fix |
+| --- | --- | --- |
+| The demo prints outcome: wrong-label on the NAIVE case | One search ran for one country | Give each doctor a worker with its own search |
+| A worker is named as failed | That worker's step failed | Retry it once, then hand it to a person. The others still go |
+| A letter does not pass the check | The draft is not from the right document | Check the letter before it is sent |
+
 ## The promise, and its test
 
 Each doctor's letter is written from a document of the doctor's own country, and it passes a check. A worker that fails is named and the others still go.

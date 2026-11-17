@@ -59,6 +59,20 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 8 | A drug with no chunk in this country | Dermalin has only a US chunk. We never fall back to another country. We say there is no source. | no-source | `bun run lab retrieval --question "How do I use the Dermalin cream?" --country DE` |
 | 9 | Nothing to do with drugs | No word matches any chunk. The answer is no source. We do not send the closest bad match. | no-source | `bun run lab retrieval --question "What is the weather in Berlin today?" --country DE` |
 
+## Stuck points
+
+**Correct run:** Search only the doctor's country, score the chunks, and return the strong ones. Say so when none are strong.
+
+**Common wrong turn:** Searching all countries. The best match may come from another country, which gives the wrong dose.
+
+**Hint to give:** Which filter must run before the score?
+
+| What you see | What it means | Fix |
+| --- | --- | --- |
+| The demo prints outcome: wrong-country on the NAIVE case | A chunk from another country was returned | Filter by country before ranking |
+| The demo prints outcome: no-source | No chunk has a strong score for this country | This is correct. Say there is no source |
+| Two chunks tie on score | The score cannot pick one | Sort ties in a fixed order, so the answer never changes |
+
 ## The promise, and its test
 
 Only chunks from the doctor's country, with a strong score, are returned. Otherwise we say there is no source.

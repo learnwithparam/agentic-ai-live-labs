@@ -52,6 +52,20 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 4 | EDGE: the version that makes things up | For an unknown drug it writes a made-up document and a dose. The Zorbex eval fails. | blocked | `bun run lab evals-and-release --question "Is this new version ready to release?" --version invents` |
 | 5 | EDGE: nobody wrote any evals | Zero evals pass, but nothing was tested. An empty set blocks the release. | blocked | `bun run lab evals-and-release --question "Is this new version ready to release?" --version current --evals none` |
 
+## Stuck points
+
+**Correct run:** Run every eval on the new version. Ship only when all evals pass.
+
+**Common wrong turn:** Shipping because the version still answers. A regression can give the wrong dose, and no one sees it.
+
+**Hint to give:** Which eval would catch a German doctor getting the US dose?
+
+| What you see | What it means | Fix |
+| --- | --- | --- |
+| The demo prints outcome: shipped-wrong on the NAIVE case | The naive gate shipped a wrong version | Run every eval, and block on any failure |
+| The release is blocked and names a question | One eval failed | Fix the version, or the eval if it is wrong. Never delete the eval |
+| The release is blocked on an empty eval set | There are no evals, so nothing can pass | Write at least one eval for each risk |
+
 ## The promise, and its test
 
 A version ships only when every eval passes. A failed eval blocks it and names the question. An empty eval set blocks everything.
