@@ -1,6 +1,6 @@
 # Keep noisy work apart
 
-Each example asks for a dose. The document search returns forty old drafts with wrong doses. Pick the doctor with --hcp, and pick how the model acts with --model.
+Each example asks for a dose. The document search returns many old drafts with wrong doses. A helper reads that noise in its own context, and sends back a short report. Pick the doctor with --hcp, and how the model acts with --model.
 
 ## The story in one picture
 
@@ -12,11 +12,15 @@ flowchart LR
 
 ## The problem
 
-A search can return pages of old and wrong text. If the main agent reads it all, its space is full of junk. It may copy a wrong dose.
+A search can return pages of old and wrong text. If the main agent reads it all, its context is full of junk. It may copy a wrong dose.
 
 ## New words
 
-helper = a second agent with its own space. context = everything an agent has read so far. report = the short answer the helper sends back.
+Each word has one meaning in every lab.
+
+- **helper**: A second agent with its own context, used for noisy work.
+- **context**: Everything an agent has read so far, which it keeps in its window.
+- **report**: The short answer a helper sends back.
 
 ## Run it
 

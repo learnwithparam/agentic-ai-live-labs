@@ -15,11 +15,11 @@ export const lab: Lab = {
   file: "31-parallel-workers.ts",
   title: "Parallel workers",
   about:
-    "Each example prepares a call brief from three systems: documents, the profile and the emails. Pick the doctor with --hcp. Make a system fail with --stuck or --crash, and give the system name: docs, profile or emails.",
-  terms: "parallel = at the same time. deadline = the time we stop waiting. merge = put the parts of the result together. worker = one program that does one part.",
+    "Each example prepares a call brief from three systems. A worker reads each system, and the workers run in parallel. Pick the doctor with --hcp. Make a system fail with --stuck or --crash, and name it: docs, profile or emails.",
+  terms: ["parallel", "deadline", "merge", "worker"],
   challenge: "Three slow systems one after another take three seconds. One stuck system holds up the whole brief, and the rep walks into the call with nothing.",
   promise: "All workers start at once. A worker that is late is stopped at the deadline, and one that crashes is named. The brief goes out with the parts that came back.",
-  production: "Give each worker its own result file or queue, so none overwrites another. Set the deadline from how long the rep can wait. Log which parts are missing.",
+  production: "Give each worker its own result file, so none overwrites another. Set the deadline from how long the rep can wait. The merge keeps the parts that came back.",
   cases: [
     { title: "NAIVE: one system after another", why: "The systems run in a line. Three seconds go by before the brief is ready.", question: ASK, flags: { hcp: "H-1", naive: "true" }, expect: "slow" },
     { title: "Three workers at once", why: "All three start together. The brief is ready in about one second.", question: ASK, flags: { hcp: "H-1" }, expect: "complete" },

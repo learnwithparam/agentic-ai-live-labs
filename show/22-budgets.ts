@@ -15,10 +15,10 @@ export const lab: Lab = {
   file: "22-budgets.ts",
   title: "Money caps",
   about:
-    "Each example runs the loop with a cost cap. The run cap is 1 cent and the day cap is 3 cents, so you see them hit. Change them with --run and --day (whole cents). Also use --before (millicents spent today), --hops and --again (runs in a row).",
-  terms: "millicent = a thousandth of a cent, so every amount is a whole number. cap = a limit we set. worst case = the price if the model uses its longest answer. hop = one agent handing work to another.",
+    "Each example runs the loop with a cost cap. The run cap is 1 cent and the day cap is 3 cents, so you see them hit. Change them with --run and --day, in whole cents. Also use --before (millicents spent today), --hops and --again.",
+  terms: ["millicent", "cap", "worst-case", "hop"],
   challenge: "A stuck model keeps spending, and one person can start many runs in a day. A count of tokens does not stop a company bill.",
-  promise: "A call never starts if its worst case would pass the run cap or the day cap. What a call really cost is written to disk. A run handed on too many times is refused.",
+  promise: "A call never starts if its worst case would pass a cap. What a call really cost is written to disk. A run with too many hops is refused.",
   production: "Take the price list from your provider. Keep the ledger in a database that every server shares. Alert a person when a cap is hit.",
   cases: [
     { title: "NAIVE: no money cap", why: "The model keeps making the same call, and nothing in our code counts money. The demo cuts it at 200 rounds, and the bill is long.", question: "What is the dose of Zorbex?", flags: { model: "stuck", naive: "true" }, expect: "never-stopped" },

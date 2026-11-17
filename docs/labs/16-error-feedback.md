@@ -1,6 +1,6 @@
 # A useful error
 
-Each example is a question like Cardioza in Germany. The model writes the tool call, reads each error, and fixes the call, up to 3 tries.
+Each example is a question like Cardioza in Germany. The model writes the tool call, reads each error, and fixes the call, up to 3 tries. Each try after a failure is a retry.
 
 ## The story in one picture
 
@@ -15,11 +15,15 @@ flowchart LR
 
 ## The problem
 
-A bare ERROR gives the model nothing to fix. It repeats itself until the loop runs out.
+A bare ERROR gives the model no hint to fix. It repeats the same call until the loop runs out.
 
 ## New words
 
-retry = try the call again. hint = what the error says is valid. ask a person = stop, because only they know what was meant.
+Each word has one meaning in every lab.
+
+- **retry**: Try the same call again after it failed.
+- **hint**: A short line that says what the error expected, so the model can fix its call.
+- **ask a person**: Stop and let a person decide, because only they know what was meant.
 
 ## Run it
 
@@ -56,7 +60,7 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 ## The promise, and its test
 
-An error says what is valid. Retries are capped. A call that cannot be fixed goes to a person.
+An error says what is valid. Retries are capped. A call that cannot be fixed means we ask a person.
 
 ```bash
 bun test tests/promises/16.test.ts

@@ -1,6 +1,6 @@
 # Identity and scopes
 
-Each example sends a doctor's request to one of three bots: answer, outreach or report. Pick the bot with --bot. The model says which tools the request needs. Then each tool call must show the bot's signed token.
+Each example sends a doctor's request to one of three bots. Pick the bot with --bot. Each bot proves its identity with a signed token, and the token lists its scopes.
 
 ## The story in one picture
 
@@ -15,11 +15,16 @@ flowchart LR
 
 ## The problem
 
-If every bot shares one key, any bot can do anything. A bot that only answers questions can still send email.
+If every bot shares one key, any bot can do anything. A bot that only answers questions could still send email, which is more than it needs.
 
 ## New words
 
-identity = who is calling. scope = one thing a token may do. least privilege = a bot gets only the scopes it needs. token = a signed note that lists them.
+Each word has one meaning in every lab.
+
+- **identity**: Who is calling: a named bot or a named person.
+- **scope**: A right, such as reading documents, that a token gives.
+- **least privilege**: Give each bot only the scopes it needs, and no more.
+- **signed token**: A note, signed by us, that lists what a bot may do and until when.
 
 ## Run it
 
@@ -56,7 +61,7 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 ## The promise, and its test
 
-A tool call runs only when the token is real and not expired. The token must also list the scope the tool needs. A bot never does more than its own list.
+A tool call runs only when the token is real and not expired. The token must list the scope the tool needs. Least privilege means a bot never does more than its list.
 
 ```bash
 bun test tests/promises/24.test.ts

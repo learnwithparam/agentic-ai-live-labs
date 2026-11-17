@@ -1,6 +1,6 @@
 # Guardrails and private details
 
-Each example is a note from a doctor. The input guardrail hides private details before the model reads the note. The output guardrail blocks any reply with no approved source.
+Each example is a note from a doctor. The input guardrail hides the private details before the model reads the note. The output guardrail blocks any reply with no approved source. For example, a social security number becomes a token such as [SSN].
 
 ## The story in one picture
 
@@ -15,11 +15,15 @@ flowchart LR
 
 ## The problem
 
-Once a model has read a patient's name or number, you cannot take it back. And a model can write a fact with no source.
+A note can hold PHI, such as a patient name or a record number. Once the model reads it, we cannot take it back. The model can also write a fact with no source.
 
 ## New words
 
-PHI = private health details, like a name or a record number. token = a label such as [SSN] that stands in for a private piece. guardrail = a check in plain code, before or after the model.
+Each word has one meaning in every lab.
+
+- **PHI**: Protected health information. Facts that can point to a patient, such as a name or record number.
+- **token**: A short label, such as [SSN] or [SSN-1], that stands in for a private value.
+- **guardrail**: A check in plain code, before or after the model, that can stop or change text.
 
 ## Run it
 
@@ -68,7 +72,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Rules catch only the formats you wrote, and the name finder can miss a rare name. Add a person to review what slips through. Never log the raw note.
+Rules catch only the formats we wrote. A name finder can miss a rare name, so a person should review what slips through. Never log the raw note.
 
 ## Read the code
 

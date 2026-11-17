@@ -13,9 +13,9 @@ export const lab: Lab = {
   file: "19-run-state.ts",
   title: "Run state",
   about:
-    "Each example is one run of the agent. Afterwards we read the run record back from disk, the way another person or program would.",
-  terms: "run = one job from start to end. run record = a file with the run's id, status and steps. stalled = running, but quiet for too long.",
-  challenge: "A printed log is gone when the program ends. Nobody can say what the run was doing, or whether it is still alive.",
+    "Each example is one run of the agent. Each run saves a run record to disk. Afterwards we read the record back, the way another person or program would.",
+  terms: ["run", "run-record", "stalled"],
+  challenge: "A printed log is gone when the program ends. Nobody can say what the run was doing, or if it is still alive.",
   promise: "Every run has a record from its first step. The record is saved after every step. A quiet run is called stalled.",
   production: "Keep run records in a database, show them on a board, and alert on a stalled run.",
   cases: [

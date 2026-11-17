@@ -11,9 +11,9 @@ export const lab: Lab = {
   file: "28-evals-and-release.ts",
   title: "Evals and the release gate",
   about:
-    "Each example is a new version of the document search. Pick it with --version: current, wide or invents. We run every eval question through it, then decide if it may ship.",
-  terms: "eval = a real question with the facts a right answer must have. eval set = the list of evals. release gate = the check that blocks a bad version. regression = something that worked and now does not.",
-  challenge: "A change that looks fine ships because it still answers. It gives a German doctor the US dose, and nobody finds out until she does.",
+    "Each example is a new version of the document search. We run every eval in the eval set through it. The release gate then decides if the version may ship. Pick the version with --version: current, wide or invents.",
+  terms: ["eval", "eval-set", "release-gate", "regression"],
+  challenge: "A change that looks fine ships, because it still answers. It can give a German doctor the US dose, and nobody finds out until she does. That is a regression.",
   promise: "A version ships only when every eval passes. A failed eval blocks it and names the question. An empty eval set blocks everything.",
   production: "Run the evals on every change, on the same model you ship. Add a new eval each time a bug gets out. Never delete one to make a release pass.",
   cases: [

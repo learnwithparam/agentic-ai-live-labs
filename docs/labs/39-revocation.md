@@ -1,6 +1,6 @@
 # Withdrawn documents and the cache
 
-Each example asks one question twice. In between, a document may be withdrawn. Use --withdraw to withdraw it after the first answer. Use --late to withdraw it while the second answer is made.
+Each example asks one question twice. In between, a document may be withdrawn, which means the company took it back. Use --withdraw to withdraw it after the first answer. Use --late to withdraw it while the second answer is made.
 
 ## The story in one picture
 
@@ -15,11 +15,15 @@ flowchart LR
 
 ## The problem
 
-A saved answer is fast, and it never looks at the document again. When the document is withdrawn, the old dose still goes out.
+A cache holds saved answers. It is fast, and it never looks at the document again. When the document is withdrawn, the old dose still goes out.
 
 ## New words
 
-withdrawn = the company took the document back. cache = saved answers, so the next ask is fast. revoke = make a saved answer stop working.
+Each word has one meaning in every lab.
+
+- **withdrawn**: The company took the document back, so no one may use it.
+- **cache**: A store of saved answers, so the next ask is faster.
+- **revoke**: Make a saved answer stop working in every place.
 
 ## Run it
 
@@ -50,7 +54,7 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 ## The promise, and its test
 
-A withdrawn document is never sent. That holds for a saved answer, and for an answer made a moment before. A US answer never reaches a German doctor.
+A withdrawn document is never sent, even from the cache. That holds for a saved answer, and for an answer made a moment before. A US answer never reaches a German doctor.
 
 ```bash
 bun test tests/promises/39.test.ts
@@ -60,7 +64,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Keep the withdrawal list in the same store as the documents, and have the document system call it. Alert the medical team when a saved answer is dropped.
+Keep the withdrawal list in the same store as the documents. Revoke every saved answer that uses the document. Alert the medical team when a saved answer is dropped.
 
 ## Read the code
 

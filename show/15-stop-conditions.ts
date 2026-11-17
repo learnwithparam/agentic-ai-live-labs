@@ -10,9 +10,9 @@ export const lab: Lab = {
   file: "15-stop-conditions.ts",
   title: "When the loop must stop",
   about:
-    "Each example asks one question. The loop allows 6 steps, 2 identical calls and 400 tokens. Change them with --steps, --repeats and --budget. A real model answers fast, so two pretend habits are on the shelf: --model stuck repeats one search, and --model wanders tries new words every time.",
-  terms: "step = one trip round the loop. repeat = the same call again. budget = the most we allow a run to spend.",
-  challenge: "A model that is stuck never says it is done. A loop that trusts the model runs and bills forever.",
+    "Each example asks one question, and each trip round the loop is one step. The loop allows 6 steps, 2 identical calls and 400 tokens of budget. Change them with --steps, --repeats and --budget. Two pretend habits help: --model stuck repeats one search, and --model wanders tries new words.",
+  terms: ["step", "stuck-call", "budget"],
+  challenge: "A model that is stuck makes the same call again and again. This is a stuck call, and it never says it is done.",
   promise: "A run always stops within its steps and its budget, and says why it stopped.",
   production: "Set the limits for each task. Alert when a run hits one. Show the stop reason to the person.",
   cases: [

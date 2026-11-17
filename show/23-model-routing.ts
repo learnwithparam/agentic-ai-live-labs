@@ -11,10 +11,10 @@ export const lab: Lab = {
   file: "23-model-routing.ts",
   title: "Which model answers",
   about:
-    "Each example has a small model and a strong model. Our code checks the small model's answer. Pretend habits: --small and --big can be ok, nocite (no citation) or invent (a wrong dose). With --live both tiers use the real model, so the check is real too.",
-  terms: "route = pick which model answers. cascade = try the cheap one first, then a better one. check = a rule in our code that an answer must pass.",
+    "Each example has a small model and a strong model. Our code routes each question to one, then checks the answer. The cascade tries the small model first. Pretend habits: --small and --big can be ok, nocite or invent.",
+  terms: ["route", "cascade", "check"],
   challenge: "The strong model costs ten times more. Using it for every question wastes money. Using the small one alone sends wrong doses to doctors.",
-  promise: "The small model answers first. An answer that fails our check is never sent. The strong model is asked only after a failed check. If both fail, nothing is sent.",
+  promise: "The small model answers first. An answer that fails the check is never sent. The strong model is asked only after a failed check. If both fail, nothing is sent.",
   production: "Log which tier answered each question. Watch how often the small model fails the check, and move the line when it changes.",
   cases: [
     { title: "NAIVE: always the strong model", why: "Every question goes to the strong model, and nobody checks the answer. It works, but it costs ten times more than it needs to.", question: DOSE, flags: { naive: "true" }, expect: "always-big" },

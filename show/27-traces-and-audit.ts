@@ -15,11 +15,11 @@ export const lab: Lab = {
   file: "27-traces-and-audit.ts",
   title: "Traces and the audit ledger",
   about:
-    "Each example answers Dr. Weber, writes the trace, and then someone edits the file. Pick the edit with --tamper: edit, delete, cut or rewrite. Then we check the chain.",
-  terms: "trace = the record of every step. hash = a fingerprint of some text. chain = each line holds the fingerprint of the line before it. head = the last fingerprint, saved elsewhere.",
+    "Each example answers Dr Weber, writes the trace, and then someone edits the file. Pick the edit with --tamper: edit, delete, cut or rewrite. Then we check the hash chain against the saved head.",
+  terms: ["trace", "fingerprint", "hash-chain", "head"],
   challenge: "A month later someone asks why the bot said 5mg. A plain log can be edited to tell any story, and nobody can tell.",
-  promise: "Every step is written down. We check the chain against the saved head. It finds any edit, removed line, cut end or full rewrite.",
-  production: "Send each line to storage that cannot be changed. Save the head in a second place with a different owner. Check the chain on a schedule, not only in an audit.",
+  promise: "Every step is written down. Each line holds a fingerprint of the line before it. The chain is checked against the saved head, and it finds any edit.",
+  production: "Send each line to storage that cannot be changed. Save the head in a second place with a different owner. Check the chain on a schedule.",
   cases: [
     { title: "NAIVE: a plain log", why: "Someone changes the document id in the log. The file still reads fine, and nothing notices.", question: ASK, flags: { hcp: "H-2", tamper: "edit", naive: "true" }, expect: "unnoticed" },
     { title: "Nobody touches the trace", why: "Every line is in order and every fingerprint matches.", question: ASK, flags: { hcp: "H-2" }, expect: "intact" },

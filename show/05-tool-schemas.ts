@@ -18,9 +18,9 @@ export const lab: Lab = {
   file: "05-tool-schemas.ts",
   title: "Tool schemas and structured output",
   about:
-    "Each example asks the same plain question. The model writes a tool call. To test a bad call, pass the text yourself with --call. A schema checks it first. A good call runs. An easy fix is made and noted. A bad call is rejected, and the tool never runs.",
-  terms: "schema = the shape of a good call. JSON = text that holds fields. reject = refuse to run.",
-  challenge: "A model writes tool calls as text. A small mistake can fail with no error at all.",
+    "Each example asks the same plain question. The model writes a tool call, and a schema checks it first. A good call runs, and a fixable call is repaired and noted. A bad call is rejected, and the tool never runs. To test a bad call, pass the text with --call.",
+  terms: ["schema", "json", "reject"],
+  challenge: "A model writes tool calls as JSON text. A small mistake, such as a lower case country, can fail with no error at all.",
   promise: "A call that fails the schema never reaches the tool.",
   production: "Every tool gets a schema. Real systems use a schema library and the model API's own tool format.",
   cases: [

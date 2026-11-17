@@ -11,8 +11,8 @@ export const lab: Lab = {
   file: "29-routing.ts",
   title: "Routing",
   about:
-    "Each example is one message in the care team inbox, from the doctor you pick with --hcp. The router sends it to the answer bot, the outreach bot or a person.",
-  terms: "router = the step that picks who handles a message. specialist = a bot or person that does one job well. fallback = where a message goes when nothing fits.",
+    "Each example is one message in the care team inbox. Pick the doctor with --hcp. The router sends each message to a specialist: the answer bot, the outreach bot or a person. A message that fits no rule goes to the fallback.",
+  terms: ["router", "specialist", "fallback"],
   challenge: "One bot that answers everything also answers the rash message with a dose. A doctor reads it and trusts it.",
   promise: "A message with a danger word always goes to a person. Any route not on our list goes to a person. The other messages reach the specialist that fits.",
   production: "Log every route with the message id. Review the person queue each week, and add a danger word when one slips past.",

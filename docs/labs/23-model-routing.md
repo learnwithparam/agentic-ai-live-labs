@@ -1,6 +1,6 @@
 # Which model answers
 
-Each example has a small model and a strong model. Our code checks the small model's answer. Pretend habits: --small and --big can be ok, nocite (no citation) or invent (a wrong dose). With --live both tiers use the real model, so the check is real too.
+Each example has a small model and a strong model. Our code routes each question to one, then checks the answer. The cascade tries the small model first. Pretend habits: --small and --big can be ok, nocite or invent.
 
 ## The story in one picture
 
@@ -21,7 +21,11 @@ The strong model costs ten times more. Using it for every question wastes money.
 
 ## New words
 
-route = pick which model answers. cascade = try the cheap one first, then a better one. check = a rule in our code that an answer must pass.
+Each word has one meaning in every lab.
+
+- **route**: Pick which model or helper handles a request.
+- **cascade**: Try the cheap model first, and use a stronger one only if the answer fails the check.
+- **check**: A rule in plain code that a draft must pass before it goes out.
 
 ## Run it
 
@@ -54,7 +58,7 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 ## The promise, and its test
 
-The small model answers first. An answer that fails our check is never sent. The strong model is asked only after a failed check. If both fail, nothing is sent.
+The small model answers first. An answer that fails the check is never sent. The strong model is asked only after a failed check. If both fail, nothing is sent.
 
 ```bash
 bun test tests/promises/23.test.ts

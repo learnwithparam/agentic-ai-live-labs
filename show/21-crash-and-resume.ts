@@ -26,11 +26,11 @@ export const lab: Lab = {
   file: "21-crash-and-resume.ts",
   title: "Crash and resume",
   about:
-    "Each example emails three doctors. Some examples kill the program part way, for real, and start it again. Pick one with --scenario: naive, clean, resume, between or done.",
-  terms: "ledger = a list of finished steps on disk. idempotency key = a name for one send, so it happens once. resume = start again and carry on. SIGKILL = a kill the program cannot catch.",
-  challenge: "A kill in the middle of a job loses work or does it twice. Start again from the top and the first doctors get the same email twice.",
-  promise: "After a kill and a restart, every doctor has exactly one email. A step in the ledger is never done again. A key the outbox holds is never sent again.",
-  production: "Keep the ledger and the outbox in a database. Ask your email service to honour the key itself. Then a crash between our two writes is still safe.",
+    "Each example emails three doctors. Some examples send a SIGKILL, which stops the program at once, and then start it again. Pick one with --scenario: naive, clean, resume, between or done. Each finished step is written in the ledger.",
+  terms: ["ledger", "idempotency-key", "resume", "sigkill"],
+  challenge: "A kill in the middle of a job loses work or does it twice. Start again from the top, and the first doctors get the same email twice.",
+  promise: "After a kill and a restart, every doctor has exactly one email. A step in the ledger is never done again. An idempotency key stops a send from happening twice.",
+  production: "Keep the ledger in a database. Ask your email service to honour the idempotency key. Then a crash between our two writes is still safe.",
   cases: [
     { title: "NAIVE: start over after a kill", why: "The program dies after it emails Dr. Weber. The restart begins at the top. Dr. Lee and Dr. Weber get a second email.", question: ASK, flags: { scenario: "naive" }, expect: "duplicates" },
     { title: "No crash", why: "All three doctors get one email, and the ledger lists all three.", question: ASK, flags: { scenario: "clean" }, expect: "ok" },

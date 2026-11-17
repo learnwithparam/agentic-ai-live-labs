@@ -1,6 +1,6 @@
 # Tool schemas and structured output
 
-Each example asks the same plain question. The model writes a tool call. To test a bad call, pass the text yourself with --call. A schema checks it first. A good call runs. An easy fix is made and noted. A bad call is rejected, and the tool never runs.
+Each example asks the same plain question. The model writes a tool call, and a schema checks it first. A good call runs, and a fixable call is repaired and noted. A bad call is rejected, and the tool never runs. To test a bad call, pass the text with --call.
 
 ## The story in one picture
 
@@ -15,11 +15,15 @@ flowchart LR
 
 ## The problem
 
-A model writes tool calls as text. A small mistake can fail with no error at all.
+A model writes tool calls as JSON text. A small mistake, such as a lower case country, can fail with no error at all.
 
 ## New words
 
-schema = the shape of a good call. JSON = text that holds fields. reject = refuse to run.
+Each word has one meaning in every lab.
+
+- **schema**: The rules for a valid input: its fields, their types and which ones are required.
+- **JSON**: A text format for data made of named fields and their values.
+- **reject**: Refuse a tool call, so the tool never runs.
 
 ## Run it
 

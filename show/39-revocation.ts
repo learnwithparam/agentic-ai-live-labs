@@ -14,11 +14,11 @@ export const lab: Lab = {
   file: "39-revocation.ts",
   title: "Withdrawn documents and the cache",
   about:
-    "Each example asks one question twice. In between, a document may be withdrawn. Use --withdraw to withdraw it after the first answer. Use --late to withdraw it while the second answer is made.",
-  terms: "withdrawn = the company took the document back. cache = saved answers, so the next ask is fast. revoke = make a saved answer stop working.",
-  challenge: "A saved answer is fast, and it never looks at the document again. When the document is withdrawn, the old dose still goes out.",
-  promise: "A withdrawn document is never sent. That holds for a saved answer, and for an answer made a moment before. A US answer never reaches a German doctor.",
-  production: "Keep the withdrawal list in the same store as the documents, and have the document system call it. Alert the medical team when a saved answer is dropped.",
+    "Each example asks one question twice. In between, a document may be withdrawn, which means the company took it back. Use --withdraw to withdraw it after the first answer. Use --late to withdraw it while the second answer is made.",
+  terms: ["withdrawn", "cache", "revoke"],
+  challenge: "A cache holds saved answers. It is fast, and it never looks at the document again. When the document is withdrawn, the old dose still goes out.",
+  promise: "A withdrawn document is never sent, even from the cache. That holds for a saved answer, and for an answer made a moment before. A US answer never reaches a German doctor.",
+  production: "Keep the withdrawal list in the same store as the documents. Revoke every saved answer that uses the document. Alert the medical team when a saved answer is dropped.",
   cases: [
     { title: "NAIVE: serve the saved answer", why: "DOC-101 is withdrawn after the first answer. The saved answer still holds its dose, and it goes out again.", question: ASK, flags: { withdraw: "DOC-101", naive: "true" }, expect: "stale" },
     { title: "A withdrawn document", why: "The saved answer cites DOC-101. It is deleted. Nothing else is approved for Cardioza in the US, so there is no answer.", question: ASK, flags: { withdraw: "DOC-101" }, expect: "no-answer" },

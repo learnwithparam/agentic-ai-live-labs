@@ -1,6 +1,6 @@
 # Act for the user
 
-Each example is one doctor asking the bot a question. Pick the doctor with --hcp: H-1 is Dr. Lee in the US, H-2 is Dr. Weber in Germany. The bot carries a token that names her, and the search uses her country.
+Each example is one doctor asking the bot a question. The bot can act for a user, with that user's rights. Pick the doctor with --hcp: H-1 is Dr Lee in the US, and H-2 is Dr Weber in Germany.
 
 ## The story in one picture
 
@@ -14,11 +14,15 @@ flowchart LR
 
 ## The problem
 
-A bot on its own key answers as typed. A German doctor who asks about the US label gets the US dose, which is wrong for her.
+A bot on a service key answers as the key allows. No person is on that key, so nobody is named. A German doctor who asks about the US label gets the wrong dose for her.
 
 ## New words
 
-act for = do a job as a named person. delegation = a person lets a bot act for her. service key = one shared key with no person on it.
+Each word has one meaning in every lab.
+
+- **act for a user**: Do a task as a named person, with only the rights that person has.
+- **delegation**: A person lets a bot act for her, for one set job.
+- **service key**: One shared secret that a bot uses. No person is on it, so no one is named.
 
 ## Run it
 
@@ -63,7 +67,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Issue the token when the doctor signs in, and keep it short. Pass it on every call, and log the doctor with each one.
+Issue the delegation token when the doctor signs in, and keep it short. Pass it on every call, and log the doctor with each one.
 
 ## Read the code
 

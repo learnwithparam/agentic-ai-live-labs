@@ -1,6 +1,6 @@
 # Parallel workers
 
-Each example prepares a call brief from three systems: documents, the profile and the emails. Pick the doctor with --hcp. Make a system fail with --stuck or --crash, and give the system name: docs, profile or emails.
+Each example prepares a call brief from three systems. A worker reads each system, and the workers run in parallel. Pick the doctor with --hcp. Make a system fail with --stuck or --crash, and name it: docs, profile or emails.
 
 ## The story in one picture
 
@@ -20,7 +20,12 @@ Three slow systems one after another take three seconds. One stuck system holds 
 
 ## New words
 
-parallel = at the same time. deadline = the time we stop waiting. merge = put the parts of the result together. worker = one program that does one part.
+Each word has one meaning in every lab.
+
+- **parallel**: At the same time, not one after another.
+- **deadline**: The time after which we stop waiting for a worker.
+- **merge**: Join pieces from several sources into one result.
+- **worker**: A program or agent that does one small part of a job.
 
 ## Run it
 
@@ -61,7 +66,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Give each worker its own result file or queue, so none overwrites another. Set the deadline from how long the rep can wait. Log which parts are missing.
+Give each worker its own result file, so none overwrites another. Set the deadline from how long the rep can wait. The merge keeps the parts that came back.
 
 ## Read the code
 

@@ -12,8 +12,8 @@ export const lab: Lab = {
   file: "30-chain-and-delegate.ts",
   title: "Chains and delegation",
   about:
-    "Each example is one job for three doctors. Pick the doctors with --hcps, for example H-1,H-2,H-3. A lead splits the job and gives each doctor to a worker with a short chain.",
-  terms: "chain = steps where each result feeds the next. delegate = hand a part of the job to a worker. lead = the one that splits the job and collects. worker = does one small part.",
+    "Each example is one job for three doctors. Pick the doctors with --hcps, for example H-1,H-2,H-3. The lead splits the job and delegates each doctor to a worker. Each step in the chain feeds the next one.",
+  terms: ["chain", "delegate", "lead", "worker"],
   challenge: "One bot, one search and one letter for three doctors. The search ran for one country, so the others get the wrong label.",
   promise: "Each doctor's letter is written from a document of the doctor's own country, and it passes a check. A worker that fails is named and the others still go.",
   production: "Give each worker only what its part needs. Log each worker's result by name. Retry a failed worker once, then hand it to a person.",

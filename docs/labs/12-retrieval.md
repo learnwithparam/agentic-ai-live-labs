@@ -1,6 +1,6 @@
 # Retrieval
 
-Each example is a question about a drug. Six invented chunks are searched. Use --country DE for a German doctor. Only chunks from the doctor's country are searched.
+Each example is a question about a drug. Six invented chunks are searched. Each chunk gets a score for how well it matches. Use --country DE for a German doctor, and only chunks from that country are searched.
 
 ## The story in one picture
 
@@ -13,11 +13,16 @@ flowchart LR
 
 ## The problem
 
-The model cannot read every document. If we send the wrong chunk, it answers from the wrong source.
+The model cannot read every document. If retrieval sends the wrong chunk, the model answers from the wrong source.
 
 ## New words
 
-chunk = a small piece of a document. score = how well a chunk matches the question (BM25, the standard word ranking). retrieval = finding the best chunks to send.
+Each word has one meaning in every lab.
+
+- **chunk**: A small piece of a document, such as one paragraph.
+- **BM25**: A standard formula that scores a chunk by the rare words it shares with the question.
+- **score**: A number that says how well one chunk matches the question.
+- **retrieval**: Finding the chunks that best answer a question, before the model reads them.
 
 ## Run it
 
@@ -66,7 +71,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Rank by meaning too, as src/meaning.ts does with --meaning --live. Log which chunk ids were sent on every answer.
+The search ranks with BM25, a standard ranking for words. Rank by meaning too, as src/meaning.ts does with --meaning --live. Log which chunk ids were sent on every answer.
 
 ## Read the code
 

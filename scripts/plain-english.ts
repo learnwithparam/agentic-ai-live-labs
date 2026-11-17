@@ -327,6 +327,101 @@ export function problemsIn(file: string, markdown: string, gradeLimit: number): 
   return problems;
 }
 
+// The teach rules for learner pages (teach repo: scripts/learner-clarity.mjs and strict-grade.mjs).
+// They are stricter than the rules above. Five sentences at most in a paragraph. No semicolons or
+// em dashes in prose. The grade also counts table cells, headings, list items and diagram labels,
+// because a learner reads those too.
+export const PARAGRAPH_SENTENCES = 5;
+
+// The text a learner reads, with table cells, headings, list items and diagram labels included.
+export function strictTextOf(markdown: string): string {
+  const out: string[] = [];
+  let openFence = "";
+  let mermaid = false;
+  for (const line of markdown.split("\n")) {
+    const fence = fenceOn(line);
+    if (fence !== "" || openFence !== "") {
+      if (fence !== "") {
+        mermaid = openFence === "" && /mermaid/.test(line);
+        if (openFence === "") openFence = fence;
+        else if (fence.length >= openFence.length) openFence = "";
+        continue;
+      }
+      if (mermaid) {
+        // Node labels sit in [] {} or "", and edge labels in ||.
+        for (const match of line.matchAll(/"([^"]+)"|\[([^\]]+)\]|\|([^|]+)\||\{([^}]+)\}/g)) {
+          out.push((match[1] || match[2] || match[3] || match[4]).replace(/[()]/g, ""));
+        }
+      }
+      continue;
+    }
+    if (/^\s*\|/.test(line)) {
+      if (/^\s*\|[\s:|-]+\|\s*$/.test(line)) continue;
+      for (const cell of line.split("|").slice(1, -1)) out.push(cell.trim());
+      continue;
+    }
+    out.push(line.replace(/^#+\s*/, "").replace(/^\s*[-*]\s+/, "").replace(/^\s*\d+[.)]\s+/, ""));
+  }
+  return out
+    .filter(Boolean)
+    .map((line) => line.replace(/`[^`]*`/g, "it").replace(/\[([^\]]*)\]\([^)]*\)/g, "$1").replace(/\*\*/g, ""))
+    .join("\n");
+}
+
+export function strictGradeOf(markdown: string): number {
+  const sentences = strictTextOf(markdown)
+    .split(/\n+/)
+    .flatMap((line) => line.split(/(?<=[.!?:])\s+/))
+    .filter((sentence) => sentence.trim() !== "");
+  return readingGrade(sentences);
+}
+
+// Paragraphs: a blank line, a heading or a table row ends one. A list item or a bold label starts one.
+export function paragraphsOfPage(markdown: string): string[] {
+  const blocks: string[] = [];
+  let current: string[] = [];
+  const flush = () => {
+    if (current.length > 0) blocks.push(current.join(" "));
+    current = [];
+  };
+  let openFence = "";
+  for (const line of markdown.split("\n")) {
+    const fence = fenceOn(line);
+    openFence = openFenceAfter(line, openFence);
+    if (fence !== "" || openFence !== "") {
+      flush();
+      continue;
+    }
+    const trimmed = line.trim();
+    if (trimmed === "" || /^(#|\|)/.test(trimmed)) {
+      flush();
+    } else if (/^([-*]\s|\d+[.)]\s|\*\*[^*]+:\*\*)/.test(trimmed)) {
+      flush();
+      current.push(trimmed);
+    } else {
+      current.push(trimmed);
+    }
+  }
+  flush();
+  return blocks;
+}
+
+export function teachProblems(file: string, markdown: string, gradeLimit: number): Problem[] {
+  const problems: Problem[] = [];
+  for (const paragraph of paragraphsOfPage(markdown)) {
+    const count = sentencesOf(paragraph.replace(/`[^`]*`/g, "it")).length;
+    if (count > PARAGRAPH_SENTENCES) {
+      problems.push({ file, message: `paragraph of ${count} sentences; keep it to ${PARAGRAPH_SENTENCES}: "${paragraph.slice(0, 50)}..."` });
+    }
+  }
+  const prose = textOutsideCode(markdown);
+  if (/;\s/.test(prose)) problems.push({ file, message: "semicolon in prose: use a full stop or a comma" });
+  if (/\u2014/.test(markdown)) problems.push({ file, message: "em dash: use a full stop or a comma" });
+  const grade = strictGradeOf(markdown);
+  if (grade > gradeLimit) problems.push({ file, message: `strict grade ${grade.toFixed(1)} (tables, headings and labels count), above ${gradeLimit}` });
+  return problems;
+}
+
 function configuredGrade(): number {
   const packageJson = JSON.parse(readFileSync(join(ROOT, "package.json"), "utf8"));
   const grade = packageJson.plainEnglish?.grade;
@@ -353,7 +448,7 @@ if (import.meta.main) {
       : markdownFiles(ROOT);
   const readProblems = (file: string) => problemsIn(file, readFileSync(file, "utf8"), gradeLimit);
   const problemsInFile = readProblems;
-  const problems = files.flatMap(problemsInFile);
+  const problems = files.flatMap((file) => [...problemsInFile(file), ...teachProblems(file, readFileSync(file, "utf8"), gradeLimit)]);
   for (const problem of problems) {
     console.error(`${relative(ROOT, problem.file)}: ${problem.message}`);
   }

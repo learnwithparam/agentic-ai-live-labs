@@ -14,10 +14,10 @@ export const lab: Lab = {
   file: "24-identity-and-scopes.ts",
   title: "Identity and scopes",
   about:
-    "Each example sends a doctor's request to one of three bots: answer, outreach or report. Pick the bot with --bot. The model says which tools the request needs. Then each tool call must show the bot's signed token.",
-  terms: "identity = who is calling. scope = one thing a token may do. least privilege = a bot gets only the scopes it needs. token = a signed note that lists them.",
-  challenge: "If every bot shares one key, any bot can do anything. A bot that only answers questions can still send email.",
-  promise: "A tool call runs only when the token is real and not expired. The token must also list the scope the tool needs. A bot never does more than its own list.",
+    "Each example sends a doctor's request to one of three bots. Pick the bot with --bot. Each bot proves its identity with a signed token, and the token lists its scopes.",
+  terms: ["identity", "scope", "least-privilege", "signed-token"],
+  challenge: "If every bot shares one key, any bot can do anything. A bot that only answers questions could still send email, which is more than it needs.",
+  promise: "A tool call runs only when the token is real and not expired. The token must list the scope the tool needs. Least privilege means a bot never does more than its list.",
   production: "Keep the secret in a vault and rotate it. Issue short tokens from one place. Log the bot name on every call.",
   cases: [
     { title: "NAIVE: one key for every bot", why: "All bots share one key that may do everything. The answer bot was asked to email Dr. Lee, and it did.", question: DOSE_AND_EMAIL, flags: { bot: "answer", naive: "true" }, expect: "overreach" },

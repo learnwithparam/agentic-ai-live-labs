@@ -35,9 +35,9 @@ export const lab: Lab = {
   file: "11-history-trimming.ts",
   title: "Trimming the chat history",
   about:
-    "Each example is a chat between a doctor and the agent. The last question needs a fact from the start. Pick a chat by name: short, long, two-facts, no-facts or empty. Use --keep 4 to change how many recent turns stay.",
-  terms: "history = the earlier turns of a chat. trim = leave out old turns. pinned fact = a turn we keep whatever its age. The model decides which turns are facts.",
-  challenge: "A long chat does not fit. Cutting the oldest turns also cuts early facts, like the doctor's country.",
+    "Each example is a chat between a doctor and the agent. The last question needs a fact from the start of the chat. Pick a chat by name: short, long, two-facts, no-facts or empty. Use --keep 4 to change how many recent turns stay.",
+  terms: ["history", "trim", "pinned-fact"],
+  challenge: "The chat history gets long, and it does not fit. Trimming the oldest turns also removes early facts, like the doctor's country.",
   promise: "Pinned facts and the most recent turns always survive, in order. Nothing else does.",
   production: "Save each fact when it is said, not at trim time. Write a short summary of the turns left out.",
   cases: [

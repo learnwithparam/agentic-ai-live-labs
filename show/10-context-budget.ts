@@ -29,9 +29,9 @@ export const lab: Lab = {
   file: "10-context-budget.ts",
   title: "The context budget",
   about:
-    "Each example builds the prompt for one question under a token budget. Use --window 80 to change the budget. The prompt holds rules, a doctor note, documents, chat history and the question.",
-  terms: "context window = the most text a model reads at once. token = a small piece of text, counted by a real tokenizer (o200k). budget = the tokens we allow ourselves.",
-  challenge: "A prompt grows every turn. When it passes the window, something is cut, and nobody chooses what.",
+    "Each example builds the prompt for one question under a token budget. The model reads only the context window, so the budget keeps the prompt inside it. Use --window 80 to change the budget. The prompt holds rules, a doctor note, documents, chat history and the question.",
+  terms: ["context-window", "model-token", "budget"],
+  challenge: "A prompt grows every turn. A model counts its text in model tokens. When the prompt passes the context window, something is cut, and nobody chooses what.",
   promise: "The prompt never passes the budget, and the rules and the question are never dropped.",
   production: "Count with the model's own counter. Keep a reserve for the reply. Log what was dropped on every call.",
   cases: [

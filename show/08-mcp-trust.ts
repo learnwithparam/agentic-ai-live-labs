@@ -29,11 +29,11 @@ export const lab: Lab = {
   file: "08-mcp-trust.ts",
   title: "Trusting an MCP server",
   about:
-    "Each example is a server and the tools it lists. Only the server hcp-docs is approved, and its tools were pinned when a person reviewed them. Pick a scene by typing its name.",
-  terms: "pin = remember what a tool looked like when approved. rug pull = a tool changes after approval. fingerprint = a short code for a text.",
-  challenge: "A tool description goes into the prompt. A server can change it later and give the model orders.",
-  promise: "A tool that is unapproved, new, changed or carrying an order is never loaded.",
-  production: "Pin on a schedule, alert on any change, and let only a named person re-approve a tool.",
+    "Each example is a server and the tools it lists. Only the server hcp-docs is approved. Its tools were pinned when a person reviewed them. Pick a scene by typing its name.",
+  terms: ["pin", "rug-pull", "fingerprint"],
+  challenge: "A tool description goes into the prompt. A server can change it later and give the model orders. That is a rug pull.",
+  promise: "A tool that is unapproved, new, changed or carrying an order is never loaded. A changed tool shows a new fingerprint.",
+  production: "Pin on a schedule, and alert on any change. Let only a named person re-approve a tool.",
   cases: [
     { title: "NAIVE: trust every description", why: "The server hides an order inside a tool description. With no check, the order goes straight into the prompt, and the model may follow it.", question: ASK, flags: { server: "unknown-server",  naive: "true" }, expect: "poisoned" },
     { title: "An approved server, unchanged", why: "Right server, and both tools match their pins. Both are loaded.", question: ASK, flags: { server: "approved" }, expect: "trusted" },

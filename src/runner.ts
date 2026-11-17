@@ -2,6 +2,7 @@
 //   --question "..."  run one question.
 //   --demo            walk through every edge case, with a plain explanation for each.
 //   (nothing)         interactive menu. Pick an example by number, or type your own question.
+import { GLOSSARY } from "./glossary";
 import { makeLiveModel, LIVE_MODEL } from "./live";
 import { makeModel, type Behaviour } from "./model";
 import { slugFromFile, whereAmI } from "./roadmap";
@@ -45,7 +46,7 @@ export type Lab = {
   title: string;
   about: string;
   // Optional notes for newer labs. The readable gate requires them from the tool schema lab on.
-  terms?: string;      // 2 to 4 new words, with plain meanings
+  terms?: string[];    // ids from src/glossary.ts: 2 to 5 new words, each with one plain meaning
   challenge?: string;  // the problem this lab solves
   promise?: string;    // what a test proves
   production?: string; // what this becomes in a real system
@@ -84,7 +85,7 @@ function header(lab: Lab) {
   box(lab.title, wrap(lab.about), cyan);
   console.log(dim(whereAmI(Number(lab.file.slice(0, 2)))));
   const notes = [
-    ...(lab.terms ? field("Words", lab.terms, dim, 11) : []),
+    ...(lab.terms ? lab.terms.flatMap((id, index) => field(index === 0 ? "Words" : "", `${GLOSSARY[id].word}: ${GLOSSARY[id].meaning}`, dim, 11)) : []),
     ...(lab.challenge ? field("Challenge", lab.challenge, yellow, 11) : []),
     ...(lab.promise ? field("Promise", lab.promise, green, 11) : []),
     ...(lab.production ? field("Production", lab.production, cyan, 11) : []),

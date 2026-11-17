@@ -11,9 +11,9 @@ export const lab: Lab = {
   file: "13-pick-context.ts",
   title: "Picking what goes in",
   about:
-    "Each example is a question from Dr. Lee. Three sources are on the shelf: documents, the doctor's profile and past emails. We load only the ones the question needs.",
-  terms: "source = a place facts come from. picking = choosing sources per question. overloaded = more context than the question needs.",
-  challenge: "Loading everything is easy. It costs tokens and hides the useful part. It also shows private data that has nothing to do with the question.",
+    "Each example is a question from Dr Lee. Three sources sit on the shelf: documents, the doctor's profile and past emails. Context picking loads only the sources that the question needs.",
+  terms: ["source", "context-picking", "overloaded"],
+  challenge: "A prompt loaded with every source is overloaded. It costs tokens, hides the useful part, and shows private data the question does not need.",
   promise: "A question loads only the sources whose keyword it holds. A question with no keyword loads nothing, and the agent asks.",
   production: "Let the model choose with a tool call, and log which sources each answer used.",
   cases: [

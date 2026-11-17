@@ -11,8 +11,8 @@ export const lab: Lab = {
   file: "07-mcp-basics.ts",
   title: "MCP basics",
   about:
-    "The agent gets its tools from a real MCP server. That server runs as a separate program. Nothing is hard-coded. Use --hcp H-1, H-2 or H-3 to pick the doctor.",
-  terms: "MCP = a standard way for an agent to find and call tools. server = the program that owns the tools. JSON-RPC = the message format.",
+    "The agent gets its tools from a real MCP server. That server runs as a separate program and speaks JSON-RPC messages. Nothing is hard-coded. Use --hcp H-1, H-2 or H-3 to pick the doctor.",
+  terms: ["mcp", "mcp-server", "json-rpc"],
   challenge: "Every new tool means new glue code in every agent. Tool lists go out of date.",
   promise: "The agent learns its tools from the server, so a new server tool needs no agent change.",
   production: "Use the official MCP SDK and keep the server running. Add sign-in and a time limit to every call.",

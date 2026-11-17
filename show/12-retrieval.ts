@@ -12,11 +12,11 @@ export const lab: Lab = {
   file: "12-retrieval.ts",
   title: "Retrieval",
   about:
-    "Each example is a question about a drug. Six invented chunks are searched. Use --country DE for a German doctor. Only chunks from the doctor's country are searched.",
-  terms: "chunk = a small piece of a document. score = how well a chunk matches the question (BM25, the standard word ranking). retrieval = finding the best chunks to send.",
-  challenge: "The model cannot read every document. If we send the wrong chunk, it answers from the wrong source.",
+    "Each example is a question about a drug. Six invented chunks are searched. Each chunk gets a score for how well it matches. Use --country DE for a German doctor, and only chunks from that country are searched.",
+  terms: ["chunk", "bm25", "score", "retrieval"],
+  challenge: "The model cannot read every document. If retrieval sends the wrong chunk, the model answers from the wrong source.",
   promise: "Only chunks from the doctor's country, with a strong score, are returned. Otherwise we say there is no source.",
-  production: "Rank by meaning too, as src/meaning.ts does with --meaning --live. Log which chunk ids were sent on every answer.",
+  production: "The search ranks with BM25, a standard ranking for words. Rank by meaning too, as src/meaning.ts does with --meaning --live. Log which chunk ids were sent on every answer.",
   cases: [
     { title: "NAIVE: best chunk from anywhere", why: "A German doctor asks for the dose. Two chunks match equally well and the US chunk comes first. The doctor gets the US dose.", question: "What is the dose of Cardioza?", flags: { naive: "true", country: "DE" }, expect: "wrong-country" },
     { title: "A US doctor asks for a dose", why: "The right chunk matches on two words. The side effects chunk matches on only one, so it stays out.", question: "What is the dose of Cardioza?", flags: { country: "US" }, expect: "found" },

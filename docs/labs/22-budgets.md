@@ -1,6 +1,6 @@
 # Money caps
 
-Each example runs the loop with a cost cap. The run cap is 1 cent and the day cap is 3 cents, so you see them hit. Change them with --run and --day (whole cents). Also use --before (millicents spent today), --hops and --again (runs in a row).
+Each example runs the loop with a cost cap. The run cap is 1 cent and the day cap is 3 cents, so you see them hit. Change them with --run and --day, in whole cents. Also use --before (millicents spent today), --hops and --again.
 
 ## The story in one picture
 
@@ -18,7 +18,12 @@ A stuck model keeps spending, and one person can start many runs in a day. A cou
 
 ## New words
 
-millicent = a thousandth of a cent, so every amount is a whole number. cap = a limit we set. worst case = the price if the model uses its longest answer. hop = one agent handing work to another.
+Each word has one meaning in every lab.
+
+- **millicent**: A thousandth of a cent. Using it keeps every amount a whole number.
+- **cap**: A hard limit we set, such as the money one run may spend.
+- **worst case**: The most one call can cost, if the model uses its longest answer.
+- **hop**: One step where work passes from one bot or agent to another.
 
 ## Run it
 
@@ -51,7 +56,7 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 ## The promise, and its test
 
-A call never starts if its worst case would pass the run cap or the day cap. What a call really cost is written to disk. A run handed on too many times is refused.
+A call never starts if its worst case would pass a cap. What a call really cost is written to disk. A run with too many hops is refused.
 
 ```bash
 bun test tests/promises/22.test.ts

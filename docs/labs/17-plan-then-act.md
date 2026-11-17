@@ -16,11 +16,14 @@ flowchart LR
 
 ## The problem
 
-Step by step, the email is sent before anyone sees that the plan was wrong.
+Step by step, an email can go out before anyone sees the plan was wrong. A risky step, such as sending an email, cannot be undone.
 
 ## New words
 
-plan = the list of steps, written before the first one runs. risky step = one that cannot be undone, like sending an email.
+Each word has one meaning in every lab.
+
+- **plan**: A list of steps, written before the first step runs.
+- **risky step**: A step that cannot be undone, such as sending an email.
 
 ## Run it
 

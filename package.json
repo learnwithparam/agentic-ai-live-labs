@@ -6,13 +6,15 @@
     "lab": "bun scripts/lab.ts",
     "test": "bun test",
     "readable": "bun scripts/readable.ts",
-    "check": "bun test && bun scripts/readable.ts && bun scripts/plain-english.ts && bun scripts/plain-code.ts && bun scripts/commands.ts && bun scripts/path.ts --check && bun scripts/readme.ts --check && bun scripts/mutate.ts && bunx tsc -p .",
+    "check": "bun test && bun scripts/readable.ts && bun scripts/plain-english.ts && bun scripts/plain-code.ts && bun scripts/commands.ts && bun scripts/path.ts --check && bun scripts/readme.ts --check && bun scripts/glossary.ts && bun scripts/mermaid.ts && bun scripts/mutate.ts && bunx tsc -p .",
     "path": "bun scripts/path.ts",
     "sync": "bun scripts/readme.ts --write && bun scripts/path.ts --write",
     "mutate": "bun scripts/mutate.ts",
     "plain": "bun scripts/plain-english.ts",
     "verify": "bun scripts/verify.ts",
-    "verify:live": "bun scripts/verify.ts --live"
+    "verify:live": "bun scripts/verify.ts --live",
+    "glossary": "bun scripts/glossary.ts",
+    "mermaid": "bun scripts/mermaid.ts"
   },
   "devDependencies": {
     "@types/bun": "latest"

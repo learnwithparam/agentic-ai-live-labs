@@ -1,6 +1,6 @@
 # Instructions versus data
 
-Each example is a document the agent reads. Pick one by name: clean, injected, breakout or subtle. Three of them hide an order.
+Each example is a document the agent reads. Pick one by name: clean, injected, breakout or subtle. Three of them hide an order. The agent puts each document inside a data fence, so the model reads it as data.
 
 ## The story in one picture
 
@@ -14,11 +14,15 @@ flowchart LR
 
 ## The problem
 
-The model reads rules and documents as one text. A document can give it orders, and nobody notices.
+The model reads rules and documents as one text. A document can hide an order for the model. This is prompt injection, and nobody notices.
 
 ## New words
 
-prompt injection = an order hidden in data. fence = a labelled box that marks text as data. held = taken out of the prompt.
+Each word has one meaning in every lab.
+
+- **prompt injection**: A hidden order in data, such as an email, that tries to steer the model.
+- **data fence**: A labelled box that tells the model where the data starts and ends.
+- **held**: Taken out of the prompt, so the model never sees it.
 
 ## Run it
 
@@ -49,7 +53,7 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 ## The promise, and its test
 
-A line with an order never reaches the prompt, and data can never close its own fence.
+A line with an order is held out of the prompt. Data can never close its own fence.
 
 ```bash
 bun test tests/promises/14.test.ts
@@ -59,7 +63,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Fence and scan as here. Also give the agent the fewest tools, and let a person approve risky ones (the gates lab).
+Fence and scan as here. Give the agent the fewest tools. Let a person approve risky ones, as the gates lab does.
 
 ## Read the code
 

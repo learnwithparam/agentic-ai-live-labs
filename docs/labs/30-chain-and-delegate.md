@@ -1,6 +1,6 @@
 # Chains and delegation
 
-Each example is one job for three doctors. Pick the doctors with --hcps, for example H-1,H-2,H-3. A lead splits the job and gives each doctor to a worker with a short chain.
+Each example is one job for three doctors. Pick the doctors with --hcps, for example H-1,H-2,H-3. The lead splits the job and delegates each doctor to a worker. Each step in the chain feeds the next one.
 
 ## The story in one picture
 
@@ -19,7 +19,12 @@ One bot, one search and one letter for three doctors. The search ran for one cou
 
 ## New words
 
-chain = steps where each result feeds the next. delegate = hand a part of the job to a worker. lead = the one that splits the job and collects. worker = does one small part.
+Each word has one meaning in every lab.
+
+- **chain**: Steps where each result feeds the next step.
+- **delegate**: Hand one part of a job to a worker, and wait for its result.
+- **lead**: The agent that splits the job and gathers the results.
+- **worker**: A program or agent that does one small part of a job.
 
 ## Run it
 

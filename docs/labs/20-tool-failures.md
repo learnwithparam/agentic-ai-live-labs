@@ -15,11 +15,16 @@ flowchart LR
 
 ## The problem
 
-A service can be slow, fail for a moment, or say no. One try with no time limit hangs on the slow one and gives up on the flaky one.
+A service can be slow, fail for a moment, or say no. One try with no timeout hangs on the slow one and gives up on the flaky one.
 
 ## New words
 
-timeout = the most time we will wait. retry = try the same call again. backoff = wait longer before each retry. transient = a failure that may pass.
+Each word has one meaning in every lab.
+
+- **timeout**: The longest time we wait for a reply before we give up on the call.
+- **retry**: Try the same call again after it failed.
+- **backoff**: Wait longer before each retry.
+- **transient**: A failure that may pass if we try again, such as a brief outage.
 
 ## Run it
 
@@ -54,7 +59,7 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 ## The promise, and its test
 
-Bad input never leaves our code. A slow call stops at the time limit. A failure that may pass is tried again, with growing waits. A no is never tried again.
+Bad input never leaves our code. A slow call stops at its timeout. A transient failure is retried, with a backoff. A no is never tried again.
 
 ```bash
 bun test tests/promises/20.test.ts

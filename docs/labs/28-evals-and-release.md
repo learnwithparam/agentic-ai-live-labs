@@ -1,6 +1,6 @@
 # Evals and the release gate
 
-Each example is a new version of the document search. Pick it with --version: current, wide or invents. We run every eval question through it, then decide if it may ship.
+Each example is a new version of the document search. We run every eval in the eval set through it. The release gate then decides if the version may ship. Pick the version with --version: current, wide or invents.
 
 ## The story in one picture
 
@@ -14,11 +14,16 @@ flowchart LR
 
 ## The problem
 
-A change that looks fine ships because it still answers. It gives a German doctor the US dose, and nobody finds out until she does.
+A change that looks fine ships, because it still answers. It can give a German doctor the US dose, and nobody finds out until she does. That is a regression.
 
 ## New words
 
-eval = a real question with the facts a right answer must have. eval set = the list of evals. release gate = the check that blocks a bad version. regression = something that worked and now does not.
+Each word has one meaning in every lab.
+
+- **eval**: A test question, with the facts that a right answer must contain.
+- **eval set**: The full list of evals, run before each release.
+- **release gate**: A check that blocks a new version when a test fails.
+- **regression**: Something that used to work and now fails.
 
 ## Run it
 

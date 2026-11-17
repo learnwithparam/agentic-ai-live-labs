@@ -10,11 +10,11 @@ export const lab: Lab = {
   file: "02-guardrails.ts",
   title: "Guardrails and private details",
   about:
-    "Each example is a note from a doctor. The input guardrail hides private details before the model reads the note. The output guardrail blocks any reply with no approved source.",
-  terms: "PHI = private health details, like a name or a record number. token = a label such as [SSN] that stands in for a private piece. guardrail = a check in plain code, before or after the model.",
-  challenge: "Once a model has read a patient's name or number, you cannot take it back. And a model can write a fact with no source.",
+    "Each example is a note from a doctor. The input guardrail hides the private details before the model reads the note. The output guardrail blocks any reply with no approved source. For example, a social security number becomes a token such as [SSN].",
+  terms: ["phi", "token", "guardrail"],
+  challenge: "A note can hold PHI, such as a patient name or a record number. Once the model reads it, we cannot take it back. The model can also write a fact with no source.",
   promise: "The model only ever reads the hidden version of a note. A reply with no approved source is blocked.",
-  production: "Rules catch only the formats you wrote, and the name finder can miss a rare name. Add a person to review what slips through. Never log the raw note.",
+  production: "Rules catch only the formats we wrote. A name finder can miss a rare name, so a person should review what slips through. Never log the raw note.",
   cases: [
     { title: "NAIVE: no guardrails", why: "The model reads the patient's name and social security number. Its reply goes out with no check. Once a model has read private details, you cannot take them back.", question: "Call from Dr. Lee about Patient: Jane Doe (SSN 123-45-6789, 555-123-4567) on Cardioza dose", flags: { naive: "true" }, expect: "leaked 3" },
     { title: "Name, social security number and phone", why: "The classic case. All three are hidden, and the model only ever sees the tokens.", question: "Call from Dr. Lee about Patient: Jane Doe (SSN 123-45-6789, 555-123-4567) on Cardioza dose", expect: "3 masked, passed" },

@@ -1,6 +1,6 @@
 # Three ways to build one job
 
-Three ways to build the same helper. Pick the shape with --shape workflow, agent or multi. Pick the doctor with --hcp H-1 (US), H-2 (Germany) or H-3 (US neurology).
+Three ways to build the same helper. A workflow runs fixed steps. One agent picks its own tools. Many agents pass work between them. Pick the shape with --shape workflow, agent or multi, and the doctor with --hcp H-1, H-2 or H-3.
 
 ## The story in one picture
 
@@ -13,11 +13,16 @@ flowchart TB
 
 ## The problem
 
-One agent has no second pair of eyes. It can write a wrong dose, cite a real document, and nothing stops it.
+One agent has no second pair of eyes. It can write a wrong dose and cite a real document, and nothing stops it. An auditor is a second model that checks the first one.
 
 ## New words
 
-workflow = fixed steps in plain code. agent = a model that picks its own tools. many agents = several models, each with one job. auditor = a model that only checks another model's work.
+Each word has one meaning in every lab.
+
+- **workflow**: A fixed set of steps written in code. The model writes text but does not pick the steps.
+- **agent**: A model that picks its own next step and tool, inside a loop.
+- **many agents**: Several models, each with one job, that pass work between them.
+- **auditor**: A model that checks the work of another model.
 
 ## Run it
 
@@ -58,7 +63,7 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 ## The promise, and its test
 
-Pick the simplest shape that does the job. When a wrong answer is costly, a second agent checks it and a person decides on any doubt.
+Pick the simplest shape that does the job. When a wrong answer is costly, an auditor checks it and a person decides on any doubt.
 
 ```bash
 bun test tests/promises/04.test.ts

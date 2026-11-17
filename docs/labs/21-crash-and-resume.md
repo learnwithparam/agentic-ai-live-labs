@@ -1,6 +1,6 @@
 # Crash and resume
 
-Each example emails three doctors. Some examples kill the program part way, for real, and start it again. Pick one with --scenario: naive, clean, resume, between or done.
+Each example emails three doctors. Some examples send a SIGKILL, which stops the program at once, and then start it again. Pick one with --scenario: naive, clean, resume, between or done. Each finished step is written in the ledger.
 
 ## The story in one picture
 
@@ -16,11 +16,16 @@ flowchart LR
 
 ## The problem
 
-A kill in the middle of a job loses work or does it twice. Start again from the top and the first doctors get the same email twice.
+A kill in the middle of a job loses work or does it twice. Start again from the top, and the first doctors get the same email twice.
 
 ## New words
 
-ledger = a list of finished steps on disk. idempotency key = a name for one send, so it happens once. resume = start again and carry on. SIGKILL = a kill the program cannot catch.
+Each word has one meaning in every lab.
+
+- **ledger**: A file on disk that lists each step already finished.
+- **idempotency key**: A unique name for one action, so it happens once, even if asked twice.
+- **resume**: Start again from the ledger and carry on, not from the beginning.
+- **SIGKILL**: A signal that stops a program at once. The program cannot catch it or clean up.
 
 ## Run it
 
@@ -51,7 +56,7 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 ## The promise, and its test
 
-After a kill and a restart, every doctor has exactly one email. A step in the ledger is never done again. A key the outbox holds is never sent again.
+After a kill and a restart, every doctor has exactly one email. A step in the ledger is never done again. An idempotency key stops a send from happening twice.
 
 ```bash
 bun test tests/promises/21.test.ts
@@ -61,7 +66,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Keep the ledger and the outbox in a database. Ask your email service to honour the key itself. Then a crash between our two writes is still safe.
+Keep the ledger in a database. Ask your email service to honour the idempotency key. Then a crash between our two writes is still safe.
 
 ## Read the code
 

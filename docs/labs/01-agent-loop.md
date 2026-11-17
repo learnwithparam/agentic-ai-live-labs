@@ -1,6 +1,6 @@
 # The agent loop
 
-The model asks for a tool. Our code runs it. The model reads the result. This repeats until the model answers. The only source of facts is the approved document search. The country decides which documents the doctor may see.
+Each example is one question about a drug. The model asks for a tool, our code runs it, and the model reads the result. Each trip round the loop is one step. The only source of facts is the approved document search.
 
 ## The story in one picture
 
@@ -12,6 +12,18 @@ flowchart LR
   D -->|"needs more"| B
   D --> E["Answer with a source"]
 ```
+
+## The problem
+
+A model's memory can be wrong or old. It needs a tool that looks up the approved facts.
+
+## New words
+
+Each word has one meaning in every lab.
+
+- **loop**: The model asks for a tool, the code runs it, and the model reads the result.
+- **tool**: A function the model may ask our code to run, such as a search.
+- **step**: One trip round the loop: the model acts, then the code reacts.
 
 ## Run it
 

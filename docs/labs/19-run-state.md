@@ -1,6 +1,6 @@
 # Run state
 
-Each example is one run of the agent. Afterwards we read the run record back from disk, the way another person or program would.
+Each example is one run of the agent. Each run saves a run record to disk. Afterwards we read the record back, the way another person or program would.
 
 ## The story in one picture
 
@@ -13,11 +13,15 @@ flowchart LR
 
 ## The problem
 
-A printed log is gone when the program ends. Nobody can say what the run was doing, or whether it is still alive.
+A printed log is gone when the program ends. Nobody can say what the run was doing, or if it is still alive.
 
 ## New words
 
-run = one job from start to end. run record = a file with the run's id, status and steps. stalled = running, but quiet for too long.
+Each word has one meaning in every lab.
+
+- **run**: One job from its start to its end.
+- **run record**: A file that saves the run's id, its status and its steps.
+- **stalled**: Still marked as running, but no step has finished for too long.
 
 ## Run it
 

@@ -21,10 +21,10 @@ export const lab: Lab = {
   file: "26-hooks.ts",
   title: "Hooks",
   about:
-    "Each example asks the bot to use tools. The model says which tools. Before hooks can block a call. An after hook cleans what comes back. The first example runs with no hooks, to show the harm.",
-  terms: "hook = code that runs on every tool call. before hook = may stop the call. after hook = may change the output. fail closed = if the check breaks, say no.",
+    "Each example asks the bot to use tools. The model says which tools. A before hook can block a call, and an after hook cleans what comes back. The first example runs with no hooks, to show the harm.",
+  terms: ["hook", "before-hook", "after-hook", "fail-closed"],
   challenge: "A rule written in the prompt can be ignored. The model can email a note with an SSN to a private mailbox, and nothing stops it.",
-  promise: "Every tool call passes the before hooks, and every output passes the after hooks. A hook that crashes blocks the call.",
+  promise: "Every tool call passes the before hooks, and every output passes the after hooks. A hook that crashes blocks the call, which is fail closed.",
   production: "Keep hooks in one list for every tool. Log each block with the hook name. Test a hook by making it crash.",
   cases: [
     { title: "NAIVE: no hooks", why: "The note is read and emailed to a private mailbox, with the patient name and SSN in it.", question: NOTE_BAD, flags: { naive: "true" }, expect: "leaked" },

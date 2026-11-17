@@ -1,6 +1,6 @@
 # Check every sentence of a draft
 
-Each example is an email draft that a person wrote. Give the draft with --draft, and the doctor's country with --country. Code checks each sentence against the approved documents.
+Each example is an email draft that a person wrote. Code checks each sentence. A claim needs a citation, such as [DOC-101], and the document's own words, word for word. Give the draft with --draft, and the doctor's country with --country.
 
 ## The story in one picture
 
@@ -18,7 +18,11 @@ A draft can cite a real document and still say something that document never say
 
 ## New words
 
-claim = a sentence that says something about a drug. citation = the document id in brackets, such as [DOC-101]. word for word = the same words as the document.
+Each word has one meaning in every lab.
+
+- **claim**: A sentence that says something about a drug, such as its dose.
+- **citation**: A document id in brackets, such as [DOC-101], that names the source.
+- **word for word**: The same words as the source, with nothing changed.
 
 ## Run it
 

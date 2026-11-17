@@ -14,11 +14,11 @@ export const lab: Lab = {
   file: "25-act-for-user.ts",
   title: "Act for the user",
   about:
-    "Each example is one doctor asking the bot a question. Pick the doctor with --hcp: H-1 is Dr. Lee in the US, H-2 is Dr. Weber in Germany. The bot carries a token that names her, and the search uses her country.",
-  terms: "act for = do a job as a named person. delegation = a person lets a bot act for her. service key = one shared key with no person on it.",
-  challenge: "A bot on its own key answers as typed. A German doctor who asks about the US label gets the US dose, which is wrong for her.",
+    "Each example is one doctor asking the bot a question. The bot can act for a user, with that user's rights. Pick the doctor with --hcp: H-1 is Dr Lee in the US, and H-2 is Dr Weber in Germany.",
+  terms: ["act-for-user", "delegation", "service-key"],
+  challenge: "A bot on a service key answers as the key allows. No person is on that key, so nobody is named. A German doctor who asks about the US label gets the wrong dose for her.",
   promise: "The bot searches only the country of the doctor its token names. What the doctor or the model types cannot change it. A bad token answers nothing.",
-  production: "Issue the token when the doctor signs in, and keep it short. Pass it on every call, and log the doctor with each one.",
+  production: "Issue the delegation token when the doctor signs in, and keep it short. Pass it on every call, and log the doctor with each one.",
   cases: [
     { title: "NAIVE: the bot's own key", why: "Dr. Weber is in Germany and asks about the US. The service key searches the US, so she gets 10mg, the wrong label for her.", question: US_DOSE, flags: { hcp: "H-2", naive: "true" }, expect: "wrong-label" },
     { title: "A US doctor", why: "The token names Dr. Lee. The search uses US, and she gets the US label.", question: DOSE, flags: { hcp: "H-1" }, expect: "own-label" },

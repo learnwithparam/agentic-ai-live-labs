@@ -12,11 +12,11 @@ export const lab: Lab = {
   file: "06-shell-tool.ts",
   title: "A shell tool, safely",
   about:
-    "Describe a task and the model writes the command. Or pass a command yourself with --command, as if the model wrote it. Four rules decide if it starts. The agent works in one folder called sandbox, which holds two small files.",
-  terms: "shell = a program that runs commands. allow-list = the only commands we permit. sandbox = a folder it cannot leave.",
-  challenge: "A shell can delete files or read secrets. An agent that can type anything can do anything.",
+    "Describe a task and the model writes the command. Or pass a command yourself with --command, as if the model wrote it. Four rules decide if it may start. The agent works in one folder called sandbox, which holds two small files.",
+  terms: ["shell", "allow-list", "sandbox"],
+  challenge: "A shell can delete files or read secrets. An allow-list lets only the commands we name, so an agent cannot do anything it likes.",
   promise: "A command that breaks a rule never starts, so the files stay as they were.",
-  production: "Run the agent in a container with no secrets and no network, and keep this allow-list as well.",
+  production: "Run the agent in a container with no secrets and no network. Keep this allow-list as well.",
   cases: [
     { title: "The model writes the command", why: "The model turns a plain task into a command. The four rules still decide if it starts.", question: "Show me the doses file", expect: "ran" },
     { title: "The model asks to delete", why: "The task asks for a delete. The model writes rm. It is not on the allow-list, so it never starts.", question: "Please delete the notes file for me.", expect: "refused" },

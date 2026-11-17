@@ -16,11 +16,15 @@ flowchart LR
 
 ## The problem
 
-Teams pick a door by habit. Each door has a cost, a risk and a shape of answer.
+Teams pick a door by habit. Each door has its own cost, risk and latency.
 
 ## New words
 
-door = the way an agent reaches a tool. latency = how long a call takes. structured = has fields a program can read.
+Each word has one meaning in every lab.
+
+- **door**: One way an agent reaches a tool: a function, a command or an MCP server.
+- **latency**: How long one call takes, from the ask to the answer.
+- **structured**: Has named fields that a program can read.
 
 ## Run it
 
@@ -67,7 +71,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Start with a function. Move to MCP when a second team needs the tool. Use a command only when none exists.
+Start with a function. Prefer a structured answer, with fields a program can read. Move to MCP when a second team needs the tool.
 
 ## Read the code
 

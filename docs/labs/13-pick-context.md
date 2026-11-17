@@ -1,6 +1,6 @@
 # Picking what goes in
 
-Each example is a question from Dr. Lee. Three sources are on the shelf: documents, the doctor's profile and past emails. We load only the ones the question needs.
+Each example is a question from Dr Lee. Three sources sit on the shelf: documents, the doctor's profile and past emails. Context picking loads only the sources that the question needs.
 
 ## The story in one picture
 
@@ -14,11 +14,15 @@ flowchart LR
 
 ## The problem
 
-Loading everything is easy. It costs tokens and hides the useful part. It also shows private data that has nothing to do with the question.
+A prompt loaded with every source is overloaded. It costs tokens, hides the useful part, and shows private data the question does not need.
 
 ## New words
 
-source = a place facts come from. picking = choosing sources per question. overloaded = more context than the question needs.
+Each word has one meaning in every lab.
+
+- **source**: A place that holds approved facts, such as the documents for one country.
+- **context picking**: Choosing which sources to load for one question, using a rule in code.
+- **overloaded**: Given more text than the question needs, which can confuse the model.
 
 ## Run it
 

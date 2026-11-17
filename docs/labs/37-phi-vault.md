@@ -1,6 +1,6 @@
 # Private data in a vault
 
-Each example saves a case record for a doctor's note. Pick who looks at it with --role: reviewer or agent. The model never reads the real private data.
+Each example saves a case record for a doctor's note. The vault swaps each real value for a token, such as [SSN-1]. The model never reads the real private data. Pick who looks at the record with --role: reviewer or agent.
 
 ## The story in one picture
 
@@ -19,7 +19,12 @@ A fixed mask hides the data from the model, but it also hides it from the review
 
 ## New words
 
-token = a stand-in such as [SSN-1]. vault = the place that keeps the real values. role = what a person is allowed to do. audit = a file that lists every try.
+Each word has one meaning in every lab.
+
+- **token**: A short label, such as [SSN] or [SSN-1], that stands in for a private value.
+- **vault**: The place that keeps the real values behind the tokens.
+- **role**: What a person is allowed to do, such as review a record.
+- **audit log**: A list of every try, allowed or refused.
 
 ## Run it
 
@@ -48,7 +53,7 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 ## The promise, and its test
 
-The model sees tokens only. The same value has the same token. Only a reviewer sees real values, and every try is in the audit file.
+The model sees tokens only. The same value has the same token. Only a reviewer sees real values, and every try is in the audit log.
 
 ```bash
 bun test tests/promises/37.test.ts

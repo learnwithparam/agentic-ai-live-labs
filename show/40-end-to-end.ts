@@ -17,9 +17,9 @@ export const lab: Lab = {
   file: "40-end-to-end.ts",
   title: "Put it all together",
   about:
-    "Each example sends one doctor's note through every guard from the labs before. Use --hcp to pick the doctor. Use --withdraw to withdraw a document first. Use --approve y or n to answer the person's gate.",
-  terms: "guard = one check that stops one risk. record = the log of every step, linked so an edit shows. gate = a stop where a person decides.",
-  challenge: "Each guard works alone. One missing guard is still a hole. A note can leak a patient. A withdrawn dose can go out. The other guards cannot help.",
+    "Each example sends one doctor's note through every guard. A guard is one check that stops one risk. Pick the doctor with --hcp. Use --withdraw to pull a document first. Use --approve y or n to answer the gate.",
+  terms: ["guard", "record", "gate"],
+  challenge: "Each guard works alone. One missing guard is still a hole. A note can leak a patient, and a withdrawn dose can go out.",
   promise: "Private details never reach the model. Only a checked reply goes out, or one a person approved. Every step is in a record that shows any edit.",
   production: "Run each guard as its own service with its own owner. Alert a person when a guard blocks, and keep the record in storage that cannot be changed.",
   cases: [

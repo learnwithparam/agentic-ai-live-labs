@@ -1,6 +1,6 @@
 # Traces and the audit ledger
 
-Each example answers Dr. Weber, writes the trace, and then someone edits the file. Pick the edit with --tamper: edit, delete, cut or rewrite. Then we check the chain.
+Each example answers Dr Weber, writes the trace, and then someone edits the file. Pick the edit with --tamper: edit, delete, cut or rewrite. Then we check the hash chain against the saved head.
 
 ## The story in one picture
 
@@ -19,7 +19,12 @@ A month later someone asks why the bot said 5mg. A plain log can be edited to te
 
 ## New words
 
-trace = the record of every step. hash = a fingerprint of some text. chain = each line holds the fingerprint of the line before it. head = the last fingerprint, saved elsewhere.
+Each word has one meaning in every lab.
+
+- **trace**: A record of every step that a run took.
+- **fingerprint**: A short code made from a text. Change one letter and the code changes.
+- **hash chain**: A list where each line stores the fingerprint of the line before it.
+- **head**: The last fingerprint, saved where an edit to the list cannot reach it.
 
 ## Run it
 
@@ -52,7 +57,7 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 ## The promise, and its test
 
-Every step is written down. We check the chain against the saved head. It finds any edit, removed line, cut end or full rewrite.
+Every step is written down. Each line holds a fingerprint of the line before it. The chain is checked against the saved head, and it finds any edit.
 
 ```bash
 bun test tests/promises/27.test.ts
@@ -62,7 +67,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Send each line to storage that cannot be changed. Save the head in a second place with a different owner. Check the chain on a schedule, not only in an audit.
+Send each line to storage that cannot be changed. Save the head in a second place with a different owner. Check the chain on a schedule.
 
 ## Read the code
 

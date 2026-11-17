@@ -9,10 +9,10 @@ export const lab: Lab = {
   file: "03-gates.ts",
   title: "Human in the loop gates",
   about:
-    "A gate stops the run and hands the full story to a person. Gate 1 fires before the model runs, when there is no approved document. Gate 2 fires after, when the reply fails the output check. Add --approve y or --approve n to answer the gate. With no answer, the gate says no.",
-  terms: "gate = a stop in the run where a person must say yes. human in the loop = a person who decides before anything goes out. escalate = send it to a person.",
-  challenge: "A model always writes something. With no gate, a reply with no source goes straight to a doctor.",
-  promise: "With no approved document, or a reply with no source, nothing goes out until a person says yes. No answer means no.",
+    "A gate stops the run and hands the full story to a person. Gate 1 fires before the model runs, when no approved document exists. Gate 2 fires after the model, when the reply fails the output check. Add --approve y or --approve n to answer the gate. With no answer, the gate says no.",
+  terms: ["gate", "human-in-the-loop", "escalate"],
+  challenge: "A model always writes something. A human in the loop is the safety net. With no gate, a reply with no source goes straight to a doctor.",
+  promise: "We escalate to a person when there is no approved document or no source. Nothing goes out until a person says yes. No answer means no.",
   production: "Send the gate to a real queue with a name, a time and a reason. Log who approved what. Keep the default as no.",
   cases: [
     { title: "NAIVE: no gate", why: "The model forgets the citation. With no gate, the uncited reply goes straight to the doctor.", question: "What is the dose of Cardioza?", flags: { model: "nocite", naive: "true" }, expect: "SENT_UNCHECKED" },

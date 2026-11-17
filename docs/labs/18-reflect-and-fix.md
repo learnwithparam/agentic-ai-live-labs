@@ -1,6 +1,6 @@
 # Check the draft, then fix it
 
-Each example is a doctor's question. The pretend model writes a draft, and sometimes the draft is wrong. Pick how it acts with --model. Use ok, nocite (no citation), invent (a wrong dose) or stubborn (a wrong dose it will not fix).
+Each example is a doctor's question. The pretend model writes a draft, and sometimes the draft is wrong. Pick how it acts with --model: ok, nocite (no citation), invent (a wrong dose) or stubborn (a wrong dose it will not fix). Each fix is one round.
 
 ## The story in one picture
 
@@ -18,7 +18,11 @@ A model that grades its own work has no new facts. It says the draft looks good,
 
 ## New words
 
-draft = the first answer. check = plain code that compares the draft with the document. round = one fix and one more check.
+Each word has one meaning in every lab.
+
+- **draft**: The first answer, before it is checked.
+- **check**: A rule in plain code that a draft must pass before it goes out.
+- **round**: One fix, followed by one more check.
 
 ## Run it
 
@@ -51,7 +55,7 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 ## The promise, and its test
 
-Code checks every draft against the source. A fix gets two rounds at most. With no source there is nothing to check.
+Code runs a check on every draft against the source. A fix gets two rounds at most. With no source there is nothing to check.
 
 ```bash
 bun test tests/promises/18.test.ts

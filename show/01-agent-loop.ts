@@ -9,7 +9,9 @@ export const lab: Lab = {
   file: "01-agent-loop.ts",
   title: "The agent loop",
   about:
-    "The model asks for a tool. Our code runs it. The model reads the result. This repeats until the model answers. The only source of facts is the approved document search. The country decides which documents the doctor may see.",
+    "Each example is one question about a drug. The model asks for a tool, our code runs it, and the model reads the result. Each trip round the loop is one step. The only source of facts is the approved document search.",
+  terms: ["loop", "tool", "step"],
+  challenge: "A model's memory can be wrong or old. It needs a tool that looks up the approved facts.",
   cases: [
     { title: "A normal question", why: "The happy path. One search, then an answer that cites its source.", question: "What is the dose of Cardioza?", expect: "answered" },
     { title: "Same question, different country", why: "Approved text differs by country. Germany gets 5mg and the US gets 10mg. The tool filters by country, so the model cannot override it.", question: "What is the dose of Cardioza?", flags: { country: "DE" }, expect: "answered" },

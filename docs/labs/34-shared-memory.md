@@ -1,6 +1,6 @@
 # Memory the bots share
 
-Each example has two bots ask for a dose, one after the other. The first bot may use a model that makes up a dose, with --model invent. Pick the first doctor with --hcp and the second with --then.
+Each example has two bots ask for a dose, one after the other. The bots save facts in shared memory. The first bot may use a model that makes up a dose, with --model invent. Pick the first doctor with --hcp and the second with --then.
 
 ## The story in one picture
 
@@ -14,11 +14,15 @@ flowchart LR
 
 ## The problem
 
-One bot saves a wrong dose. Every bot after it reads the fact and repeats it. No one looks at the approved document again.
+One bot saves a wrong dose. Every bot after it reads the fact and repeats it. The shared memory is now poisoned.
 
 ## New words
 
-shared memory = facts that every bot can read. poisoned = a wrong fact that got in. provenance = who saved a fact, and from which source.
+Each word has one meaning in every lab.
+
+- **shared memory**: Facts that every bot can read.
+- **poisoned**: Said of memory that holds a wrong fact that got in.
+- **provenance**: Where a fact came from: who saved it, and from which source.
 
 ## Run it
 
@@ -49,7 +53,7 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 ## The promise, and its test
 
-A fact is saved only if it passes the dose check. A bot reads only facts for its own country, and only while the approved document still agrees.
+A fact is saved only if it passes the dose check. Each fact keeps its provenance, which is the source it came from.
 
 ```bash
 bun test tests/promises/34.test.ts
@@ -59,7 +63,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Keep memory in a database with the writer and the source on every row. Give facts an end date. Let a person delete a fact, and log every read.
+Keep memory in a database with the writer and the source on every row. Let a person delete a poisoned fact, and log every read.
 
 ## Read the code
 

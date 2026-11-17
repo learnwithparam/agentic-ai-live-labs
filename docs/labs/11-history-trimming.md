@@ -1,6 +1,6 @@
 # Trimming the chat history
 
-Each example is a chat between a doctor and the agent. The last question needs a fact from the start. Pick a chat by name: short, long, two-facts, no-facts or empty. Use --keep 4 to change how many recent turns stay.
+Each example is a chat between a doctor and the agent. The last question needs a fact from the start of the chat. Pick a chat by name: short, long, two-facts, no-facts or empty. Use --keep 4 to change how many recent turns stay.
 
 ## The story in one picture
 
@@ -15,11 +15,15 @@ flowchart LR
 
 ## The problem
 
-A long chat does not fit. Cutting the oldest turns also cuts early facts, like the doctor's country.
+The chat history gets long, and it does not fit. Trimming the oldest turns also removes early facts, like the doctor's country.
 
 ## New words
 
-history = the earlier turns of a chat. trim = leave out old turns. pinned fact = a turn we keep whatever its age. The model decides which turns are facts.
+Each word has one meaning in every lab.
+
+- **history**: The earlier turns of a chat, which the model reads again on each call.
+- **trim**: Leave out old turns to make room in the prompt.
+- **pinned fact**: A fact, such as a country or an allergy, that we always keep.
 
 ## Run it
 

@@ -1,6 +1,6 @@
 # Trusting an MCP server
 
-Each example is a server and the tools it lists. Only the server hcp-docs is approved, and its tools were pinned when a person reviewed them. Pick a scene by typing its name.
+Each example is a server and the tools it lists. Only the server hcp-docs is approved. Its tools were pinned when a person reviewed them. Pick a scene by typing its name.
 
 ## The story in one picture
 
@@ -15,11 +15,15 @@ flowchart LR
 
 ## The problem
 
-A tool description goes into the prompt. A server can change it later and give the model orders.
+A tool description goes into the prompt. A server can change it later and give the model orders. That is a rug pull.
 
 ## New words
 
-pin = remember what a tool looked like when approved. rug pull = a tool changes after approval. fingerprint = a short code for a text.
+Each word has one meaning in every lab.
+
+- **pin**: Save what a tool looked like when we approved it, so we can compare later.
+- **rug pull**: A server changes a tool after we approve it.
+- **fingerprint**: A short code made from a text. Change one letter and the code changes.
 
 ## Run it
 
@@ -56,7 +60,7 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 ## The promise, and its test
 
-A tool that is unapproved, new, changed or carrying an order is never loaded.
+A tool that is unapproved, new, changed or carrying an order is never loaded. A changed tool shows a new fingerprint.
 
 ```bash
 bun test tests/promises/08.test.ts
@@ -66,7 +70,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Pin on a schedule, alert on any change, and let only a named person re-approve a tool.
+Pin on a schedule, and alert on any change. Let only a named person re-approve a tool.
 
 ## Read the code
 

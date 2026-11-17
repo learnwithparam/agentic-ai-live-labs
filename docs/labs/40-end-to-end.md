@@ -1,6 +1,6 @@
 # Put it all together
 
-Each example sends one doctor's note through every guard from the labs before. Use --hcp to pick the doctor. Use --withdraw to withdraw a document first. Use --approve y or n to answer the person's gate.
+Each example sends one doctor's note through every guard. A guard is one check that stops one risk. Pick the doctor with --hcp. Use --withdraw to pull a document first. Use --approve y or n to answer the gate.
 
 ## The story in one picture
 
@@ -17,11 +17,15 @@ flowchart LR
 
 ## The problem
 
-Each guard works alone. One missing guard is still a hole. A note can leak a patient. A withdrawn dose can go out. The other guards cannot help.
+Each guard works alone. One missing guard is still a hole. A note can leak a patient, and a withdrawn dose can go out.
 
 ## New words
 
-guard = one check that stops one risk. record = the log of every step, linked so an edit shows. gate = a stop where a person decides.
+Each word has one meaning in every lab.
+
+- **guard**: One check that stops one kind of risk.
+- **record**: A log of every step, linked so that any edit shows.
+- **gate**: A stop in the run where a person must say yes before it goes on.
 
 ## Run it
 

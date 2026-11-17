@@ -18,10 +18,10 @@ export const lab: Lab = {
   file: "37-phi-vault.ts",
   title: "Private data in a vault",
   about:
-    "Each example saves a case record for a doctor's note. Pick who looks at it with --role: reviewer or agent. The model never reads the real private data.",
-  terms: "token = a stand-in such as [SSN-1]. vault = the place that keeps the real values. role = what a person is allowed to do. audit = a file that lists every try.",
+    "Each example saves a case record for a doctor's note. The vault swaps each real value for a token, such as [SSN-1]. The model never reads the real private data. Pick who looks at the record with --role: reviewer or agent.",
+  terms: ["token", "vault", "role", "audit-log"],
   challenge: "A fixed mask hides the data from the model, but it also hides it from the reviewer. Nobody can get the value back.",
-  promise: "The model sees tokens only. The same value has the same token. Only a reviewer sees real values, and every try is in the audit file.",
+  promise: "The model sees tokens only. The same value has the same token. Only a reviewer sees real values, and every try is in the audit log.",
   production: "Keep the vault in an encrypted store with its own access list. Let your identity system say who is a reviewer. Never log the real values.",
   cases: [
     { title: "NAIVE: a fixed mask", why: "The reviewer opens the record. It says [SSN], and the real number is gone for good.", question: ONE, flags: { role: "reviewer", naive: "true" }, expect: "lost" },

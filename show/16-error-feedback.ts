@@ -11,10 +11,10 @@ export const lab: Lab = {
   file: "16-error-feedback.ts",
   title: "A useful error",
   about:
-    "Each example is a question like Cardioza in Germany. The model writes the tool call, reads each error, and fixes the call, up to 3 tries.",
-  terms: "retry = try the call again. hint = what the error says is valid. ask a person = stop, because only they know what was meant.",
-  challenge: "A bare ERROR gives the model nothing to fix. It repeats itself until the loop runs out.",
-  promise: "An error says what is valid. Retries are capped. A call that cannot be fixed goes to a person.",
+    "Each example is a question like Cardioza in Germany. The model writes the tool call, reads each error, and fixes the call, up to 3 tries. Each try after a failure is a retry.",
+  terms: ["retry", "hint", "ask-a-person"],
+  challenge: "A bare ERROR gives the model no hint to fix. It repeats the same call until the loop runs out.",
+  promise: "An error says what is valid. Retries are capped. A call that cannot be fixed means we ask a person.",
   production: "Write every tool error for a reader that cannot ask questions, and count how often each error appears.",
   cases: [
     { title: "NAIVE: an error that says nothing", why: "The country is Germany, which the tool does not accept. The error only says ERROR, so the model sends the same call three times and gives up.", question: "What is the dose of Cardioza in Germany?", flags: { naive: "true" }, expect: "gave-up" },

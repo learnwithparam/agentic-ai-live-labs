@@ -15,8 +15,8 @@ export const lab: Lab = {
   title: "Plan, then act",
   about:
     "Each example is a plan the model wrote. Pick one by name: look-up, send-reply, delete-files, too-long or no-source. The code checks the plan before any step runs.",
-  terms: "plan = the list of steps, written before the first one runs. risky step = one that cannot be undone, like sending an email.",
-  challenge: "Step by step, the email is sent before anyone sees that the plan was wrong.",
+  terms: ["plan", "risky-step"],
+  challenge: "Step by step, an email can go out before anyone sees the plan was wrong. A risky step, such as sending an email, cannot be undone.",
   promise: "A plan is checked before it runs. A risky step needs a person. A failed step stops the rest.",
   production: "Show the plan to the person and keep it with the run. Then compare what ran with the plan.",
   cases: [

@@ -9,10 +9,10 @@ export const lab: Lab = {
   file: "18-reflect-and-fix.ts",
   title: "Check the draft, then fix it",
   about:
-    "Each example is a doctor's question. The pretend model writes a draft, and sometimes the draft is wrong. Pick how it acts with --model. Use ok, nocite (no citation), invent (a wrong dose) or stubborn (a wrong dose it will not fix).",
-  terms: "draft = the first answer. check = plain code that compares the draft with the document. round = one fix and one more check.",
+    "Each example is a doctor's question. The pretend model writes a draft, and sometimes the draft is wrong. Pick how it acts with --model: ok, nocite (no citation), invent (a wrong dose) or stubborn (a wrong dose it will not fix). Each fix is one round.",
+  terms: ["draft", "check", "round"],
   challenge: "A model that grades its own work has no new facts. It says the draft looks good, even when the dose is wrong.",
-  promise: "Code checks every draft against the source. A fix gets two rounds at most. With no source there is nothing to check.",
+  promise: "Code runs a check on every draft against the source. A fix gets two rounds at most. With no source there is nothing to check.",
   production: "Check what code can check, like numbers and citations. Send the rest to a person, and keep every round in the log.",
   cases: [
     { title: "NAIVE: ask the model if it is fine", why: "The model writes 20mg. The document says 10mg. We ask the model if the draft is fine. It has no new facts, so it says yes.", question: "What is the dose of Cardioza?", flags: { model: "invent", naive: "true" }, expect: "self-approved" },

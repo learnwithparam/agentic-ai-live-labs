@@ -1,6 +1,6 @@
 # When the loop must stop
 
-Each example asks one question. The loop allows 6 steps, 2 identical calls and 400 tokens. Change them with --steps, --repeats and --budget. A real model answers fast, so two pretend habits are on the shelf: --model stuck repeats one search, and --model wanders tries new words every time.
+Each example asks one question, and each trip round the loop is one step. The loop allows 6 steps, 2 identical calls and 400 tokens of budget. Change them with --steps, --repeats and --budget. Two pretend habits help: --model stuck repeats one search, and --model wanders tries new words.
 
 ## The story in one picture
 
@@ -17,11 +17,15 @@ flowchart LR
 
 ## The problem
 
-A model that is stuck never says it is done. A loop that trusts the model runs and bills forever.
+A model that is stuck makes the same call again and again. This is a stuck call, and it never says it is done.
 
 ## New words
 
-step = one trip round the loop. repeat = the same call again. budget = the most we allow a run to spend.
+Each word has one meaning in every lab.
+
+- **step**: One trip round the loop: the model acts, then the code reacts.
+- **stuck call**: The same tool call, with the same input, made again and again with no progress.
+- **budget**: The most we allow ourselves to spend, in tokens, money, steps or time.
 
 ## Run it
 

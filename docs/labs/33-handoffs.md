@@ -1,6 +1,6 @@
 # Handing work between bots
 
-Each example sends one message through a team of bots: intake, answer and outreach. Pick the doctor with --hcp. Change the hop limit with --limit.
+Each example sends one message through a team of bots: intake, answer and outreach. Each handoff passes it to the next bot in an envelope. Pick the doctor with --hcp, and change the hop limit with --limit.
 
 ## The story in one picture
 
@@ -15,11 +15,16 @@ flowchart LR
 
 ## The problem
 
-Two bots can each think the other should do the work. The message goes back and forth for ever, and no doctor gets a reply.
+Two bots can each think the other should do the work. The message goes back and forth, and no doctor gets a reply.
 
 ## New words
 
-handoff = one bot passes work to another. envelope = the wrapper that travels with the message. hop = one handoff. loop breaker = a rule that stops a message that goes in circles.
+Each word has one meaning in every lab.
+
+- **handoff**: One bot passes the work to another bot.
+- **envelope**: The wrapper around a message. It counts the hops and lists the bots it passed.
+- **hop**: One step where work passes from one bot or agent to another.
+- **loop breaker**: A rule that stops a message that keeps going round in circles.
 
 ## Run it
 
@@ -52,7 +57,7 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 ## The promise, and its test
 
-Every message travels in an envelope. It stops at the hop limit, or when it meets a bot twice. Then a person gets it with the list of bots it met.
+Every message travels in an envelope. It stops at the hop limit, or when it meets a bot twice. Then a person gets it, with the list of bots it met.
 
 ```bash
 bun test tests/promises/33.test.ts
@@ -62,7 +67,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Put the envelope on a queue, with its id, hop count and path. Alert a person when a message is stopped. Keep the limit small, because real work rarely needs many hops.
+Put the envelope on a queue, with its id, hop count and path. A loop breaker alerts a person when a message is stopped. Keep the limit small.
 
 ## Read the code
 

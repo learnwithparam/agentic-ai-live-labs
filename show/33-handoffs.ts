@@ -12,11 +12,11 @@ export const lab: Lab = {
   file: "33-handoffs.ts",
   title: "Handing work between bots",
   about:
-    "Each example sends one message through a team of bots: intake, answer and outreach. Pick the doctor with --hcp. Change the hop limit with --limit.",
-  terms: "handoff = one bot passes work to another. envelope = the wrapper that travels with the message. hop = one handoff. loop breaker = a rule that stops a message that goes in circles.",
-  challenge: "Two bots can each think the other should do the work. The message goes back and forth for ever, and no doctor gets a reply.",
-  promise: "Every message travels in an envelope. It stops at the hop limit, or when it meets a bot twice. Then a person gets it with the list of bots it met.",
-  production: "Put the envelope on a queue, with its id, hop count and path. Alert a person when a message is stopped. Keep the limit small, because real work rarely needs many hops.",
+    "Each example sends one message through a team of bots: intake, answer and outreach. Each handoff passes it to the next bot in an envelope. Pick the doctor with --hcp, and change the hop limit with --limit.",
+  terms: ["handoff", "envelope", "hop", "loop-breaker"],
+  challenge: "Two bots can each think the other should do the work. The message goes back and forth, and no doctor gets a reply.",
+  promise: "Every message travels in an envelope. It stops at the hop limit, or when it meets a bot twice. Then a person gets it, with the list of bots it met.",
+  production: "Put the envelope on a queue, with its id, hop count and path. A loop breaker alerts a person when a message is stopped. Keep the limit small.",
   cases: [
     { title: "NAIVE: no envelope, no count", why: "The outreach bot and the answer bot pass the message back and forth until we cut it off.", question: LOOP, flags: { hcp: "H-1", naive: "true" }, expect: "looped" },
     { title: "A dose goes to the answer bot", why: "Intake sends it to the answer bot, which gives the dose.", question: DOSE, flags: { hcp: "H-1" }, expect: "delivered" },

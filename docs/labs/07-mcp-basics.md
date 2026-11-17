@@ -1,6 +1,6 @@
 # MCP basics
 
-The agent gets its tools from a real MCP server. That server runs as a separate program. Nothing is hard-coded. Use --hcp H-1, H-2 or H-3 to pick the doctor.
+The agent gets its tools from a real MCP server. That server runs as a separate program and speaks JSON-RPC messages. Nothing is hard-coded. Use --hcp H-1, H-2 or H-3 to pick the doctor.
 
 ## The story in one picture
 
@@ -18,7 +18,11 @@ Every new tool means new glue code in every agent. Tool lists go out of date.
 
 ## New words
 
-MCP = a standard way for an agent to find and call tools. server = the program that owns the tools. JSON-RPC = the message format.
+Each word has one meaning in every lab.
+
+- **MCP**: Model Context Protocol. A standard way for an agent to find and call tools.
+- **MCP server**: The program that owns the tools and runs them when asked.
+- **JSON-RPC**: The message format that MCP uses. Each request and reply is one JSON message.
 
 ## Run it
 

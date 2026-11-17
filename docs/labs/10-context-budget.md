@@ -1,6 +1,6 @@
 # The context budget
 
-Each example builds the prompt for one question under a token budget. Use --window 80 to change the budget. The prompt holds rules, a doctor note, documents, chat history and the question.
+Each example builds the prompt for one question under a token budget. The model reads only the context window, so the budget keeps the prompt inside it. Use --window 80 to change the budget. The prompt holds rules, a doctor note, documents, chat history and the question.
 
 ## The story in one picture
 
@@ -14,11 +14,15 @@ flowchart LR
 
 ## The problem
 
-A prompt grows every turn. When it passes the window, something is cut, and nobody chooses what.
+A prompt grows every turn. A model counts its text in model tokens. When the prompt passes the context window, something is cut, and nobody chooses what.
 
 ## New words
 
-context window = the most text a model reads at once. token = a small piece of text, counted by a real tokenizer (o200k). budget = the tokens we allow ourselves.
+Each word has one meaning in every lab.
+
+- **context window**: The most text a model can read at one time, counted in tokens.
+- **model token**: A small piece of text that a model counts. Often part of a word.
+- **budget**: The most we allow ourselves to spend, in tokens, money, steps or time.
 
 ## Run it
 

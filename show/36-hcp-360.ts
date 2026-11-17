@@ -12,10 +12,10 @@ export const lab: Lab = {
   file: "36-hcp-360.ts",
   title: "One profile for each doctor",
   about:
-    "Each example asks to email one doctor. Pick the doctor with --npi, the number that belongs to that doctor. The bot merges four systems and then decides.",
-  terms: "NPI = a 10-digit number for one doctor. merge = join rows from many systems. opt-out = the doctor said no emails. quiet days = days we wait after any contact.",
+    "Each example asks to email one doctor. Pick the doctor with --npi, the NPI that belongs to that doctor. The bot merges four systems, then decides if the email may go.",
+  terms: ["npi", "merge", "opt-out", "quiet-days"],
   challenge: "Each system sees only its own piece. The email system shows nothing recent, so the doctor gets a second message after a medical question.",
-  promise: "One profile joins all four systems by NPI. An opt-out or a contact in the last 7 days blocks the email. A row with no NPI is never guessed.",
+  promise: "One profile joins all four systems by NPI. An opt-out blocks the email. So does a contact inside the quiet days, which is 7 days here. A row with no NPI is never guessed.",
   production: "Keep the profile in your CRM. Clean the NPI at the door, and let a person review each held row.",
   cases: [
     { title: "NAIVE: read the email system only", why: "Dr. Lee asked the medical team a question two days ago. The email system shows nothing, so the naive bot sends.", question: LEE, flags: { npi: "1000000004", naive: "true" }, expect: "spam" },

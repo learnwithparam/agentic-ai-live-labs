@@ -15,8 +15,8 @@ export const lab: Lab = {
   file: "38-fact-checker.ts",
   title: "Check every sentence of a draft",
   about:
-    "Each example is an email draft that a person wrote. Give the draft with --draft, and the doctor's country with --country. Code checks each sentence against the approved documents.",
-  terms: "claim = a sentence that says something about a drug. citation = the document id in brackets, such as [DOC-101]. word for word = the same words as the document.",
+    "Each example is an email draft that a person wrote. Code checks each sentence. A claim needs a citation, such as [DOC-101], and the document's own words, word for word. Give the draft with --draft, and the doctor's country with --country.",
+  terms: ["claim", "citation", "word-for-word"],
   challenge: "A draft can cite a real document and still say something that document never says. A model that reviews its own draft has no new facts.",
   promise: "Every sentence is checked. A claim needs a citation, a document for this country, and the document's own words. One bad sentence blocks the email.",
   production: "Use a trained claim finder to catch claims that name no drug. Send each blocked sentence to a medical reviewer, and keep the result in the log.",

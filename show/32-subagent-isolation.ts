@@ -12,9 +12,9 @@ export const lab: Lab = {
   file: "32-subagent-isolation.ts",
   title: "Keep noisy work apart",
   about:
-    "Each example asks for a dose. The document search returns forty old drafts with wrong doses. Pick the doctor with --hcp, and pick how the model acts with --model.",
-  terms: "helper = a second agent with its own space. context = everything an agent has read so far. report = the short answer the helper sends back.",
-  challenge: "A search can return pages of old and wrong text. If the main agent reads it all, its space is full of junk. It may copy a wrong dose.",
+    "Each example asks for a dose. The document search returns many old drafts with wrong doses. A helper reads that noise in its own context, and sends back a short report. Pick the doctor with --hcp, and how the model acts with --model.",
+  terms: ["helper", "context", "report"],
+  challenge: "A search can return pages of old and wrong text. If the main agent reads it all, its context is full of junk. It may copy a wrong dose.",
   promise: "The helper reads the noise, and the main agent keeps only a short report. It checks the report against the approved source before it answers.",
   production: "Give the helper its own model call and its own tools. Cap the size of the report. Log how much the helper read, so you can see a helper that reads too much.",
   cases: [

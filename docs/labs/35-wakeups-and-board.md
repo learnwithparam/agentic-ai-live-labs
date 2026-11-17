@@ -1,6 +1,6 @@
 # Wake the bot and show its work
 
-Each example wakes a bot. Give the hours of each wakeup with --times. Give webhook ids with --events, and send the same id twice to see a repeat. Add --fail true to make the model fail.
+Each example wakes a bot. Give the hours of each wakeup with --times. Give webhook ids with --events, and send the same id twice to see a repeat. Each slot runs its job once. Add --fail true to make the model fail.
 
 ## The story in one picture
 
@@ -18,7 +18,12 @@ A bot that wakes by itself can run twice, and nobody sees it. A tick repeats, or
 
 ## New words
 
-wakeup = a moment when a bot starts by itself. slot = one period, such as one day. board = a list of cards that show every run. idempotent = safe to run twice.
+Each word has one meaning in every lab.
+
+- **wakeup**: A moment when a bot starts on its own, from a timer or an event.
+- **slot**: One fixed period of time, such as one day, that a job runs in once.
+- **board**: A list of cards, one for each run, that shows what each agent did.
+- **idempotent**: Safe to run twice, with the same result as running once.
 
 ## Run it
 
@@ -47,7 +52,7 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 ## The promise, and its test
 
-A key runs once. Every run is a card, and a failed run is a card that says failed.
+A key runs once, so the job is idempotent. Every run is a card on the board, and a failed run is a card that says failed.
 
 ```bash
 bun test tests/promises/35.test.ts

@@ -4,6 +4,7 @@
 // The page is made from the lab's own words (about, terms, challenge, promise, production, cases)
 // and its picture in src/pictures.ts, so it cannot drift from the code. Nobody writes these by hand.
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { GLOSSARY, type Word } from "../src/glossary";
 import { PICTURES } from "../src/pictures";
 import { LABS, TRACKS, slugFromFile } from "../src/roadmap";
 import { shellWord } from "../src/runner";
@@ -32,6 +33,13 @@ export function commandFor(file: string, item: Case): string {
   return command;
 }
 
+// A new word, read from the glossary. A missing id is an error, never a blank.
+export function wordOf(id: string): Word {
+  const entry = GLOSSARY[id];
+  if (!entry) throw new Error(`No glossary entry "${id}". Add it to src/glossary.ts.`);
+  return entry;
+}
+
 // The picture of the lab's story. Every lab needs one, so a page is never missing it.
 export function pictureOf(file: string): string {
   const slug = slugFromFile(file);
@@ -45,7 +53,11 @@ export function pageFor(file: string, lab: Lab): string {
   const out: string[] = [`# ${lab.title}`, "", lab.about, ""];
   out.push("## The story in one picture", "", "```mermaid", pictureOf(file), "```", "");
   if (lab.challenge) out.push("## The problem", "", lab.challenge, "");
-  if (lab.terms) out.push("## New words", "", lab.terms, "");
+  if (lab.terms) {
+    out.push("## New words", "", "Each word has one meaning in every lab.", "");
+    for (const id of lab.terms) out.push(`- **${wordOf(id).word}**: ${wordOf(id).meaning}`);
+    out.push("");
+  }
   out.push("## Run it", "", "Copy any line into your terminal. Each one is a real example from this lab.", "");
   out.push("```bash");
   lab.cases.forEach((item) => out.push(commandFor(file, item)));

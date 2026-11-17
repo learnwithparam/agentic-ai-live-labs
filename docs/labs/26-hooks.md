@@ -1,6 +1,6 @@
 # Hooks
 
-Each example asks the bot to use tools. The model says which tools. Before hooks can block a call. An after hook cleans what comes back. The first example runs with no hooks, to show the harm.
+Each example asks the bot to use tools. The model says which tools. A before hook can block a call, and an after hook cleans what comes back. The first example runs with no hooks, to show the harm.
 
 ## The story in one picture
 
@@ -18,7 +18,12 @@ A rule written in the prompt can be ignored. The model can email a note with an 
 
 ## New words
 
-hook = code that runs on every tool call. before hook = may stop the call. after hook = may change the output. fail closed = if the check breaks, say no.
+Each word has one meaning in every lab.
+
+- **hook**: Code that runs before or after every tool call.
+- **before hook**: Code that runs first, and may stop the call.
+- **after hook**: Code that runs last, and may check or change the output.
+- **fail closed**: If the check itself breaks, refuse the action.
 
 ## Run it
 
@@ -51,7 +56,7 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 ## The promise, and its test
 
-Every tool call passes the before hooks, and every output passes the after hooks. A hook that crashes blocks the call.
+Every tool call passes the before hooks, and every output passes the after hooks. A hook that crashes blocks the call, which is fail closed.
 
 ```bash
 bun test tests/promises/26.test.ts

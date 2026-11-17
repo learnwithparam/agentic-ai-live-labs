@@ -17,10 +17,10 @@ export const lab: Lab = {
   file: "04-shapes.ts",
   title: "Three ways to build one job",
   about:
-    "Three ways to build the same helper. Pick the shape with --shape workflow, agent or multi. Pick the doctor with --hcp H-1 (US), H-2 (Germany) or H-3 (US neurology).",
-  terms: "workflow = fixed steps in plain code. agent = a model that picks its own tools. many agents = several models, each with one job. auditor = a model that only checks another model's work.",
-  challenge: "One agent has no second pair of eyes. It can write a wrong dose, cite a real document, and nothing stops it.",
-  promise: "Pick the simplest shape that does the job. When a wrong answer is costly, a second agent checks it and a person decides on any doubt.",
+    "Three ways to build the same helper. A workflow runs fixed steps. One agent picks its own tools. Many agents pass work between them. Pick the shape with --shape workflow, agent or multi, and the doctor with --hcp H-1, H-2 or H-3.",
+  terms: ["workflow", "agent", "many-agents", "auditor"],
+  challenge: "One agent has no second pair of eyes. It can write a wrong dose and cite a real document, and nothing stops it. An auditor is a second model that checks the first one.",
+  promise: "Pick the simplest shape that does the job. When a wrong answer is costly, an auditor checks it and a person decides on any doubt.",
   production: "Use a workflow when the steps never change. Add an agent only where the path must change. Add an auditor where a mistake would cost real money or safety.",
   cases: [
     { title: "NAIVE: one agent, and nothing checks it", why: "The model writes a wrong dose and cites the real document. One agent has no second pair of eyes, so the wrong dose goes out.", question: "What is the dose of Cardioza?", flags: { shape: "agent", hcp: "H-1", model: "invent" }, expect: "answered" },

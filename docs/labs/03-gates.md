@@ -1,6 +1,6 @@
 # Human in the loop gates
 
-A gate stops the run and hands the full story to a person. Gate 1 fires before the model runs, when there is no approved document. Gate 2 fires after, when the reply fails the output check. Add --approve y or --approve n to answer the gate. With no answer, the gate says no.
+A gate stops the run and hands the full story to a person. Gate 1 fires before the model runs, when no approved document exists. Gate 2 fires after the model, when the reply fails the output check. Add --approve y or --approve n to answer the gate. With no answer, the gate says no.
 
 ## The story in one picture
 
@@ -16,11 +16,15 @@ flowchart LR
 
 ## The problem
 
-A model always writes something. With no gate, a reply with no source goes straight to a doctor.
+A model always writes something. A human in the loop is the safety net. With no gate, a reply with no source goes straight to a doctor.
 
 ## New words
 
-gate = a stop in the run where a person must say yes. human in the loop = a person who decides before anything goes out. escalate = send it to a person.
+Each word has one meaning in every lab.
+
+- **gate**: A stop in the run where a person must say yes before it goes on.
+- **human in the loop**: A design where a person checks the risky steps before they happen.
+- **escalate**: Send the case to a person, because the system is not sure.
 
 ## Run it
 
@@ -59,7 +63,7 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 ## The promise, and its test
 
-With no approved document, or a reply with no source, nothing goes out until a person says yes. No answer means no.
+We escalate to a person when there is no approved document or no source. Nothing goes out until a person says yes. No answer means no.
 
 ```bash
 bun test tests/promises/03.test.ts

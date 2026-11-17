@@ -23,10 +23,10 @@ export const lab: Lab = {
   file: "35-wakeups-and-board.ts",
   title: "Wake the bot and show its work",
   about:
-    "Each example wakes a bot. Give the hours of each wakeup with --times. Give webhook ids with --events, and send the same id twice to see a repeat. Add --fail true to make the model fail.",
-  terms: "wakeup = a moment when a bot starts by itself. slot = one period, such as one day. board = a list of cards that show every run. idempotent = safe to run twice.",
+    "Each example wakes a bot. Give the hours of each wakeup with --times. Give webhook ids with --events, and send the same id twice to see a repeat. Each slot runs its job once. Add --fail true to make the model fail.",
+  terms: ["wakeup", "slot", "board", "idempotent"],
   challenge: "A bot that wakes by itself can run twice, and nobody sees it. A tick repeats, or a webhook arrives twice, and the work is done again.",
-  promise: "A key runs once. Every run is a card, and a failed run is a card that says failed.",
+  promise: "A key runs once, so the job is idempotent. Every run is a card on the board, and a failed run is a card that says failed.",
   production: "Use your scheduler or a queue, and keep the keys in a database. Alert a person when a card says failed, or says running for too long.",
   cases: [
     { title: "NAIVE: every wakeup runs", why: "The bot wakes at hour 0 and again at hour 5, which is the same day. It does the day's work twice.", question: DAILY, flags: { times: "0,5", naive: "true" }, expect: "duplicates" },

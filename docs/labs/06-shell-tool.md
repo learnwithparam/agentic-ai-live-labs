@@ -1,6 +1,6 @@
 # A shell tool, safely
 
-Describe a task and the model writes the command. Or pass a command yourself with --command, as if the model wrote it. Four rules decide if it starts. The agent works in one folder called sandbox, which holds two small files.
+Describe a task and the model writes the command. Or pass a command yourself with --command, as if the model wrote it. Four rules decide if it may start. The agent works in one folder called sandbox, which holds two small files.
 
 ## The story in one picture
 
@@ -15,11 +15,15 @@ flowchart LR
 
 ## The problem
 
-A shell can delete files or read secrets. An agent that can type anything can do anything.
+A shell can delete files or read secrets. An allow-list lets only the commands we name, so an agent cannot do anything it likes.
 
 ## New words
 
-shell = a program that runs commands. allow-list = the only commands we permit. sandbox = a folder it cannot leave.
+Each word has one meaning in every lab.
+
+- **shell**: A program that reads text commands, such as ls, and runs them.
+- **allow-list**: A list of the only items we allow. Anything else is refused.
+- **sandbox**: A limited space, here one folder, that the program may not leave.
 
 ## Run it
 
@@ -70,7 +74,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Run the agent in a container with no secrets and no network, and keep this allow-list as well.
+Run the agent in a container with no secrets and no network. Keep this allow-list as well.
 
 ## Read the code
 

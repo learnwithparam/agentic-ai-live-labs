@@ -1,6 +1,6 @@
 # Routing
 
-Each example is one message in the care team inbox, from the doctor you pick with --hcp. The router sends it to the answer bot, the outreach bot or a person.
+Each example is one message in the care team inbox. Pick the doctor with --hcp. The router sends each message to a specialist: the answer bot, the outreach bot or a person. A message that fits no rule goes to the fallback.
 
 ## The story in one picture
 
@@ -18,7 +18,11 @@ One bot that answers everything also answers the rash message with a dose. A doc
 
 ## New words
 
-router = the step that picks who handles a message. specialist = a bot or person that does one job well. fallback = where a message goes when nothing fits.
+Each word has one meaning in every lab.
+
+- **router**: The step that picks who handles each message.
+- **specialist**: A bot or a person that handles one kind of job well.
+- **fallback**: Where a message goes when no rule fits it.
 
 ## Run it
 
