@@ -68,7 +68,7 @@ export function makeModel(behaviour: Behaviour = "ok"): CallLlm {
     if (search.startsWith("SERVICE_UNAVAILABLE")) return { text: "The document service is not answering, so I cannot give a dose." };
     if (search.startsWith("BAD_INPUT")) return { text: "The search was refused, so I cannot give a dose." };
 
-    const lines = search.split("\n").map((line) => {
+    const lines = search.split("\n").filter((line) => /^\[DOC-\d+\]/.test(line)).map((line) => {
       const id = line.match(/^\[(DOC-\d+)\]/)![1];
       const body = line.replace(/^\[DOC-\d+\]\s*/, "");
       const claim = behaviour === "invent" || behaviour === "stubborn" ? body.replace(/\d+mg/, "20mg") : body;

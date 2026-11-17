@@ -1,0 +1,59 @@
+# Lab 32: keep noisy work apart
+
+Each example asks for a dose. The document search returns forty old drafts with wrong doses. Pick the doctor with --hcp, and pick how the model acts with --model.
+
+## The problem
+
+A search can return pages of old and wrong text. If the main agent reads it all, its space is full of junk, and it may copy a wrong dose.
+
+## New words
+
+helper = a second agent with its own space. context = everything an agent has read so far. report = the short answer the helper sends back.
+
+## Run it
+
+Copy any line into your terminal. Each one is a real example from this lab.
+
+```bash
+bun labs/32-subagent-isolation.ts --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1 --naive
+bun labs/32-subagent-isolation.ts --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1
+bun labs/32-subagent-isolation.ts --question "What is the dose of Cardioza for Dr. Weber?" --hcp H-2
+bun labs/32-subagent-isolation.ts --question "What is the dose of Zorbex for Dr. Lee?" --hcp H-1
+bun labs/32-subagent-isolation.ts --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1 --model invent
+bun labs/32-subagent-isolation.ts --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1 --model stuck
+bun labs/32-subagent-isolation.ts --demo
+```
+
+Run `bun labs/32-subagent-isolation.ts` with nothing else to pick an example from a menu.
+
+## The cases
+
+Case 1 is the naive way. Read what goes wrong, then read the rest.
+
+| # | Case | Why it matters | Result | Run it alone |
+| --- | --- | --- | --- | --- |
+| 1 | NAIVE: the main agent reads everything | The main agent searches by itself. Forty old drafts fill its space. | flooded | `bun labs/32-subagent-isolation.ts --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1 --naive` |
+| 2 | A helper does the search | The helper reads the drafts. The main agent keeps one short report. | clean | `bun labs/32-subagent-isolation.ts --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1` |
+| 3 | A German doctor | Dr. Weber is in Germany, so the report holds the German dose. | clean | `bun labs/32-subagent-isolation.ts --question "What is the dose of Cardioza for Dr. Weber?" --hcp H-2` |
+| 4 | EDGE: no approved document | There is no approved document for Zorbex. The helper says so, and the main agent makes nothing up. | no-answer | `bun labs/32-subagent-isolation.ts --question "What is the dose of Zorbex for Dr. Lee?" --hcp H-1` |
+| 5 | EDGE: the helper makes up a dose | The helper writes a dose that no approved document has. The main agent checks the report and refuses it. | no-answer | `bun labs/32-subagent-isolation.ts --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1 --model invent` |
+| 6 | EDGE: the helper gets stuck | The helper never finishes. The main agent gets a short failure note, not the helper's whole log. | no-answer | `bun labs/32-subagent-isolation.ts --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1 --model stuck` |
+
+## The promise, and its test
+
+The helper reads the noise, and the main agent keeps only a short report. It checks the report against the approved source before it answers.
+
+```bash
+bun test tests/promises/32.test.ts
+```
+
+To see the test do its job, break the rule in PART 1 on purpose. The test must fail. Then undo it.
+
+## In production
+
+Give the helper its own model call and its own tools. Cap the size of the report. Log how much the helper read, so you can see a helper that reads too much.
+
+## Read the code
+
+Open `labs/32-subagent-isolation.ts`. Read the code from the top. It holds only the lesson.
+The screen output is in `show/`. You do not need it to learn.
