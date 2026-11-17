@@ -3,7 +3,8 @@
 
 import { createHmac, timingSafeEqual } from "node:crypto";
 
-export type Claims = { bot: string; scopes: string[]; expires: number };
+// user is set when a bot acts for a doctor. It is the doctor's id from the CRM.
+export type Claims = { bot: string; scopes: string[]; expires: number; user?: string };
 export type Checked = { ok: boolean; reason: string; claims: Claims };
 
 const NOBODY: Claims = { bot: "nobody", scopes: [], expires: 0 };
