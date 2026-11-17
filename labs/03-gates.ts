@@ -7,11 +7,11 @@
 // The examples and the screen output are in show/03-gates.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/03-gates.ts --question "Cardioza dose" --model nocite --naive
-//   bun labs/03-gates.ts --question "Cardioza dose"
-//   bun labs/03-gates.ts --question "Zorbex dose" --approve y
-//   bun labs/03-gates.ts --question "Zorbex dose" --approve n
-//   bun labs/03-gates.ts --question "Cardioza dose" --model nocite --approve y
+//   bun labs/03-gates.ts --question "What is the dose of Cardioza?" --model nocite --naive
+//   bun labs/03-gates.ts --question "What is the dose of Cardioza?"
+//   bun labs/03-gates.ts --question "What is the dose of Zorbex?" --approve y
+//   bun labs/03-gates.ts --question "What is the dose of Zorbex?" --approve n
+//   bun labs/03-gates.ts --question "What is the dose of Cardioza?" --model nocite --approve y
 //   bun labs/03-gates.ts --demo
 
 import { APPROVED_DOCS, NO_DOC } from "../src/data";

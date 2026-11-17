@@ -1,5 +1,6 @@
 // bun scripts/commands.ts: every run command names its file, like bun labs/01-agent-loop.ts.
 // "bun run lab 16" hides which file runs, and it breaks when a lab is renumbered or renamed.
+// A question about a dose must read like a doctor wrote it, not like a search: "Zorbex dose" fails.
 import { readdirSync, readFileSync } from "node:fs";
 
 const FOLDERS = ["labs", "docs/labs", "paths", "scripts", "src", "tests"];
@@ -26,11 +27,15 @@ for (const file of all) {
     const start = line.indexOf(NUMBERED);
     const rest = start < 0 ? "" : line.slice(start + NUMBERED.length);
     if (rest.length > 0 && rest[0] >= "0" && rest[0] <= "9") problems.push(`${file}:${index + 1}: ${line.trim()}`);
+    for (const found of line.matchAll(/--question "([^"]*)"/g)) {
+      const words = found[1].trim().split(" ").length;
+      if (/ dose\b/i.test(found[1]) && words < 5) problems.push(`${file}:${index + 1}: short question "${found[1]}"`);
+    }
   });
 }
 if (problems.length > 0) {
   console.error(problems.join("\n"));
-  console.error(`${problems.length} numbered run commands. Name the file: bun labs/01-agent-loop.ts`);
+  console.error(`${problems.length} bad run commands. Name the file (bun labs/01-agent-loop.ts) and ask a full question.`);
   process.exit(1);
 }
 console.log("Every run command names its lab file.");

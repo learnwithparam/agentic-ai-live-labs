@@ -18,7 +18,7 @@ const model = makeModel();
 // PROMISE: every run has a record from its first step, saved after every step.
 // A failed run says why. A run that went quiet reads as stalled.
 test("lab 19: the record is on disk after each step, before the run ends", () => {
-  const run = openRun("Cardioza dose", 1000);
+  const run = openRun("What is the dose of Cardioza?", 1000);
   expect(loadRun(run.id)).toMatchObject({ status: "running", steps: [] });
   addStep(run, "search", "done", "found", 2000);
   expect(loadRun(run.id)?.steps.length).toBe(1);
@@ -37,7 +37,7 @@ test("lab 19: a finished run reads back done, and a failed run keeps its reason"
 });
 
 test("lab 19: a running record with no news for too long is stalled", () => {
-  const run = openRun("Cardioza dose", 0);
+  const run = openRun("What is the dose of Cardioza?", 0);
   expect(describeRun(run, 10_000)).toBe("running: 0 steps so far");
   expect(describeRun(run, (STALL_SECONDS + 1) * 1000)).toContain("stalled");
 });

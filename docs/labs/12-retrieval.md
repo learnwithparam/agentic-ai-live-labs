@@ -15,12 +15,12 @@ chunk = a small piece of a document. score = how well a chunk matches the questi
 Copy any line into your terminal. Each one is a real example from this lab.
 
 ```bash
-bun labs/12-retrieval.ts --question "Cardioza dose" --naive --country DE
-bun labs/12-retrieval.ts --question "Cardioza dose" --country US
-bun labs/12-retrieval.ts --question "Cardioza dose" --country DE
+bun labs/12-retrieval.ts --question "What is the dose of Cardioza?" --naive --country DE
+bun labs/12-retrieval.ts --question "What is the dose of Cardioza?" --country US
+bun labs/12-retrieval.ts --question "What is the dose of Cardioza?" --country DE
 bun labs/12-retrieval.ts --question "Cardioza side effects" --country US
 bun labs/12-retrieval.ts --question "Cardioza dose and Neurovex dose" --country US
-bun labs/12-retrieval.ts --question "CARDIOZA DOSE?!" --country US
+bun labs/12-retrieval.ts --question "WHAT IS THE CARDIOZA DOSE?!" --country US
 bun labs/12-retrieval.ts --question "Cardioza please" --country US
 bun labs/12-retrieval.ts --question "Dermalin cream use" --country DE
 bun labs/12-retrieval.ts --question "weather in Berlin" --country DE
@@ -35,12 +35,12 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
-| 1 | NAIVE: best chunk from anywhere | A German doctor asks for the dose. Two chunks match equally well and the US chunk comes first. The doctor gets the US dose. | wrong-country | `bun labs/12-retrieval.ts --question "Cardioza dose" --naive --country DE` |
-| 2 | A US doctor asks for a dose | The right chunk matches on two words. The side effects chunk matches on only one, so it stays out. | found | `bun labs/12-retrieval.ts --question "Cardioza dose" --country US` |
-| 3 | A German doctor asks for a dose | The same question gives the German chunk, because we filter by country first. | found | `bun labs/12-retrieval.ts --question "Cardioza dose" --country DE` |
+| 1 | NAIVE: best chunk from anywhere | A German doctor asks for the dose. Two chunks match equally well and the US chunk comes first. The doctor gets the US dose. | wrong-country | `bun labs/12-retrieval.ts --question "What is the dose of Cardioza?" --naive --country DE` |
+| 2 | A US doctor asks for a dose | The right chunk matches on two words. The side effects chunk matches on only one, so it stays out. | found | `bun labs/12-retrieval.ts --question "What is the dose of Cardioza?" --country US` |
+| 3 | A German doctor asks for a dose | The same question gives the German chunk, because we filter by country first. | found | `bun labs/12-retrieval.ts --question "What is the dose of Cardioza?" --country DE` |
 | 4 | A different topic for one drug | Side effects of the same drug. The score picks the side effects chunk and not the dose chunk. | found | `bun labs/12-retrieval.ts --question "Cardioza side effects" --country US` |
 | 5 | Two drugs in one question | Both drugs match, so we send two chunks. We never send more than two. | found | `bun labs/12-retrieval.ts --question "Cardioza dose and Neurovex dose" --country US` |
-| 6 | Capital letters and punctuation | The words are cleaned first, so shouting does not change the answer. | found | `bun labs/12-retrieval.ts --question "CARDIOZA DOSE?!" --country US` |
+| 6 | Capital letters and punctuation | The words are cleaned first, so shouting does not change the answer. | found | `bun labs/12-retrieval.ts --question "WHAT IS THE CARDIOZA DOSE?!" --country US` |
 | 7 | A question with one matching word | Only the drug name matches. One word is too weak to trust. We ask the doctor to say more. | too-vague | `bun labs/12-retrieval.ts --question "Cardioza please" --country US` |
 | 8 | A drug with no chunk in this country | Dermalin has only a US chunk. We never fall back to another country. We say there is no source. | no-source | `bun labs/12-retrieval.ts --question "Dermalin cream use" --country DE` |
 | 9 | Nothing to do with drugs | No word matches any chunk. The answer is no source. We do not send the closest bad match. | no-source | `bun labs/12-retrieval.ts --question "weather in Berlin" --country DE` |

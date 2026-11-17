@@ -9,7 +9,7 @@
 // Run it (copy any line):
 //   bun labs/01-agent-loop.ts --question "What is the dose of Cardioza?"
 //   bun labs/01-agent-loop.ts --question "What is the dose of Cardioza?" --country DE
-//   bun labs/01-agent-loop.ts --question "CARDIOZA dose please"
+//   bun labs/01-agent-loop.ts --question "Can you tell me the CARDIOZA dose please?"
 //   bun labs/01-agent-loop.ts --question "What is the dose of Cardioza and Neurovex?"
 //   bun labs/01-agent-loop.ts --demo
 

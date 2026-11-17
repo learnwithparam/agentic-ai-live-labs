@@ -21,12 +21,12 @@ export const lab: Lab = {
   promise: "A call never starts if its worst case would pass the run cap or the day cap. What a call really cost is written to disk. A run handed on too many times is refused.",
   production: "Take the price list from your provider. Keep the ledger in a database that every server shares. Alert a person when a cap is hit.",
   cases: [
-    { title: "NAIVE: no money cap", why: "The model keeps making the same call, and nothing in our code counts money. The demo cuts it at 200 rounds, and the bill is long.", question: "Zorbex dose", flags: { model: "stuck", naive: "true" }, expect: "never-stopped" },
-    { title: "A normal question", why: "Two rounds, a fraction of a cent. No cap is touched.", question: "Cardioza dose", expect: "answered" },
-    { title: "A stuck model and a run cap", why: "Each round sends the whole chat again, so each round costs more. The run cap of 1 cent stops it before the call that would pass it.", question: "Zorbex dose", flags: { model: "stuck" }, expect: "run-cap" },
-    { title: "EDGE: today's money is already used", why: "This person spent 2500 millicents earlier today. The day cap is 3000. The worst case of the next call does not fit, so no call starts.", question: "Cardioza dose", flags: { before: "2500" }, expect: "day-cap" },
-    { title: "EDGE: handed on too many times", why: "This run is the third hand-over, and the cap is three hops. It is refused before any money is spent.", question: "Cardioza dose", flags: { hops: "3" }, expect: "hop-cap" },
-    { title: "EDGE: many runs in one day", why: "Each run is small. The ledger on disk adds them up, and the second run in a row is stopped by the day cap.", question: "Cardioza dose", flags: { again: "3", day: "1" }, expect: "day-cap" },
+    { title: "NAIVE: no money cap", why: "The model keeps making the same call, and nothing in our code counts money. The demo cuts it at 200 rounds, and the bill is long.", question: "What is the dose of Zorbex?", flags: { model: "stuck", naive: "true" }, expect: "never-stopped" },
+    { title: "A normal question", why: "Two rounds, a fraction of a cent. No cap is touched.", question: "What is the dose of Cardioza?", expect: "answered" },
+    { title: "A stuck model and a run cap", why: "Each round sends the whole chat again, so each round costs more. The run cap of 1 cent stops it before the call that would pass it.", question: "What is the dose of Zorbex?", flags: { model: "stuck" }, expect: "run-cap" },
+    { title: "EDGE: today's money is already used", why: "This person spent 2500 millicents earlier today. The day cap is 3000. The worst case of the next call does not fit, so no call starts.", question: "What is the dose of Cardioza?", flags: { before: "2500" }, expect: "day-cap" },
+    { title: "EDGE: handed on too many times", why: "This run is the third hand-over, and the cap is three hops. It is refused before any money is spent.", question: "What is the dose of Cardioza?", flags: { hops: "3" }, expect: "hop-cap" },
+    { title: "EDGE: many runs in one day", why: "Each run is small. The ledger on disk adds them up, and the second run in a row is stopped by the day cap.", question: "What is the dose of Cardioza?", flags: { again: "3", day: "1" }, expect: "day-cap" },
   ],
   play(question, flags) {
     process.env.SPEND_DIR = mkdtempSync(`${tmpdir()}/lab22-`);

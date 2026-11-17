@@ -35,12 +35,12 @@ export const lab: Lab = {
   promise: "The prompt never passes the budget, and the rules and the question are never dropped.",
   production: "Count with the model's own counter, keep a reserve for the reply, and log what was dropped on every call.",
   cases: [
-    { title: "NAIVE: let the window cut the oldest text", why: "The rules come first, so they are the oldest text. When the window is full, they are the first thing cut. The model now answers with no rules.", question: "Cardioza dose", flags: { naive: "true", window: "60" }, expect: "rules-lost" },
-    { title: "Plenty of room", why: "Everything fits, so everything is sent.", question: "Cardioza dose", flags: { window: "200" }, expect: "all-fit" },
-    { title: "A tighter window", why: "The chat history is the least useful part, so it goes first.", question: "Cardioza dose", flags: { window: "70" }, expect: "dropped: history" },
-    { title: "A tight window", why: "The documents also stop fitting. We keep the rules, the question and the small doctor note. The model has to refuse, which is safe.", question: "Cardioza dose", flags: { window: "40" }, expect: "dropped: documents, history" },
-    { title: "Two drugs, bigger documents", why: "Two documents are larger. The window drops the history and then the documents, and the doctor note survives.", question: "Cardioza and Neurovex dose", flags: { window: "60" }, expect: "dropped: documents, history" },
-    { title: "The must parts do not fit", why: "A budget of 10 cannot hold the rules and the question. We say so. We never send a prompt without its rules.", question: "Cardioza dose", flags: { window: "10" }, expect: "too-small" },
+    { title: "NAIVE: let the window cut the oldest text", why: "The rules come first, so they are the oldest text. When the window is full, they are the first thing cut. The model now answers with no rules.", question: "What is the dose of Cardioza?", flags: { naive: "true", window: "60" }, expect: "rules-lost" },
+    { title: "Plenty of room", why: "Everything fits, so everything is sent.", question: "What is the dose of Cardioza?", flags: { window: "200" }, expect: "all-fit" },
+    { title: "A tighter window", why: "The chat history is the least useful part, so it goes first.", question: "What is the dose of Cardioza?", flags: { window: "70" }, expect: "dropped: history" },
+    { title: "A tight window", why: "The documents also stop fitting. We keep the rules, the question and the small doctor note. The model has to refuse, which is safe.", question: "What is the dose of Cardioza?", flags: { window: "40" }, expect: "dropped: documents, history" },
+    { title: "Two drugs, bigger documents", why: "Two documents are larger. The window drops the history and then the documents, and the doctor note survives.", question: "What are the doses of Cardioza and Neurovex?", flags: { window: "60" }, expect: "dropped: documents, history" },
+    { title: "The must parts do not fit", why: "A budget of 10 cannot hold the rules and the question. We say so. We never send a prompt without its rules.", question: "What is the dose of Cardioza?", flags: { window: "10" }, expect: "too-small" },
     { title: "A very long question", why: "The question alone is bigger than the window. The doctor must shorten it. We do not cut it for them.", question: "Cardioza dose " + "please tell me more ".repeat(20), flags: { window: "80" }, expect: "too-small" },
   ],
   play(question, flags) {

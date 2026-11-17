@@ -8,11 +8,11 @@
 // The examples and the screen output are in show/15-stop-conditions.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/15-stop-conditions.ts --question "Zorbex dose" --model stuck --naive
-//   bun labs/15-stop-conditions.ts --question "Cardioza dose"
-//   bun labs/15-stop-conditions.ts --question "Zorbex dose" --model stuck
-//   bun labs/15-stop-conditions.ts --question "Zorbex dose" --model wanders
-//   bun labs/15-stop-conditions.ts --question "Cardioza dose" --budget 20
+//   bun labs/15-stop-conditions.ts --question "What is the dose of Zorbex?" --model stuck --naive
+//   bun labs/15-stop-conditions.ts --question "What is the dose of Cardioza?"
+//   bun labs/15-stop-conditions.ts --question "What is the dose of Zorbex?" --model stuck
+//   bun labs/15-stop-conditions.ts --question "What is the dose of Zorbex?" --model wanders
+//   bun labs/15-stop-conditions.ts --question "What is the dose of Cardioza?" --budget 20
 //   bun labs/15-stop-conditions.ts --demo
 
 import type { CallLlm, Message } from "../src/model";

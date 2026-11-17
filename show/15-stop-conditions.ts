@@ -16,13 +16,13 @@ export const lab: Lab = {
   promise: "A run always stops within its steps and its budget, and says why it stopped.",
   production: "Set the limits per task, alert when a run hits one, and show the stop reason to the person.",
   cases: [
-    { title: "NAIVE: trust the model to stop", why: "The model keeps making the same call. With no limit of our own, the loop never ends. The demo cuts it at 200 rounds.", question: "Zorbex dose", flags: { model: "stuck", naive: "true" }, expect: "never-stopped" },
-    { title: "A model that answers", why: "One search, then an answer. The normal case. No limit is touched.", question: "Cardioza dose", expect: "answered" },
-    { title: "A model that is stuck", why: "The same call again and again. We allow it twice, because a retry can be fair. The third time we stop.", question: "Zorbex dose", flags: { model: "stuck" }, expect: "repeat" },
-    { title: "A model that wanders", why: "New words each time, so it is not a repeat. The step limit ends it.", question: "Zorbex dose", flags: { model: "wanders" }, expect: "max-steps" },
-    { title: "A small budget", why: "Every round sends the whole chat again. A budget of 20 tokens is gone before the model is asked a second time.", question: "Cardioza dose", flags: { budget: "20" }, expect: "out-of-budget" },
-    { title: "One step only", why: "We allow one round. The model wants a second one, so we stop it, even though it was close to an answer.", question: "Cardioza dose", flags: { steps: "1" }, expect: "max-steps" },
-    { title: "A fair retry", why: "Two identical calls are allowed. A model that retries once and then answers is fine. Here the limit is raised to show the rule.", question: "Zorbex dose", flags: { model: "stuck", repeats: "9", steps: "3" }, expect: "max-steps" },
+    { title: "NAIVE: trust the model to stop", why: "The model keeps making the same call. With no limit of our own, the loop never ends. The demo cuts it at 200 rounds.", question: "What is the dose of Zorbex?", flags: { model: "stuck", naive: "true" }, expect: "never-stopped" },
+    { title: "A model that answers", why: "One search, then an answer. The normal case. No limit is touched.", question: "What is the dose of Cardioza?", expect: "answered" },
+    { title: "A model that is stuck", why: "The same call again and again. We allow it twice, because a retry can be fair. The third time we stop.", question: "What is the dose of Zorbex?", flags: { model: "stuck" }, expect: "repeat" },
+    { title: "A model that wanders", why: "New words each time, so it is not a repeat. The step limit ends it.", question: "What is the dose of Zorbex?", flags: { model: "wanders" }, expect: "max-steps" },
+    { title: "A small budget", why: "Every round sends the whole chat again. A budget of 20 tokens is gone before the model is asked a second time.", question: "What is the dose of Cardioza?", flags: { budget: "20" }, expect: "out-of-budget" },
+    { title: "One step only", why: "We allow one round. The model wants a second one, so we stop it, even though it was close to an answer.", question: "What is the dose of Cardioza?", flags: { steps: "1" }, expect: "max-steps" },
+    { title: "A fair retry", why: "Two identical calls are allowed. A model that retries once and then answers is fine. Here the limit is raised to show the rule.", question: "What is the dose of Zorbex?", flags: { model: "stuck", repeats: "9", steps: "3" }, expect: "max-steps" },
   ],
   play(question, flags) {
     const limits: Limits = {

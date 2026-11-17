@@ -9,12 +9,12 @@
 // The examples and the screen output are in show/22-budgets.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/22-budgets.ts --question "Zorbex dose" --model stuck --naive
-//   bun labs/22-budgets.ts --question "Cardioza dose"
-//   bun labs/22-budgets.ts --question "Zorbex dose" --model stuck --run 1
-//   bun labs/22-budgets.ts --question "Cardioza dose" --before 2900
-//   bun labs/22-budgets.ts --question "Cardioza dose" --hops 3
-//   bun labs/22-budgets.ts --question "Cardioza dose" --again 3
+//   bun labs/22-budgets.ts --question "What is the dose of Zorbex?" --model stuck --naive
+//   bun labs/22-budgets.ts --question "What is the dose of Cardioza?"
+//   bun labs/22-budgets.ts --question "What is the dose of Zorbex?" --model stuck --run 1
+//   bun labs/22-budgets.ts --question "What is the dose of Cardioza?" --before 2900
+//   bun labs/22-budgets.ts --question "What is the dose of Cardioza?" --hops 3
+//   bun labs/22-budgets.ts --question "What is the dose of Cardioza?" --again 3
 //   bun labs/22-budgets.ts --demo
 
 import type { CallLlm, Message } from "../src/model";

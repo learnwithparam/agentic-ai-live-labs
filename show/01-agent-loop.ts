@@ -13,7 +13,7 @@ export const lab: Lab = {
   cases: [
     { title: "A normal question", why: "The happy path. One search, then an answer that cites its source.", question: "What is the dose of Cardioza?", expect: "answered" },
     { title: "Same question, different country", why: "Approved text differs by country. Germany gets 5mg and the US gets 10mg. The tool filters by country, so the model cannot override it.", question: "What is the dose of Cardioza?", flags: { country: "DE" }, expect: "answered" },
-    { title: "Capital letters", why: "Search ignores case, so shouting the drug name still works.", question: "CARDIOZA dose please", expect: "answered" },
+    { title: "Capital letters", why: "Search ignores case, so shouting the drug name still works.", question: "Can you tell me the CARDIOZA dose please?", expect: "answered" },
     { title: "Two drugs in one question", why: "One search can return two documents. The answer must cite both.", question: "What is the dose of Cardioza and Neurovex?", expect: "answered" },
     { title: "A drug we have no document for", why: "The search finds nothing, so the model must refuse. It must not guess from memory.", question: "Is Zorbex safe for children?", expect: "no-source" },
     { title: "Approved in another country only", why: "Dermalin is approved in the US only. A German doctor gets no answer. That is the right behaviour.", question: "What is the dose of Dermalin?", flags: { country: "DE" }, expect: "no-source" },

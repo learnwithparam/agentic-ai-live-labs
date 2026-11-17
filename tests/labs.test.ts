@@ -32,7 +32,7 @@ describe("lab 1: agent loop", () => {
     expect(result.answer).toContain("[DOC-101]");
   });
   test("uses the country's own document", () => {
-    expect(runAgentLoop("Cardioza dose", "DE", makeModel()).answer).toContain("5mg");
+    expect(runAgentLoop("What is the dose of Cardioza?", "DE", makeModel()).answer).toContain("5mg");
   });
   test("stops at max steps", () => {
     const stuck = () => ({ toolCall: { name: "search_approved_docs", args: { query: "x", country: "US", hcpId: "none" } } });
@@ -53,7 +53,7 @@ describe("lab 2: guardrails", () => {
     expect(found.length).toBe(5);
   });
   test("leaves a clean note alone", () => {
-    expect(redactPhi("Cardioza dose").found).toEqual([]);
+    expect(redactPhi("What is the dose of Cardioza?").found).toEqual([]);
   });
   test("blocks a reply with no citation or an unknown one", () => {
     expect(verifyOutput("10mg daily", ids).ok).toBe(false);
@@ -64,19 +64,19 @@ describe("lab 2: guardrails", () => {
 
 describe("lab 3: gates", () => {
   test("approved question is sent with no gate", () => {
-    expect(silent(() => handleHcpInquiry("Cardioza dose", "US", makeModel(), no)).status).toBe("SENT");
+    expect(silent(() => handleHcpInquiry("What is the dose of Cardioza?", "US", makeModel(), no)).status).toBe("SENT");
   });
   test("no approved document opens gate 1", () => {
-    expect(silent(() => handleHcpInquiry("Zorbex dose", "US", makeModel(), yes)).status).toBe("SENT_AFTER_HUMAN_APPROVAL");
-    expect(silent(() => handleHcpInquiry("Zorbex dose", "US", makeModel(), no)).status).toBe("BLOCKED_BY_REVIEWER");
+    expect(silent(() => handleHcpInquiry("What is the dose of Zorbex?", "US", makeModel(), yes)).status).toBe("SENT_AFTER_HUMAN_APPROVAL");
+    expect(silent(() => handleHcpInquiry("What is the dose of Zorbex?", "US", makeModel(), no)).status).toBe("BLOCKED_BY_REVIEWER");
   });
   test("a reply with no citation opens gate 2", () => {
-    const outcome = silent(() => handleHcpInquiry("Cardioza dose", "US", makeModel("nocite"), no));
+    const outcome = silent(() => handleHcpInquiry("What is the dose of Cardioza?", "US", makeModel("nocite"), no));
     expect(outcome.status).toBe("BLOCKED_BY_REVIEWER");
     expect(outcome.log.join(" ")).toContain("Gate 2 stops the run");
   });
   test("with no gate, an uncited reply is sent", () => {
-    const outcome = handleWithoutGate("Cardioza dose", "US", makeModel("nocite"));
+    const outcome = handleWithoutGate("What is the dose of Cardioza?", "US", makeModel("nocite"));
     expect(outcome.status).toBe("SENT_UNCHECKED");
   });
   test("patient details never reach the model", () => {
@@ -103,17 +103,17 @@ describe("lab 4: shapes", () => {
     expect(result.allowedDocs).toEqual([]);
   });
   test("one agent picks three tools", () => {
-    const result = singleHcpAgent("Cardioza dose", "H-1", makeModel());
+    const result = singleHcpAgent("What is the dose of Cardioza?", "H-1", makeModel());
     expect(result.steps.filter((step) => step.kind === "tool").length).toBe(3);
     expect(result.answer).toContain("Recent outreach");
   });
   test("auditor passes a true draft", () => {
-    expect(silent(() => multiAgentPipeline("Cardioza dose", "US", makeModel(), no)).reply).toContain("10mg");
+    expect(silent(() => multiAgentPipeline("What is the dose of Cardioza?", "US", makeModel(), no)).reply).toContain("10mg");
   });
   test("auditor catches a wrong dose that has a valid citation", () => {
-    const draft = runAgentLoop("Cardioza dose", "US", makeModel("invent")).answer;
+    const draft = runAgentLoop("What is the dose of Cardioza?", "US", makeModel("invent")).answer;
     expect(verifyOutput(draft, ids).ok).toBe(true); // the citation check is fooled
-    const result = silent(() => multiAgentPipeline("Cardioza dose", "US", makeModel("invent"), no));
+    const result = silent(() => multiAgentPipeline("What is the dose of Cardioza?", "US", makeModel("invent"), no));
     expect(result.reply).toBe("REJECTED_BY_COMPLIANCE"); // the auditor is not
   });
 });

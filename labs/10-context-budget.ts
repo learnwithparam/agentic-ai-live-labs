@@ -8,10 +8,10 @@
 // The examples and the screen output are in show/10-context-budget.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/10-context-budget.ts --question "Cardioza dose" --naive --window 60
-//   bun labs/10-context-budget.ts --question "Cardioza dose" --window 200
-//   bun labs/10-context-budget.ts --question "Cardioza dose" --window 70
-//   bun labs/10-context-budget.ts --question "Cardioza dose" --window 40
+//   bun labs/10-context-budget.ts --question "What is the dose of Cardioza?" --naive --window 60
+//   bun labs/10-context-budget.ts --question "What is the dose of Cardioza?" --window 200
+//   bun labs/10-context-budget.ts --question "What is the dose of Cardioza?" --window 70
+//   bun labs/10-context-budget.ts --question "What is the dose of Cardioza?" --window 40
 //   bun labs/10-context-budget.ts --demo
 
 import type { CallLlm } from "../src/model";

@@ -1,0 +1,59 @@
+# Lab 23: which model answers
+
+Each example has a small model and a strong model. Our code checks the small model's answer. Pretend habits: --small and --big can be ok, nocite (no citation) or invent (a wrong dose). With --live both tiers use the real model, so the check is real too.
+
+## The problem
+
+The strong model costs ten times more. Using it for every question wastes money. Using the small one alone sends wrong doses to doctors.
+
+## New words
+
+route = pick which model answers. cascade = try the cheap one first, then a better one. check = a rule in our code that an answer must pass.
+
+## Run it
+
+Copy any line into your terminal. Each one is a real example from this lab.
+
+```bash
+bun labs/23-model-routing.ts --question "What is the dose of Cardioza?" --naive
+bun labs/23-model-routing.ts --question "What is the dose of Cardioza?"
+bun labs/23-model-routing.ts --question "What is the dose of Cardioza?" --small nocite
+bun labs/23-model-routing.ts --question "What is the dose of Cardioza?" --small invent
+bun labs/23-model-routing.ts --question "What is the dose of Cardioza?" --small nocite --big nocite
+bun labs/23-model-routing.ts --question "What is the dose of Zorbex?"
+bun labs/23-model-routing.ts --demo
+```
+
+Run `bun labs/23-model-routing.ts` with nothing else to pick an example from a menu.
+
+## The cases
+
+Case 1 is the naive way. Read what goes wrong, then read the rest.
+
+| # | Case | Why it matters | Result | Run it alone |
+| --- | --- | --- | --- | --- |
+| 1 | NAIVE: always the strong model | Every question goes to the strong model, and nobody checks the answer. It works, but it costs ten times more than it needs to. | always-big | `bun labs/23-model-routing.ts --question "What is the dose of Cardioza?" --naive` |
+| 2 | The small model is good enough | The small answer cites its source and the dose matches. It is sent as it is, and the strong model is never called. | small | `bun labs/23-model-routing.ts --question "What is the dose of Cardioza?"` |
+| 3 | The small model forgets the citation | The check fails: no citation. We ask the strong model, and its answer passes. | big | `bun labs/23-model-routing.ts --question "What is the dose of Cardioza?" --small nocite` |
+| 4 | EDGE: the small model invents a dose | It says 20mg. The document says 10mg. The check catches it in code, and the strong model answers. | big | `bun labs/23-model-routing.ts --question "What is the dose of Cardioza?" --small invent` |
+| 5 | EDGE: both models fail | Neither answer passes the check. We send nothing, and a person looks at it. | refused | `bun labs/23-model-routing.ts --question "What is the dose of Cardioza?" --small nocite --big nocite` |
+| 6 | EDGE: no approved document | There is no source for Zorbex. The small model says so, and no dose is made up. That is a good answer. | small | `bun labs/23-model-routing.ts --question "What is the dose of Zorbex?"` |
+
+## The promise, and its test
+
+The small model answers first. An answer that fails our check is never sent. The strong model is asked only after a failed check. If both fail, nothing is sent.
+
+```bash
+bun test tests/promises/23.test.ts
+```
+
+To see the test do its job, break the rule in PART 1 on purpose. The test must fail. Then undo it.
+
+## In production
+
+Log which tier answered each question. Watch how often the small model fails the check, and move the line when it changes.
+
+## Read the code
+
+Open `labs/23-model-routing.ts`. Read the code from the top. It holds only the lesson.
+The screen output is in `show/`. You do not need it to learn.

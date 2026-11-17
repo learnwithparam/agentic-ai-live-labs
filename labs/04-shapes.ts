@@ -7,10 +7,10 @@
 // The examples and the screen output are in show/04-shapes.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/04-shapes.ts --question "Cardioza dose" --shape agent --hcp H-1 --model invent
+//   bun labs/04-shapes.ts --question "What is the dose of Cardioza?" --shape agent --hcp H-1 --model invent
 //   bun labs/04-shapes.ts --question "(not used by a workflow)" --shape workflow --hcp H-2
-//   bun labs/04-shapes.ts --question "Cardioza dose" --shape agent --hcp H-1
-//   bun labs/04-shapes.ts --question "Cardioza dose" --shape multi --model invent --approve n
+//   bun labs/04-shapes.ts --question "What is the dose of Cardioza?" --shape agent --hcp H-1
+//   bun labs/04-shapes.ts --question "What is the dose of Cardioza?" --shape multi --model invent --approve n
 //   bun labs/04-shapes.ts --demo
 
 import { APPROVED_DOCS, CRM, EMAILS } from "../src/data";

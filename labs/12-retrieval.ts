@@ -7,9 +7,9 @@
 // The examples and the screen output are in show/12-retrieval.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/12-retrieval.ts --question "Cardioza dose" --naive --country DE
-//   bun labs/12-retrieval.ts --question "Cardioza dose" --country US
-//   bun labs/12-retrieval.ts --question "Cardioza dose" --country DE
+//   bun labs/12-retrieval.ts --question "What is the dose of Cardioza?" --naive --country DE
+//   bun labs/12-retrieval.ts --question "What is the dose of Cardioza?" --country US
+//   bun labs/12-retrieval.ts --question "What is the dose of Cardioza?" --country DE
 //   bun labs/12-retrieval.ts --question "Cardioza side effects" --country US
 //   bun labs/12-retrieval.ts --demo
 

@@ -18,12 +18,12 @@ Copy any line into your terminal. Each one is a real example from this lab.
 bun labs/02-guardrails.ts --demo
 bun labs/02-guardrails.ts --demo
 bun labs/02-guardrails.ts --demo
-bun labs/02-guardrails.ts --question "Cardioza dose"
+bun labs/02-guardrails.ts --question "What is the dose of Cardioza?"
 bun labs/02-guardrails.ts --demo
 bun labs/02-guardrails.ts --question "Jane Doe takes Cardioza, what is the dose?"
-bun labs/02-guardrails.ts --question "Cardioza dose" --model nocite
-bun labs/02-guardrails.ts --question "Zorbex dose"
-bun labs/02-guardrails.ts --question "Cardioza dose" --model invent
+bun labs/02-guardrails.ts --question "What is the dose of Cardioza?" --model nocite
+bun labs/02-guardrails.ts --question "What is the dose of Zorbex?"
+bun labs/02-guardrails.ts --question "What is the dose of Cardioza?" --model invent
 bun labs/02-guardrails.ts --demo
 ```
 
@@ -38,12 +38,12 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 1 | NAIVE: no guardrails | The model reads the patient's name and social security number. Its reply goes out with no check. Once a model has read private details, you cannot take them back. | leaked 3 | `bun labs/02-guardrails.ts --demo` |
 | 2 | Name, social security number and phone | The classic case. All three are hidden, and the model only ever sees the tokens. | 3 masked, passed | `bun labs/02-guardrails.ts --demo` |
 | 3 | Email, record number and birth date | Other formats the input guardrail knows about. | 3 masked, passed | `bun labs/02-guardrails.ts --demo` |
-| 4 | Nothing private | A clean question passes through unchanged. No false alarms. | 0 masked, passed | `bun labs/02-guardrails.ts --question "Cardioza dose"` |
+| 4 | Nothing private | A clean question passes through unchanged. No false alarms. | 0 masked, passed | `bun labs/02-guardrails.ts --question "What is the dose of Cardioza?"` |
 | 5 | EDGE: a number format we do not know | The SSN has no dashes, so our rule misses it and it stays in the note. This is the limit of rule-based hiding. Real systems add a trained detector and a review step. | 0 masked, passed | `bun labs/02-guardrails.ts --demo` |
 | 6 | EDGE: a name with no label | We only catch names that follow 'Patient:'. A bare name goes straight through. | 0 masked, passed | `bun labs/02-guardrails.ts --question "Jane Doe takes Cardioza, what is the dose?"` |
-| 7 | Reply with no citation | This model gives the right fact but forgets the source tag. The output guardrail blocks it anyway. An uncited claim never goes out. | 0 masked, blocked | `bun labs/02-guardrails.ts --question "Cardioza dose" --model nocite` |
-| 8 | No approved source, so no citation | The model refuses, and a refusal has no citation either. The guardrail blocks it. In lab 3 that sends it to a person. | 0 masked, blocked | `bun labs/02-guardrails.ts --question "Zorbex dose"` |
-| 9 | EDGE: wrong dose, valid citation | The model says 20mg and cites the real document. A citation check cannot see that the claim is wrong. Only a check of the claim itself can. That is lab 4. | 0 masked, passed | `bun labs/02-guardrails.ts --question "Cardioza dose" --model invent` |
+| 7 | Reply with no citation | This model gives the right fact but forgets the source tag. The output guardrail blocks it anyway. An uncited claim never goes out. | 0 masked, blocked | `bun labs/02-guardrails.ts --question "What is the dose of Cardioza?" --model nocite` |
+| 8 | No approved source, so no citation | The model refuses, and a refusal has no citation either. The guardrail blocks it. In lab 3 that sends it to a person. | 0 masked, blocked | `bun labs/02-guardrails.ts --question "What is the dose of Zorbex?"` |
+| 9 | EDGE: wrong dose, valid citation | The model says 20mg and cites the real document. A citation check cannot see that the claim is wrong. Only a check of the claim itself can. That is lab 4. | 0 masked, passed | `bun labs/02-guardrails.ts --question "What is the dose of Cardioza?" --model invent` |
 
 ## The promise, and its test
 

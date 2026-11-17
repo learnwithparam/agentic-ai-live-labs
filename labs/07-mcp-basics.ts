@@ -7,10 +7,10 @@
 // The examples and the screen output are in show/07-mcp-basics.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/07-mcp-basics.ts --question "Cardioza dose" --naive
+//   bun labs/07-mcp-basics.ts --question "What is the dose of Cardioza?" --naive
 //   bun labs/07-mcp-basics.ts --question "(not used)" --show wire
-//   bun labs/07-mcp-basics.ts --question "Cardioza dose" --hcp H-1
-//   bun labs/07-mcp-basics.ts --question "Cardioza dose" --hcp H-2 --country DE
+//   bun labs/07-mcp-basics.ts --question "What is the dose of Cardioza?" --hcp H-1
+//   bun labs/07-mcp-basics.ts --question "What is the dose of Cardioza?" --hcp H-2 --country DE
 //   bun labs/07-mcp-basics.ts --demo
 
 import type { CallLlm } from "../src/model";

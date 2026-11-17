@@ -9,8 +9,8 @@
 // Run it (copy any line):
 //   bun labs/02-guardrails.ts --question "Call from Dr. Lee about Patient: Jane Doe (SSN 123-45-6789, 555-123-4567) on Cardioza dose" --naive
 //   bun labs/02-guardrails.ts --question "Call from Dr. Lee about Patient: Jane Doe (SSN 123-45-6789, 555-123-4567) on Cardioza dose"
-//   bun labs/02-guardrails.ts --question "Cardioza dose" --model nocite
-//   bun labs/02-guardrails.ts --question "Zorbex dose"
+//   bun labs/02-guardrails.ts --question "What is the dose of Cardioza?" --model nocite
+//   bun labs/02-guardrails.ts --question "What is the dose of Zorbex?"
 //   bun labs/02-guardrails.ts --demo
 
 import { APPROVED_DOCS } from "../src/data";
