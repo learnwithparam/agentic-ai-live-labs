@@ -4,7 +4,7 @@
 
 **Goal:** Harden a multi-agent system: trust, recovery, cost, audit and release.
 
-**Time:** 10 hours for the main steps, about most of an hour a lab.
+**Time:** 10.5 hours for the main steps, about most of an hour a lab.
 
 ## How to work
 
@@ -31,6 +31,7 @@
 | 33. Handoffs between agents | `bun labs/33-handoffs.ts --demo` | Break handoff loops with a hop limit. |
 | 34. Memory the bots share | `bun labs/34-shared-memory.ts --demo` | Memory that cannot be poisoned. |
 | 35. Wakeups and the mission board | `bun labs/35-wakeups-and-board.ts --demo` | Wake agents on events and show a board. |
+| 40. Put it all together | `bun labs/40-end-to-end.ts --demo` | Send one note through every guard, and check the record. |
 
 ## Optional
 

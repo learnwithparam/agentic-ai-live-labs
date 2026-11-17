@@ -7,8 +7,8 @@ Pick the path that matches you. Every path uses the same labs in a different ord
 | [Noobs](noob.md) | You have never built with AI, and you may not code. You want to know what an agent is. | 6 main, 1 optional | 2 hours |
 | [Beginners](beginner.md) | You can write simple code, such as functions and loops. Agents are new to you. | 12 main, 4 optional | 6 hours |
 | [Intermediate](intermediate.md) | You have called an LLM API inside an app. You want it to work reliably. | 22 main, 9 optional | 11 hours |
-| [Advanced](advanced.md) | You run agents in production, or you lead the team that does. | 15 main, 9 optional | 10 hours |
-| [Product managers](pm.md) | You decide what ships and what is safe. You do not need to read code. | 12 main, 2 optional | 3 hours |
+| [Advanced](advanced.md) | You run agents in production, or you lead the team that does. | 16 main, 9 optional | 10.5 hours |
+| [Product managers](pm.md) | You decide what ships and what is safe. You do not need to read code. | 13 main, 2 optional | 3.5 hours |
 
 Not sure? Start with Beginners. If you never code, start with Noobs.
 
@@ -108,3 +108,4 @@ The ideas used together on one real job.
 | 37. The PHI vault | Swap private data for tokens that only a reviewer can reverse. |
 | 38. The claim checker | Check every sentence of a draft against approved claims. |
 | 39. Country rules and revocation | Block withdrawn documents, even from the cache. |
+| 40. Put it all together | Send one note through every guard, and keep a record nobody can edit. |

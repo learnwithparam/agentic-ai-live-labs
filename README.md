@@ -1,6 +1,6 @@
 # Agentic AI Live Labs
 
-Thirty-nine small labs on one job: answer a doctor's drug question safely. Each lab shows one idea.
+Forty small labs on one job: answer a doctor's drug question safely. Each lab shows one idea.
 
 It is plain TypeScript. You run it with Bun. You need no AI library and no API key.
 
@@ -98,7 +98,7 @@ The labs are in eight tracks. Pick a learning path in [paths/README.md](paths/RE
 | Agent runtime | 19 to 23 | State, failures, crashes, cost and routing |
 | Harness engineering | 24 to 28 | Identity, hooks, audit and release checks |
 | Teammate patterns | 29 to 35 | Many agents that work as one team |
-| HCP case study | 36 to 39 | The ideas used together on one real job |
+| HCP case study | 36 to 40 | The ideas used together on one real job |
 
 Each lab has a page in `docs/labs/`. It lists the new words, the problem, the promise, and every example.
 

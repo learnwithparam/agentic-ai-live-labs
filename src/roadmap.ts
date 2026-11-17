@@ -68,6 +68,7 @@ export const LABS: RoadmapLab[] = [
   { number: 37, slug: "phi-vault", track: "hcp", title: "The PHI vault", idea: "Swap private data for tokens that only a reviewer can reverse." },
   { number: 38, slug: "fact-checker", track: "hcp", title: "The claim checker", idea: "Check every sentence of a draft against approved claims." },
   { number: 39, slug: "revocation", track: "hcp", title: "Country rules and revocation", idea: "Block withdrawn documents, even from the cache." },
+  { number: 40, slug: "end-to-end", track: "hcp", title: "Put it all together", idea: "Send one note through every guard, and keep a record nobody can edit." },
 ];
 
 export const PATHS: Path[] = [
@@ -209,6 +210,7 @@ export const PATHS: Path[] = [
       { lab: 37, note: "Reversible tokens for private data.", optional: true },
       { lab: 38, note: "Check every claim against a source.", optional: true },
       { lab: 39, note: "Revoke a document everywhere, cache included.", optional: true },
+      { lab: 40, note: "Send one note through every guard, and check the record." },
     ],
     finish: "You can name the failure each control stops, and the case where it does not.",
     next: "add",
@@ -239,6 +241,7 @@ export const PATHS: Path[] = [
       { lab: 35, note: "Ask: which jobs run without being asked, and where can we see them?", optional: true },
       { lab: 36, note: "Ask: do doctors get two emails about one product?" },
       { lab: 39, note: "Ask: how fast does a withdrawn document stop being used?" },
+      { lab: 40, note: "Ask: which guards did one answer pass, and can we see the record?" },
     ],
     finish: "You can review an agent project, spot the missing control, and ask for the test that proves it.",
     next: "beginner",

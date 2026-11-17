@@ -4,7 +4,7 @@
 
 **Goal:** Ask the right questions of your team, and know what a good answer sounds like.
 
-**Time:** 3 hours for the main steps, about a quick coffee a lab.
+**Time:** 3.5 hours for the main steps, about a quick coffee a lab.
 
 ## How to work
 
@@ -28,6 +28,7 @@
 | 28. Evals and the release gate | `bun labs/28-evals-and-release.ts --demo` | Ask: what blocks a release when a safety check fails? |
 | 36. One profile per doctor | `bun labs/36-hcp-360.ts --demo` | Ask: do doctors get two emails about one product? |
 | 39. Country rules and revocation | `bun labs/39-revocation.ts --demo` | Ask: how fast does a withdrawn document stop being used? |
+| 40. Put it all together | `bun labs/40-end-to-end.ts --demo` | Ask: which guards did one answer pass, and can we see the record? |
 
 ## Optional
 
