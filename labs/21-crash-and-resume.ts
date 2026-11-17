@@ -43,9 +43,12 @@ export function runJob(jobId: string, doctors: string[], callLlm: CallLlm, dieAt
 
     // Step 3: send it with its key. The outbox refuses a key it already holds.
     const fresh = sendOnce(jobId, mail);
-    if (fresh) job.sent.push(doctor);
-    if (fresh) job.log.push(`Step 3: ${doctor}: sent.`);
-    else job.log.push(`Step 3: ${doctor}: the key was used before, so no second email.`);
+    if (fresh) {
+      job.sent.push(doctor);
+      job.log.push(`Step 3: ${doctor}: sent.`);
+    } else {
+      job.log.push(`Step 3: ${doctor}: the key was used before, so no second email.`);
+    }
     dieIf(dieAt, `send:${doctor}`);
 
     // Step 4: write the ledger line only after the send. A kill before this line is safe.
