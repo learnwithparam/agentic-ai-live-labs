@@ -17,7 +17,7 @@ import { APPROVED_DOCS } from "../src/data";
 import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";
 import { runAgentLoop } from "./01-agent-loop"; // the loop from lab 1
-import { hidePrivate, RULES } from "../src/phi";
+import { hidePrivate } from "../src/phi";
 
 export type Guarded = {
   clean: string;
@@ -68,17 +68,6 @@ export function redactPhi(raw: string): { clean: string; found: Found[] } {
   const pieces: Found[] = [];
   for (const piece of found) pieces.push({ label: piece.label, text: piece.text });
   return { clean, found: pieces };
-}
-
-// What we hide, in plain words. The patterns are the one place in this repo where a regex is fine.
-// Ids like a social security number have a fixed shape, and a regex states that shape best.
-// So the patterns sit in src/phi.ts, and this list is built from them. It cannot drift.
-export function kindsWeHide(): string[] {
-  const kinds: string[] = [];
-  for (const rule of RULES) {
-    if (!kinds.includes(rule.label)) kinds.push(rule.label);
-  }
-  return kinds;
 }
 
 // The kinds of private text we found, as a list of names.

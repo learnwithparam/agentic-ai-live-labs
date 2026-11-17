@@ -4,7 +4,7 @@ import { APPROVED_DOCS } from "../src/data";
 import { makeModel } from "../src/model";
 import { checkCases, type Lab } from "../src/runner";
 import { searchOnly, runAgentLoop } from "../labs/01-agent-loop";
-import { kindsWeHide, redactPhi, verifyOutput } from "../labs/02-guardrails";
+import { redactPhi, verifyOutput } from "../labs/02-guardrails";
 import { handleHcpInquiry, handleWithoutGate } from "../labs/03-gates";
 import { hcpContextWorkflow, multiAgentPipeline, singleHcpAgent } from "../labs/04-shapes";
 import { problemsIn } from "../scripts/readable";
@@ -143,13 +143,4 @@ describe("the readable gate", () => {
     const text = "// PART 1: x\nfunction add(first: number, second: number) {\n  return first + second;\n}\n// PART 2: y\n";
     expect(problemsIn("x.ts", text)).toEqual([]);
   });
-});
-
-test("lab 2: the plain list of what we hide matches the real patterns", () => {
-  const kinds = kindsWeHide();
-  expect(kinds).toEqual(["SSN", "phone", "email", "MRN", "birth date", "patient name"]);
-  for (const kind of kinds) {
-    const sample = "Patient: Jane Doe SSN 123-45-6789 555-123-4567 a@b.co MRN 12345 DOB 1/2/1990";
-    expect(redactPhi(sample).found.map((piece) => piece.label)).toContain(kind);
-  }
 });
