@@ -4,7 +4,7 @@ Each example is a question from Dr. Lee. Three sources are on the shelf: documen
 
 ## The problem
 
-Loading everything is easy. It costs tokens, hides the useful part, and shows private data that has nothing to do with the question.
+Loading everything is easy. It costs tokens and hides the useful part. It also shows private data that has nothing to do with the question.
 
 ## New words
 

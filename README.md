@@ -1,6 +1,8 @@
 # Agentic AI Live Labs
 
-Four small labs on one problem: answering a doctor's drug question safely. Plain TypeScript, run with Bun, no install of any AI library and no API key.
+Thirty-nine small labs on one job: answer a doctor's drug question safely. Each lab shows one idea.
+
+It is plain TypeScript. You run it with Bun. You need no AI library and no API key.
 
 All drugs, doctors and documents are invented.
 
@@ -11,70 +13,93 @@ bun install
 bun test
 ```
 
-Expect: `22 pass`
+Expect: `0 fail`
 
-## Learning paths
-
-Not sure where to start? Pick your path in [paths/README.md](paths/README.md): [Noobs](paths/noob.md), [Beginners](paths/beginner.md), [Intermediate](paths/intermediate.md), [Advanced](paths/advanced.md) or [Product managers](paths/pm.md). `bun run path beginner` shows a path in the terminal and marks which labs are ready. The paths are made from `src/roadmap.ts`, which also lists the labs still to come.
-
-## How to read this repo
-
-Each lab is one file. Open it and read PART 1. That is the whole idea, in plain code with comments. PART 2 below it only prints the result in colour, so skip it. Labs build on each other: lab 3 imports the loop from lab 1 and the guardrails from lab 2, with a comment on each import.
-
-## Three ways to run any lab
+Then open the first lab and run it.
 
 ```bash
-bun labs/01-agent-loop.ts                                  # menu: pick an example, or type your own
-bun labs/01-agent-loop.ts --demo                           # every edge case in order, with a "Why"
-bun labs/01-agent-loop.ts --question "Is Zorbex safe for children?"   # one question
-bun run lab                                                # list every lab and its file
+bun labs/01-agent-loop.ts --demo
 ```
 
-`--demo` is the fastest way to learn. Every case shows why it behaves as it does and the exact command to repeat it, then marks it EXPECTED or SURPRISE. Colour turns off when output is piped or `NO_COLOR` is set. `FORCE_COLOR=1` turns it on.
+Expect: a list of cases. Each one has a "Why" and a command to repeat it.
 
-## The pretend model
+## How a lab works
 
-Every lab calls `callLlm` from `src/model.ts`, a small rule-based stand-in, so the labs run offline and give the same answer every time. You do not need to read it. It can behave three ways with `--model`:
+Every lab has the same two files.
 
-- `ok`: follows the rules (default).
-- `nocite`: gives a right answer but forgets the citation.
-- `invent`: cites a real document but states a wrong dose.
+- `labs/NN-name.ts` holds the lesson. It is a short story, then numbered steps in code.
+- `show/NN-name.ts` holds the examples and the screen output. You do not need to read it.
 
-To use a real provider, replace `makeModel` with a function that takes messages and returns a tool call or text. The labs do not change.
+The steps in the code have numbers. The run prints a log with the same numbers. So you can match what you read with what you see.
 
-## The labs and their edge cases
+For example, lab 21 kills the program in the middle of a job. Step 1 in the code checks the ledger. The log prints "Step 1: H-1 is in the ledger, so it is skipped."
 
-| Lab | File | Core idea | Edge cases shown |
-| --- | --- | --- | --- |
-| 1 | `labs/01-agent-loop.ts` | The loop: model asks, code runs a tool, repeat | unknown drug, drug approved only in another country, spelling mistake, small talk, capital letters, two drugs, step limit |
-| 2 | `labs/02-guardrails.ts` | Mask patient details in, block uncited replies out | name, SSN, phone, email, record number, birth date, formats the patterns miss, wrong dose with a valid citation |
-| 3 | `labs/03-gates.ts` | A person approves or rejects at two gates | no gate, gate 1 yes and no, gate 2 yes and no, masked patient details |
-| 4 | `labs/04-shapes.ts` | Workflow, one agent, multi-agent | unknown doctor, no outreach, no document, auditor catches a wrong dose, a person overrides the auditor |
-| 5 | `labs/05-tool-schemas.ts` | Check a tool call against a schema before it runs | lower-case country, number as text, extra field, missing field, bad country, out of range, not JSON |
-| 6 | `labs/06-shell-tool.ts` | A shell with an allow-list, one folder and a time limit | rm, chained commands, `..`, absolute path, missing file, a command that never ends |
-| 7 | `labs/07-mcp-basics.ts` | Discover and call tools on a real MCP server | the raw messages, a tool error, a tool the server lacks, a server that is not there |
-| 8 | `labs/08-mcp-trust.ts` | Approve servers, pin tools, catch a rug pull | unknown server, changed tool, new tool, hidden order, re-approval |
-| 9 | `labs/09-three-doors.ts` | Function, CLI or MCP for the same job | time, uncited shell output, a hidden command, a server that is down |
+## Three ways to run a lab
 
-Every lab from 5 on also shows its words, the challenge, the promise and what it becomes in production. Case 1 of each is the NAIVE failure, and `--naive` runs the whole menu that way. A test in `tests/promises/` proves each promise, and `bun run check` fails if one is missing.
+```bash
+bun labs/01-agent-loop.ts --demo
+bun labs/01-agent-loop.ts --question "Is Zorbex safe for children?"
+bun labs/01-agent-loop.ts
+```
 
-Lab 3 and lab 4 take `--approve y` or `--approve n` to answer a gate without typing. Lab 4 takes `--shape workflow|agent|multi` and `--hcp H-1|H-2|H-3` (US cardiology, DE cardiology, US neurology).
+Expect: the first line runs every case. The second runs one question. The third shows a menu.
 
-Other files: `src/data.ts` holds the invented documents, doctors and emails. `src/ui.ts` and `src/runner.ts` draw the colour and run the menu and demo.
+Every lab opens with the problem. Case 1 is always the naive way, and it fails on purpose. Add `--naive` to run a whole lab that way.
+
+## Use a real model
+
+The labs run offline on a pretend model. To use a real one, add `--live` to any command.
+
+```bash
+bun labs/01-agent-loop.ts --question "What is the dose of Cardioza for Dr. Lee?" --live
+```
+
+Expect: the same lab, with a real model behind it.
+
+It uses OpenRouter and your own key in `OPENROUTER_API_KEY`. The key is never printed. The lab code does not change.
+
+## When something looks wrong
+
+| What you see | What it means | Fix |
+| --- | --- | --- |
+| The terminal says it cannot find bun | Bun is not installed | Install Bun, then open a new terminal |
+| The run asks for a key | You added `--live` | Set `OPENROUTER_API_KEY`, or remove `--live` |
+| A case says SURPRISE | The result is not the one the lab expected | Read its "Why". With `--live`, a real model can differ |
+| `bun run check` fails on a long line | A lab breaks the plain style | Split the line. Keep each line under 101 letters |
+| A lab file will not run | The command has no file name | Write `bun labs/01-agent-loop.ts`, not a number |
+
+Common wrong turn: you read `show/NN-name.ts` first. It only prints things. The lesson is in `labs/NN-name.ts`.
+
+## The labs
+
+The labs are in eight tracks. Pick a learning path in [paths/README.md](paths/README.md), or go in order.
+
+| Track | Labs | What you learn |
+| --- | --- | --- |
+| Foundations | 1 to 4 | The loop, guardrails, a person in the loop, and three shapes |
+| Tools and protocols | 5 to 9 | Schemas, a safe shell, MCP, and trust |
+| Context engineering | 10 to 14 | What the model reads, and how to choose it |
+| Loop engineering | 15 to 18 | How a loop ends well, and how it recovers |
+| Agent runtime | 19 to 23 | State, failures, crashes, cost and routing |
+| Harness engineering | 24 to 28 | Identity, hooks, audit and release checks |
+| Teammate patterns | 29 to 35 | Many agents that work as one team |
+| HCP case study | 36 to 39 | The ideas used together on one real job |
+
+Each lab has a page in `docs/labs/`. It lists the new words, the problem, the promise, and every example.
 
 ## Add a lab
 
-Every lab follows the same shape, so you can add as many as you like.
+1. Copy `scripts/lab-template.ts` to `labs/40-your-name.ts`.
+2. Write the lesson as plain steps. Write the examples in `show/40-your-name.ts`.
+3. Write one test in `tests/promises/` that proves the promise.
+4. Run `bun run check`.
 
-1. Copy `scripts/lab-template.ts` to `labs/05-your-name.ts`.
-2. Write the idea in PART 1 as plain functions. Write the examples in `cases`. Add edge cases.
-3. Run `bun labs/05-your-name.ts --demo`, then `bun run check`.
+The check runs the tests and the style gates. It also breaks each rule on purpose, and a test must fail every time.
 
-`bun run check` runs three things. The tests find every file in `labs/` by themselves and run all its cases. The readable gate (`scripts/readable.ts`) fails a lab whose PART 1 breaks the plain style. It bans regex, arrow functions, `.map`, spread, `?.`, `??` and ternaries. It bans short names, lines over 100 characters and sentences over 25 words. The plain English check (`scripts/plain-english.ts`) holds every page to reading grade 6. The type check runs last.
-
-For example, add `bun labs/05-your-name.ts --question "What is the dose of Cardioza?"` to a page, and the page must still read easily.
+For example, if you remove the audit line in lab 37, the audit test must fail. If it does not, the check names the rule that was missed.
 
 ## What this does not do
 
-- Redaction is pattern based. It catches the formats it lists and nothing else, so a real system needs more.
-- The auditor checks each cited sentence word for word against its document. A real auditor would be a second model.
+- Hiding private data uses patterns. It finds the formats it knows and nothing else.
+- The auditor compares each cited sentence word for word. A real system may use a second model.
+- The pretend model follows rules. It is a stand-in, so use `--live` to see a real model.

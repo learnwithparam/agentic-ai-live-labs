@@ -1,6 +1,6 @@
 // A real model, for any lab: add --live to the command. It uses OpenRouter and your own key.
 // The key comes from the environment variable OPENROUTER_API_KEY. It is never printed.
-// A lab calls the model through callLlm, so the same lab code runs on the pretend model or this one.
+// A lab calls the model through callLlm. So the same lab code runs on the pretend model or this one.
 import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";

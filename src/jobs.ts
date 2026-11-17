@@ -1,6 +1,6 @@
 // The files a job keeps on disk for lab 21.
 // The ledger lists every step that finished. The outbox holds every email that was sent.
-// A line is forced to disk before we go on, so a kill cannot lose a line we already wrote.
+// A line is forced to disk before we go on. So a kill cannot lose a line we already wrote.
 
 import { closeSync, existsSync, fsyncSync, mkdirSync, openSync, readFileSync, writeSync } from "node:fs";
 

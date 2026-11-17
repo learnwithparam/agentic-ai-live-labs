@@ -21,7 +21,7 @@ export const lab: Lab = {
     { title: "Gate 1, reviewer rejects", why: "Same stop, but the person says no. Nothing is sent.", question: "What is the dose of Zorbex?", flags: { approve: "n" }, expect: "BLOCKED_BY_REVIEWER" },
     { title: "Gate 2, reviewer approves", why: "The model forgot the citation. The output check stops it and a person reads the draft before it can go.", question: "What is the dose of Cardioza?", flags: { model: "nocite", approve: "y" }, expect: "SENT_AFTER_HUMAN_APPROVAL" },
     { title: "Gate 2, reviewer rejects", why: "Same stop, and the person rejects it.", question: "What is the dose of Cardioza?", flags: { model: "nocite", approve: "n" }, expect: "BLOCKED_BY_REVIEWER" },
-    { title: "Patient details in the question", why: "The note is masked before the search, so the reply and the reviewer never see the SSN or the name.", question: "Cardioza dose for Patient: Jane Doe, SSN 123-45-6789", expect: "SENT" },
+    { title: "Patient details in the question", why: "The note is masked before the search. The reply and the reviewer never see the SSN or the name.", question: "Cardioza dose for Patient: Jane Doe, SSN 123-45-6789", expect: "SENT" },
     { title: "Approved in another country only", why: "Dermalin is approved in the US only. A German doctor hits gate 1.", question: "What is the dose of Dermalin?", flags: { country: "DE", approve: "n" }, expect: "BLOCKED_BY_REVIEWER" },
     { title: "Small talk", why: "No drug, no document. The safe default is to stop and ask a person.", question: "Hello there, can you help me today?", flags: { approve: "n" }, expect: "BLOCKED_BY_REVIEWER" },
   ],

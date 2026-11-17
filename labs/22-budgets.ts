@@ -4,7 +4,7 @@
 // A company pays in money, not tokens, and one person can start many runs in a day.
 // So we keep three caps in whole cents: one for a run, one for a person's day, one for the hops.
 // A hop is one agent handing work to another. Too many hops means two agents are passing a ball.
-// We check the cap before each call, with the worst case cost, so a call never starts if it may not fit.
+// We check the cap before each call, using the worst case cost. A call never starts if it may not fit.
 // The run prints each step as it happens, with the same number as the step in the code.
 // The examples and the screen output are in show/22-budgets.ts. You do not need them to learn.
 //

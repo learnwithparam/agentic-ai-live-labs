@@ -1,7 +1,7 @@
 // Lab 33: Handing work between bots
 //
 // A doctor writes: "Email Dr. Lee the dose of Cardioza." The intake bot sorts the message.
-// The outreach bot writes emails, but it needs a dose, so it hands the message to the answer bot.
+// The outreach bot writes emails. It needs a dose, so it hands the message to the answer bot.
 // The answer bot gives doses, but the message asks for an email, so it hands it back.
 // Without a guard, the two bots pass the message back and forth for ever.
 // So every message travels in an envelope. The envelope counts the hops and lists the bots it met.

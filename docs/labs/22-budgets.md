@@ -1,6 +1,6 @@
 # Lab 22: money caps
 
-Each example runs the loop with a cost cap. The run cap is 1 cent and the day cap is 3 cents, so you see them hit. Change them with --run and --day (whole cents), --before (millicents already spent today), --hops, and --again (how many runs in a row).
+Each example runs the loop with a cost cap. The run cap is 1 cent and the day cap is 3 cents, so you see them hit. Change them with --run and --day (whole cents). Also use --before (millicents spent today), --hops and --again (runs in a row).
 
 ## The problem
 
@@ -37,7 +37,7 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 3 | A stuck model and a run cap | Each round sends the whole chat again, so each round costs more. The run cap of 1 cent stops it before the call that would pass it. | run-cap | `bun labs/22-budgets.ts --question "What is the dose of Zorbex?" --model stuck` |
 | 4 | EDGE: today's money is already used | This person spent 2500 millicents earlier today. The day cap is 3000. The worst case of the next call does not fit, so no call starts. | day-cap | `bun labs/22-budgets.ts --question "What is the dose of Cardioza?" --before 2500` |
 | 5 | EDGE: handed on too many times | This run is the third hand-over, and the cap is three hops. It is refused before any money is spent. | hop-cap | `bun labs/22-budgets.ts --question "What is the dose of Cardioza?" --hops 3` |
-| 6 | EDGE: many runs in one day | Each run is small. The ledger on disk adds them up, and the second run in a row is stopped by the day cap. | day-cap | `bun labs/22-budgets.ts --question "What is the dose of Cardioza?" --again 3 --day 1` |
+| 6 | EDGE: many runs in one day | Each run is small. The ledger on disk adds them up. The day cap stops the second run in a row. | day-cap | `bun labs/22-budgets.ts --question "What is the dose of Cardioza?" --again 3 --day 1` |
 
 ## The promise, and its test
 

@@ -1,8 +1,8 @@
 // Lab 12: Retrieval, finding the right pieces
 //
 // A German doctor asks: "What is the Cardioza dose?" We cannot send every document to the model.
-// So we cut the documents into small chunks, score each chunk against the question, and send only
-// the best ones from the doctor's own country.
+// So we cut the documents into small chunks. We score each chunk against the question.
+// We send only the best ones from the doctor's own country.
 // The run prints each step as it happens, with the same number as the step in the code.
 // The examples and the screen output are in show/12-retrieval.ts. You do not need them to learn.
 //

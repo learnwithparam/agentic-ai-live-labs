@@ -1,7 +1,9 @@
 // Lab 11: Trimming the chat history
 //
 // Dr. Weber chats with the agent for a long time. In the first turn, the doctor said: "I work in
-// Germany, so use German labels." Ten turns later comes the question: "Which dose label should I use?"
+// Germany, so use German labels." Ten turns later comes the question:
+// "Which dose label should I use?"
+//
 // A long chat does not fit in the window, so old turns must go. But some old turns hold a fact we
 // still need, like the doctor's country. We pin those, and we trim the rest.
 // The run prints each step as it happens, with the same number as the step in the code.

@@ -12,7 +12,7 @@ export const lab: Lab = {
   file: "06-shell-tool.ts",
   title: "Lab 6: a shell tool, safely",
   about:
-    "Describe a task and the model writes the command, or hand it a command yourself with --command, as if the model had written it. Four rules decide if it starts. The agent works in one folder called sandbox, which holds two small files.",
+    "Describe a task and the model writes the command. Or pass a command yourself with --command, as if the model wrote it. Four rules decide if it starts. The agent works in one folder called sandbox, which holds two small files.",
   terms: "shell = a program that runs commands. allow-list = the only commands we permit. sandbox = a folder it cannot leave.",
   challenge: "A shell can delete files or read secrets. An agent that can type anything can do anything.",
   promise: "A command that breaks a rule never starts, so the files stay as they were.",

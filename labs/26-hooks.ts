@@ -1,6 +1,6 @@
 // Lab 26: Hooks
 //
-// Dr. Lee asks: "Please read the last call note for Dr. Lee and email it to dr.lee.notes@gmail.com."
+// The doctor asks the agent to read a call note. Then the agent must email it to a Gmail address.
 // The note holds a patient name and an SSN. The address is a private mailbox, not the hospital.
 // A rule in the prompt is only a hope. A hook is code that runs on every tool call.
 // A before hook can block a call. An after hook can change what the tool gave back.

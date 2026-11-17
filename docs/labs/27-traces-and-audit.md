@@ -41,7 +41,7 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 ## The promise, and its test
 
-Every step is written down. Any edit, removed line, cut end or full rewrite is found when we check the chain against the saved head.
+Every step is written down. We check the chain against the saved head. It finds any edit, removed line, cut end or full rewrite.
 
 ```bash
 bun test tests/promises/27.test.ts
@@ -51,7 +51,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Send each line to storage that cannot be changed, and save the head in a second place with a different owner. Check the chain on a schedule, not only in an audit.
+Send each line to storage that cannot be changed. Save the head in a second place with a different owner. Check the chain on a schedule, not only in an audit.
 
 ## Read the code
 

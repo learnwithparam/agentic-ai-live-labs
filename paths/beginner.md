@@ -40,6 +40,6 @@
 
 ## When you finish
 
-You can build a small agent with a loop, a guardrail and a gate, and say why it is safe.
+You can build a small agent with a loop, a guardrail and a gate. You can say why it is safe.
 
 Next: [Intermediate](intermediate.md).

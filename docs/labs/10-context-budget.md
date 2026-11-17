@@ -53,7 +53,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Count with the model's own counter, keep a reserve for the reply, and log what was dropped on every call.
+Count with the model's own counter. Keep a reserve for the reply. Log what was dropped on every call.
 
 ## Read the code
 

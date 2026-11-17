@@ -45,7 +45,7 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 ## The promise, and its test
 
-A tool call runs only when the token is real, not expired, and lists the scope the tool needs. A bot never does more than its own list.
+A tool call runs only when the token is real and not expired. The token must also list the scope the tool needs. A bot never does more than its own list.
 
 ```bash
 bun test tests/promises/24.test.ts

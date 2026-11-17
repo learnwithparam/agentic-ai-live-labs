@@ -79,7 +79,7 @@ function refuse(why: string): ShellResult {
   return { status: "refused", output: "", why };
 }
 
-// A word leaves the folder if it starts at the top of the disk, at home, or climbs up with "..".
+// A word leaves the folder if it starts at the top of the disk or at home. It also leaves if it climbs up with "..".
 // It also leaves if the real file is somewhere else, which a link inside the folder can cause.
 function leavesFolder(word: string, folder: string): boolean {
   if (word.startsWith("/") || word.startsWith("~")) return true;

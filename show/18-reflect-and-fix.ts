@@ -9,7 +9,7 @@ export const lab: Lab = {
   file: "18-reflect-and-fix.ts",
   title: "Lab 18: check the draft, then fix it",
   about:
-    "Each example is a doctor's question. The pretend model writes a draft, and sometimes the draft is wrong. Pick how it behaves with --model: ok, nocite (forgets the citation), invent (a wrong dose) or stubborn (a wrong dose that it will not fix).",
+    "Each example is a doctor's question. The pretend model writes a draft, and sometimes the draft is wrong. Pick how it acts with --model. Use ok, nocite (no citation), invent (a wrong dose) or stubborn (a wrong dose it will not fix).",
   terms: "draft = the first answer. check = plain code that compares the draft with the document. round = one fix and one more check.",
   challenge: "A model that grades its own work has no new facts. It says the draft looks good, even when the dose is wrong.",
   promise: "Code checks every draft against the source. A fix gets two rounds at most. With no source there is nothing to check.",

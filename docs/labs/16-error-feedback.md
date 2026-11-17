@@ -45,7 +45,7 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 ## The promise, and its test
 
-An error says what is valid, retries are capped, and a call that cannot be fixed goes to a person.
+An error says what is valid. Retries are capped. A call that cannot be fixed goes to a person.
 
 ```bash
 bun test tests/promises/16.test.ts

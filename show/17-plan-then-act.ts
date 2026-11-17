@@ -18,7 +18,7 @@ export const lab: Lab = {
   terms: "plan = the list of steps, written before the first one runs. risky step = one that cannot be undone, like sending an email.",
   challenge: "Step by step, the email is sent before anyone sees that the plan was wrong.",
   promise: "A plan is checked before it runs. A risky step needs a person. A failed step stops the rest.",
-  production: "Show the plan to the person, keep it with the run, and compare what ran with what was planned.",
+  production: "Show the plan to the person and keep it with the run. Then compare what ran with the plan.",
   cases: [
     { title: "NAIVE: act with no plan", why: "The plan runs as it is written. The email is sent before anyone could say no.", question: EMAIL, flags: { naive: "true" }, expect: "ran-unchecked" },
     { title: "A safe plan", why: "Search, then draft. Nothing risky, so it runs.", question: "Look up the Cardioza dose and write a reply", expect: "done" },

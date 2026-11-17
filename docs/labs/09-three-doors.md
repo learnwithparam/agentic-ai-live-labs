@@ -45,7 +45,7 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 ## The promise, and its test
 
-The function door and the MCP door give the same cited answer, and the shell door's answer is caught as uncited.
+The function door and the MCP door give the same cited answer. The shell door's answer is caught as uncited.
 
 ```bash
 bun test tests/promises/09.test.ts

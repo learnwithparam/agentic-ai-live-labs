@@ -102,7 +102,7 @@ function audit(prompt: string): string {
   return "PASS";
 }
 
-// A model asked to write a tool call. It finds the drug in the question. It writes the country in lower case, a common slip.
+// A model asked to write a tool call. It finds the drug in the question. It writes the country in lower case. That is a common slip.
 function writeCall(prompt: string): string {
   const question = prompt.split("Question: ")[1] || "";
   let drug = "Zorbex";
@@ -223,7 +223,7 @@ function rulesFor(prompt: string): string {
   return docs.join(" ") || "I found no approved source.";
 }
 
-// A model asked to write a tool call, and to fix it when the tool says it was wrong.
+// A model asked to write a tool call. It must fix the call when the tool says it was wrong.
 // It reads the hint in the error. It never changes what the doctor meant, so it says ASK instead.
 function tryFor(prompt: string): string {
   const question = (prompt.split("Question: ")[1] || "").split("\n")[0];

@@ -17,7 +17,7 @@ export const lab: Lab = {
   about:
     "Each example has two bots ask for a dose, one after the other. The first bot may use a model that makes up a dose, with --model invent. Pick the first doctor with --hcp and the second with --then.",
   terms: "shared memory = facts that every bot can read. poisoned = a wrong fact that got in. provenance = who saved a fact, and from which source.",
-  challenge: "One bot saves a wrong dose. Every bot after it reads the fact and repeats it, and no one looks at the approved document again.",
+  challenge: "One bot saves a wrong dose. Every bot after it reads the fact and repeats it. No one looks at the approved document again.",
   promise: "A fact is saved only if it passes the dose check. A bot reads only facts for its own country, and only while the approved document still agrees.",
   production: "Keep memory in a database with the writer and the source on every row. Give facts an end date. Let a person delete a fact, and log every read.",
   cases: [

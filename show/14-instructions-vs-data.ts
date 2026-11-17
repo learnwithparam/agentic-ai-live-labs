@@ -25,7 +25,7 @@ export const lab: Lab = {
   terms: "prompt injection = an order hidden in data. fence = a labelled box that marks text as data. held = taken out of the prompt.",
   challenge: "The model reads rules and documents as one text. A document can give it orders, and nobody notices.",
   promise: "A line with an order never reaches the prompt, and data can never close its own fence.",
-  production: "Fence and scan as here, and also give the agent the fewest tools, with a person approving risky ones (lab 3).",
+  production: "Fence and scan as here. Also give the agent the fewest tools, and let a person approve risky ones (lab 3).",
   cases: [
     { title: "NAIVE: paste the data in", why: "The hidden order sits next to the rules and looks the same. The model may obey it.", question: ASK, flags: { document: "injected",  naive: "true" }, expect: "obeyed" },
     { title: "A clean document", why: "No order in it. The data is fenced and nothing is held.", question: ASK, flags: { document: "clean" }, expect: "clean" },

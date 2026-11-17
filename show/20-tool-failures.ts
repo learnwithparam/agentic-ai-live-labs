@@ -18,7 +18,7 @@ export const lab: Lab = {
   terms: "timeout = the most time we will wait. retry = try the same call again. backoff = wait longer before each retry. transient = a failure that may pass.",
   challenge: "A service can be slow, fail for a moment, or say no. One try with no time limit hangs on the slow one and gives up on the flaky one.",
   promise: "Bad input never leaves our code. A slow call stops at the time limit. A failure that may pass is tried again, with growing waits. A no is never tried again.",
-  production: "Add a circuit breaker for a service that stays down, and add some random wait so many agents do not retry at the same moment.",
+  production: "Add a circuit breaker for a service that stays down. Add a random wait so many agents do not retry together.",
   cases: [
     { title: "NAIVE: one try, no time limit", why: "The service fails once, as services do. One try gives up on the first 503, and the doctor gets no dose.", question: DOSE, flags: { service: "flaky", naive: "true" }, expect: "unavailable" },
     { title: "A healthy service", why: "The first try works. No waiting, no retry.", question: DOSE, expect: "ok" },

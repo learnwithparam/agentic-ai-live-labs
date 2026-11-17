@@ -1,7 +1,7 @@
-// Finds private pieces in a note with regular expressions, the standard tool for ids that have a
-// fixed shape. Lab 2 uses it. Each rule has a name, a token to put in its place, and a pattern.
+// Finds private pieces in a note with regular expressions. They suit ids that have a fixed shape.
+// Lab 2 uses it. Each rule has a name, a token to put in its place, and a pattern.
 // Names have no fixed shape. A name after "Patient:" is caught here. In production a trained
-// detector such as Microsoft Presidio finds the rest, and its results go through this same step.
+// detector such as Microsoft Presidio finds the rest. Its results go through this same step.
 
 export type Rule = { label: string; token: string; pattern: RegExp };
 export type Piece = { label: string; text: string; start: number; end: number };

@@ -17,7 +17,7 @@ export const lab: Lab = {
   file: "04-shapes.ts",
   title: "Lab 4: three ways to build one job",
   about:
-    "Three ways to build the same helper. Pick the shape with --shape workflow, agent or multi, and the doctor with --hcp H-1 (US), H-2 (Germany) or H-3 (US neurology).",
+    "Three ways to build the same helper. Pick the shape with --shape workflow, agent or multi. Pick the doctor with --hcp H-1 (US), H-2 (Germany) or H-3 (US neurology).",
   terms: "workflow = fixed steps in plain code. agent = a model that picks its own tools. many agents = several models, each with one job. auditor = a model that only checks another model's work.",
   challenge: "One agent has no second pair of eyes. It can write a wrong dose, cite a real document, and nothing stops it.",
   promise: "Pick the simplest shape that does the job. When a wrong answer is costly, a second agent checks it and a person decides on any doubt.",

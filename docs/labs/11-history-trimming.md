@@ -1,6 +1,6 @@
 # Lab 11: trimming the chat history
 
-Each example is a chat between a doctor and the agent, and the last question needs a fact from the start. Pick a chat by name: short, long, two-facts, no-facts or empty. Use --keep 4 to change how many recent turns stay.
+Each example is a chat between a doctor and the agent. The last question needs a fact from the start. Pick a chat by name: short, long, two-facts, no-facts or empty. Use --keep 4 to change how many recent turns stay.
 
 ## The problem
 

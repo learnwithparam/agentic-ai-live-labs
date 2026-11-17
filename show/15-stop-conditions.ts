@@ -14,7 +14,7 @@ export const lab: Lab = {
   terms: "step = one trip round the loop. repeat = the same call again. budget = the most we allow a run to spend.",
   challenge: "A model that is stuck never says it is done. A loop that trusts the model runs and bills forever.",
   promise: "A run always stops within its steps and its budget, and says why it stopped.",
-  production: "Set the limits per task, alert when a run hits one, and show the stop reason to the person.",
+  production: "Set the limits for each task. Alert when a run hits one. Show the stop reason to the person.",
   cases: [
     { title: "NAIVE: trust the model to stop", why: "The model keeps making the same call. With no limit of our own, the loop never ends. The demo cuts it at 200 rounds.", question: "What is the dose of Zorbex?", flags: { model: "stuck", naive: "true" }, expect: "never-stopped" },
     { title: "A model that answers", why: "One search, then an answer. The normal case. No limit is touched.", question: "What is the dose of Cardioza?", expect: "answered" },

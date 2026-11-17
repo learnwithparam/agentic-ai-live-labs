@@ -20,7 +20,7 @@ export const lab: Lab = {
     "The question box takes a drug name. The same lookup runs through three doors. Pick one with --door function, cli or mcp, or use --door all to compare them.",
   terms: "door = the way an agent reaches a tool. latency = how long a call takes. structured = has fields a program can read.",
   challenge: "Teams pick a door by habit. Each door has a cost, a risk and a shape of answer.",
-  promise: "The function door and the MCP door give the same cited answer, and the shell door's answer is caught as uncited.",
+  promise: "The function door and the MCP door give the same cited answer. The shell door's answer is caught as uncited.",
   production: "Start with a function. Move to MCP when a second team needs the tool. Use a command only when none exists.",
   cases: [
     { title: "NAIVE: always use the shell", why: "A command is easy to start with, so we use it for everything. The answer has no document id, so the output guardrail of lab 2 cannot check it.", question: "What is the dose of Cardioza?", flags: { naive: "true", door: "cli" }, expect: "uncited" },

@@ -41,7 +41,7 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 4 | Gate 1, reviewer rejects | Same stop, but the person says no. Nothing is sent. | BLOCKED_BY_REVIEWER | `bun labs/03-gates.ts --question "What is the dose of Zorbex?" --approve n` |
 | 5 | Gate 2, reviewer approves | The model forgot the citation. The output check stops it and a person reads the draft before it can go. | SENT_AFTER_HUMAN_APPROVAL | `bun labs/03-gates.ts --question "What is the dose of Cardioza?" --model nocite --approve y` |
 | 6 | Gate 2, reviewer rejects | Same stop, and the person rejects it. | BLOCKED_BY_REVIEWER | `bun labs/03-gates.ts --question "What is the dose of Cardioza?" --model nocite --approve n` |
-| 7 | Patient details in the question | The note is masked before the search, so the reply and the reviewer never see the SSN or the name. | SENT | `bun labs/03-gates.ts --demo` |
+| 7 | Patient details in the question | The note is masked before the search. The reply and the reviewer never see the SSN or the name. | SENT | `bun labs/03-gates.ts --demo` |
 | 8 | Approved in another country only | Dermalin is approved in the US only. A German doctor hits gate 1. | BLOCKED_BY_REVIEWER | `bun labs/03-gates.ts --question "What is the dose of Dermalin?" --country DE --approve n` |
 | 9 | Small talk | No drug, no document. The safe default is to stop and ask a person. | BLOCKED_BY_REVIEWER | `bun labs/03-gates.ts --question "Hello there, can you help me today?" --approve n` |
 

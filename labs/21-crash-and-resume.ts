@@ -3,8 +3,8 @@
 // The agent must email three doctors about Cardioza. After the second email, the program is killed.
 // Maybe the machine restarted. Maybe memory ran out. Now what? If we start over, Dr. Lee and
 // Dr. Weber get the same email twice. If we give up, Dr. Rao gets nothing.
-// So the agent keeps a ledger of finished steps, and every email has a key. A restart leaves out
-// what is in the ledger, and the outbox refuses a key it has already sent.
+// So the agent keeps a ledger of finished steps, and every email has a key.
+// A restart leaves out what is in the ledger. The outbox refuses a key it has already sent.
 // The run prints each step as it happens, with the same number as the step in the code.
 // The examples and the screen output are in show/21-crash-and-resume.ts. You do not need them to learn.
 //

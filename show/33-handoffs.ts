@@ -15,7 +15,7 @@ export const lab: Lab = {
     "Each example sends one message through a team of bots: intake, answer and outreach. Pick the doctor with --hcp. Change the hop limit with --limit.",
   terms: "handoff = one bot passes work to another. envelope = the wrapper that travels with the message. hop = one handoff. loop breaker = a rule that stops a message that goes in circles.",
   challenge: "Two bots can each think the other should do the work. The message goes back and forth for ever, and no doctor gets a reply.",
-  promise: "Every message travels in an envelope. It stops at the hop limit, or when it meets a bot twice, and a person gets it with the path it took.",
+  promise: "Every message travels in an envelope. It stops at the hop limit, or when it meets a bot twice. Then a person gets it with the list of bots it met.",
   production: "Put the envelope on a queue, with its id, hop count and path. Alert a person when a message is stopped. Keep the limit small, because real work rarely needs many hops.",
   cases: [
     { title: "NAIVE: no envelope, no count", why: "The outreach bot and the answer bot pass the message back and forth until we cut it off.", question: LOOP, flags: { hcp: "H-1", naive: "true" }, expect: "looped" },

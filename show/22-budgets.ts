@@ -15,7 +15,7 @@ export const lab: Lab = {
   file: "22-budgets.ts",
   title: "Lab 22: money caps",
   about:
-    "Each example runs the loop with a cost cap. The run cap is 1 cent and the day cap is 3 cents, so you see them hit. Change them with --run and --day (whole cents), --before (millicents already spent today), --hops, and --again (how many runs in a row).",
+    "Each example runs the loop with a cost cap. The run cap is 1 cent and the day cap is 3 cents, so you see them hit. Change them with --run and --day (whole cents). Also use --before (millicents spent today), --hops and --again (runs in a row).",
   terms: "millicent = a thousandth of a cent, so every amount is a whole number. cap = a limit we set. worst case = the price if the model uses its longest answer. hop = one agent handing work to another.",
   challenge: "A stuck model keeps spending, and one person can start many runs in a day. A count of tokens does not stop a company bill.",
   promise: "A call never starts if its worst case would pass the run cap or the day cap. What a call really cost is written to disk. A run handed on too many times is refused.",
@@ -26,7 +26,7 @@ export const lab: Lab = {
     { title: "A stuck model and a run cap", why: "Each round sends the whole chat again, so each round costs more. The run cap of 1 cent stops it before the call that would pass it.", question: "What is the dose of Zorbex?", flags: { model: "stuck" }, expect: "run-cap" },
     { title: "EDGE: today's money is already used", why: "This person spent 2500 millicents earlier today. The day cap is 3000. The worst case of the next call does not fit, so no call starts.", question: "What is the dose of Cardioza?", flags: { before: "2500" }, expect: "day-cap" },
     { title: "EDGE: handed on too many times", why: "This run is the third hand-over, and the cap is three hops. It is refused before any money is spent.", question: "What is the dose of Cardioza?", flags: { hops: "3" }, expect: "hop-cap" },
-    { title: "EDGE: many runs in one day", why: "Each run is small. The ledger on disk adds them up, and the second run in a row is stopped by the day cap.", question: "What is the dose of Cardioza?", flags: { again: "3", day: "1" }, expect: "day-cap" },
+    { title: "EDGE: many runs in one day", why: "Each run is small. The ledger on disk adds them up. The day cap stops the second run in a row.", question: "What is the dose of Cardioza?", flags: { again: "3", day: "1" }, expect: "day-cap" },
   ],
   play(question, flags) {
     process.env.SPEND_DIR = mkdtempSync(`${tmpdir()}/lab22-`);

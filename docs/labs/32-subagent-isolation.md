@@ -4,7 +4,7 @@ Each example asks for a dose. The document search returns forty old drafts with 
 
 ## The problem
 
-A search can return pages of old and wrong text. If the main agent reads it all, its space is full of junk, and it may copy a wrong dose.
+A search can return pages of old and wrong text. If the main agent reads it all, its space is full of junk. It may copy a wrong dose.
 
 ## New words
 

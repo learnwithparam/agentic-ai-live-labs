@@ -4,7 +4,7 @@
 // The model must not read them. But the case record must keep them, and a reviewer must see them.
 // So we swap each private piece for a token and keep the real value in a vault.
 // The same value always gets the same token. Only the reviewer role may turn a token back.
-// Every try to turn a token back is written in an audit file, even a try that is refused.
+// Every try to turn a token back is written in an audit file. That includes a try that is refused.
 // The run prints each step as it happens, with the same number as the step in the code.
 // The examples and the screen output are in show/37-phi-vault.ts. You do not need them to learn.
 //

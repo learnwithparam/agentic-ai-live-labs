@@ -1,6 +1,6 @@
 # Lab 4: three ways to build one job
 
-Three ways to build the same helper. Pick the shape with --shape workflow, agent or multi, and the doctor with --hcp H-1 (US), H-2 (Germany) or H-3 (US neurology).
+Three ways to build the same helper. Pick the shape with --shape workflow, agent or multi. Pick the doctor with --hcp H-1 (US), H-2 (Germany) or H-3 (US neurology).
 
 ## The problem
 

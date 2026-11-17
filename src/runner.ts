@@ -1,7 +1,7 @@
 // Shared lab runner. One lab can run three ways:
-//   --question "..."  run one question
-//   --demo            walk through every edge case, with a plain explanation for each
-//   (nothing)         interactive menu: pick an example by number, or type your own question
+//   --question "..."  run one question.
+//   --demo            walk through every edge case, with a plain explanation for each.
+//   (nothing)         interactive menu. Pick an example by number, or type your own question.
 import { makeLiveModel, LIVE_MODEL } from "./live";
 import { makeModel, type Behaviour } from "./model";
 import { badgeBlue, badgeGreen, badgeRed, bold, box, cyan, dim, field, green } from "./ui";
@@ -61,7 +61,7 @@ export function commandFor(lab: Lab, question: string, flags: Flags = {}): strin
   return command;
 }
 
-// A flag value that holds spaces or quotes is wrapped in single quotes, so a copied line still works.
+// A flag value that holds spaces or quotes is wrapped in single quotes. So a copied line still works.
 export function shellWord(value: string): string {
   if (value !== "" && !/[^A-Za-z0-9._:\/-]/.test(value)) return value;
   return `'${value.replaceAll("'", "'\\''")}'`;

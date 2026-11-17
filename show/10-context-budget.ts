@@ -33,7 +33,7 @@ export const lab: Lab = {
   terms: "context window = the most text a model reads at once. token = a small piece of text, about four letters. budget = the tokens we allow ourselves.",
   challenge: "A prompt grows every turn. When it passes the window, something is cut, and nobody chooses what.",
   promise: "The prompt never passes the budget, and the rules and the question are never dropped.",
-  production: "Count with the model's own counter, keep a reserve for the reply, and log what was dropped on every call.",
+  production: "Count with the model's own counter. Keep a reserve for the reply. Log what was dropped on every call.",
   cases: [
     { title: "NAIVE: let the window cut the oldest text", why: "The rules come first, so they are the oldest text. When the window is full, they are the first thing cut. The model now answers with no rules.", question: "What is the dose of Cardioza?", flags: { naive: "true", window: "60" }, expect: "rules-lost" },
     { title: "Plenty of room", why: "Everything fits, so everything is sent.", question: "What is the dose of Cardioza?", flags: { window: "200" }, expect: "all-fit" },

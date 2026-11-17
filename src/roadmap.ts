@@ -123,7 +123,7 @@ export const PATHS: Path[] = [
       { lab: 17, note: "Make a plan before acting.", optional: true },
       { lab: 36, note: "Use the ideas on one real job.", optional: true },
     ],
-    finish: "You can build a small agent with a loop, a guardrail and a gate, and say why it is safe.",
+    finish: "You can build a small agent with a loop, a guardrail and a gate. You can say why it is safe.",
     next: "intermediate",
   },
   {

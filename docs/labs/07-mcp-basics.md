@@ -55,7 +55,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Use the official MCP SDK, keep the server running, and add sign-in and a time limit to every call.
+Use the official MCP SDK and keep the server running. Add sign-in and a time limit to every call.
 
 ## Read the code
 

@@ -49,7 +49,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Fence and scan as here, and also give the agent the fewest tools, with a person approving risky ones (lab 3).
+Fence and scan as here. Also give the agent the fewest tools, and let a person approve risky ones (lab 3).
 
 ## Read the code
 

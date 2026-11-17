@@ -11,6 +11,13 @@ const ROOT = process.cwd();
 const DEFAULT_READING_GRADE = 6;
 const LONGEST_SENTENCE = 25;
 
+// A page can ask for shorter sentences in package.json: "plainEnglish": { "longest": 18, "average": 12 }.
+function configuredNumber(name: string, fallback: number): number {
+  const packageJson = JSON.parse(readFileSync(join(process.cwd(), "package.json"), "utf8"));
+  const value = packageJson.plainEnglish?.[name];
+  return typeof value === "number" ? value : fallback;
+}
+
 const SKIPPED_FOLDERS = new Set([
   "node_modules",
   ".git",
@@ -242,6 +249,12 @@ export function syllablesIn(word: string): number {
   return Math.max(1, vowelGroups ? vowelGroups.length : 1);
 }
 
+// The average number of words in a sentence.
+export function averageWords(sentences: string[]): number {
+  if (sentences.length === 0) return 0;
+  return sentences.flatMap(wordsOf).length / sentences.length;
+}
+
 // Flesch-Kincaid grade level: about the school year a reader needs to follow the text.
 export function readingGrade(sentences: string[]): number {
   const words = sentences.flatMap(wordsOf);
@@ -276,7 +289,7 @@ function sentenceProblems(file: string, sentences: string[]): Problem[] {
   const problems: Problem[] = [];
   for (const sentence of sentences) {
     const count = wordsOf(sentence).length;
-    if (count > LONGEST_SENTENCE) {
+    if (count > configuredNumber("longest", LONGEST_SENTENCE)) {
       const opening = sentence.split(" ").slice(0, 8).join(" ");
       problems.push({ file, message: `${count}-word sentence "${opening}..."; split it` });
     }
@@ -296,6 +309,12 @@ export function problemsIn(file: string, markdown: string, gradeLimit: number): 
     ...dateProblems(file, markdown),
   ];
 
+  const average = averageWords(sentences);
+  const averageLimit = configuredNumber("average", 999);
+  if (sentences.length >= 5 && average > averageLimit) {
+    const message = `sentences average ${average.toFixed(1)} words, above ${averageLimit}; cut them shorter`;
+    problems.push({ file, message });
+  }
   const grade = readingGrade(sentences);
   if (sentences.length >= 5 && grade > gradeLimit) {
     const shown = grade.toFixed(1);

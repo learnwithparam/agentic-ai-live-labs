@@ -1,6 +1,6 @@
 # Lab 6: a shell tool, safely
 
-Describe a task and the model writes the command, or hand it a command yourself with --command, as if the model had written it. Four rules decide if it starts. The agent works in one folder called sandbox, which holds two small files.
+Describe a task and the model writes the command. Or pass a command yourself with --command, as if the model wrote it. Four rules decide if it starts. The agent works in one folder called sandbox, which holds two small files.
 
 ## The problem
 

@@ -1,6 +1,6 @@
 # Lab 5: tool schemas and structured output
 
-Each example asks the same plain question. The model writes a tool call. To test a bad call on purpose, pass the call text yourself with --call, as if the model had written it. A schema checks it first. A good call runs. An easy fix is made and noted. A bad call is rejected, and the tool never runs.
+Each example asks the same plain question. The model writes a tool call. To test a bad call, pass the text yourself with --call. A schema checks it first. A good call runs. An easy fix is made and noted. A bad call is rejected, and the tool never runs.
 
 ## The problem
 

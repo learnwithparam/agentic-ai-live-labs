@@ -4,7 +4,7 @@ Each example has two bots ask for a dose, one after the other. The first bot may
 
 ## The problem
 
-One bot saves a wrong dose. Every bot after it reads the fact and repeats it, and no one looks at the approved document again.
+One bot saves a wrong dose. Every bot after it reads the fact and repeats it. No one looks at the approved document again.
 
 ## New words
 

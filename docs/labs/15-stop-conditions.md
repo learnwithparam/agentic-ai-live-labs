@@ -53,7 +53,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Set the limits per task, alert when a run hits one, and show the stop reason to the person.
+Set the limits for each task. Alert when a run hits one. Show the stop reason to the person.
 
 ## Read the code
 

@@ -53,7 +53,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Add a circuit breaker for a service that stays down, and add some random wait so many agents do not retry at the same moment.
+Add a circuit breaker for a service that stays down. Add a random wait so many agents do not retry together.
 
 ## Read the code
 

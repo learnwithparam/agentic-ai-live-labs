@@ -53,7 +53,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Show the plan to the person, keep it with the run, and compare what ran with what was planned.
+Show the plan to the person and keep it with the run. Then compare what ran with the plan.
 
 ## Read the code
 

@@ -15,7 +15,7 @@ export const lab: Lab = {
   terms: "MCP = a standard way for an agent to find and call tools. server = the program that owns the tools. JSON-RPC = the message format.",
   challenge: "Every new tool means new glue code in every agent. Tool lists go out of date.",
   promise: "The agent learns its tools from the server, so a new server tool needs no agent change.",
-  production: "Use the official MCP SDK, keep the server running, and add sign-in and a time limit to every call.",
+  production: "Use the official MCP SDK and keep the server running. Add sign-in and a time limit to every call.",
   cases: [
     { title: "NAIVE: a hard-coded tool list", why: "The agent copied one tool into its own code. The server has more. The agent cannot use them, and nobody gets an error.", question: "What is the dose of Cardioza?", flags: { naive: "true" }, expect: "out-of-date" },
     { title: "See the messages", why: "This is all MCP is: lines of JSON in, lines of JSON out. Read the method names and the tool list.", question: "What is the dose of Cardioza?", flags: { show: "wire" }, expect: "listed" },

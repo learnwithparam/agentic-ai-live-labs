@@ -41,7 +41,7 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 ## The promise, and its test
 
-Every message travels in an envelope. It stops at the hop limit, or when it meets a bot twice, and a person gets it with the path it took.
+Every message travels in an envelope. It stops at the hop limit, or when it meets a bot twice. Then a person gets it with the list of bots it met.
 
 ```bash
 bun test tests/promises/33.test.ts

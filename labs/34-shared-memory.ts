@@ -4,7 +4,7 @@
 // A shared memory saves the second search. But a bad fact in memory is copied by every bot.
 // If one bot writes a wrong dose, all the others repeat it, and nobody checks again.
 // So a fact is saved only after it passes the dose check. It is saved with its source and its country.
-// A bot reads a fact only if it is for its own country, and only if the approved document still agrees.
+// A bot reads a fact only if it is for its own country. The approved document must still agree.
 // The run prints each step as it happens, with the same number as the step in the code.
 // The examples and the screen output are in show/34-shared-memory.ts. You do not need them to learn.
 //

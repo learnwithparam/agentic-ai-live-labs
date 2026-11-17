@@ -1,6 +1,6 @@
 # Lab 18: check the draft, then fix it
 
-Each example is a doctor's question. The pretend model writes a draft, and sometimes the draft is wrong. Pick how it behaves with --model: ok, nocite (forgets the citation), invent (a wrong dose) or stubborn (a wrong dose that it will not fix).
+Each example is a doctor's question. The pretend model writes a draft, and sometimes the draft is wrong. Pick how it acts with --model. Use ok, nocite (no citation), invent (a wrong dose) or stubborn (a wrong dose it will not fix).
 
 ## The problem
 
