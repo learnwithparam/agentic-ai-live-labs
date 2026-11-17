@@ -8,10 +8,10 @@
 // The examples and the screen output are in show/11-history-trimming.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/11-history-trimming.ts --question "long" --naive --keep 4
-//   bun labs/11-history-trimming.ts --question "short" --keep 4
-//   bun labs/11-history-trimming.ts --question "long" --keep 4
-//   bun labs/11-history-trimming.ts --question "two-facts" --keep 3
+//   bun labs/11-history-trimming.ts --question "What is the dose of Cardioza for me?" --chat long --naive --keep 4
+//   bun labs/11-history-trimming.ts --question "What is the dose of Cardioza for me?" --chat short --keep 4
+//   bun labs/11-history-trimming.ts --question "What is the dose of Cardioza for me?" --chat long --keep 4
+//   bun labs/11-history-trimming.ts --question "What is the dose of Cardioza for me?" --chat two-facts --keep 3
 //   bun labs/11-history-trimming.ts --demo
 
 import type { CallLlm } from "../src/model";

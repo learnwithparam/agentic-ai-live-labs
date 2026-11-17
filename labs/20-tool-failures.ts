@@ -13,7 +13,7 @@
 //   bun labs/20-tool-failures.ts --question "What is the dose of Cardioza?" --service slow
 //   bun labs/20-tool-failures.ts --question "What is the dose of Cardioza?" --service down
 //   bun labs/20-tool-failures.ts --question "What is the dose of Cardioza?" --country FR
-//   bun labs/20-tool-failures.ts --question "" --empty true
+//   bun labs/20-tool-failures.ts --question "What is the dose of Cardioza?" --empty true
 //   bun labs/20-tool-failures.ts --demo
 
 import type { CallLlm } from "../src/model";

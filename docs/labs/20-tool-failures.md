@@ -21,7 +21,7 @@ bun labs/20-tool-failures.ts --question "What is the dose of Cardioza?" --servic
 bun labs/20-tool-failures.ts --question "What is the dose of Cardioza?" --service slow
 bun labs/20-tool-failures.ts --question "What is the dose of Cardioza?" --service down
 bun labs/20-tool-failures.ts --question "What is the dose of Cardioza?" --country FR
-bun labs/20-tool-failures.ts --question "" --empty
+bun labs/20-tool-failures.ts --question "What is the dose of Cardioza?" --empty
 bun labs/20-tool-failures.ts --demo
 ```
 
@@ -39,7 +39,7 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 4 | A slow service | The service takes three seconds. We stop each try after one second. After three tries we say so and do not guess. | unavailable | `bun labs/20-tool-failures.ts --question "What is the dose of Cardioza?" --service slow` |
 | 5 | A service that is down | Every try fails. After three tries we stop and say the service is unavailable. | unavailable | `bun labs/20-tool-failures.ts --question "What is the dose of Cardioza?" --service down` |
 | 6 | EDGE: the service says no | France is not a country we serve. The service answers 400. Trying again cannot help, so we stop at once. | rejected | `bun labs/20-tool-failures.ts --question "What is the dose of Cardioza?" --country FR` |
-| 7 | EDGE: empty search words | The input check stops an empty query before any call is made. | bad-input | `bun labs/20-tool-failures.ts --question "" --empty` |
+| 7 | EDGE: empty search words | The input check stops an empty query before any call is made. | bad-input | `bun labs/20-tool-failures.ts --question "What is the dose of Cardioza?" --empty` |
 
 ## The promise, and its test
 

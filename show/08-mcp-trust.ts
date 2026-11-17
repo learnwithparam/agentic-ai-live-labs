@@ -23,6 +23,8 @@ const SCENES: Record<string, Manifest> = {
   "re-approved": { server: "hcp-docs", tools: [{ ...SEARCH, description: "Search approved documents for a drug name." }, PROFILE] },
 };
 
+const ASK = "What is the dose of Cardioza?";
+
 export const lab: Lab = {
   file: "08-mcp-trust.ts",
   title: "Lab 8: trusting an MCP server",
@@ -33,16 +35,18 @@ export const lab: Lab = {
   promise: "A tool that is unapproved, new, changed or carrying an order is never loaded.",
   production: "Pin on a schedule, alert on any change, and let only a named person re-approve a tool.",
   cases: [
-    { title: "NAIVE: trust every description", why: "The server hides an order inside a tool description. With no check, the order goes straight into the prompt, and the model may follow it.", question: "unknown-server", flags: { naive: "true" }, expect: "poisoned" },
-    { title: "An approved server, unchanged", why: "Right server, and both tools match their pins. Both are loaded.", question: "approved", expect: "trusted" },
-    { title: "A server nobody approved", why: "The name is not on the list. We do not even read its tools.", question: "unknown-server", expect: "blocked" },
-    { title: "A rug pull", why: "The server was approved, then one tool quietly gained a hidden order. Its fingerprint no longer matches the pin, so it is held back.", question: "rug-pull", expect: "changed" },
-    { title: "A new tool appears", why: "A tool that can send email shows up. Nobody reviewed it, so it is not loaded. The old tools still work.", question: "new-tool", expect: "new" },
-    { title: "A harmless fix is also held", why: "Even a one word fix changes the fingerprint. We are strict on purpose. Re-approving takes one step.", question: "typo-fix", expect: "changed" },
-    { title: "EDGE: an order that was approved by mistake", why: "A person pinned a tool that already held an order. The word scan still catches it. It is a rule list, so a cleverer order could slip past. That is why a person reviews too.", question: "bad-but-pinned", expect: "trap" },
-    { title: "A person re-approves", why: "After a review the new text is pinned. The tool is trusted again.", question: "re-approved", flags: { reapprove: "true" }, expect: "trusted" },
+    { title: "NAIVE: trust every description", why: "The server hides an order inside a tool description. With no check, the order goes straight into the prompt, and the model may follow it.", question: ASK, flags: { server: "unknown-server",  naive: "true" }, expect: "poisoned" },
+    { title: "An approved server, unchanged", why: "Right server, and both tools match their pins. Both are loaded.", question: ASK, flags: { server: "approved" }, expect: "trusted" },
+    { title: "A server nobody approved", why: "The name is not on the list. We do not even read its tools.", question: ASK, flags: { server: "unknown-server" }, expect: "blocked" },
+    { title: "A rug pull", why: "The server was approved, then one tool quietly gained a hidden order. Its fingerprint no longer matches the pin, so it is held back.", question: ASK, flags: { server: "rug-pull" }, expect: "changed" },
+    { title: "A new tool appears", why: "A tool that can send email shows up. Nobody reviewed it, so it is not loaded. The old tools still work.", question: ASK, flags: { server: "new-tool" }, expect: "new" },
+    { title: "A harmless fix is also held", why: "Even a one word fix changes the fingerprint. We are strict on purpose. Re-approving takes one step.", question: ASK, flags: { server: "typo-fix" }, expect: "changed" },
+    { title: "EDGE: an order that was approved by mistake", why: "A person pinned a tool that already held an order. The word scan still catches it. It is a rule list, so a cleverer order could slip past. That is why a person reviews too.", question: ASK, flags: { server: "bad-but-pinned" }, expect: "trap" },
+    { title: "A person re-approves", why: "After a review the new text is pinned. The tool is trusted again.", question: ASK, flags: { server: "re-approved",  reapprove: "true" }, expect: "trusted" },
   ],
-  play(scene, flags) {
+  play(question, flags) {
+    const scene = flags.server || "approved";
+    print(field("Question", question));
     const manifest = SCENES[scene];
     if (!manifest) {
       box("ERROR", [red(`No scene "${scene}". Try: ${Object.keys(SCENES).join(", ")}`)], red);

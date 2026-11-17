@@ -7,11 +7,11 @@
 // The examples and the screen output are in show/06-shell-tool.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/06-shell-tool.ts --question "ls .." --raw --naive
+//   bun labs/06-shell-tool.ts --question "Can you show me what is in the doses file?" --command "ls .." --naive
 //   bun labs/06-shell-tool.ts --question "Show me the doses file"
-//   bun labs/06-shell-tool.ts --question "Delete the notes file" --model invent
-//   bun labs/06-shell-tool.ts --question "cat doses.txt" --raw
-//   bun labs/06-shell-tool.ts --question "rm notes.txt" --raw
+//   bun labs/06-shell-tool.ts --question "Please delete the notes file for me." --model invent
+//   bun labs/06-shell-tool.ts --question "Can you show me what is in the doses file?" --command "cat doses.txt"
+//   bun labs/06-shell-tool.ts --question "Can you show me what is in the doses file?" --command "rm notes.txt"
 //   bun labs/06-shell-tool.ts --demo
 
 import { existsSync, realpathSync } from "node:fs";

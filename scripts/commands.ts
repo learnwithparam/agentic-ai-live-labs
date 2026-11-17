@@ -29,7 +29,7 @@ for (const file of all) {
     if (rest.length > 0 && rest[0] >= "0" && rest[0] <= "9") problems.push(`${file}:${index + 1}: ${line.trim()}`);
     for (const found of line.matchAll(/--question "([^"]*)"/g)) {
       const words = found[1].trim().split(" ").length;
-      if (/ dose\b/i.test(found[1]) && words < 5) problems.push(`${file}:${index + 1}: short question "${found[1]}"`);
+      if (found[1].trim() !== "" && words < 5 && !found[1].includes("$") && found[1] !== "..." && !found[1].includes("example")) problems.push(`${file}:${index + 1}: short question (ask a full question of five words or more) "${found[1]}"`);
     }
   });
 }

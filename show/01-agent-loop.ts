@@ -18,7 +18,7 @@ export const lab: Lab = {
     { title: "A drug we have no document for", why: "The search finds nothing, so the model must refuse. It must not guess from memory.", question: "Is Zorbex safe for children?", expect: "no-source" },
     { title: "Approved in another country only", why: "Dermalin is approved in the US only. A German doctor gets no answer. That is the right behaviour.", question: "What is the dose of Dermalin?", flags: { country: "DE" }, expect: "no-source" },
     { title: "A spelling mistake", why: "Search needs the exact drug name. A typo finds nothing. A real system would match close spellings or ask the doctor to confirm.", question: "What is the dose of Cardiozza?", expect: "no-source" },
-    { title: "Not a drug question at all", why: "Small talk has no approved source. The loop still ends safely.", question: "How are you today?", expect: "no-source" },
+    { title: "Not a drug question at all", why: "Small talk has no approved source. The loop still ends safely.", question: "Hi there, how are you doing today?", expect: "no-source" },
     { title: "The loop hits its step limit", why: "We allow only 1 step. The model gets one tool call and no turn left to answer. A step limit stops a model that never finishes.", question: "What is the dose of Cardioza?", flags: { steps: "1" }, expect: "stopped" },
   ],
   play(question, flags) {

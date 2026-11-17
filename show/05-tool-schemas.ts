@@ -2,45 +2,52 @@
 // You do not need to read this file to learn the lab. The lesson is in labs/05-tool-schemas.ts.
 
 import { NO_DOC } from "../src/data";
-import { modelFrom, type Lab } from "../src/runner";
+import { modelFrom, type Flags, type Lab } from "../src/runner";
 import { badgeGreen, badgeRed, badgeYellow, bold, box, dim, field, green, highlight } from "../src/ui";
 import { print, red, rule, yellow } from "../src/ui";
-import { callWithSchema, searchTool, searchWithSchema } from "../labs/05-tool-schemas";
+import { callWithSchema, searchTool, searchWithSchema, writeCall } from "../labs/05-tool-schemas";
 import { searchSchema } from "../src/schema";
 import { searchApprovedDocs } from "../labs/01-agent-loop";
 import type { Called } from "../labs/05-tool-schemas";
 import type { Verdict } from "../src/schema";
 
+const ASK = "What is the Cardioza dose in the US?";
 const GOOD = '{"drug": "Cardioza", "country": "US", "limit": 2}';
 
 export const lab: Lab = {
   file: "05-tool-schemas.ts",
   title: "Lab 5: tool schemas and structured output",
   about:
-    "Ask a plain question and the model writes a tool call. Or type the call text yourself. A schema checks it first. A good call runs. An easy fix is made and noted. A bad call is rejected, and the tool never runs.",
+    "Each example asks the same plain question. The model writes a tool call. To test a bad call on purpose, pass the call text yourself with --call, as if the model had written it. A schema checks it first. A good call runs. An easy fix is made and noted. A bad call is rejected, and the tool never runs.",
   terms: "schema = the shape of a good call. JSON = text that holds fields. reject = refuse to run.",
   challenge: "A model writes tool calls as text. A small mistake can fail with no error at all.",
   promise: "A call that fails the schema never reaches the tool.",
   production: "Every tool gets a schema. Real systems use a schema library and the model API's own tool format.",
   cases: [
-    { title: "NAIVE: trust the text", why: "The country is written in lower case. With no check, the search finds nothing and nobody is told why. It looks like there is no approved document.", question: '{"drug": "Cardioza", "country": "us"}', flags: { naive: "true" }, expect: "silent-miss" },
-    { title: "The model writes the call", why: "The model reads a plain question and writes the tool call itself. Then the schema checks it.", question: "What is the Cardioza dose in the US?", expect: "repaired" },
-    { title: "A good call", why: "Every field is right. The tool runs.", question: GOOD, expect: "ok" },
-    { title: "Easy fix: lower case country", why: "The fix is safe, so we make it and write a note. The same call now finds the document.", question: '{"drug": "Cardioza", "country": "us"}', expect: "repaired" },
-    { title: "Easy fix: a number written as text", why: "The limit is the text 3. We turn it into the number 3 and note it.", question: '{"drug": "Cardioza", "country": "DE", "limit": "3"}', expect: "repaired" },
-    { title: "Extra field the schema does not know", why: "A field called delete_all is dropped and noted. The tool never sees it.", question: '{"drug": "Cardioza", "country": "US", "delete_all": true}', expect: "repaired" },
-    { title: "Missing field", why: "No drug, so there is nothing to search. We reject. We do not guess.", question: '{"country": "US"}', expect: "rejected" },
-    { title: "A country we do not serve", why: "FR is not in the allowed list. A wrong country could show the wrong label, so we reject.", question: '{"drug": "Cardioza", "country": "FR"}', expect: "rejected" },
-    { title: "Number out of range", why: "A limit of 99 is above the top of the range, which is 5.", question: '{"drug": "Cardioza", "country": "US", "limit": 99}', expect: "rejected" },
-    { title: "Not JSON at all", why: "The model wrote a sentence. There is no call to run.", question: "Please search for Cardioza in the US", flags: { raw: "true" }, expect: "rejected" },
+    { title: "NAIVE: trust the text", why: "The country is written in lower case. With no check, the search finds nothing and nobody is told why. It looks like there is no approved document.", question: ASK, flags: { call: '{"drug": "Cardioza", "country": "us"}', naive: "true" }, expect: "silent-miss" },
+    { title: "The model writes the call", why: "The model reads a plain question and writes the tool call itself. Then the schema checks it.", question: ASK, expect: "repaired" },
+    { title: "A good call", why: "Every field is right. The tool runs.", question: ASK, flags: { call: GOOD }, expect: "ok" },
+    { title: "Easy fix: lower case country", why: "The fix is safe, so we make it and write a note. The same call now finds the document.", question: ASK, flags: { call: '{"drug": "Cardioza", "country": "us"}' }, expect: "repaired" },
+    { title: "Easy fix: a number written as text", why: "The limit is the text 3. We turn it into the number 3 and note it.", question: ASK, flags: { call: '{"drug": "Cardioza", "country": "DE", "limit": "3"}' }, expect: "repaired" },
+    { title: "Extra field the schema does not know", why: "A field called delete_all is dropped and noted. The tool never sees it.", question: ASK, flags: { call: '{"drug": "Cardioza", "country": "US", "delete_all": true}' }, expect: "repaired" },
+    { title: "Missing field", why: "No drug, so there is nothing to search. We reject. We do not guess.", question: ASK, flags: { call: '{"country": "US"}' }, expect: "rejected" },
+    { title: "A country we do not serve", why: "FR is not in the allowed list. A wrong country could show the wrong label, so we reject.", question: ASK, flags: { call: '{"drug": "Cardioza", "country": "FR"}' }, expect: "rejected" },
+    { title: "Number out of range", why: "A limit of 99 is above the top of the range, which is 5.", question: ASK, flags: { call: '{"drug": "Cardioza", "country": "US", "limit": 99}' }, expect: "rejected" },
+    { title: "Not JSON at all", why: "The model wrote a sentence. There is no call to run.", question: ASK, flags: { call: "Please search for Cardioza in the US" }, expect: "rejected" },
   ],
   play(question, flags) {
-    const typed = question.startsWith("{") || flags.raw;
-    if (flags.naive) return playNaive(question);
-    if (typed) return showCheck(question);
+    print(field("Question", question));
+    const written = flags.call;
+    if (flags.naive) return playNaive(written || naiveText(question, flags));
+    if (written !== undefined) return showCheck(written);
     return showSteps(searchWithSchema(question, modelFrom(flags)));
   },
 };
+
+// With no --call, the naive run asks the model for the call text, and trusts it.
+function naiveText(question: string, flags: Flags): string {
+  return writeCall(question, modelFrom(flags));
+}
 
 function showSteps(called: Called): string {
   rule("LOG, STEP BY STEP");

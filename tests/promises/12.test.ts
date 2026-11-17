@@ -3,8 +3,8 @@ import { CHUNKS } from "../../src/chunks";
 import { MINIMUM_SCORE, MOST_HITS, retrieve } from "../../labs/12-retrieval";
 
 const questions = [
-  "What is the dose of Cardioza?", "Cardioza side effects", "Neurovex dose and Cardioza dose",
-  "Dermalin cream use", "Cardioza please", "weather in Berlin", "", "WHAT IS THE CARDIOZA DOSE?!",
+  "What is the dose of Cardioza?", "What are the side effects of Cardioza?", "Neurovex dose and Cardioza dose",
+  "How do I use the Dermalin cream?", "Can you tell me about Cardioza please?", "What is the weather in Berlin today?", "", "WHAT IS THE CARDIOZA DOSE?!",
 ];
 
 // PROMISE: only chunks from the doctor's country, with a strong score, are returned.
@@ -27,7 +27,7 @@ test("lab 12: every hit is from the right country, strong, few and sorted", () =
 });
 
 test("lab 12: a drug with no chunk in the country is never answered from another one", () => {
-  expect(retrieve("Dermalin cream use", "DE", CHUNKS).outcome).toBe("no-source");
+  expect(retrieve("How do I use the Dermalin cream?", "DE", CHUNKS).outcome).toBe("no-source");
   expect(retrieve("What is the dose of Cardioza?", "DE", CHUNKS).hits[0].chunk.id).toBe("C-2");
-  expect(retrieve("Cardioza please", "US", CHUNKS).outcome).toBe("too-vague");
+  expect(retrieve("Can you tell me about Cardioza please?", "US", CHUNKS).outcome).toBe("too-vague");
 });

@@ -4,14 +4,16 @@
 // It writes the call as text. Text can be wrong: a small letter where a capital belongs, a field
 // missing, a number written as a word. A schema says what a good call looks like.
 // Code checks the call before the tool runs.
+// Add --call to hand the check a call as if the model had written it. That is how we test bad calls.
 // The run prints each step as it happens, with the same number as the step in the code.
 // The examples and the screen output are in show/05-tool-schemas.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/05-tool-schemas.ts --question "{"drug": "Cardioza", "country": "us"}" --naive
+//   bun labs/05-tool-schemas.ts --question "What is the Cardioza dose in the US?" --call '{"drug": "Cardioza", "country": "us"}' --naive
 //   bun labs/05-tool-schemas.ts --question "What is the Cardioza dose in the US?"
-//   bun labs/05-tool-schemas.ts --question "{"drug": "Cardioza", "country": "us"}"
-//   bun labs/05-tool-schemas.ts --question "{"drug": "Cardioza", "country": "FR"}"
+//   bun labs/05-tool-schemas.ts --question "What is the Cardioza dose in the US?" --call '{"drug": "Cardioza", "country": "us"}'
+//   bun labs/05-tool-schemas.ts --question "What is the Cardioza dose in the US?" --call '{"drug": "Cardioza", "country": "FR"}'
+//   bun labs/05-tool-schemas.ts --question "What is the Cardioza dose in the US?" --call "Please search for Cardioza in the US"
 //   bun labs/05-tool-schemas.ts --demo
 
 import { NO_DOC } from "../src/data";

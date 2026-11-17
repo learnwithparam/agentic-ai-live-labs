@@ -41,7 +41,7 @@ export const lab: Lab = {
     { title: "A tight window", why: "The documents also stop fitting. We keep the rules, the question and the small doctor note. The model has to refuse, which is safe.", question: "What is the dose of Cardioza?", flags: { window: "40" }, expect: "dropped: documents, history" },
     { title: "Two drugs, bigger documents", why: "Two documents are larger. The window drops the history and then the documents, and the doctor note survives.", question: "What are the doses of Cardioza and Neurovex?", flags: { window: "60" }, expect: "dropped: documents, history" },
     { title: "The must parts do not fit", why: "A budget of 10 cannot hold the rules and the question. We say so. We never send a prompt without its rules.", question: "What is the dose of Cardioza?", flags: { window: "10" }, expect: "too-small" },
-    { title: "A very long question", why: "The question alone is bigger than the window. The doctor must shorten it. We do not cut it for them.", question: "Cardioza dose " + "please tell me more ".repeat(20), flags: { window: "80" }, expect: "too-small" },
+    { title: "A very long question", why: "The question alone is bigger than the window. The doctor must shorten it. We do not cut it for them.", question: "What is the dose of Cardioza? " + "Please tell me more about it. ".repeat(20), flags: { window: "80" }, expect: "too-small" },
   ],
   play(question, flags) {
     const budget = Number(flags.window || 120);

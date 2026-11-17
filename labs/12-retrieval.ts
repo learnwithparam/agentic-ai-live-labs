@@ -10,7 +10,7 @@
 //   bun labs/12-retrieval.ts --question "What is the dose of Cardioza?" --naive --country DE
 //   bun labs/12-retrieval.ts --question "What is the dose of Cardioza?" --country US
 //   bun labs/12-retrieval.ts --question "What is the dose of Cardioza?" --country DE
-//   bun labs/12-retrieval.ts --question "Cardioza side effects" --country US
+//   bun labs/12-retrieval.ts --question "What are the side effects of Cardioza?" --country US
 //   bun labs/12-retrieval.ts --demo
 
 import type { CallLlm } from "../src/model";

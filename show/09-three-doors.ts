@@ -23,14 +23,14 @@ export const lab: Lab = {
   promise: "The function door and the MCP door give the same cited answer, and the shell door's answer is caught as uncited.",
   production: "Start with a function. Move to MCP when a second team needs the tool. Use a command only when none exists.",
   cases: [
-    { title: "NAIVE: always use the shell", why: "A command is easy to start with, so we use it for everything. The answer has no document id, so the output guardrail of lab 2 cannot check it.", question: "Cardioza", flags: { naive: "true", door: "cli" }, expect: "uncited" },
-    { title: "The function door", why: "The same search as lab 1. It answers with the document id.", question: "Cardioza", flags: { door: "function" }, expect: "answered" },
-    { title: "The MCP door", why: "The same answer, with the same document id, from a separate program. It is slower, because a server has to start.", question: "Cardioza", flags: { door: "mcp" }, expect: "answered" },
-    { title: "Compare all three", why: "One table: the time, and whether the answer can be cited. Look at the time column and at the cited column.", question: "Cardioza", flags: { door: "all" }, expect: "compared" },
-    { title: "Another country", why: "A German doctor. The function and MCP doors filter by country in the tool. The shell door filters by hand.", question: "Cardioza", flags: { door: "mcp", country: "DE" }, expect: "answered" },
-    { title: "A drug with no document", why: "Every door says there is nothing. Good. No door guesses.", question: "Zorbex", flags: { door: "function" }, expect: "no-source" },
-    { title: "A bad drug name through the shell", why: "The name hides a second command. The function door would only find nothing. The shell door must rely on lab 6's rules, and they refuse it.", question: "Cardioza; rm notes.txt", flags: { door: "cli" }, expect: "door-error" },
-    { title: "The MCP server is down", why: "The function door has nothing to start, so it cannot be down. The MCP door fails with a clear error.", question: "Cardioza", flags: { door: "mcp", script: "src/missing-server.ts" }, expect: "door-error" },
+    { title: "NAIVE: always use the shell", why: "A command is easy to start with, so we use it for everything. The answer has no document id, so the output guardrail of lab 2 cannot check it.", question: "What is the dose of Cardioza?", flags: { naive: "true", door: "cli" }, expect: "uncited" },
+    { title: "The function door", why: "The same search as lab 1. It answers with the document id.", question: "What is the dose of Cardioza?", flags: { door: "function" }, expect: "answered" },
+    { title: "The MCP door", why: "The same answer, with the same document id, from a separate program. It is slower, because a server has to start.", question: "What is the dose of Cardioza?", flags: { door: "mcp" }, expect: "answered" },
+    { title: "Compare all three", why: "One table: the time, and whether the answer can be cited. Look at the time column and at the cited column.", question: "What is the dose of Cardioza?", flags: { door: "all" }, expect: "compared" },
+    { title: "Another country", why: "A German doctor. The function and MCP doors filter by country in the tool. The shell door filters by hand.", question: "What is the dose of Cardioza?", flags: { door: "mcp", country: "DE" }, expect: "answered" },
+    { title: "A drug with no document", why: "Every door says there is nothing. Good. No door guesses.", question: "What is the dose of Zorbex?", flags: { door: "function" }, expect: "no-source" },
+    { title: "A bad drug name through the shell", why: "The name hides a second command. The function door would only find nothing. The shell door must rely on lab 6's rules, and they refuse it.", question: "What is the dose of Cardioza; rm notes.txt?", flags: { door: "cli" }, expect: "door-error" },
+    { title: "The MCP server is down", why: "The function door has nothing to start, so it cannot be down. The MCP door fails with a clear error.", question: "What is the dose of Cardioza?", flags: { door: "mcp", script: "src/missing-server.ts" }, expect: "door-error" },
   ],
   play(question, flags) {
     const country = flags.country || "US";

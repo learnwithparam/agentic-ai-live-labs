@@ -14,7 +14,7 @@ bun labs/01-agent-loop.ts --question "What is the dose of Cardioza and Neurovex?
 bun labs/01-agent-loop.ts --question "Is Zorbex safe for children?"
 bun labs/01-agent-loop.ts --question "What is the dose of Dermalin?" --country DE
 bun labs/01-agent-loop.ts --question "What is the dose of Cardiozza?"
-bun labs/01-agent-loop.ts --question "How are you today?"
+bun labs/01-agent-loop.ts --question "Hi there, how are you doing today?"
 bun labs/01-agent-loop.ts --question "What is the dose of Cardioza?" --steps 1
 bun labs/01-agent-loop.ts --demo
 ```
@@ -32,7 +32,7 @@ Run `bun labs/01-agent-loop.ts` with nothing else to pick an example from a menu
 | 5 | A drug we have no document for | The search finds nothing, so the model must refuse. It must not guess from memory. | no-source | `bun labs/01-agent-loop.ts --question "Is Zorbex safe for children?"` |
 | 6 | Approved in another country only | Dermalin is approved in the US only. A German doctor gets no answer. That is the right behaviour. | no-source | `bun labs/01-agent-loop.ts --question "What is the dose of Dermalin?" --country DE` |
 | 7 | A spelling mistake | Search needs the exact drug name. A typo finds nothing. A real system would match close spellings or ask the doctor to confirm. | no-source | `bun labs/01-agent-loop.ts --question "What is the dose of Cardiozza?"` |
-| 8 | Not a drug question at all | Small talk has no approved source. The loop still ends safely. | no-source | `bun labs/01-agent-loop.ts --question "How are you today?"` |
+| 8 | Not a drug question at all | Small talk has no approved source. The loop still ends safely. | no-source | `bun labs/01-agent-loop.ts --question "Hi there, how are you doing today?"` |
 | 9 | The loop hits its step limit | We allow only 1 step. The model gets one tool call and no turn left to answer. A step limit stops a model that never finishes. | stopped | `bun labs/01-agent-loop.ts --question "What is the dose of Cardioza?" --steps 1` |
 
 ## Read the code

@@ -190,9 +190,11 @@ function rulesFor(prompt: string): string {
 // It reads the hint in the error. It never changes what the doctor meant, so it says ASK instead.
 function tryFor(prompt: string): string {
   const question = (prompt.split("Question: ")[1] || "").split("\n")[0];
-  const parts = question.split(" in ");
+  const asked = question.replace("What is the dose of ", "").replace("?", "");
+  const parts = asked.split(" in ");
   let drug = parts[0].trim();
   let country = (parts[1] || "US").trim();
+  if (country.startsWith("the ")) country = country.slice(4);
   const said = prompt.split("The tool said: ")[1];
   if (said === undefined) return `{"drug": "${drug}", "country": "${country}"}`;
   const last = prompt.split("Your last call: ")[1].split("\n")[0];

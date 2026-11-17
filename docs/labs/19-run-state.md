@@ -19,7 +19,7 @@ bun labs/19-run-state.ts --question "What is the dose of Cardioza?" --naive
 bun labs/19-run-state.ts --question "What is the dose of Cardioza?"
 bun labs/19-run-state.ts --question "Is Zorbex safe for children?"
 bun labs/19-run-state.ts --question "What is the dose of Cardioza?" --stalled
-bun labs/19-run-state.ts --question "R-nothing" --ask
+bun labs/19-run-state.ts --question "What is the dose of Cardioza?" --ask --run R-nothing
 bun labs/19-run-state.ts --demo
 ```
 
@@ -35,7 +35,7 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 2 | A run that works | The record is saved after each step. We read it back from disk. It says done, with its steps. | done | `bun labs/19-run-state.ts --question "What is the dose of Cardioza?"` |
 | 3 | A run that fails | Zorbex has no approved document. The record says failed, and why. | failed | `bun labs/19-run-state.ts --question "Is Zorbex safe for children?"` |
 | 4 | EDGE: a run that went quiet | A run saved one step, then its program died. The record still says running. Ten minutes of silence means stalled. | stalled | `bun labs/19-run-state.ts --question "What is the dose of Cardioza?" --stalled` |
-| 5 | EDGE: a run that never existed | Asking about an id we never saved gives a clear answer, not a crash. | unknown | `bun labs/19-run-state.ts --question "R-nothing" --ask` |
+| 5 | EDGE: a run that never existed | Asking about an id we never saved gives a clear answer, not a crash. | unknown | `bun labs/19-run-state.ts --question "What is the dose of Cardioza?" --ask --run R-nothing` |
 
 ## The promise, and its test
 

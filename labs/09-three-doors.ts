@@ -7,10 +7,10 @@
 // The examples and the screen output are in show/09-three-doors.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/09-three-doors.ts --question "Cardioza" --naive --door cli
+//   bun labs/09-three-doors.ts --question "What is the dose of Cardioza?" --naive --door cli
 //   bun labs/09-three-doors.ts --question "What is the Cardioza dose?" --door function
-//   bun labs/09-three-doors.ts --question "Cardioza" --door mcp
-//   bun labs/09-three-doors.ts --question "Cardioza" --door all
+//   bun labs/09-three-doors.ts --question "What is the dose of Cardioza?" --door mcp
+//   bun labs/09-three-doors.ts --question "What is the dose of Cardioza?" --door all
 //   bun labs/09-three-doors.ts --demo
 
 import { NO_DOC } from "../src/data";

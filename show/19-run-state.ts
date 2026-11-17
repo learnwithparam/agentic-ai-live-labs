@@ -23,10 +23,10 @@ export const lab: Lab = {
     { title: "A run that works", why: "The record is saved after each step. We read it back from disk. It says done, with its steps.", question: DOSE, expect: "done" },
     { title: "A run that fails", why: "Zorbex has no approved document. The record says failed, and why.", question: "Is Zorbex safe for children?", expect: "failed" },
     { title: "EDGE: a run that went quiet", why: "A run saved one step, then its program died. The record still says running. Ten minutes of silence means stalled.", question: DOSE, flags: { stalled: "true" }, expect: "stalled" },
-    { title: "EDGE: a run that never existed", why: "Asking about an id we never saved gives a clear answer, not a crash.", question: "R-nothing", flags: { ask: "true" }, expect: "unknown" },
+    { title: "EDGE: a run that never existed", why: "Asking about an id we never saved gives a clear answer, not a crash.", question: DOSE, flags: { ask: "true", run: "R-nothing" }, expect: "unknown" },
   ],
   play(question, flags) {
-    if (flags.ask) return showAsk(question);
+    if (flags.ask) return showAsk(flags.run || "R-nothing");
     if (flags.naive) return showNaive(question, flags);
     if (flags.stalled) return showStalled(question);
     const run = runWithRecord(question, flags.country || "US", modelFrom(flags));

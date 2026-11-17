@@ -1,6 +1,6 @@
 // Lab 16: Giving the model a useful error
 //
-// Dr. Weber asks about "Cardioza in Germany". The model writes a tool call with country "Germany".
+// Dr. Weber asks about "What is the dose of Cardioza in Germany?". The model writes a tool call with country "Germany".
 // The tool only knows US and DE, so it fails. If the error says what was wrong and what is valid,
 // the model can fix its own call. If the error only says "ERROR", it repeats the same mistake.
 // And some mistakes only a person can fix, like a country we do not serve.
@@ -8,10 +8,10 @@
 // The examples and the screen output are in show/16-error-feedback.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/16-error-feedback.ts --question "Cardioza in Germany" --naive
-//   bun labs/16-error-feedback.ts --question "Cardioza in US"
-//   bun labs/16-error-feedback.ts --question "Cardioza in Germany"
-//   bun labs/16-error-feedback.ts --question "Cardiozza in US"
+//   bun labs/16-error-feedback.ts --question "What is the dose of Cardioza in Germany?" --naive
+//   bun labs/16-error-feedback.ts --question "What is the dose of Cardioza in the US?"
+//   bun labs/16-error-feedback.ts --question "What is the dose of Cardioza in Germany?"
+//   bun labs/16-error-feedback.ts --question "What is the dose of Cardiozza in the US?"
 //   bun labs/16-error-feedback.ts --demo
 
 import { KNOWN_DRUGS, NO_DOC } from "../src/data";

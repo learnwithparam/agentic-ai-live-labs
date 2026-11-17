@@ -8,10 +8,10 @@
 // The examples and the screen output are in show/14-instructions-vs-data.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/14-instructions-vs-data.ts --question "injected" --naive
-//   bun labs/14-instructions-vs-data.ts --question "clean"
-//   bun labs/14-instructions-vs-data.ts --question "injected"
-//   bun labs/14-instructions-vs-data.ts --question "breakout"
+//   bun labs/14-instructions-vs-data.ts --question "What is the dose of Cardioza?" --document injected --naive
+//   bun labs/14-instructions-vs-data.ts --question "What is the dose of Cardioza?" --document clean
+//   bun labs/14-instructions-vs-data.ts --question "What is the dose of Cardioza?" --document injected
+//   bun labs/14-instructions-vs-data.ts --question "What is the dose of Cardioza?" --document breakout
 //   bun labs/14-instructions-vs-data.ts --demo
 
 import type { CallLlm } from "../src/model";

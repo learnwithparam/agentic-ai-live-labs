@@ -26,7 +26,7 @@ export const lab: Lab = {
     { title: "A slow service", why: "The service takes three seconds. We stop each try after one second. After three tries we say so and do not guess.", question: DOSE, flags: { service: "slow" }, expect: "unavailable" },
     { title: "A service that is down", why: "Every try fails. After three tries we stop and say the service is unavailable.", question: DOSE, flags: { service: "down" }, expect: "unavailable" },
     { title: "EDGE: the service says no", why: "France is not a country we serve. The service answers 400. Trying again cannot help, so we stop at once.", question: DOSE, flags: { country: "FR" }, expect: "rejected" },
-    { title: "EDGE: empty search words", why: "The input check stops an empty query before any call is made.", question: "", flags: { empty: "true" }, expect: "bad-input" },
+    { title: "EDGE: empty search words", why: "The input check stops an empty query before any call is made.", question: "What is the dose of Cardioza?", flags: { empty: "true" }, expect: "bad-input" },
   ],
   play(question, flags) {
     print(field("Question", question || "(empty)"));

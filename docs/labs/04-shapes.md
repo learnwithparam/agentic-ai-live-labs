@@ -16,8 +16,8 @@ Copy any line into your terminal. Each one is a real example from this lab.
 
 ```bash
 bun labs/04-shapes.ts --question "What is the dose of Cardioza?" --shape agent --hcp H-1 --model invent
-bun labs/04-shapes.ts --question "(not used by a workflow)" --shape workflow --hcp H-2
-bun labs/04-shapes.ts --question "(not used by a workflow)" --shape workflow --hcp H-9
+bun labs/04-shapes.ts --question "What do we know about this doctor?" --shape workflow --hcp H-2
+bun labs/04-shapes.ts --question "What do we know about this doctor?" --shape workflow --hcp H-9
 bun labs/04-shapes.ts --question "What is the dose of Cardioza?" --shape agent --hcp H-1
 bun labs/04-shapes.ts --question "What is the dose of Cardioza?" --shape agent --hcp H-2
 bun labs/04-shapes.ts --question "What is the dose of Zorbex?" --shape agent --hcp H-3
@@ -37,8 +37,8 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
 | 1 | NAIVE: one agent, and nothing checks it | The model writes a wrong dose and cites the real document. One agent has no second pair of eyes, so the wrong dose goes out. | answered | `bun labs/04-shapes.ts --question "What is the dose of Cardioza?" --shape agent --hcp H-1 --model invent` |
-| 2 | Workflow: join a doctor's records | No model needed to combine the CRM profile, recent emails and the documents this doctor's country allows. | joined | `bun labs/04-shapes.ts --question "(not used by a workflow)" --shape workflow --hcp H-2` |
-| 3 | Workflow: a doctor we do not know | Plain code handles missing data the same way every time. No profile means no allowed documents. | joined | `bun labs/04-shapes.ts --question "(not used by a workflow)" --shape workflow --hcp H-9` |
+| 2 | Workflow: join a doctor's records | No model needed to combine the CRM profile, recent emails and the documents this doctor's country allows. | joined | `bun labs/04-shapes.ts --question "What do we know about this doctor?" --shape workflow --hcp H-2` |
+| 3 | Workflow: a doctor we do not know | Plain code handles missing data the same way every time. No profile means no allowed documents. | joined | `bun labs/04-shapes.ts --question "What do we know about this doctor?" --shape workflow --hcp H-9` |
 | 4 | One agent: three tools in turn | The model looks up the profile, searches approved documents, then checks recent outreach before it answers. | answered | `bun labs/04-shapes.ts --question "What is the dose of Cardioza?" --shape agent --hcp H-1` |
 | 5 | One agent: a doctor with no recent outreach | Same agent, different doctor. Dr. Weber has no emails, and gets the German dose. | answered | `bun labs/04-shapes.ts --question "What is the dose of Cardioza?" --shape agent --hcp H-2` |
 | 6 | One agent: no approved document | The agent refuses to guess, but nothing double checks it. That is the gap multi-agent fills. | no-source | `bun labs/04-shapes.ts --question "What is the dose of Zorbex?" --shape agent --hcp H-3` |

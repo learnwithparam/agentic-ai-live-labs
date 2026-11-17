@@ -57,8 +57,14 @@ export type Lab = {
 // The command a learner can copy to repeat one case.
 export function commandFor(lab: Lab, question: string, flags: Flags = {}): string {
   let command = `bun labs/${lab.file} --question "${question}"`;
-  for (const name in flags) command += flags[name] === "true" ? ` --${name}` : ` --${name} ${flags[name]}`;
+  for (const name in flags) command += flags[name] === "true" ? ` --${name}` : ` --${name} ${shellWord(flags[name])}`;
   return command;
+}
+
+// A flag value that holds spaces or quotes is wrapped in single quotes, so a copied line still works.
+export function shellWord(value: string): string {
+  if (value !== "" && !/[^A-Za-z0-9._:\/-]/.test(value)) return value;
+  return `'${value.replaceAll("'", "'\\''")}'`;
 }
 
 // Runs every case and returns the ones whose outcome was not the expected one.

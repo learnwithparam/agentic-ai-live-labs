@@ -20,12 +20,12 @@ export const lab: Lab = {
     { title: "NAIVE: best chunk from anywhere", why: "A German doctor asks for the dose. Two chunks match equally well and the US chunk comes first. The doctor gets the US dose.", question: "What is the dose of Cardioza?", flags: { naive: "true", country: "DE" }, expect: "wrong-country" },
     { title: "A US doctor asks for a dose", why: "The right chunk matches on two words. The side effects chunk matches on only one, so it stays out.", question: "What is the dose of Cardioza?", flags: { country: "US" }, expect: "found" },
     { title: "A German doctor asks for a dose", why: "The same question gives the German chunk, because we filter by country first.", question: "What is the dose of Cardioza?", flags: { country: "DE" }, expect: "found" },
-    { title: "A different topic for one drug", why: "Side effects of the same drug. The score picks the side effects chunk and not the dose chunk.", question: "Cardioza side effects", flags: { country: "US" }, expect: "found" },
+    { title: "A different topic for one drug", why: "Side effects of the same drug. The score picks the side effects chunk and not the dose chunk.", question: "What are the side effects of Cardioza?", flags: { country: "US" }, expect: "found" },
     { title: "Two drugs in one question", why: "Both drugs match, so we send two chunks. We never send more than two.", question: "Cardioza dose and Neurovex dose", flags: { country: "US" }, expect: "found" },
     { title: "Capital letters and punctuation", why: "The words are cleaned first, so shouting does not change the answer.", question: "WHAT IS THE CARDIOZA DOSE?!", flags: { country: "US" }, expect: "found" },
-    { title: "A question with one matching word", why: "Only the drug name matches. One word is too weak to trust. We ask the doctor to say more.", question: "Cardioza please", flags: { country: "US" }, expect: "too-vague" },
-    { title: "A drug with no chunk in this country", why: "Dermalin has only a US chunk. We never fall back to another country. We say there is no source.", question: "Dermalin cream use", flags: { country: "DE" }, expect: "no-source" },
-    { title: "Nothing to do with drugs", why: "No word matches any chunk. The answer is no source. We do not send the closest bad match.", question: "weather in Berlin", flags: { country: "DE" }, expect: "no-source" },
+    { title: "A question with one matching word", why: "Only the drug name matches. One word is too weak to trust. We ask the doctor to say more.", question: "Can you tell me about Cardioza please?", flags: { country: "US" }, expect: "too-vague" },
+    { title: "A drug with no chunk in this country", why: "Dermalin has only a US chunk. We never fall back to another country. We say there is no source.", question: "How do I use the Dermalin cream?", flags: { country: "DE" }, expect: "no-source" },
+    { title: "Nothing to do with drugs", why: "No word matches any chunk. The answer is no source. We do not send the closest bad match.", question: "What is the weather in Berlin today?", flags: { country: "DE" }, expect: "no-source" },
   ],
   play(question, flags) {
     const country = flags.country || "US";

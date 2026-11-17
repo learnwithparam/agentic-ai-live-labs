@@ -4,6 +4,7 @@
 // The page is made from the lab's own words (about, terms, challenge, promise, production, cases),
 // so it cannot drift from the code. Nobody writes these by hand.
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { shellWord } from "../src/runner";
 import type { Case, Lab } from "../src/runner";
 
 const FOLDER = "docs/labs";
@@ -19,7 +20,7 @@ export function commandFor(file: string, item: Case): string {
   const flags = item.flags || {};
   for (const key of Object.keys(flags)) {
     const value = flags[key];
-    command += value === "true" ? ` --${key}` : ` --${key} ${value}`;
+    command += value === "true" ? ` --${key}` : ` --${key} ${shellWord(value)}`;
   }
   return command;
 }

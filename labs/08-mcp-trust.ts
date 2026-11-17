@@ -7,10 +7,10 @@
 // The examples and the screen output are in show/08-mcp-trust.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/08-mcp-trust.ts --question "unknown-server" --naive
-//   bun labs/08-mcp-trust.ts --question "approved"
-//   bun labs/08-mcp-trust.ts --question "unknown-server"
-//   bun labs/08-mcp-trust.ts --question "rug-pull"
+//   bun labs/08-mcp-trust.ts --question "What is the dose of Cardioza?" --server unknown-server --naive
+//   bun labs/08-mcp-trust.ts --question "What is the dose of Cardioza?" --server approved
+//   bun labs/08-mcp-trust.ts --question "What is the dose of Cardioza?" --server unknown-server
+//   bun labs/08-mcp-trust.ts --question "What is the dose of Cardioza?" --server rug-pull
 //   bun labs/08-mcp-trust.ts --demo
 
 import { createHash } from "node:crypto";

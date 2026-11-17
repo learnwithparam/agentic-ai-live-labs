@@ -23,7 +23,7 @@ export const lab: Lab = {
     { title: "Gate 2, reviewer rejects", why: "Same stop, and the person rejects it.", question: "What is the dose of Cardioza?", flags: { model: "nocite", approve: "n" }, expect: "BLOCKED_BY_REVIEWER" },
     { title: "Patient details in the question", why: "The note is masked before the search, so the reply and the reviewer never see the SSN or the name.", question: "Cardioza dose for Patient: Jane Doe, SSN 123-45-6789", expect: "SENT" },
     { title: "Approved in another country only", why: "Dermalin is approved in the US only. A German doctor hits gate 1.", question: "What is the dose of Dermalin?", flags: { country: "DE", approve: "n" }, expect: "BLOCKED_BY_REVIEWER" },
-    { title: "Small talk", why: "No drug, no document. The safe default is to stop and ask a person.", question: "hello there", flags: { approve: "n" }, expect: "BLOCKED_BY_REVIEWER" },
+    { title: "Small talk", why: "No drug, no document. The safe default is to stop and ask a person.", question: "Hello there, can you help me today?", flags: { approve: "n" }, expect: "BLOCKED_BY_REVIEWER" },
   ],
   play(question, flags, ask) {
     const country = flags.country || "US";

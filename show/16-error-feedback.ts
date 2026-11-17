@@ -17,14 +17,14 @@ export const lab: Lab = {
   promise: "An error says what is valid, retries are capped, and a call that cannot be fixed goes to a person.",
   production: "Write every tool error for a reader that cannot ask questions, and count how often each error appears.",
   cases: [
-    { title: "NAIVE: an error that says nothing", why: "The country is Germany, which the tool does not accept. The error only says ERROR, so the model sends the same call three times and gives up.", question: "Cardioza in Germany", flags: { naive: "true" }, expect: "gave-up" },
-    { title: "A call that works", why: "Nothing to fix. One try.", question: "Cardioza in US", expect: "answered" },
-    { title: "A country spelled out", why: "The error says to use US or DE. The model maps Germany to DE and tries again.", question: "Cardioza in Germany", expect: "fixed" },
-    { title: "A drug with a typo", why: "The error lists the known drugs. The model picks the one that looks like its typo.", question: "Cardiozza in US", expect: "fixed" },
-    { title: "EDGE: two mistakes in one call", why: "The country is fixed first, then the drug. That is three tries, which is exactly the limit.", question: "Cardiozza in Germany", expect: "fixed" },
-    { title: "A country we do not serve", why: "France is not US or DE. The model must not swap it for US, because that is a different doctor's label. A person decides.", question: "Cardioza in France", expect: "ask-person" },
-    { title: "A drug nobody knows", why: "Zorbex is not close to any known drug. Guessing could be dangerous, so a person decides.", question: "Zorbex in US", expect: "ask-person" },
-    { title: "Valid call, no document", why: "Dermalin has no German document. That is not an error, so there is no retry. The answer is no source.", question: "Dermalin in DE", expect: "no-source" },
+    { title: "NAIVE: an error that says nothing", why: "The country is Germany, which the tool does not accept. The error only says ERROR, so the model sends the same call three times and gives up.", question: "What is the dose of Cardioza in Germany?", flags: { naive: "true" }, expect: "gave-up" },
+    { title: "A call that works", why: "Nothing to fix. One try.", question: "What is the dose of Cardioza in the US?", expect: "answered" },
+    { title: "A country spelled out", why: "The error says to use US or DE. The model maps Germany to DE and tries again.", question: "What is the dose of Cardioza in Germany?", expect: "fixed" },
+    { title: "A drug with a typo", why: "The error lists the known drugs. The model picks the one that looks like its typo.", question: "What is the dose of Cardiozza in the US?", expect: "fixed" },
+    { title: "EDGE: two mistakes in one call", why: "The country is fixed first, then the drug. That is three tries, which is exactly the limit.", question: "What is the dose of Cardiozza in Germany?", expect: "fixed" },
+    { title: "A country we do not serve", why: "France is not US or DE. The model must not swap it for US, because that is a different doctor's label. A person decides.", question: "What is the dose of Cardioza in France?", expect: "ask-person" },
+    { title: "A drug nobody knows", why: "Zorbex is not close to any known drug. Guessing could be dangerous, so a person decides.", question: "What is the dose of Zorbex in the US?", expect: "ask-person" },
+    { title: "Valid call, no document", why: "Dermalin has no German document. That is not an error, so there is no retry. The answer is no source.", question: "What is the dose of Dermalin in Germany?", expect: "no-source" },
   ],
   play(question, flags) {
     print(field("Question", question));

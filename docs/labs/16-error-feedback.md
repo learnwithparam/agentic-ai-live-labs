@@ -15,14 +15,14 @@ retry = try the call again. hint = what the error says is valid. ask a person = 
 Copy any line into your terminal. Each one is a real example from this lab.
 
 ```bash
-bun labs/16-error-feedback.ts --question "Cardioza in Germany" --naive
-bun labs/16-error-feedback.ts --question "Cardioza in US"
-bun labs/16-error-feedback.ts --question "Cardioza in Germany"
-bun labs/16-error-feedback.ts --question "Cardiozza in US"
-bun labs/16-error-feedback.ts --question "Cardiozza in Germany"
-bun labs/16-error-feedback.ts --question "Cardioza in France"
-bun labs/16-error-feedback.ts --question "Zorbex in US"
-bun labs/16-error-feedback.ts --question "Dermalin in DE"
+bun labs/16-error-feedback.ts --question "What is the dose of Cardioza in Germany?" --naive
+bun labs/16-error-feedback.ts --question "What is the dose of Cardioza in the US?"
+bun labs/16-error-feedback.ts --question "What is the dose of Cardioza in Germany?"
+bun labs/16-error-feedback.ts --question "What is the dose of Cardiozza in the US?"
+bun labs/16-error-feedback.ts --question "What is the dose of Cardiozza in Germany?"
+bun labs/16-error-feedback.ts --question "What is the dose of Cardioza in France?"
+bun labs/16-error-feedback.ts --question "What is the dose of Zorbex in the US?"
+bun labs/16-error-feedback.ts --question "What is the dose of Dermalin in Germany?"
 bun labs/16-error-feedback.ts --demo
 ```
 
@@ -34,14 +34,14 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
-| 1 | NAIVE: an error that says nothing | The country is Germany, which the tool does not accept. The error only says ERROR, so the model sends the same call three times and gives up. | gave-up | `bun labs/16-error-feedback.ts --question "Cardioza in Germany" --naive` |
-| 2 | A call that works | Nothing to fix. One try. | answered | `bun labs/16-error-feedback.ts --question "Cardioza in US"` |
-| 3 | A country spelled out | The error says to use US or DE. The model maps Germany to DE and tries again. | fixed | `bun labs/16-error-feedback.ts --question "Cardioza in Germany"` |
-| 4 | A drug with a typo | The error lists the known drugs. The model picks the one that looks like its typo. | fixed | `bun labs/16-error-feedback.ts --question "Cardiozza in US"` |
-| 5 | EDGE: two mistakes in one call | The country is fixed first, then the drug. That is three tries, which is exactly the limit. | fixed | `bun labs/16-error-feedback.ts --question "Cardiozza in Germany"` |
-| 6 | A country we do not serve | France is not US or DE. The model must not swap it for US, because that is a different doctor's label. A person decides. | ask-person | `bun labs/16-error-feedback.ts --question "Cardioza in France"` |
-| 7 | A drug nobody knows | Zorbex is not close to any known drug. Guessing could be dangerous, so a person decides. | ask-person | `bun labs/16-error-feedback.ts --question "Zorbex in US"` |
-| 8 | Valid call, no document | Dermalin has no German document. That is not an error, so there is no retry. The answer is no source. | no-source | `bun labs/16-error-feedback.ts --question "Dermalin in DE"` |
+| 1 | NAIVE: an error that says nothing | The country is Germany, which the tool does not accept. The error only says ERROR, so the model sends the same call three times and gives up. | gave-up | `bun labs/16-error-feedback.ts --question "What is the dose of Cardioza in Germany?" --naive` |
+| 2 | A call that works | Nothing to fix. One try. | answered | `bun labs/16-error-feedback.ts --question "What is the dose of Cardioza in the US?"` |
+| 3 | A country spelled out | The error says to use US or DE. The model maps Germany to DE and tries again. | fixed | `bun labs/16-error-feedback.ts --question "What is the dose of Cardioza in Germany?"` |
+| 4 | A drug with a typo | The error lists the known drugs. The model picks the one that looks like its typo. | fixed | `bun labs/16-error-feedback.ts --question "What is the dose of Cardiozza in the US?"` |
+| 5 | EDGE: two mistakes in one call | The country is fixed first, then the drug. That is three tries, which is exactly the limit. | fixed | `bun labs/16-error-feedback.ts --question "What is the dose of Cardiozza in Germany?"` |
+| 6 | A country we do not serve | France is not US or DE. The model must not swap it for US, because that is a different doctor's label. A person decides. | ask-person | `bun labs/16-error-feedback.ts --question "What is the dose of Cardioza in France?"` |
+| 7 | A drug nobody knows | Zorbex is not close to any known drug. Guessing could be dangerous, so a person decides. | ask-person | `bun labs/16-error-feedback.ts --question "What is the dose of Zorbex in the US?"` |
+| 8 | Valid call, no document | Dermalin has no German document. That is not an error, so there is no retry. The answer is no source. | no-source | `bun labs/16-error-feedback.ts --question "What is the dose of Dermalin in Germany?"` |
 
 ## The promise, and its test
 

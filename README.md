@@ -72,7 +72,7 @@ Every lab follows the same shape, so you can add as many as you like.
 
 `bun run check` runs three things. The tests find every file in `labs/` by themselves and run all its cases. The readable gate (`scripts/readable.ts`) fails a lab whose PART 1 breaks the plain style. It bans regex, arrow functions, `.map`, spread, `?.`, `??` and ternaries. It bans short names, lines over 100 characters and sentences over 25 words. The plain English check (`scripts/plain-english.ts`) holds every page to reading grade 6. The type check runs last.
 
-For example, add `bun labs/05-your-name.ts --question "Cardioza"` to a page, and the page must still read easily.
+For example, add `bun labs/05-your-name.ts --question "What is the dose of Cardioza?"` to a page, and the page must still read easily.
 
 ## What this does not do
 

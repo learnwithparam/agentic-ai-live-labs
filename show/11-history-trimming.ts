@@ -29,6 +29,8 @@ const SCENES: Record<string, Scene> = {
   empty: { turns: [], need: "" },
 };
 
+const ASK = "What is the dose of Cardioza for me?";
+
 export const lab: Lab = {
   file: "11-history-trimming.ts",
   title: "Lab 11: trimming the chat history",
@@ -39,22 +41,24 @@ export const lab: Lab = {
   promise: "Pinned facts and the most recent turns always survive, in order. Nothing else does.",
   production: "Let the agent save facts with a tool, and write a short summary of the turns left out.",
   cases: [
-    { title: "NAIVE: keep only the last turns", why: "The doctor said Germany in the first turn. That turn is old, so it is cut. The agent no longer knows which label to use.", question: "long", flags: { naive: "true", keep: "4" }, expect: "fact-lost" },
-    { title: "A short chat", why: "The chat is shorter than the limit, so nothing is cut.", question: "short", flags: { keep: "4" }, expect: "nothing-to-trim" },
-    { title: "A long chat, fact pinned", why: "The old chatter is cut. The country turn stays, because it is pinned.", question: "long", flags: { keep: "4" }, expect: "trimmed" },
-    { title: "Two pinned facts", why: "Two old facts are pinned, one early and one in the middle. Both stay.", question: "two-facts", flags: { keep: "3" }, expect: "trimmed" },
-    { title: "Facts only", why: "We keep zero recent turns. Only the pinned facts remain. The current question is sent on its own, as in lab 10.", question: "long", flags: { keep: "0" }, expect: "facts-only" },
-    { title: "A chat with no facts", why: "Nothing is pinned, so only the last turns stay. This is safe, because nothing there was needed.", question: "no-facts", flags: { keep: "4" }, expect: "trimmed" },
-    { title: "A limit larger than the chat", why: "We allow 50 recent turns, and the chat has fewer. Nothing is cut.", question: "long", flags: { keep: "50" }, expect: "nothing-to-trim" },
-    { title: "An empty chat", why: "A new chat has no history. There is nothing to trim, and nothing breaks.", question: "empty", flags: { keep: "4" }, expect: "empty" },
+    { title: "NAIVE: keep only the last turns", why: "The doctor said Germany in the first turn. That turn is old, so it is cut. The agent no longer knows which label to use.", question: ASK, flags: { chat: "long", naive: "true", keep: "4" }, expect: "fact-lost" },
+    { title: "A short chat", why: "The chat is shorter than the limit, so nothing is cut.", question: ASK, flags: { chat: "short", keep: "4" }, expect: "nothing-to-trim" },
+    { title: "A long chat, fact pinned", why: "The old chatter is cut. The country turn stays, because it is pinned.", question: ASK, flags: { chat: "long", keep: "4" }, expect: "trimmed" },
+    { title: "Two pinned facts", why: "Two old facts are pinned, one early and one in the middle. Both stay.", question: ASK, flags: { chat: "two-facts", keep: "3" }, expect: "trimmed" },
+    { title: "Facts only", why: "We keep zero recent turns. Only the pinned facts remain. The current question is sent on its own, as in lab 10.", question: ASK, flags: { chat: "long", keep: "0" }, expect: "facts-only" },
+    { title: "A chat with no facts", why: "Nothing is pinned, so only the last turns stay. This is safe, because nothing there was needed.", question: ASK, flags: { chat: "no-facts", keep: "4" }, expect: "trimmed" },
+    { title: "A limit larger than the chat", why: "We allow 50 recent turns, and the chat has fewer. Nothing is cut.", question: ASK, flags: { chat: "long", keep: "50" }, expect: "nothing-to-trim" },
+    { title: "An empty chat", why: "A new chat has no history. There is nothing to trim, and nothing breaks.", question: ASK, flags: { chat: "empty", keep: "4" }, expect: "empty" },
   ],
-  play(name, flags) {
+  play(question, flags) {
+    const name = flags.chat || "long";
     const scene = SCENES[name];
     if (!scene) {
       box("ERROR", [red(`No chat "${name}". Try: ${Object.keys(SCENES).join(", ")}`)], red);
       return "error";
     }
     const keep = Number(flags.keep || 4);
+    print(field("Question", question));
     print(field("Chat", `${name}, ${scene.turns.length} turns`));
     print(field("Keep", `the last ${keep} turns, and every pinned fact`));
     if (scene.turns.length === 0) {

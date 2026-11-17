@@ -6,32 +6,35 @@ import { badgeGreen, badgeRed, badgeYellow, box, dim, field, green, print, red, 
 import { doTask, runShell, SANDBOX } from "../labs/06-shell-tool";
 import type { ShellResult } from "../labs/06-shell-tool";
 
+const ASK_FILE = "Can you show me what is in the doses file?";
+
 export const lab: Lab = {
   file: "06-shell-tool.ts",
   title: "Lab 6: a shell tool, safely",
   about:
-    "Describe a task and the model writes the command, or type the command yourself with --raw. Four rules decide if it starts. The agent works in one folder called sandbox, which holds two small files.",
+    "Describe a task and the model writes the command, or hand it a command yourself with --command, as if the model had written it. Four rules decide if it starts. The agent works in one folder called sandbox, which holds two small files.",
   terms: "shell = a program that runs commands. allow-list = the only commands we permit. sandbox = a folder it cannot leave.",
   challenge: "A shell can delete files or read secrets. An agent that can type anything can do anything.",
   promise: "A command that breaks a rule never starts, so the files stay as they were.",
   production: "Run the agent in a container with no secrets and no network, and keep this allow-list as well.",
   cases: [
     { title: "The model writes the command", why: "The model turns a plain task into a command. The four rules still decide if it starts.", question: "Show me the doses file", expect: "ran" },
-    { title: "The model asks to delete", why: "The task asks for a delete. The model writes rm. It is not on the allow-list, so it never starts.", question: "Delete the notes file", expect: "refused" },
-    { title: "NAIVE: hand it to a shell", why: "The agent asks for ls .. and the shell obeys. It lists the folder ABOVE the sandbox. The same hole would let it read or delete there.", question: "ls ..", flags: { raw: "true", naive: "true" }, expect: "escaped" },
-    { title: "List the folder", why: "A harmless command on the allow-list. It runs.", question: "ls", flags: { raw: "true" }, expect: "ran" },
-    { title: "Read a file", why: "Reading a file inside the sandbox is fine.", question: "cat doses.txt", flags: { raw: "true" }, expect: "ran" },
-    { title: "A command not on the list", why: "rm can delete. It is not on the allow-list, so it is refused before anything starts.", question: "rm notes.txt", flags: { raw: "true" }, expect: "refused" },
-    { title: "Chaining a second command", why: "The first part is allowed. The semicolon would add a delete. We refuse the whole line.", question: "cat notes.txt; rm notes.txt", flags: { raw: "true" }, expect: "refused" },
-    { title: "Climbing out of the folder", why: "Two dots mean the folder above. The sandbox is only a rule if code enforces it.", question: "cat ../package.json", flags: { raw: "true" }, expect: "refused" },
-    { title: "An absolute path", why: "A path from the top of the disk could read any file. It is refused.", question: "cat /etc/hosts", flags: { raw: "true" }, expect: "refused" },
-    { title: "A file that is not there", why: "The command is allowed, but it fails. The error goes back to the agent, so it can try again. That is lab 16.", question: "cat missing.txt", flags: { raw: "true" }, expect: "failed" },
-    { title: "A command that never ends", why: "Sleep for 5 seconds with a limit of 1. The time limit stops it. Without one, a stuck command would hang the agent.", question: "sleep 5", flags: { raw: "true", limit: "1" }, expect: "timeout" },
+    { title: "The model asks to delete", why: "The task asks for a delete. The model writes rm. It is not on the allow-list, so it never starts.", question: "Please delete the notes file for me.", expect: "refused" },
+    { title: "NAIVE: hand it to a shell", why: "The model writes ls .. and the shell obeys. It lists the folder ABOVE the sandbox. The same hole would let it read or delete there.", question: ASK_FILE, flags: { command: "ls ..", naive: "true" }, expect: "escaped" },
+    { title: "List the folder", why: "A harmless command on the allow-list. It runs.", question: ASK_FILE, flags: { command: "ls"}, expect: "ran" },
+    { title: "Read a file", why: "Reading a file inside the sandbox is fine.", question: ASK_FILE, flags: { command: "cat doses.txt"}, expect: "ran" },
+    { title: "A command not on the list", why: "rm can delete. It is not on the allow-list, so it is refused before anything starts.", question: ASK_FILE, flags: { command: "rm notes.txt"}, expect: "refused" },
+    { title: "Chaining a second command", why: "The first part is allowed. The semicolon would add a delete. We refuse the whole line.", question: ASK_FILE, flags: { command: "cat notes.txt; rm notes.txt"}, expect: "refused" },
+    { title: "Climbing out of the folder", why: "Two dots mean the folder above. The sandbox is only a rule if code enforces it.", question: ASK_FILE, flags: { command: "cat ../package.json"}, expect: "refused" },
+    { title: "An absolute path", why: "A path from the top of the disk could read any file. It is refused.", question: ASK_FILE, flags: { command: "cat /etc/hosts"}, expect: "refused" },
+    { title: "A file that is not there", why: "The command is allowed, but it fails. The error goes back to the agent, so it can try again. That is lab 16.", question: ASK_FILE, flags: { command: "cat missing.txt"}, expect: "failed" },
+    { title: "A command that never ends", why: "Sleep for 5 seconds with a limit of 1. The time limit stops it. Without one, a stuck command would hang the agent.", question: ASK_FILE, flags: { command: "sleep 5", limit: "1" }, expect: "timeout" },
   ],
   play(question, flags) {
     const limit = Number(flags.limit || 2);
-    if (flags.naive) return playNaive(question);
-    if (flags.raw) return showCommand(question, runShell(question, SANDBOX, limit));
+    print(field("Task", question));
+    if (flags.naive) return playNaive(flags.command);
+    if (flags.command) return showCommand(flags.command, runShell(flags.command, SANDBOX, limit));
     const ran = doTask(question, modelFrom(flags), limit);
     rule("LOG, STEP BY STEP");
     for (const line of ran.log) console.log(dim(line));

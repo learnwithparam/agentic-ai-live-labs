@@ -8,7 +8,7 @@
 //
 // Run it (copy any line):
 //   bun labs/04-shapes.ts --question "What is the dose of Cardioza?" --shape agent --hcp H-1 --model invent
-//   bun labs/04-shapes.ts --question "(not used by a workflow)" --shape workflow --hcp H-2
+//   bun labs/04-shapes.ts --question "What do we know about this doctor?" --shape workflow --hcp H-2
 //   bun labs/04-shapes.ts --question "What is the dose of Cardioza?" --shape agent --hcp H-1
 //   bun labs/04-shapes.ts --question "What is the dose of Cardioza?" --shape multi --model invent --approve n
 //   bun labs/04-shapes.ts --demo

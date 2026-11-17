@@ -12,7 +12,7 @@
 //   bun labs/19-run-state.ts --question "What is the dose of Cardioza?"
 //   bun labs/19-run-state.ts --question "Is Zorbex safe for children?"
 //   bun labs/19-run-state.ts --question "What is the dose of Cardioza?" --stalled true
-//   bun labs/19-run-state.ts --question "R-nothing" --ask true
+//   bun labs/19-run-state.ts --question "What is the dose of Cardioza?" --ask true --run R-nothing
 //   bun labs/19-run-state.ts --demo
 
 import { NO_DOC } from "../src/data";
