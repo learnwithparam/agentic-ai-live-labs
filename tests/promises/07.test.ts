@@ -2,7 +2,7 @@ import { expect, test } from "bun:test";
 import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { callMcpTool, discoverTools, mcpTools } from "../../labs/07-mcp-basics";
+import { callMcpTool, discoverTools, HELLO, mcpTools } from "../../labs/07-mcp-basics";
 
 // A second, hand-made server that has one tool the real server does not have.
 const OTHER_SERVER = `
@@ -33,4 +33,17 @@ test("lab 7: every failure comes back as text that starts with ERROR", () => {
   expect(callMcpTool("get_hcp_profile", { hcpId: "H-9" })).toStartWith("ERROR");
   expect(callMcpTool("search_approved_docs", {}, "src/missing-server.ts")).toStartWith("ERROR");
   expect(discoverTools("src/missing-server.ts")).toEqual([]);
+});
+
+// PROMISE: the server answers while the input is still open, as a real MCP client expects.
+test("lab 7: the server replies before the input closes", async () => {
+  const child = Bun.spawn(["bun", "src/mcp-server.ts"], { stdin: "pipe", stdout: "pipe" });
+  child.stdin.write(JSON.stringify(HELLO[0]) + "\n");
+  child.stdin.flush();
+  const reader = child.stdout.getReader();
+  const first = await reader.read();
+  const reply = JSON.parse(new TextDecoder().decode(first.value));
+  expect(reply.result.serverInfo.name).toBe("hcp-lab-server");
+  child.stdin.end();
+  await child.exited;
 });

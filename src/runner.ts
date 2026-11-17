@@ -4,6 +4,7 @@
 //   (nothing)         interactive menu. Pick an example by number, or type your own question.
 import { makeLiveModel, LIVE_MODEL } from "./live";
 import { makeModel, type Behaviour } from "./model";
+import { whereAmI } from "./roadmap";
 import { badgeBlue, badgeGreen, badgeRed, bold, box, cyan, dim, field, green } from "./ui";
 import { print, red, rule, wrap, yellow } from "./ui";
 
@@ -81,6 +82,7 @@ export function checkCases(lab: Lab, base: Flags = {}) {
 function header(lab: Lab) {
   console.log();
   box(lab.title, wrap(lab.about), cyan);
+  console.log(dim(whereAmI(Number(lab.file.slice(0, 2)))));
   const notes = [
     ...(lab.terms ? field("Words", lab.terms, dim, 11) : []),
     ...(lab.challenge ? field("Challenge", lab.challenge, yellow, 11) : []),

@@ -1,5 +1,6 @@
 // bun scripts/commands.ts: every run command names its file, like bun labs/01-agent-loop.ts.
 // "bun run lab 16" hides which file runs, and it breaks when a lab is renumbered or renamed.
+// So only the README and the scripts may use that short form. Lab files and lab pages name the file.
 // A question about a dose must read like a doctor wrote it, not like a search: "Zorbex dose" fails.
 import { readdirSync, readFileSync } from "node:fs";
 
@@ -22,11 +23,12 @@ const all = [...FILES];
 for (const folder of FOLDERS) all.push(...filesIn(folder));
 for (const file of all) {
   if (file === "scripts/commands.ts") continue;
+  const shortFormOk = file === "README.md" || file.startsWith("scripts/");
   const lines = readFileSync(file, "utf8").split("\n");
   lines.forEach((line, index) => {
     const start = line.indexOf(NUMBERED);
     const rest = start < 0 ? "" : line.slice(start + NUMBERED.length);
-    if (rest.length > 0 && rest[0] >= "0" && rest[0] <= "9") problems.push(`${file}:${index + 1}: ${line.trim()}`);
+    if (!shortFormOk && rest.length > 0 && rest[0] >= "0" && rest[0] <= "9") problems.push(`${file}:${index + 1}: ${line.trim()}`);
     for (const found of line.matchAll(/--question "([^"]*)"/g)) {
       const words = found[1].trim().split(" ").length;
       if (found[1].trim() !== "" && words < 5 && !found[1].includes("$") && found[1] !== "..." && !found[1].includes("example")) problems.push(`${file}:${index + 1}: short question (ask a full question of five words or more) "${found[1]}"`);

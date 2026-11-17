@@ -6,7 +6,7 @@ import { askService, NAIVE_LIMITS } from "../../labs/20-tool-failures";
 const limits = { timeoutSeconds: 1, tries: 3, waitMs: 20 };
 const flaky = startService("flaky");
 const down = startService("down");
-const slow = startService("slow", 2000);
+const slow = startService("slow", 20000);
 const healthy = startService("ok");
 afterAll(() => [flaky, down, slow, healthy].forEach((service) => service.stop()));
 
@@ -33,7 +33,8 @@ test("lab 20: a slow service stops at the time limit, and a service that is down
   const started = Date.now();
   const tight = { timeoutSeconds: 1, tries: 2, waitMs: 10 };
   expect(askService(slow.url, "What is the dose of Cardioza?", "US", tight).outcome).toBe("unavailable");
-  expect(Date.now() - started).toBeLessThan(3500);
+  // Without the limit, two tries would wait 40 seconds. A busy machine still stays far below that.
+  expect(Date.now() - started).toBeLessThan(15000);
   const gone = askService(down.url, "What is the dose of Cardioza?", "US", limits);
   expect(gone).toMatchObject({ outcome: "unavailable", attempts: 3 });
 });

@@ -4,8 +4,14 @@ import { LABS, TRACKS } from "../src/roadmap";
 import { isReady, labFile } from "./path";
 import { bold, cyan, dim } from "../src/ui";
 
-const wanted = Number(process.argv[2]);
-const lab = LABS.find((item) => item.number === wanted);
+// A lab can be named by number or by words from its name: 7, mcp-basics or mcp.
+const named = process.argv[2] || "";
+const lab = LABS.find((item) => String(item.number) === named || item.slug.includes(named) && named !== "");
+
+// Plain words for the common flags: bun run lab 7 demo, naive or live.
+const EASY: Record<string, string> = { demo: "--demo", naive: "--naive", live: "--live" };
+const extra: string[] = [];
+for (const word of process.argv.slice(3)) extra.push(EASY[word] || word);
 
 if (!process.argv[2]) {
   for (const track of TRACKS) {
@@ -15,7 +21,7 @@ if (!process.argv[2]) {
       console.log(isReady(item) ? `  ${label}` : `  ${dim(`${item.number}  ${item.title}  (coming)`)}`);
     }
   }
-  console.log(dim("\nbun run lab <number> runs a lab. bun run path shows the learning paths."));
+  console.log(dim("\nbun run lab 7 demo runs lab 7. Add naive or live. bun run path shows the learning paths."));
   process.exit(0);
 }
 if (!lab) {
@@ -27,7 +33,7 @@ if (!isReady(lab)) {
   process.exit(1);
 }
 
-const run = Bun.spawnSync(["bun", `labs/${labFile(lab)}`, ...process.argv.slice(3)], {
+const run = Bun.spawnSync(["bun", `labs/${labFile(lab)}`, ...extra], {
   stdin: "inherit",
   stdout: "inherit",
   stderr: "inherit",

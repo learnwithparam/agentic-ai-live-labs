@@ -244,3 +244,17 @@ export const PATHS: Path[] = [
     next: "beginner",
   },
 ];
+
+// "You are here": the lab, its track, and the labs just before and after it.
+export function whereAmI(number: number): string {
+  const lab = LABS.find((item) => item.number === number);
+  if (!lab) return "";
+  const mates = LABS.filter((item) => item.track === lab.track);
+  const place = mates.findIndex((item) => item.number === number) + 1;
+  const track = TRACKS.find((item) => item.id === lab.track);
+  const name = track ? track.name : lab.track;
+  let text = `You are here: lab ${number} of ${LABS.length}, ${name} (${place} of ${mates.length}).`;
+  if (number > 1) text += ` Before: ${number - 1}.`;
+  if (number < LABS.length) text += ` Next: ${number + 1}.`;
+  return text;
+}

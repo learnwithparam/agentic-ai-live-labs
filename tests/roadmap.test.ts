@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { readdirSync, readFileSync } from "node:fs";
-import { LABS, PATHS, TRACKS } from "../src/roadmap";
+import { LABS, PATHS, TRACKS, whereAmI } from "../src/roadmap";
 import { labFile, renderAll } from "../scripts/path";
 
 describe("the roadmap", () => {
@@ -55,5 +55,13 @@ describe("the learning paths", () => {
         }
       }
     }
+  });
+});
+
+describe("where am I", () => {
+  test("every lab says its track place, and the ends have no before or next", () => {
+    expect(whereAmI(7)).toBe("You are here: lab 7 of 39, Tools and protocols (3 of 5). Before: 6. Next: 8.");
+    expect(whereAmI(1)).not.toContain("Before");
+    expect(whereAmI(LABS.length)).not.toContain("Next");
   });
 });

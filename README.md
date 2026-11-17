@@ -46,6 +46,21 @@ Expect: the first line runs every case. The second runs one question. The third 
 
 Every lab opens with the problem. Case 1 is always the naive way, and it fails on purpose. Add `--naive` to run a whole lab that way.
 
+## The short way
+
+You do not need to type a file name. Use the lab number or a word from its name.
+
+```bash
+bun run lab
+bun run lab 7 demo
+bun run lab guardrails naive
+bun run lab 1 live --question "Is Zorbex safe for children?"
+```
+
+Expect: the first line lists every lab by track. The others run one lab. The words `demo`, `naive` and `live` mean the same as `--demo`, `--naive` and `--live`.
+
+Every run starts with a "You are here" line. It names the track and the labs before and after.
+
 ## Use a real model
 
 The labs run offline on a pretend model. To use a real one, add `--live` to any command.

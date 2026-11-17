@@ -1,7 +1,7 @@
 // A TINY MCP SERVER. You do not need to read this file. Lab 7 reads the CLIENT side.
 // MCP is JSON messages over standard input and output, one message per line.
 // This server knows four methods: initialize, tools/list, tools/call and one notification.
-// It reads every line from its input, answers each request, and exits when the input ends.
+// It answers each line as soon as it arrives, and exits when the input ends.
 import { searchApprovedDocs } from "../labs/01-agent-loop";
 import { CRM, EMAILS } from "./data";
 
@@ -64,8 +64,16 @@ function handle(message: { id?: number; method: string; params?: any }) {
   return { jsonrpc: "2.0", id, error: { code: -32601, message: `Unknown method: ${message.method}` } };
 }
 
-for (const line of (await Bun.stdin.text()).split("\n")) {
-  if (line.trim() === "") continue;
-  const reply = handle(JSON.parse(line));
-  if (reply) console.log(JSON.stringify(reply));
+// Answer each line as soon as it arrives, so a client can keep the server open.
+// A real MCP client waits for the answer before it closes the input.
+let waiting = "";
+for await (const chunk of Bun.stdin.stream()) {
+  waiting += new TextDecoder().decode(chunk);
+  const lines = waiting.split("\n");
+  waiting = lines.pop() || "";
+  for (const line of lines) {
+    if (line.trim() === "") continue;
+    const reply = handle(JSON.parse(line));
+    if (reply) console.log(JSON.stringify(reply));
+  }
 }
