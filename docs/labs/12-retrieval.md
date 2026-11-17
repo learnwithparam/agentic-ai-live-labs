@@ -8,7 +8,7 @@ The model cannot read every document. If we send the wrong chunk, it answers fro
 
 ## New words
 
-chunk = a small piece of a document. score = how well a chunk matches the question. retrieval = finding the best chunks to send.
+chunk = a small piece of a document. score = how well a chunk matches the question (BM25, the standard word ranking). retrieval = finding the best chunks to send.
 
 ## Run it
 
@@ -57,7 +57,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Score with embeddings as well as words, and log which chunk ids were sent on every answer.
+Add embeddings to the word score, and log which chunk ids were sent on every answer.
 
 ## Read the code
 

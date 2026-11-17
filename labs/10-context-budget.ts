@@ -16,6 +16,7 @@
 
 import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";
+import { decode, encode } from "gpt-tokenizer/encoding/o200k_base";
 
 // A part of the prompt. "must" parts are never dropped.
 export type Part = { name: string; text: string; must: boolean };
@@ -46,47 +47,50 @@ export function askWithinBudget(parts: Part[], budget: number, callLlm: CallLlm)
   return { built, reply: text, log };
 }
 
-// A rough count: one token is about four letters. Real systems use the model's own counter.
+// A real token count. The tokenizer runs on this machine, so it needs no key.
+// Each model has its own tokenizer. A count for another model is close, but not exact.
 export function countTokens(text: string): number {
-  return Math.ceil(text.length / 4);
+  return encode(text).length;
+}
+
+function join(parts: Part[], keep: Record<string, boolean>): string {
+  let prompt = "";
+  for (const part of parts) if (keep[part.name]) prompt += part.text + "\n";
+  return prompt;
 }
 
 // Keep the must parts. Then add the other parts in order, and drop any that no longer fit.
+// Each count is of the whole prompt, because tokens do not add up part by part.
 export function buildPrompt(parts: Part[], budget: number): Built {
-  let used = 0;
   const keep: Record<string, boolean> = {};
-  for (const part of parts) {
-    if (!part.must) continue;
-    used += countTokens(part.text);
-    keep[part.name] = true;
+  for (const part of parts) if (part.must) keep[part.name] = true;
+  if (countTokens(join(parts, keep)) > budget) {
+    return { prompt: "", used: countTokens(join(parts, keep)), kept: [], dropped: [], fits: false };
   }
-  if (used > budget) return { prompt: "", used, kept: [], dropped: [], fits: false };
 
   for (const part of parts) {
     if (part.must) continue;
-    const cost = countTokens(part.text);
-    if (used + cost > budget) continue;
-    used += cost;
     keep[part.name] = true;
+    const tryIt = join(parts, keep);
+    if (countTokens(tryIt) > budget) keep[part.name] = false;
   }
 
   const kept: string[] = [];
   const dropped: string[] = [];
-  let prompt = "";
   for (const part of parts) {
-    if (keep[part.name]) {
-      kept.push(part.name);
-      prompt += part.text + "\n";
-    } else dropped.push(part.name);
+    if (keep[part.name]) kept.push(part.name);
+    else dropped.push(part.name);
   }
-  return { prompt, used, kept, dropped, fits: true };
+  const prompt = join(parts, keep);
+  return { prompt, used: countTokens(prompt), kept, dropped, fits: true };
 }
 
 // The naive way: join everything and let the window cut the oldest text, which comes first.
 export function naiveWindow(parts: Part[], budget: number): string {
   let all = "";
   for (const part of parts) all += part.text + "\n";
-  return all.slice(Math.max(0, all.length - budget * 4));
+  const tokens = encode(all);
+  return decode(tokens.slice(Math.max(0, tokens.length - budget)));
 }
 
 // Run the lab from the command line. The examples and the screen output are in the show file.

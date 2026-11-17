@@ -1,6 +1,6 @@
 import { expect, test } from "bun:test";
 import { CHUNKS } from "../../src/chunks";
-import { MINIMUM_SCORE, MOST_HITS, retrieve } from "../../labs/12-retrieval";
+import { MINIMUM_WORDS, MOST_HITS, retrieve } from "../../labs/12-retrieval";
 
 const questions = [
   "What is the dose of Cardioza?", "What are the side effects of Cardioza?", "Neurovex dose and Cardioza dose",
@@ -16,7 +16,7 @@ test("lab 12: every hit is from the right country, strong, few and sorted", () =
       expect(found.hits.length).toBeLessThanOrEqual(MOST_HITS);
       for (const hit of found.hits) {
         expect(hit.chunk.country).toBe(country);
-        expect(hit.score).toBeGreaterThanOrEqual(MINIMUM_SCORE);
+        expect(hit.words).toBeGreaterThanOrEqual(MINIMUM_WORDS);
       }
       for (let index = 1; index < found.hits.length; index++) {
         expect(found.hits[index - 1].score).toBeGreaterThanOrEqual(found.hits[index].score);

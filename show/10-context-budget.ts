@@ -30,7 +30,7 @@ export const lab: Lab = {
   title: "Lab 10: the context budget",
   about:
     "Each example builds the prompt for one question under a token budget. Use --window 80 to change the budget. The prompt holds rules, a doctor note, documents, chat history and the question.",
-  terms: "context window = the most text a model reads at once. token = a small piece of text, about four letters. budget = the tokens we allow ourselves.",
+  terms: "context window = the most text a model reads at once. token = a small piece of text, counted by a real tokenizer (o200k). budget = the tokens we allow ourselves.",
   challenge: "A prompt grows every turn. When it passes the window, something is cut, and nobody chooses what.",
   promise: "The prompt never passes the budget, and the rules and the question are never dropped.",
   production: "Count with the model's own counter. Keep a reserve for the reply. Log what was dropped on every call.",
@@ -38,7 +38,7 @@ export const lab: Lab = {
     { title: "NAIVE: let the window cut the oldest text", why: "The rules come first, so they are the oldest text. When the window is full, they are the first thing cut. The model now answers with no rules.", question: "What is the dose of Cardioza?", flags: { naive: "true", window: "60" }, expect: "rules-lost" },
     { title: "Plenty of room", why: "Everything fits, so everything is sent.", question: "What is the dose of Cardioza?", flags: { window: "200" }, expect: "all-fit" },
     { title: "A tighter window", why: "The chat history is the least useful part, so it goes first.", question: "What is the dose of Cardioza?", flags: { window: "70" }, expect: "dropped: history" },
-    { title: "A tight window", why: "The documents also stop fitting. We keep the rules, the question and the small doctor note. The model has to refuse, which is safe.", question: "What is the dose of Cardioza?", flags: { window: "40" }, expect: "dropped: documents, history" },
+    { title: "A tight window", why: "The documents also stop fitting. We keep the rules, the question and the small doctor note. The model has to refuse, which is safe.", question: "What is the dose of Cardioza?", flags: { window: "50" }, expect: "dropped: documents, history" },
     { title: "Two drugs, bigger documents", why: "Two documents are larger. The window drops the history and then the documents, and the doctor note survives.", question: "What are the doses of Cardioza and Neurovex?", flags: { window: "60" }, expect: "dropped: documents, history" },
     { title: "The must parts do not fit", why: "A budget of 10 cannot hold the rules and the question. We say so. We never send a prompt without its rules.", question: "What is the dose of Cardioza?", flags: { window: "10" }, expect: "too-small" },
     { title: "A very long question", why: "The question alone is bigger than the window. The doctor must shorten it. We do not cut it for them.", question: "What is the dose of Cardioza? " + "Please tell me more about it. ".repeat(20), flags: { window: "80" }, expect: "too-small" },

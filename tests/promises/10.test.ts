@@ -17,7 +17,7 @@ test("lab 10: every budget gives a prompt that fits, with the must parts inside"
       expect(built.prompt).toBe("");
       continue;
     }
-    expect(countTokens(built.prompt.replaceAll("\n", ""))).toBeLessThanOrEqual(budget);
+    expect(countTokens(built.prompt)).toBeLessThanOrEqual(budget);
     expect(built.kept).toContain("rules");
     expect(built.kept).toContain("question");
   }

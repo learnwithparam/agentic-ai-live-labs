@@ -12,10 +12,10 @@ export const lab: Lab = {
   title: "Lab 12: retrieval",
   about:
     "Each example is a question about a drug. Six invented chunks are searched. Use --country DE for a German doctor. Only chunks from the doctor's country are searched.",
-  terms: "chunk = a small piece of a document. score = how well a chunk matches the question. retrieval = finding the best chunks to send.",
+  terms: "chunk = a small piece of a document. score = how well a chunk matches the question (BM25, the standard word ranking). retrieval = finding the best chunks to send.",
   challenge: "The model cannot read every document. If we send the wrong chunk, it answers from the wrong source.",
   promise: "Only chunks from the doctor's country, with a strong score, are returned. Otherwise we say there is no source.",
-  production: "Score with embeddings as well as words, and log which chunk ids were sent on every answer.",
+  production: "Add embeddings to the word score, and log which chunk ids were sent on every answer.",
   cases: [
     { title: "NAIVE: best chunk from anywhere", why: "A German doctor asks for the dose. Two chunks match equally well and the US chunk comes first. The doctor gets the US dose.", question: "What is the dose of Cardioza?", flags: { naive: "true", country: "DE" }, expect: "wrong-country" },
     { title: "A US doctor asks for a dose", why: "The right chunk matches on two words. The side effects chunk matches on only one, so it stays out.", question: "What is the dose of Cardioza?", flags: { country: "US" }, expect: "found" },
@@ -46,7 +46,7 @@ export const lab: Lab = {
 };
 
 function showHit(hit: Hit) {
-  console.log(`${badgeGreen(`score ${hit.score}`)} ${dim(`${hit.chunk.id} ${hit.chunk.country}`)} ${green(hit.chunk.text)}`);
+  console.log(`${badgeGreen(`${hit.words} words, score ${hit.score}`)} ${dim(`${hit.chunk.id} ${hit.chunk.country}`)} ${green(hit.chunk.text)}`);
 }
 
 function showNaive(question: string, country: string): string {
