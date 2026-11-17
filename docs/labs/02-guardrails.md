@@ -39,8 +39,8 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 2 | Name, social security number and phone | The classic case. All three are hidden, and the model only ever sees the tokens. | 3 masked, passed | `bun labs/02-guardrails.ts --demo` |
 | 3 | Email, record number and birth date | Other formats the input guardrail knows about. | 3 masked, passed | `bun labs/02-guardrails.ts --demo` |
 | 4 | Nothing private | A clean question passes through unchanged. No false alarms. | 0 masked, passed | `bun labs/02-guardrails.ts --question "What is the dose of Cardioza?"` |
-| 5 | EDGE: a number format we do not know | The SSN has no dashes, so our rule misses it and it stays in the note. This is the limit of rule-based hiding. Real systems add a trained detector and a review step. | 0 masked, passed | `bun labs/02-guardrails.ts --demo` |
-| 6 | EDGE: a name with no label | We only catch names that follow 'Patient:'. A bare name goes straight through. | 0 masked, passed | `bun labs/02-guardrails.ts --question "Jane Doe takes Cardioza, what is the dose?"` |
+| 5 | An SSN with no dashes | The SSN has no dashes, and a second rule still finds it after the word SSN. | 1 masked, passed | `bun labs/02-guardrails.ts --demo` |
+| 6 | A name with no label | No 'Patient:' comes before the name. The language library still finds it and hides it. | 1 masked, passed | `bun labs/02-guardrails.ts --question "Jane Doe takes Cardioza, what is the dose?"` |
 | 7 | Reply with no citation | This model gives the right fact but forgets the source tag. The output guardrail blocks it anyway. An uncited claim never goes out. | 0 masked, blocked | `bun labs/02-guardrails.ts --question "What is the dose of Cardioza?" --model nocite` |
 | 8 | No approved source, so no citation | The model refuses, and a refusal has no citation either. The guardrail blocks it. In lab 3 that sends it to a person. | 0 masked, blocked | `bun labs/02-guardrails.ts --question "What is the dose of Zorbex?"` |
 | 9 | EDGE: wrong dose, valid citation | The model says 20mg and cites the real document. A citation check cannot see that the claim is wrong. Only a check of the claim itself can. That is lab 4. | 0 masked, passed | `bun labs/02-guardrails.ts --question "What is the dose of Cardioza?" --model invent` |
@@ -57,7 +57,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Rules catch only the formats you wrote. Add a trained detector and a person to review what it misses. Never log the raw note.
+Rules catch only the formats you wrote, and the name finder can miss a rare name. Add a person to review what slips through. Never log the raw note.
 
 ## Read the code
 

@@ -100,6 +100,6 @@ For example, if you remove the audit line in lab 37, the audit test must fail. I
 
 ## What this does not do
 
-- Hiding private data uses patterns. It finds the formats it knows and nothing else.
+- Hiding private data uses patterns and a language library. A rare format or an odd name can still slip through.
 - The auditor compares each cited sentence word for word. A real system may use a second model.
 - The pretend model follows rules. It is a stand-in, so use `--live` to see a real model.
