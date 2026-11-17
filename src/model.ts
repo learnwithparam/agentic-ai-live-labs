@@ -38,6 +38,7 @@ export function makeModel(behaviour: Behaviour = "ok"): CallLlm {
     if (first.startsWith("SHELL:")) return { text: shellFor(first) };
     if (first.startsWith("CALL:")) return { text: writeCall(first) };
     if (first.startsWith("AUDIT:")) return { text: audit(first) };
+    if (first.startsWith("ACT:")) return { text: actFor(first) };
     if (first.startsWith("REVIEW:")) return { text: "Looks good. The draft is fine." };
     if (first.startsWith("FIX:")) return { text: fix(first, behaviour) };
 
@@ -116,6 +117,16 @@ function shellFor(prompt: string): string {
   if (task.includes("delete") || task.includes("remove")) return "rm notes.txt";
   if (task.includes("dose") || task.includes("read")) return "cat doses.txt";
   return "ls";
+}
+
+// A model asked which tools a request needs. It lists a tool for each thing the doctor asked.
+function actFor(prompt: string): string {
+  const question = (prompt.split("Question: ")[1] || "").toLowerCase();
+  const tools: string[] = [];
+  if (question.includes("crm")) tools.push("read_crm");
+  else tools.push("search_approved_docs");
+  if (question.includes("email")) tools.push("send_email");
+  return tools.join("\n");
 }
 
 // A model asked to pick a tool. It reads each tool note. If a note holds an order, it obeys.
