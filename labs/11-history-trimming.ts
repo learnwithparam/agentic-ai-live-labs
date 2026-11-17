@@ -19,26 +19,54 @@
 import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";
 
-// One turn of the chat. A fact is a turn we must never lose.
-// In production the agent saves a fact with a tool (lab 34). Here we mark it by hand.
+// One turn of the chat. A fact is a turn we must never lose. The model decides which turns are facts.
 export type Turn = { text: string; fact: boolean };
 export type Trimmed = { kept: Turn[]; dropped: number; note: string };
 
 export type Replied = { kept: Turn[]; reply: string; log: string[] };
 
-// Trim the chat, then let the model answer the last question from what is left. Read the steps in order.
+// Pin the facts, trim the chat, then answer the last question. Read the steps in order.
 export function replyAfterTrim(turns: Turn[], keepLast: number, callLlm: CallLlm): Replied {
-  // Step 1: trim the chat. Pinned facts and the last few turns stay.
-  const trimmed = trimHistory(turns, keepLast);
-  const log = [`Step 1: kept ${trimmed.kept.length} of ${turns.length} turns. ${trimmed.note}`];
+  // Step 1: ask the model about each old turn. Is it a lasting fact? The last turns stay anyway.
+  const pinned = pinFacts(turns, keepLast, callLlm);
+  const found = countFacts(pinned);
+  const log = [`Step 1: the model pinned ${found} facts out of ${turns.length} turns.`];
 
-  // Step 2: the model reads what is left, and answers the last question.
+  // Step 2: trim the chat. Pinned facts and the last few turns stay.
+  const trimmed = trimHistory(pinned, keepLast);
+  log.push(`Step 2: kept ${trimmed.kept.length} of ${turns.length} turns. ${trimmed.note}`);
+
+  // Step 3: the model reads what is left, and answers the last question.
   const lines: string[] = [];
   for (const turn of trimmed.kept) lines.push(turn.text);
   const prompt = `CHAT: Answer the last question from this chat only.\n${lines.join("\n")}`;
   const reply = (callLlm([{ role: "user", content: prompt }], []).text || "").trim();
-  log.push(`Step 2: the model wrote: ${reply}`);
+  log.push(`Step 3: the model wrote: ${reply}`);
   return { kept: trimmed.kept, reply, log };
+}
+
+function countFacts(turns: Turn[]): number {
+  let found = 0;
+  for (const turn of turns) if (turn.fact) found += 1;
+  return found;
+}
+
+// Ask the model about one old turn at a time. Is the turn a fact that later answers need?
+export function pinFacts(turns: Turn[], keepLast: number, callLlm: CallLlm): Turn[] {
+  const firstRecent = turns.length - keepLast;
+  const result: Turn[] = [];
+  for (let index = 0; index < turns.length; index++) {
+    const turn = turns[index];
+    if (index >= firstRecent) {
+      result.push({ text: turn.text, fact: turn.fact });
+      continue;
+    }
+    const question = "Is this turn a lasting fact about the doctor or the patient? Say YES or NO.";
+    const prompt = `PIN: ${question}\nTURN: ${turn.text}`;
+    const said = (callLlm([{ role: "user", content: prompt }], []).text || "").toUpperCase();
+    result.push({ text: turn.text, fact: said.startsWith("YES") });
+  }
+  return result;
 }
 
 // Keep every pinned fact, and keep the last few turns. Everything else is left out.

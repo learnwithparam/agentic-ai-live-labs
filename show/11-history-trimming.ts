@@ -15,8 +15,8 @@ function chatter(count: number): Turn[] {
   return turns;
 }
 
-const COUNTRY: Turn = { text: "Doctor: I am Dr. Weber. I work in Germany, so use German labels.", fact: true };
-const ALLERGY: Turn = { text: "Doctor: My patient is allergic to penicillin.", fact: true };
+const COUNTRY: Turn = { text: "Doctor: I am Dr. Weber. I work in Germany, so use German labels.", fact: false };
+const ALLERGY: Turn = { text: "Doctor: My patient is allergic to penicillin.", fact: false };
 const FINAL: Turn = { text: "Doctor: Which dose label should I use?", fact: false };
 
 type Scene = { turns: Turn[]; need: string };
@@ -36,10 +36,10 @@ export const lab: Lab = {
   title: "Lab 11: trimming the chat history",
   about:
     "Each example is a chat between a doctor and the agent. The last question needs a fact from the start. Pick a chat by name: short, long, two-facts, no-facts or empty. Use --keep 4 to change how many recent turns stay.",
-  terms: "history = the earlier turns of a chat. trim = leave out old turns. pinned fact = a turn we keep whatever its age.",
+  terms: "history = the earlier turns of a chat. trim = leave out old turns. pinned fact = a turn we keep whatever its age. The model decides which turns are facts.",
   challenge: "A long chat does not fit. Cutting the oldest turns also cuts early facts, like the doctor's country.",
   promise: "Pinned facts and the most recent turns always survive, in order. Nothing else does.",
-  production: "Let the agent save facts with a tool, and write a short summary of the turns left out.",
+  production: "Save each fact when it is said, not at trim time. Write a short summary of the turns left out.",
   cases: [
     { title: "NAIVE: keep only the last turns", why: "The doctor said Germany in the first turn. That turn is old, so it is cut. The agent no longer knows which label to use.", question: ASK, flags: { chat: "long", naive: "true", keep: "4" }, expect: "fact-lost" },
     { title: "A short chat", why: "The chat is shorter than the limit, so nothing is cut.", question: ASK, flags: { chat: "short", keep: "4" }, expect: "nothing-to-trim" },

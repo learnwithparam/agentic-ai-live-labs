@@ -26,6 +26,8 @@ export const BREAKS: Break[] = [
     find: "if (countTokens(tryIt) > budget) keep[part.name] = false;", replace: "if (false) keep[part.name] = false;" },
   { lab: 11, file: "11-history-trimming.ts", rule: "a pinned fact is cut with the old chatter",
     find: "if (turn.fact || index >= firstRecent)", replace: "if (index >= firstRecent)" },
+  { lab: 11, file: "11-history-trimming.ts", rule: "every old turn counts as a fact",
+    find: 'fact: said.startsWith("YES")', replace: "fact: true" },
   { lab: 12, file: "12-retrieval.ts", rule: "a chunk from another country is searched",
     find: "if (chunk.country === country) own.push(chunk)", replace: "own.push(chunk)" },
   { lab: 12, file: "12-retrieval.ts", rule: "a weak match is sent",

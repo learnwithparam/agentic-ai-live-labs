@@ -8,7 +8,7 @@ A long chat does not fit. Cutting the oldest turns also cuts early facts, like t
 
 ## New words
 
-history = the earlier turns of a chat. trim = leave out old turns. pinned fact = a turn we keep whatever its age.
+history = the earlier turns of a chat. trim = leave out old turns. pinned fact = a turn we keep whatever its age. The model decides which turns are facts.
 
 ## Run it
 
@@ -55,7 +55,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Let the agent save facts with a tool, and write a short summary of the turns left out.
+Save each fact when it is said, not at trim time. Write a short summary of the turns left out.
 
 ## Read the code
 

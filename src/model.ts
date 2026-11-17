@@ -29,6 +29,7 @@ export function makeModel(behaviour: Behaviour = "ok"): CallLlm {
     if (first.startsWith("RULES:")) return { text: rulesFor(first) };
     if (first.startsWith("CONTEXT:")) return { text: contextFor(first) };
     if (first.startsWith("CHUNKS:")) return { text: chunksFor(first) };
+    if (first.startsWith("PIN:")) return { text: pinFor(first) };
     if (first.startsWith("CHAT:")) return { text: chatFor(first) };
     if (first.startsWith("ANSWER:")) return { text: answerFrom(first) };
     if (first.startsWith("DRUG:")) return { text: drugFor(first) };
@@ -189,6 +190,14 @@ function answerFrom(prompt: string): string {
 }
 
 // A model asked a question about a chat. It can use only the turns it was shown.
+// A model asked if a chat turn is a lasting fact. It says YES for a country, a role or an allergy.
+function pinFor(prompt: string): string {
+  const turn = prompt.split("TURN: ")[1] ?? "";
+  const lasting = ["I work in", "I am Dr", "allergic", "I practise"];
+  for (const phrase of lasting) if (turn.includes(phrase)) return "YES";
+  return "NO";
+}
+
 function chatFor(prompt: string): string {
   const parts: string[] = [];
   if (prompt.includes("Germany")) parts.push("You work in Germany, so use the German label.");
