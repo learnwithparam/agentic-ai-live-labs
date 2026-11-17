@@ -39,6 +39,7 @@ export function makeModel(behaviour: Behaviour = "ok"): CallLlm {
     if (first.startsWith("CALL:")) return { text: writeCall(first) };
     if (first.startsWith("AUDIT:")) return { text: audit(first) };
     if (first.startsWith("ACT:")) return { text: actFor(first) };
+    if (first.startsWith("ROUTE:")) return { text: routeFor(first) };
     if (first.startsWith("REVIEW:")) return { text: "Looks good. The draft is fine." };
     if (first.startsWith("FIX:")) return { text: fix(first, behaviour) };
 
@@ -120,6 +121,15 @@ function shellFor(prompt: string): string {
 }
 
 // A model asked which tools a request needs. It lists a tool for each thing the doctor asked.
+// A model asked to route a message. It answers with one word, and "billing" is not on the list.
+function routeFor(prompt: string): string {
+  const message = (prompt.split("Message: ")[1] || "").toLowerCase();
+  if (message.includes("email")) return "outreach";
+  if (message.includes("dose")) return "answer";
+  if (message.includes("invoice")) return "billing";
+  return "human";
+}
+
 function actFor(prompt: string): string {
   const question = (prompt.split("Question: ")[1] || "").toLowerCase();
   const tools: string[] = [];
