@@ -1,5 +1,5 @@
 // Finds private pieces in a note with regular expressions. They suit ids that have a fixed shape.
-// Lab 2 uses it. Each rule has a name, a token to put in its place, and a pattern.
+// The guardrails lab uses it. Each rule has a name, a token to put in its place, and a pattern.
 // Names have no fixed shape. A rule catches a name after "Patient:".
 // A language library, compromise, finds the other names. A doctor's name stays.
 

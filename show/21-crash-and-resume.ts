@@ -1,4 +1,4 @@
-// What you see on screen for lab 21: the examples and the printing.
+// What you see on screen for the crash and resume lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/21-crash-and-resume.ts.
 // Each run is a real child program. A kill is a real SIGKILL, so nothing in it gets to clean up.
 
@@ -24,7 +24,7 @@ const SCENARIOS: Record<string, string[]> = {
 
 export const lab: Lab = {
   file: "21-crash-and-resume.ts",
-  title: "Lab 21: crash and resume",
+  title: "Crash and resume",
   about:
     "Each example emails three doctors. Some examples kill the program part way, for real, and start it again. Pick one with --scenario: naive, clean, resume, between or done.",
   terms: "ledger = a list of finished steps on disk. idempotency key = a name for one send, so it happens once. resume = start again and carry on. SIGKILL = a kill the program cannot catch.",

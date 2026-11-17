@@ -1,4 +1,4 @@
-// What you see on screen for lab 19: the examples and the printing.
+// What you see on screen for the run state lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/19-run-state.ts.
 
 import { modelFrom, type Flags, type Lab } from "../src/runner";
@@ -11,7 +11,7 @@ const DOSE = "What is the dose of Cardioza?";
 
 export const lab: Lab = {
   file: "19-run-state.ts",
-  title: "Lab 19: run state",
+  title: "Run state",
   about:
     "Each example is one run of the agent. Afterwards we read the run record back from disk, the way another person or program would.",
   terms: "run = one job from start to end. run record = a file with the run's id, status and steps. stalled = running, but quiet for too long.",

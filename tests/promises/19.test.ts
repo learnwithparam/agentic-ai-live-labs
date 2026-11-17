@@ -17,7 +17,7 @@ const model = makeModel();
 
 // PROMISE: every run has a record from its first step, saved after every step.
 // A failed run says why. A run that went quiet reads as stalled.
-test("lab 19: the record is on disk after each step, before the run ends", () => {
+test("the record is on disk after each step, before the run ends", () => {
   const run = openRun("What is the dose of Cardioza?", 1000);
   expect(loadRun(run.id)).toMatchObject({ status: "running", steps: [] });
   addStep(run, "search", "done", "found", 2000);
@@ -25,7 +25,7 @@ test("lab 19: the record is on disk after each step, before the run ends", () =>
   expect(loadRun(run.id)?.updatedAt).toBe(2000);
 });
 
-test("lab 19: a finished run reads back done, and a failed run keeps its reason", () => {
+test("a finished run reads back done, and a failed run keeps its reason", () => {
   const done = runWithRecord("What is the dose of Cardioza?", "US", model);
   expect(loadRun(done.id)).toMatchObject({ status: "done" });
   expect(loadRun(done.id)?.steps.map((step) => step.name)).toEqual(["search", "answer"]);
@@ -36,7 +36,7 @@ test("lab 19: a finished run reads back done, and a failed run keeps its reason"
   expect(whatIsItDoing("R-nothing")).toBe("no run named R-nothing");
 });
 
-test("lab 19: a running record with no news for too long is stalled", () => {
+test("a running record with no news for too long is stalled", () => {
   const run = openRun("What is the dose of Cardioza?", 0);
   expect(describeRun(run, 10_000)).toBe("running: 0 steps so far");
   expect(describeRun(run, (STALL_SECONDS + 1) * 1000)).toContain("stalled");

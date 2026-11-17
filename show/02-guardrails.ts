@@ -1,4 +1,4 @@
-// What you see on screen for lab 2: the examples and the printing.
+// What you see on screen for the guardrails lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/02-guardrails.ts.
 
 import { modelFrom, type Lab } from "../src/runner";
@@ -8,7 +8,7 @@ import { answerSafely, answerUnguarded } from "../labs/02-guardrails";
 
 export const lab: Lab = {
   file: "02-guardrails.ts",
-  title: "Lab 2: guardrails and private details",
+  title: "Guardrails and private details",
   about:
     "Each example is a note from a doctor. The input guardrail hides private details before the model reads the note. The output guardrail blocks any reply with no approved source.",
   terms: "PHI = private health details, like a name or a record number. token = a label such as [SSN] that stands in for a private piece. guardrail = a check in plain code, before or after the model.",
@@ -23,8 +23,8 @@ export const lab: Lab = {
     { title: "An SSN with no dashes", why: "The SSN has no dashes, and a second rule still finds it after the word SSN.", question: "Patient has SSN 123456789 and takes Cardioza, dose?", expect: "1 masked, passed" },
     { title: "A name with no label", why: "No 'Patient:' comes before the name. The language library still finds it and hides it.", question: "Jane Doe takes Cardioza, what is the dose?", expect: "1 masked, passed" },
     { title: "Reply with no citation", why: "This model gives the right fact but forgets the source tag. The output guardrail blocks it anyway. An uncited claim never goes out.", question: "What is the dose of Cardioza?", flags: { model: "nocite" }, expect: "0 masked, blocked" },
-    { title: "No approved source, so no citation", why: "The model refuses, and a refusal has no citation either. The guardrail blocks it. In lab 3 that sends it to a person.", question: "What is the dose of Zorbex?", expect: "0 masked, blocked" },
-    { title: "EDGE: wrong dose, valid citation", why: "The model says 20mg and cites the real document. A citation check cannot see that the claim is wrong. Only a check of the claim itself can. That is lab 4.", question: "What is the dose of Cardioza?", flags: { model: "invent" }, expect: "0 masked, passed" },
+    { title: "No approved source, so no citation", why: "The model refuses, and a refusal has no citation either. The guardrail blocks it. In the gates lab that sends it to a person.", question: "What is the dose of Zorbex?", expect: "0 masked, blocked" },
+    { title: "EDGE: wrong dose, valid citation", why: "The model says 20mg and cites the real document. A citation check cannot see that the claim is wrong. Only a check of the claim itself can. That is the shapes lab.", question: "What is the dose of Cardioza?", flags: { model: "invent" }, expect: "0 masked, passed" },
   ],
   play(note, flags) {
     const country = flags.country || "US";

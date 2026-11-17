@@ -1,4 +1,4 @@
-// Six invented chunks of approved documents, used by lab 12.
+// Six invented chunks of approved documents. The retrieval lab uses them.
 
 import type { Chunk } from "../labs/12-retrieval";
 

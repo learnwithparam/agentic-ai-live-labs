@@ -1,4 +1,4 @@
-// Lab 18: Check the draft, then fix it
+// Check the draft, then fix it
 //
 // Dr. Lee asks for the Cardioza dose. The model writes a draft. The draft might be wrong.
 // So we check the draft before we show it. If it is wrong, the model gets two tries to fix it.
@@ -6,16 +6,16 @@
 // The pretend model and the screen output are in show/18-reflect-and-fix.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/18-reflect-and-fix.ts --question "What is the dose of Cardioza?" --model invent --naive
-//   bun labs/18-reflect-and-fix.ts --question "What is the dose of Cardioza?"
-//   bun labs/18-reflect-and-fix.ts --question "What is the dose of Cardioza?" --model nocite
-//   bun labs/18-reflect-and-fix.ts --question "What is the dose of Cardioza?" --model invent
-//   bun labs/18-reflect-and-fix.ts --demo
+//   bun run lab reflect-and-fix --question "What is the dose of Cardioza?" --model invent --naive
+//   bun run lab reflect-and-fix --question "What is the dose of Cardioza?"
+//   bun run lab reflect-and-fix --question "What is the dose of Cardioza?" --model nocite
+//   bun run lab reflect-and-fix --question "What is the dose of Cardioza?" --model invent
+//   bun run lab reflect-and-fix --demo
 
 import { NO_DOC } from "../src/data";
 import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";
-import { runAgentLoop, searchApprovedDocs } from "./01-agent-loop"; // lab 1
+import { runAgentLoop, searchApprovedDocs } from "./01-agent-loop";
 import { findProblems } from "../src/draft-check"; // the check in Step 4
 
 export const MOST_ROUNDS = 2;
@@ -39,7 +39,7 @@ export function answerWithCheck(
     return { outcome: "no-source", draft: "", problems: [], log };
   }
 
-  // Step 3: the model writes a first draft (lab 1's agent loop).
+  // Step 3: the model writes a first draft (the agent loop's agent loop).
   let draft = runAgentLoop(question, country, callLlm).answer;
   log.push(`Step 3: the model wrote a draft. ${draft}`);
 

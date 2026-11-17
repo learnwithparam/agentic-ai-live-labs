@@ -1,4 +1,4 @@
-// The files a job keeps on disk for lab 21.
+// The files a job keeps on disk for the crash and resume lab.
 // The ledger lists every step that finished. The outbox holds every email that was sent.
 // A line is forced to disk before we go on. So a kill cannot lose a line we already wrote.
 

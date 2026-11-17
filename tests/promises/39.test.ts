@@ -10,7 +10,7 @@ const fresh = () => mkdtempSync(`${tmpdir()}/t39-`);
 
 // PROMISE: a withdrawn document is never sent, from the cache or from a fresh answer.
 // A US answer never reaches Germany.
-test("lab 39: the second ask comes from the cache while the document is approved", () => {
+test("the second ask comes from the cache while the document is approved", () => {
   const dir = fresh();
   expect(answerChecked(ASK, "US", ok, dir).source).toBe("fresh");
   const second = answerChecked(ASK, "US", ok, dir);
@@ -18,7 +18,7 @@ test("lab 39: the second ask comes from the cache while the document is approved
   expect(second.answer).toContain("10mg");
 });
 
-test("lab 39: a withdrawn document is never served from the cache", () => {
+test("a withdrawn document is never served from the cache", () => {
   const dir = fresh();
   answerChecked(ASK, "US", ok, dir);
   withdraw(dir, "DOC-101", "The label changed.");
@@ -28,14 +28,14 @@ test("lab 39: a withdrawn document is never served from the cache", () => {
   expect(second.source).toBe("none");
 });
 
-test("lab 39: a withdrawal for another country leaves the saved answer alone", () => {
+test("a withdrawal for another country leaves the saved answer alone", () => {
   const dir = fresh();
   answerChecked(ASK, "US", ok, dir);
   withdraw(dir, "DOC-102", "The label changed.");
   expect(answerChecked(ASK, "US", ok, dir).source).toBe("cache");
 });
 
-test("lab 39: a document withdrawn during the run is caught before the send", () => {
+test("a document withdrawn during the run is caught before the send", () => {
   const dir = fresh();
   const hook = () => withdraw(dir, "DOC-101", "The label changed.");
   const result = answerChecked(ASK, "US", ok, dir, hook);
@@ -45,7 +45,7 @@ test("lab 39: a document withdrawn during the run is caught before the send", ()
   expect(again.answer).not.toContain("10mg");
 });
 
-test("lab 39: a US answer in the cache is never given to a German doctor", () => {
+test("a US answer in the cache is never given to a German doctor", () => {
   const dir = fresh();
   answerChecked(ASK, "US", ok, dir);
   const german = answerChecked(ASK, "DE", ok, dir);
@@ -53,13 +53,13 @@ test("lab 39: a US answer in the cache is never given to a German doctor", () =>
   expect(german.answer).not.toContain("10mg");
 });
 
-test("lab 39: the withdrawal stays in the list with its reason", () => {
+test("the withdrawal stays in the list with its reason", () => {
   const dir = fresh();
   withdraw(dir, "DOC-101", "The label changed.");
   expect(withdrawnIds(dir)).toEqual(["DOC-101"]);
 });
 
-test("lab 39: the naive cache serves the withdrawn dose", () => {
+test("the naive cache serves the withdrawn dose", () => {
   const dir = fresh();
   answerNaive(ASK, "US", ok, dir);
   withdraw(dir, "DOC-101", "The label changed.");

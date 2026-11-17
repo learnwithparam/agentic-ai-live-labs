@@ -1,4 +1,4 @@
-// Lab 35: Wake the bot and show its work
+// Wake the bot and show its work
 //
 // A bot checks the Cardioza dose for Dr. Lee every day. A webhook also wakes it when a new label is posted.
 // Nobody asks the bot each time, so nobody sees what it did. A tick can run twice. A webhook can arrive twice.
@@ -8,17 +8,17 @@
 // The examples and the screen output are in show/35-wakeups-and-board.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/35-wakeups-and-board.ts --question "Check the Cardioza dose for Dr. Lee every day." --times 0,5 --naive
-//   bun labs/35-wakeups-and-board.ts --question "Check the Cardioza dose for Dr. Lee every day." --times 0,5,25
-//   bun labs/35-wakeups-and-board.ts --question "Check the Cardioza dose when a new label is posted." --events label-7,label-7
-//   bun labs/35-wakeups-and-board.ts --question "Check the Cardioza dose for Dr. Lee every day." --times 0 --fail true
-//   bun labs/35-wakeups-and-board.ts --demo
+//   bun run lab wakeups-and-board --question "Check the Cardioza dose for Dr. Lee every day." --times 0,5 --naive
+//   bun run lab wakeups-and-board --question "Check the Cardioza dose for Dr. Lee every day." --times 0,5,25
+//   bun run lab wakeups-and-board --question "Check the Cardioza dose when a new label is posted." --events label-7,label-7
+//   bun run lab wakeups-and-board --question "Check the Cardioza dose for Dr. Lee every day." --times 0 --fail true
+//   bun run lab wakeups-and-board --demo
 
 import { CRM } from "../src/data";
 import { appendLine, readLines } from "../src/jobs";
 import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";
-import { runAgentLoop } from "./01-agent-loop"; // lab 1
+import { runAgentLoop } from "./01-agent-loop";
 
 export type Card = { key: string; name: string; status: string; at: number; note: string };
 export type Event = { id: string; hcpId: string; question: string };
@@ -53,7 +53,7 @@ function runCard(task: Task, now: number, callLlm: CallLlm, file: string): Card 
   // Step 4: write the card first. A crash then leaves a card that says running.
   appendLine(file, { key, name, status: "running", at: now, note: "" });
   try {
-    // Step 5: do the work. This is the loop from lab 1.
+    // Step 5: do the work. This is the loop from the agent loop.
     const country = CRM[task.hcp].country;
     const answer = runAgentLoop(task.ask, country, callLlm, undefined, 5, task.hcp).answer;
     return finish({ key, name, status: "done", at: now, note: answer.slice(0, 80) }, file);

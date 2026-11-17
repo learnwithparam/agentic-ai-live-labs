@@ -1,4 +1,4 @@
-// Real child programs for lab 31. We wait in plain code, so we ask the system if a program still runs.
+// Real child programs for the parallel workers lab. We wait in plain code, so we ask the system if a program still runs.
 // (A waiting loop that sleeps cannot hear the program end, so we look at its state instead.)
 
 export type Child = ReturnType<typeof Bun.spawn>;

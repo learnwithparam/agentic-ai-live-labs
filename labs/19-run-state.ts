@@ -1,4 +1,4 @@
-// Lab 19: Run state
+// Run state
 //
 // Dr. Lee asks for the Cardioza dose. The agent works for a while. Then someone asks:
 // "What is run R-7 doing?" With only a printed log, nobody can say. The log is gone.
@@ -8,18 +8,18 @@
 // The examples and the screen output are in show/19-run-state.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/19-run-state.ts --question "What is the dose of Cardioza?" --naive
-//   bun labs/19-run-state.ts --question "What is the dose of Cardioza?"
-//   bun labs/19-run-state.ts --question "Is Zorbex safe for children?"
-//   bun labs/19-run-state.ts --question "What is the dose of Cardioza?" --stalled true
-//   bun labs/19-run-state.ts --question "What is the dose of Cardioza?" --ask true --run R-nothing
-//   bun labs/19-run-state.ts --demo
+//   bun run lab run-state --question "What is the dose of Cardioza?" --naive
+//   bun run lab run-state --question "What is the dose of Cardioza?"
+//   bun run lab run-state --question "Is Zorbex safe for children?"
+//   bun run lab run-state --question "What is the dose of Cardioza?" --stalled true
+//   bun run lab run-state --question "What is the dose of Cardioza?" --ask true --run R-nothing
+//   bun run lab run-state --demo
 
 import { NO_DOC } from "../src/data";
 import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";
 import { loadRun, saveRun } from "../src/runs"; // saving and reading the record
-import { runAgentLoop, searchApprovedDocs } from "./01-agent-loop"; // lab 1
+import { runAgentLoop, searchApprovedDocs } from "./01-agent-loop";
 
 export type RunStep = { n: number; name: string; status: string; note: string; at: number };
 export type Run = {

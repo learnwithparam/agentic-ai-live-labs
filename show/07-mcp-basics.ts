@@ -1,4 +1,4 @@
-// What you see on screen for lab 7: the examples and the printing.
+// What you see on screen for the MCP basics lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/07-mcp-basics.ts.
 
 import { CRM } from "../src/data";
@@ -9,9 +9,9 @@ import { searchOnly } from "../labs/01-agent-loop";
 
 export const lab: Lab = {
   file: "07-mcp-basics.ts",
-  title: "Lab 7: MCP basics",
+  title: "MCP basics",
   about:
-    "The agent from lab 1 gets its tools from a real MCP server, started as a separate program. Nothing is hard-coded. Use --hcp H-1, H-2 or H-3 to pick the doctor.",
+    "The agent gets its tools from a real MCP server. That server runs as a separate program. Nothing is hard-coded. Use --hcp H-1, H-2 or H-3 to pick the doctor.",
   terms: "MCP = a standard way for an agent to find and call tools. server = the program that owns the tools. JSON-RPC = the message format.",
   challenge: "Every new tool means new glue code in every agent. Tool lists go out of date.",
   promise: "The agent learns its tools from the server, so a new server tool needs no agent change.",

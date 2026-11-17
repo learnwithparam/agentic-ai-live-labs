@@ -1,4 +1,4 @@
-// Lab 32: Keep noisy work apart
+// Keep noisy work apart
 //
 // Dr. Lee asks for the Cardioza dose. The document search returns the real answer.
 // It also returns forty old drafts, and they hold wrong doses.
@@ -9,20 +9,20 @@
 // The examples and the screen output are in show/32-subagent-isolation.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/32-subagent-isolation.ts --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1 --naive
-//   bun labs/32-subagent-isolation.ts --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1
-//   bun labs/32-subagent-isolation.ts --question "What is the dose of Cardioza for Dr. Weber?" --hcp H-2
-//   bun labs/32-subagent-isolation.ts --question "What is the dose of Zorbex for Dr. Lee?" --hcp H-1
-//   bun labs/32-subagent-isolation.ts --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1 --model invent
-//   bun labs/32-subagent-isolation.ts --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1 --model stuck
-//   bun labs/32-subagent-isolation.ts --demo
+//   bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1 --naive
+//   bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1
+//   bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Weber?" --hcp H-2
+//   bun run lab subagent-isolation --question "What is the dose of Zorbex for Dr. Lee?" --hcp H-1
+//   bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1 --model invent
+//   bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1 --model stuck
+//   bun run lab subagent-isolation --demo
 
 import { CRM } from "../src/data";
 import { searchWithArchive } from "../src/archive";
 import { findProblems } from "../src/draft-check";
 import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";
-import { runAgentLoop, searchApprovedDocs } from "./01-agent-loop"; // lab 1
+import { runAgentLoop, searchApprovedDocs } from "./01-agent-loop";
 import type { LoopResult, Tool } from "./01-agent-loop";
 
 export const REPORT_LIMIT = 400;

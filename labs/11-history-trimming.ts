@@ -1,4 +1,4 @@
-// Lab 11: Trimming the chat history
+// Trimming the chat history
 //
 // Dr. Weber chats with the agent for a long time. In the first turn, the doctor said: "I work in
 // Germany, so use German labels." Ten turns later comes the question:
@@ -10,11 +10,11 @@
 // The examples and the screen output are in show/11-history-trimming.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/11-history-trimming.ts --question "What is the dose of Cardioza for me?" --chat long --naive --keep 4
-//   bun labs/11-history-trimming.ts --question "What is the dose of Cardioza for me?" --chat short --keep 4
-//   bun labs/11-history-trimming.ts --question "What is the dose of Cardioza for me?" --chat long --keep 4
-//   bun labs/11-history-trimming.ts --question "What is the dose of Cardioza for me?" --chat two-facts --keep 3
-//   bun labs/11-history-trimming.ts --demo
+//   bun run lab history-trimming --question "What is the dose of Cardioza for me?" --chat long --naive --keep 4
+//   bun run lab history-trimming --question "What is the dose of Cardioza for me?" --chat short --keep 4
+//   bun run lab history-trimming --question "What is the dose of Cardioza for me?" --chat long --keep 4
+//   bun run lab history-trimming --question "What is the dose of Cardioza for me?" --chat two-facts --keep 3
+//   bun run lab history-trimming --demo
 
 import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";

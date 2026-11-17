@@ -1,4 +1,4 @@
-// What you see on screen for lab 40: the examples and the printing.
+// What you see on screen for the end-to-end lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/40-end-to-end.ts.
 // Each example sends one note through every guard. The record of the run is checked at the end.
 
@@ -15,7 +15,7 @@ const DOSE = "What is the dose of Cardioza for Dr. Lee?";
 
 export const lab: Lab = {
   file: "40-end-to-end.ts",
-  title: "Lab 40: put it all together",
+  title: "Put it all together",
   about:
     "Each example sends one doctor's note through every guard from the labs before. Use --hcp to pick the doctor. Use --withdraw to withdraw a document first. Use --approve y or n to answer the person's gate.",
   terms: "guard = one check that stops one risk. record = the log of every step, linked so an edit shows. gate = a stop where a person decides.",

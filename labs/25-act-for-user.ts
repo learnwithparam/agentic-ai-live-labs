@@ -1,4 +1,4 @@
-// Lab 25: Act for the user
+// Act for the user
 //
 // Dr. Weber works in Germany. She asks the bot: "What is the Cardioza dose in the US?"
 // The US label says 10mg. The German label says 5mg. She must see the German one.
@@ -9,19 +9,19 @@
 // The examples and the screen output are in show/25-act-for-user.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/25-act-for-user.ts --question "What is the Cardioza dose in the US?" --hcp H-2 --naive
-//   bun labs/25-act-for-user.ts --question "What is the dose of Cardioza?" --hcp H-1
-//   bun labs/25-act-for-user.ts --question "What is the dose of Cardioza?" --hcp H-2
-//   bun labs/25-act-for-user.ts --question "What is the Cardioza dose in the US?" --hcp H-2
-//   bun labs/25-act-for-user.ts --question "What is the dose of Cardioza?" --hcp H-9
-//   bun labs/25-act-for-user.ts --question "What is the dose of Cardioza?" --hcp H-2 --forge true
-//   bun labs/25-act-for-user.ts --demo
+//   bun run lab act-for-user --question "What is the Cardioza dose in the US?" --hcp H-2 --naive
+//   bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp H-1
+//   bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp H-2
+//   bun run lab act-for-user --question "What is the Cardioza dose in the US?" --hcp H-2
+//   bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp H-9
+//   bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp H-2 --forge true
+//   bun run lab act-for-user --demo
 
 import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";
-import { botSecret, issue, verify } from "../src/identity"; // the signed token from lab 24
+import { botSecret, issue, verify } from "../src/identity";
 import { BOT_SCOPES } from "./24-identity-and-scopes"; // what each bot may do
-import { runAgentLoop, searchApprovedDocs } from "./01-agent-loop"; // lab 1
+import { runAgentLoop, searchApprovedDocs } from "./01-agent-loop";
 import type { Tool } from "./01-agent-loop";
 import { CRM } from "../src/data";
 

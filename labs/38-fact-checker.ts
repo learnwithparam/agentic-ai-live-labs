@@ -1,4 +1,4 @@
-// Lab 38: Check every sentence of a draft
+// Check every sentence of a draft
 //
 // A team member writes an email for Dr. Lee. One sentence says Cardioza is safe for children.
 // The email cites an approved document, so it looks fine. But the document never says that.
@@ -10,12 +10,12 @@
 // The examples and the screen output are in show/38-fact-checker.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/38-fact-checker.ts --question "Please check this email draft for Dr. Lee before it goes out." --draft "Hello Dr. Lee. Cardioza is safe for children under 12. [DOC-101] Please call us with questions." --naive
-//   bun labs/38-fact-checker.ts --question "Please check this email draft for Dr. Lee before it goes out." --draft "Hello Dr. Lee. Cardioza is safe for children under 12. [DOC-101] Please call us with questions."
-//   bun labs/38-fact-checker.ts --question "Please check this email draft for Dr. Lee before it goes out." --draft "Hello Dr. Lee. Cardioza standard adult dose is 10mg once daily with food. [DOC-101] Please call us with questions."
-//   bun labs/38-fact-checker.ts --question "Please check this email draft for Dr. Weber before it goes out." --draft "Hello Dr. Weber. Cardioza standard adult dose is 10mg once daily with food. [DOC-101]" --country DE
-//   bun labs/38-fact-checker.ts --question "Please check this email draft for Dr. Lee before it goes out." --draft "Hello Dr. Lee. Cardioza standard adult dose is 10mg once daily with food. [DOC-101] Cardioza also works for headaches. [DOC-101]"
-//   bun labs/38-fact-checker.ts --demo
+//   bun run lab fact-checker --question "Please check this email draft for Dr. Lee before it goes out." --draft "Hello Dr. Lee. Cardioza is safe for children under 12. [DOC-101] Please call us with questions." --naive
+//   bun run lab fact-checker --question "Please check this email draft for Dr. Lee before it goes out." --draft "Hello Dr. Lee. Cardioza is safe for children under 12. [DOC-101] Please call us with questions."
+//   bun run lab fact-checker --question "Please check this email draft for Dr. Lee before it goes out." --draft "Hello Dr. Lee. Cardioza standard adult dose is 10mg once daily with food. [DOC-101] Please call us with questions."
+//   bun run lab fact-checker --question "Please check this email draft for Dr. Weber before it goes out." --draft "Hello Dr. Weber. Cardioza standard adult dose is 10mg once daily with food. [DOC-101]" --country DE
+//   bun run lab fact-checker --question "Please check this email draft for Dr. Lee before it goes out." --draft "Hello Dr. Lee. Cardioza standard adult dose is 10mg once daily with food. [DOC-101] Cardioza also works for headaches. [DOC-101]"
+//   bun run lab fact-checker --demo
 
 import { APPROVED_DOCS, KNOWN_DRUGS } from "../src/data";
 import { citedId, splitSentences, withoutCitation } from "../src/claims";

@@ -1,4 +1,4 @@
-// Lab 2: Guardrails and private details
+// Guardrails and private details
 //
 // Dr. Lee types a note: "Patient: Jane Doe (SSN 123-45-6789) takes Cardioza. What is the dose?"
 // The note holds private details. A model must never read them, and nothing may go out
@@ -7,16 +7,16 @@
 // The examples and the screen output are in show/02-guardrails.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/02-guardrails.ts --question "Call from Dr. Lee about Patient: Jane Doe (SSN 123-45-6789, 555-123-4567) on Cardioza dose" --naive
-//   bun labs/02-guardrails.ts --question "Call from Dr. Lee about Patient: Jane Doe (SSN 123-45-6789, 555-123-4567) on Cardioza dose"
-//   bun labs/02-guardrails.ts --question "What is the dose of Cardioza?" --model nocite
-//   bun labs/02-guardrails.ts --question "What is the dose of Zorbex?"
-//   bun labs/02-guardrails.ts --demo
+//   bun run lab guardrails --question "Call from Dr. Lee about Patient: Jane Doe (SSN 123-45-6789, 555-123-4567) on Cardioza dose" --naive
+//   bun run lab guardrails --question "Call from Dr. Lee about Patient: Jane Doe (SSN 123-45-6789, 555-123-4567) on Cardioza dose"
+//   bun run lab guardrails --question "What is the dose of Cardioza?" --model nocite
+//   bun run lab guardrails --question "What is the dose of Zorbex?"
+//   bun run lab guardrails --demo
 
 import { APPROVED_DOCS } from "../src/data";
 import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";
-import { runAgentLoop } from "./01-agent-loop"; // the loop from lab 1
+import { runAgentLoop } from "./01-agent-loop";
 import { hidePrivate } from "../src/phi";
 
 export type Guarded = {
@@ -36,7 +36,7 @@ export function answerSafely(note: string, country: string, callLlm: CallLlm): G
   log.push(`Step 1: hid ${found.length} private pieces (${labelsOf(found).join(", ")}).`);
   log.push(`        The model will read: ${clean}`);
 
-  // Step 2: let the model answer the clean note. This is the loop from lab 1.
+  // Step 2: let the model answer the clean note. This is the loop from the agent loop.
   const answer = runAgentLoop(clean, country, callLlm).answer;
   log.push(`Step 2: the model wrote a reply: ${answer}`);
 

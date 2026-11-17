@@ -1,10 +1,10 @@
-// The pieces lab 17 uses to write and run a plan.
+// The pieces the plan then act lab uses to write and run a plan.
 
 import type { CallLlm } from "./model";
 import type { Outcome, Plan, Step } from "../labs/17-plan-then-act";
-import { searchApprovedDocs } from "../labs/01-agent-loop"; // the search from lab 1
+import { searchApprovedDocs } from "../labs/01-agent-loop";
 
-// One step. The search is lab 1's search. The draft is written by the model. Email goes to an outbox.
+// One step. The search is the agent loop's search. The draft is written by the model. Email goes to an outbox.
 export function runStep(step: Step, found: string, sent: string[], callLlm: CallLlm): string {
   if (step.tool === "search") return searchApprovedDocs(step.input, "US");
   if (step.tool === "draft") {

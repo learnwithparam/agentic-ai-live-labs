@@ -1,4 +1,4 @@
-// Lab 7: MCP basics
+// MCP basics
 //
 // Dr. Lee asks about Cardioza. Our agent has no tools of its own. It asks a server what tools it has.
 // Then it uses them. MCP is the standard way to do that: messages of JSON in, messages of JSON out.
@@ -7,15 +7,15 @@
 // The examples and the screen output are in show/07-mcp-basics.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/07-mcp-basics.ts --question "What is the dose of Cardioza?" --naive
-//   bun labs/07-mcp-basics.ts --question "What is the dose of Cardioza?" --show wire
-//   bun labs/07-mcp-basics.ts --question "What is the dose of Cardioza?" --hcp H-1
-//   bun labs/07-mcp-basics.ts --question "What is the dose of Cardioza?" --hcp H-2 --country DE
-//   bun labs/07-mcp-basics.ts --demo
+//   bun run lab mcp-basics --question "What is the dose of Cardioza?" --naive
+//   bun run lab mcp-basics --question "What is the dose of Cardioza?" --show wire
+//   bun run lab mcp-basics --question "What is the dose of Cardioza?" --hcp H-1
+//   bun run lab mcp-basics --question "What is the dose of Cardioza?" --hcp H-2 --country DE
+//   bun run lab mcp-basics --demo
 
 import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";
-import { runAgentLoop, type Tool } from "./01-agent-loop"; // the loop from lab 1
+import { runAgentLoop, type Tool } from "./01-agent-loop";
 
 export const SERVER = "src/mcp-server.ts";
 
@@ -36,7 +36,7 @@ export function askWithMcp(
   const log = [`Step 1: the server has these tools: ${names.join(", ") || "none"}.`];
   if (tools.length === 0) return { answer: "", tools: names, log };
 
-  // Step 2: run the loop from lab 1 with those tools. The model picks which to call.
+  // Step 2: run the loop from the agent loop with those tools. The model picks which to call.
   const result = runAgentLoop(question, country, callLlm, tools, 5, hcp);
   for (const line of result.log) log.push(line);
   return { answer: result.answer, tools: names, log };
@@ -94,7 +94,7 @@ export function callMcpTool(name: string, args: object, script = SERVER): string
   return text;
 }
 
-// Turn each tool the server lists into a Tool the loop from lab 1 can use.
+// Turn each tool the server lists into a Tool the loop from the agent loop can use.
 function adapt(name: string, script: string): Tool {
   return { name, run(input) { return callMcpTool(name, input, script); } };
 }

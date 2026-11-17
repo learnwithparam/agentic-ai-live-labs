@@ -1,4 +1,4 @@
-// What you see on screen for lab 14: the examples and the printing.
+// What you see on screen for the instructions vs data lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/14-instructions-vs-data.ts.
 
 import { modelFrom, type Lab } from "../src/runner";
@@ -19,19 +19,19 @@ const ASK = "What is the dose of Cardioza?";
 
 export const lab: Lab = {
   file: "14-instructions-vs-data.ts",
-  title: "Lab 14: instructions versus data",
+  title: "Instructions versus data",
   about:
     "Each example is a document the agent reads. Pick one by name: clean, injected, breakout or subtle. Three of them hide an order.",
   terms: "prompt injection = an order hidden in data. fence = a labelled box that marks text as data. held = taken out of the prompt.",
   challenge: "The model reads rules and documents as one text. A document can give it orders, and nobody notices.",
   promise: "A line with an order never reaches the prompt, and data can never close its own fence.",
-  production: "Fence and scan as here. Also give the agent the fewest tools, and let a person approve risky ones (lab 3).",
+  production: "Fence and scan as here. Also give the agent the fewest tools, and let a person approve risky ones (the gates lab).",
   cases: [
     { title: "NAIVE: paste the data in", why: "The hidden order sits next to the rules and looks the same. The model may obey it.", question: ASK, flags: { document: "injected",  naive: "true" }, expect: "obeyed" },
     { title: "A clean document", why: "No order in it. The data is fenced and nothing is held.", question: ASK, flags: { document: "clean" }, expect: "clean" },
     { title: "A document with an order", why: "The order line is held back. The facts stay, and the agent still answers.", question: ASK, flags: { document: "injected" }, expect: "held" },
     { title: "A document that tries to close the fence", why: "It writes a closing tag, then new rules. We turn the tag into harmless text, so the new rules stay inside the data.", question: ASK, flags: { document: "breakout" }, expect: "fenced" },
-    { title: "EDGE: an order with no order words", why: "No word on our list appears, so the scan sees nothing. This is the limit of a word list. Lab 3's gate and lab 24's scopes are the next defence.", question: ASK, flags: { document: "subtle" }, expect: "slipped" },
+    { title: "EDGE: an order with no order words", why: "No word on our list appears, so the scan sees nothing. This is the limit of a word list. The gates lab's gate and the identity and scopes lab's scopes are the next defence.", question: ASK, flags: { document: "subtle" }, expect: "slipped" },
   ],
   play(question, flags) {
     const name = flags.document || "clean";

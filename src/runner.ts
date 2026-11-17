@@ -4,7 +4,7 @@
 //   (nothing)         interactive menu. Pick an example by number, or type your own question.
 import { makeLiveModel, LIVE_MODEL } from "./live";
 import { makeModel, type Behaviour } from "./model";
-import { whereAmI } from "./roadmap";
+import { slugFromFile, whereAmI } from "./roadmap";
 import { badgeBlue, badgeGreen, badgeRed, bold, box, cyan, dim, field, green } from "./ui";
 import { print, red, rule, wrap, yellow } from "./ui";
 
@@ -44,7 +44,7 @@ export type Lab = {
   file: string;
   title: string;
   about: string;
-  // Optional notes for newer labs. The readable gate requires them from lab 5 on.
+  // Optional notes for newer labs. The readable gate requires them from the tool schema lab on.
   terms?: string;      // 2 to 4 new words, with plain meanings
   challenge?: string;  // the problem this lab solves
   promise?: string;    // what a test proves
@@ -57,7 +57,7 @@ export type Lab = {
 
 // The command a learner can copy to repeat one case.
 export function commandFor(lab: Lab, question: string, flags: Flags = {}): string {
-  let command = `bun labs/${lab.file} --question "${question}"`;
+  let command = `bun run lab ${slugFromFile(lab.file)} --question "${question}"`;
   for (const name in flags) command += flags[name] === "true" ? ` --${name}` : ` --${name} ${shellWord(flags[name])}`;
   return command;
 }
@@ -118,13 +118,12 @@ function runDemo(lab: Lab, base: Flags): boolean {
 }
 
 function runMenu(lab: Lab, flags: Flags) {
-  const number = Number(lab.file.slice(0, 2));
   header(lab);
   console.log(bold("Examples"));
   for (const [index, thisCase] of lab.cases.entries()) {
     console.log(`  ${cyan(String(index + 1).padStart(2))}  ${thisCase.title}`);
   }
-  console.log(dim(`\nTip: bun labs/${lab.file} --demo walks through every example and explains each one.`));
+  console.log(dim(`\nTip: bun run lab ${slugFromFile(lab.file)} --demo walks through every example and explains each one.`));
   while (true) {
     const input = prompt(`\n${badgeBlue("?")} Pick 1-${lab.cases.length}, or type your own question (empty to quit): `);
     if (!input || !input.trim()) return;

@@ -1,4 +1,4 @@
-// Lab 13: Picking what goes in
+// Picking what goes in
 //
 // Dr. Lee asks: "What is the Cardioza dose?" We have three sources of facts: the documents, the
 // doctor's profile, and past emails. This question needs only the documents. Loading all three costs
@@ -8,15 +8,15 @@
 // The examples and the screen output are in show/13-pick-context.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/13-pick-context.ts --question "What is the Cardioza dose?" --naive
-//   bun labs/13-pick-context.ts --question "What is the Cardioza dose?"
-//   bun labs/13-pick-context.ts --question "Which email was sent to me last?"
-//   bun labs/13-pick-context.ts --question "Given my profile, what is the label?"
-//   bun labs/13-pick-context.ts --demo
+//   bun run lab pick-context --question "What is the Cardioza dose?" --naive
+//   bun run lab pick-context --question "What is the Cardioza dose?"
+//   bun run lab pick-context --question "Which email was sent to me last?"
+//   bun run lab pick-context --question "Given my profile, what is the label?"
+//   bun run lab pick-context --demo
 
 import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";
-import { countTokens } from "./10-context-budget"; // the counter from lab 10
+import { countTokens } from "./10-context-budget";
 
 export type Source = { name: string; about: string; text: string };
 

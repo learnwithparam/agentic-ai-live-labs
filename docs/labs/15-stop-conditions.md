@@ -1,6 +1,19 @@
-# Lab 15: when the loop must stop
+# When the loop must stop
 
 Each example asks one question. The loop allows 6 steps, 2 identical calls and 400 tokens. Change them with --steps, --repeats and --budget. A real model answers fast, so two pretend habits are on the shelf: --model stuck repeats one search, and --model wanders tries new words every time.
+
+## The story in one picture
+
+```mermaid
+flowchart LR
+  A["Loop runs a step"] --> B{"Done?"}
+  B -->|"Yes"| Z["Stop: answer"]
+  B -->|"No"| C{"Step cap reached?"}
+  C -->|"Yes"| Y["Stop: too many steps"]
+  C -->|"No"| D{"Same call again and again?"}
+  D -->|"Yes"| Y
+  D -->|"No"| A
+```
 
 ## The problem
 
@@ -15,17 +28,17 @@ step = one trip round the loop. repeat = the same call again. budget = the most 
 Copy any line into your terminal. Each one is a real example from this lab.
 
 ```bash
-bun labs/15-stop-conditions.ts --question "What is the dose of Zorbex?" --model stuck --naive
-bun labs/15-stop-conditions.ts --question "What is the dose of Cardioza?"
-bun labs/15-stop-conditions.ts --question "What is the dose of Zorbex?" --model stuck
-bun labs/15-stop-conditions.ts --question "What is the dose of Zorbex?" --model wanders
-bun labs/15-stop-conditions.ts --question "What is the dose of Cardioza?" --budget 20
-bun labs/15-stop-conditions.ts --question "What is the dose of Cardioza?" --steps 1
-bun labs/15-stop-conditions.ts --question "What is the dose of Zorbex?" --model stuck --repeats 9 --steps 3
-bun labs/15-stop-conditions.ts --demo
+bun run lab stop-conditions --question "What is the dose of Zorbex?" --model stuck --naive
+bun run lab stop-conditions --question "What is the dose of Cardioza?"
+bun run lab stop-conditions --question "What is the dose of Zorbex?" --model stuck
+bun run lab stop-conditions --question "What is the dose of Zorbex?" --model wanders
+bun run lab stop-conditions --question "What is the dose of Cardioza?" --budget 20
+bun run lab stop-conditions --question "What is the dose of Cardioza?" --steps 1
+bun run lab stop-conditions --question "What is the dose of Zorbex?" --model stuck --repeats 9 --steps 3
+bun run lab stop-conditions --demo
 ```
 
-Run `bun labs/15-stop-conditions.ts` with nothing else to pick an example from a menu.
+Run `bun run lab stop-conditions` with nothing else to pick an example from a menu.
 
 ## The cases
 
@@ -33,13 +46,13 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
-| 1 | NAIVE: trust the model to stop | The model keeps making the same call. With no limit of our own, the loop never ends. The demo cuts it at 200 rounds. | never-stopped | `bun labs/15-stop-conditions.ts --question "What is the dose of Zorbex?" --model stuck --naive` |
-| 2 | A model that answers | One search, then an answer. The normal case. No limit is touched. | answered | `bun labs/15-stop-conditions.ts --question "What is the dose of Cardioza?"` |
-| 3 | A model that is stuck | The same call again and again. We allow it twice, because a retry can be fair. The third time we stop. | repeat | `bun labs/15-stop-conditions.ts --question "What is the dose of Zorbex?" --model stuck` |
-| 4 | A model that wanders | New words each time, so it is not a repeat. The step limit ends it. | max-steps | `bun labs/15-stop-conditions.ts --question "What is the dose of Zorbex?" --model wanders` |
-| 5 | A small budget | Every round sends the whole chat again. A budget of 20 tokens is gone before the model is asked a second time. | out-of-budget | `bun labs/15-stop-conditions.ts --question "What is the dose of Cardioza?" --budget 20` |
-| 6 | One step only | We allow one round. The model wants a second one, so we stop it, even though it was close to an answer. | max-steps | `bun labs/15-stop-conditions.ts --question "What is the dose of Cardioza?" --steps 1` |
-| 7 | A fair retry | Two identical calls are allowed. A model that retries once and then answers is fine. Here the limit is raised to show the rule. | max-steps | `bun labs/15-stop-conditions.ts --question "What is the dose of Zorbex?" --model stuck --repeats 9 --steps 3` |
+| 1 | NAIVE: trust the model to stop | The model keeps making the same call. With no limit of our own, the loop never ends. The demo cuts it at 200 rounds. | never-stopped | `bun run lab stop-conditions --question "What is the dose of Zorbex?" --model stuck --naive` |
+| 2 | A model that answers | One search, then an answer. The normal case. No limit is touched. | answered | `bun run lab stop-conditions --question "What is the dose of Cardioza?"` |
+| 3 | A model that is stuck | The same call again and again. We allow it twice, because a retry can be fair. The third time we stop. | repeat | `bun run lab stop-conditions --question "What is the dose of Zorbex?" --model stuck` |
+| 4 | A model that wanders | New words each time, so it is not a repeat. The step limit ends it. | max-steps | `bun run lab stop-conditions --question "What is the dose of Zorbex?" --model wanders` |
+| 5 | A small budget | Every round sends the whole chat again. A budget of 20 tokens is gone before the model is asked a second time. | out-of-budget | `bun run lab stop-conditions --question "What is the dose of Cardioza?" --budget 20` |
+| 6 | One step only | We allow one round. The model wants a second one, so we stop it, even though it was close to an answer. | max-steps | `bun run lab stop-conditions --question "What is the dose of Cardioza?" --steps 1` |
+| 7 | A fair retry | Two identical calls are allowed. A model that retries once and then answers is fine. Here the limit is raised to show the rule. | max-steps | `bun run lab stop-conditions --question "What is the dose of Zorbex?" --model stuck --repeats 9 --steps 3` |
 
 ## The promise, and its test
 

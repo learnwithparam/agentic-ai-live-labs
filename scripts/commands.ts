@@ -1,12 +1,13 @@
-// bun scripts/commands.ts: every run command names its file, like bun labs/01-agent-loop.ts.
-// "bun run lab 16" hides which file runs, and it breaks when a lab is renumbered or renamed.
-// So only the README and the scripts may use that short form. Lab files and lab pages name the file.
+// bun scripts/commands.ts: every run command uses the concept name, like bun run lab agent-loop.
+// "bun run lab 16" and "bun labs/16-error-feedback.ts" both break when the file order changes.
+// So neither form may appear in a page, a comment or the README.
 // A question about a dose must read like a doctor wrote it, not like a search: "Zorbex dose" fails.
 import { readdirSync, readFileSync } from "node:fs";
 
-const FOLDERS = ["labs", "docs/labs", "paths", "scripts", "src", "tests"];
+const FOLDERS = ["labs", "show", "docs/labs", "paths", "scripts", "src", "tests"];
 const FILES = ["README.md"];
-const NUMBERED = "bun run lab ";
+const BY_NUMBER = /bun run lab \d/;
+const BY_FILE = /bun labs\//;
 
 function filesIn(folder: string): string[] {
   const found: string[] = [];
@@ -23,12 +24,10 @@ const all = [...FILES];
 for (const folder of FOLDERS) all.push(...filesIn(folder));
 for (const file of all) {
   if (file === "scripts/commands.ts") continue;
-  const shortFormOk = file === "README.md" || file.startsWith("scripts/");
   const lines = readFileSync(file, "utf8").split("\n");
   lines.forEach((line, index) => {
-    const start = line.indexOf(NUMBERED);
-    const rest = start < 0 ? "" : line.slice(start + NUMBERED.length);
-    if (!shortFormOk && rest.length > 0 && rest[0] >= "0" && rest[0] <= "9") problems.push(`${file}:${index + 1}: ${line.trim()}`);
+    if (BY_NUMBER.test(line)) problems.push(`${file}:${index + 1}: uses a number (${line.trim()}). Use the concept name.`);
+    if (BY_FILE.test(line)) problems.push(`${file}:${index + 1}: uses the file name (${line.trim()}). Use bun run lab <name>.`);
     for (const found of line.matchAll(/--question "([^"]*)"/g)) {
       const words = found[1].trim().split(" ").length;
       if (found[1].trim() !== "" && words < 5 && !found[1].includes("$") && found[1] !== "..." && !found[1].includes("example")) problems.push(`${file}:${index + 1}: short question (ask a full question of five words or more) "${found[1]}"`);
@@ -37,7 +36,7 @@ for (const file of all) {
 }
 if (problems.length > 0) {
   console.error(problems.join("\n"));
-  console.error(`${problems.length} bad run commands. Name the file (bun labs/01-agent-loop.ts) and ask a full question.`);
+  console.error(`${problems.length} bad run commands. Write them as: bun run lab agent-loop --question "a full question".`);
   process.exit(1);
 }
-console.log("Every run command names its lab file.");
+console.log("Every run command uses a concept name.");

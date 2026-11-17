@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { runShell } from "../../labs/06-shell-tool";
 
 // PROMISE: a command that breaks a rule never starts, so the files stay as they were.
-test("lab 6: refused commands change nothing", () => {
+test("refused commands change nothing", () => {
   const folder = mkdtempSync(join(tmpdir(), "lab6-"));
   writeFileSync(join(folder, "keep.txt"), "keep me");
   const bad = [
@@ -24,11 +24,11 @@ test("lab 6: refused commands change nothing", () => {
   rmSync(folder, { recursive: true });
 });
 
-test("lab 6: a slow command is stopped", () => {
+test("a slow command is stopped", () => {
   expect(runShell("sleep 5", "sandbox", 1).status).toBe("timeout");
 });
 
-test("lab 6: a link inside the folder cannot lead out, and flags are refused", () => {
+test("a link inside the folder cannot lead out, and flags are refused", () => {
   const folder = mkdtempSync(join(tmpdir(), "lab6-"));
   symlinkSync("/etc", join(folder, "door"));
   expect(runShell("ls door", folder).status).toBe("refused");

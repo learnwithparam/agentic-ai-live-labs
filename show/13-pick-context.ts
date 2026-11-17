@@ -1,4 +1,4 @@
-// What you see on screen for lab 13: the examples and the printing.
+// What you see on screen for the picking context lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/13-pick-context.ts.
 
 import { modelFrom, type Lab } from "../src/runner";
@@ -9,7 +9,7 @@ import { countTokens } from "../labs/10-context-budget";
 
 export const lab: Lab = {
   file: "13-pick-context.ts",
-  title: "Lab 13: picking what goes in",
+  title: "Picking what goes in",
   about:
     "Each example is a question from Dr. Lee. Three sources are on the shelf: documents, the doctor's profile and past emails. We load only the ones the question needs.",
   terms: "source = a place facts come from. picking = choosing sources per question. overloaded = more context than the question needs.",

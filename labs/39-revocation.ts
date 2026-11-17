@@ -1,4 +1,4 @@
-// Lab 39: Withdrawn documents and the cache
+// Withdrawn documents and the cache
 //
 // Dr. Lee asks for the Cardioza dose. The bot saves the answer, so the next ask is fast.
 // Then the company withdraws the document. The label changed, and the old dose is now wrong.
@@ -9,19 +9,19 @@
 // The examples and the screen output are in show/39-revocation.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/39-revocation.ts --question "What is the dose of Cardioza for Dr. Lee?" --withdraw DOC-101 --naive
-//   bun labs/39-revocation.ts --question "What is the dose of Cardioza for Dr. Lee?" --withdraw DOC-101
-//   bun labs/39-revocation.ts --question "What is the dose of Cardioza for Dr. Lee?" --withdraw DOC-102
-//   bun labs/39-revocation.ts --question "What is the dose of Cardioza for Dr. Lee?"
-//   bun labs/39-revocation.ts --question "What is the dose of Cardioza for Dr. Lee?" --late DOC-101
-//   bun labs/39-revocation.ts --demo
+//   bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?" --withdraw DOC-101 --naive
+//   bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?" --withdraw DOC-101
+//   bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?" --withdraw DOC-102
+//   bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?"
+//   bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?" --late DOC-101
+//   bun run lab revocation --demo
 
 import { APPROVED_DOCS, KNOWN_DRUGS, NO_DOC } from "../src/data";
 import { drugNamed, idsIn, type Hook } from "../src/claims";
 import { appendLine, readLines } from "../src/jobs";
 import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";
-import { runAgentLoop, type Tool } from "./01-agent-loop"; // lab 1
+import { runAgentLoop, type Tool } from "./01-agent-loop";
 
 export type Answered = { answer: string; source: string; log: string[] };
 type Saved = { key: string; answer: string };
@@ -84,7 +84,7 @@ function findSaved(dir: string, key: string): string {
   return latest;
 }
 
-// The search tool for the loop in lab 1. It never returns a withdrawn document.
+// The search tool for the loop in the agent loop. It never returns a withdrawn document.
 function liveSearch(dir: string): Tool {
   return {
     name: "search_approved_docs",

@@ -1,4 +1,4 @@
-// Lab 1: The agent loop
+// The agent loop
 //
 // Dr. Lee asks: "What is the dose of Cardioza?" The model does not know. It has no facts.
 // All it can do is ask for a tool. Our code runs the tool and gives the result back.
@@ -7,11 +7,11 @@
 // The examples and the screen output are in show/01-agent-loop.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/01-agent-loop.ts --question "What is the dose of Cardioza?"
-//   bun labs/01-agent-loop.ts --question "What is the dose of Cardioza?" --country DE
-//   bun labs/01-agent-loop.ts --question "Can you tell me the CARDIOZA dose please?"
-//   bun labs/01-agent-loop.ts --question "What is the dose of Cardioza and Neurovex?"
-//   bun labs/01-agent-loop.ts --demo
+//   bun run lab agent-loop --question "What is the dose of Cardioza?"
+//   bun run lab agent-loop --question "What is the dose of Cardioza?" --country DE
+//   bun run lab agent-loop --question "Can you tell me the CARDIOZA dose please?"
+//   bun run lab agent-loop --question "What is the dose of Cardioza and Neurovex?"
+//   bun run lab agent-loop --demo
 
 import { APPROVED_DOCS, NO_DOC } from "../src/data";
 import type { CallLlm, Message, ToolInput } from "../src/model";

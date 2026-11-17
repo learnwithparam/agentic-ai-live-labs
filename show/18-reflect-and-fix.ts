@@ -1,4 +1,4 @@
-// What you see on screen for lab 18: the examples and the printing.
+// What you see on screen for the reflect and fix lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/18-reflect-and-fix.ts.
 
 import { modelFrom, type Lab } from "../src/runner";
@@ -7,7 +7,7 @@ import { answerWithCheck, answerWithoutCheck } from "../labs/18-reflect-and-fix"
 
 export const lab: Lab = {
   file: "18-reflect-and-fix.ts",
-  title: "Lab 18: check the draft, then fix it",
+  title: "Check the draft, then fix it",
   about:
     "Each example is a doctor's question. The pretend model writes a draft, and sometimes the draft is wrong. Pick how it acts with --model. Use ok, nocite (no citation), invent (a wrong dose) or stubborn (a wrong dose it will not fix).",
   terms: "draft = the first answer. check = plain code that compares the draft with the document. round = one fix and one more check.",

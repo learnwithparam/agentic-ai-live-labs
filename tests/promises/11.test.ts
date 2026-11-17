@@ -8,7 +8,7 @@ for (let index = 0; index < 12; index++) {
 }
 
 // PROMISE: pinned facts and the most recent turns always survive, in order. Nothing else does.
-test("lab 11: for every limit, facts and recent turns stay and nothing else does", () => {
+test("for every limit, facts and recent turns stay and nothing else does", () => {
   for (let keep = 0; keep <= 15; keep++) {
     const result = trimHistory(turns, keep);
     const firstRecent = Math.max(0, turns.length - keep);
@@ -18,12 +18,12 @@ test("lab 11: for every limit, facts and recent turns stay and nothing else does
   }
 });
 
-test("lab 11: a negative limit acts like zero, and an empty chat stays empty", () => {
+test("a negative limit acts like zero, and an empty chat stays empty", () => {
   expect(trimHistory(turns, -3).kept).toEqual(trimHistory(turns, 0).kept);
   expect(trimHistory([], 4)).toEqual({ kept: [], dropped: 0, note: "Nothing was left out." });
 });
 
-test("lab 11: the model pins the country and the allergy, and leaves chatter alone", () => {
+test("the model pins the country and the allergy, and leaves chatter alone", () => {
   const chat: Turn[] = [
     { text: "Doctor: I am Dr. Weber. I work in Germany, so use German labels.", fact: false },
     { text: "Doctor: A question about topic 1.", fact: false },

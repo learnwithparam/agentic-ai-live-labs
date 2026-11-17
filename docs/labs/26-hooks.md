@@ -1,6 +1,16 @@
-# Lab 26: hooks
+# Hooks
 
 Each example asks the bot to use tools. The model says which tools. Before hooks can block a call. An after hook cleans what comes back. The first example runs with no hooks, to show the harm.
+
+## The story in one picture
+
+```mermaid
+flowchart LR
+  A["Agent wants to send an email"] --> B["Before hook checks it"]
+  B -->|"Clean"| C["Send the email"]
+  C --> D["After hook checks what left"]
+  B -->|"Dirty"| X["Block the call"]
+```
 
 ## The problem
 
@@ -15,16 +25,16 @@ hook = code that runs on every tool call. before hook = may stop the call. after
 Copy any line into your terminal. Each one is a real example from this lab.
 
 ```bash
-bun labs/26-hooks.ts --demo
-bun labs/26-hooks.ts --question "Can you read the last call note for Dr. Lee?"
-bun labs/26-hooks.ts --demo
-bun labs/26-hooks.ts --demo
-bun labs/26-hooks.ts --question "What is the dose of Cardioza?"
-bun labs/26-hooks.ts --demo
-bun labs/26-hooks.ts --demo
+bun run lab hooks --demo
+bun run lab hooks --question "Can you read the last call note for Dr. Lee?"
+bun run lab hooks --demo
+bun run lab hooks --demo
+bun run lab hooks --question "What is the dose of Cardioza?"
+bun run lab hooks --demo
+bun run lab hooks --demo
 ```
 
-Run `bun labs/26-hooks.ts` with nothing else to pick an example from a menu.
+Run `bun run lab hooks` with nothing else to pick an example from a menu.
 
 ## The cases
 
@@ -32,12 +42,12 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
-| 1 | NAIVE: no hooks | The note is read and emailed to a private mailbox, with the patient name and SSN in it. | leaked | `bun labs/26-hooks.ts --demo` |
-| 2 | Read the note, clean | The tool returns the note. The after hook swaps the private details for tokens. | clean | `bun labs/26-hooks.ts --question "Can you read the last call note for Dr. Lee?"` |
-| 3 | Email to the hospital | The address is on an approved domain, and the text is already clean. The email goes. | sent-clean | `bun labs/26-hooks.ts --demo` |
-| 4 | Email to a private mailbox | The before hook sees the domain is not approved. The email never goes. | blocked | `bun labs/26-hooks.ts --demo` |
-| 5 | A question that needs no hook | A plain dose search. No hook has anything to say, and the answer comes through. | clean | `bun labs/26-hooks.ts --question "What is the dose of Cardioza?"` |
-| 6 | EDGE: a hook that crashes | A buggy hook throws an error. We do not let the call through. Every call is blocked. | blocked | `bun labs/26-hooks.ts --demo` |
+| 1 | NAIVE: no hooks | The note is read and emailed to a private mailbox, with the patient name and SSN in it. | leaked | `bun run lab hooks --demo` |
+| 2 | Read the note, clean | The tool returns the note. The after hook swaps the private details for tokens. | clean | `bun run lab hooks --question "Can you read the last call note for Dr. Lee?"` |
+| 3 | Email to the hospital | The address is on an approved domain, and the text is already clean. The email goes. | sent-clean | `bun run lab hooks --demo` |
+| 4 | Email to a private mailbox | The before hook sees the domain is not approved. The email never goes. | blocked | `bun run lab hooks --demo` |
+| 5 | A question that needs no hook | A plain dose search. No hook has anything to say, and the answer comes through. | clean | `bun run lab hooks --question "What is the dose of Cardioza?"` |
+| 6 | EDGE: a hook that crashes | A buggy hook throws an error. We do not let the call through. Every call is blocked. | blocked | `bun run lab hooks --demo` |
 
 ## The promise, and its test
 

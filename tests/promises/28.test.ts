@@ -5,12 +5,12 @@ import { EVALS, decide, runEvals, shipIfItRuns } from "../../labs/28-evals-and-r
 const model = makeModel("ok");
 
 // PROMISE: a version ships only when every eval passes. A failed eval blocks it. No evals blocks it.
-test("lab 28: the current version passes every eval and ships", () => {
+test("the current version passes every eval and ships", () => {
   const decision = decide(runEvals("current", EVALS, model));
   expect(decision.release).toBe(true);
 });
 
-test("lab 28: the wide version fails Dr. Weber's question and is blocked", () => {
+test("the wide version fails Dr. Weber's question and is blocked", () => {
   const results = runEvals("wide", EVALS, model);
   const decision = decide(results);
   expect(decision.release).toBe(false);
@@ -19,17 +19,17 @@ test("lab 28: the wide version fails Dr. Weber's question and is blocked", () =>
   expect(shipIfItRuns(results).release).toBe(true);
 });
 
-test("lab 28: the version that makes up a document fails the unknown drug question", () => {
+test("the version that makes up a document fails the unknown drug question", () => {
   const decision = decide(runEvals("invents", EVALS, model));
   expect(decision.release).toBe(false);
   expect(decision.failed[0].ask).toContain("Zorbex");
 });
 
-test("lab 28: an empty eval set blocks the release", () => {
+test("an empty eval set blocks the release", () => {
   expect(decide(runEvals("current", [], model)).release).toBe(false);
 });
 
-test("lab 28: both kinds of fact are checked on their own", () => {
+test("both kinds of fact are checked on their own", () => {
   const ask = "What is the dose of Cardioza?";
   const lacks = [{ ask, hcp: "H-1", mustHave: ["DOC-999"], mustNot: [] }];
   expect(decide(runEvals("current", lacks, model)).release).toBe(false);

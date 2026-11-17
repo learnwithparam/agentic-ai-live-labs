@@ -6,6 +6,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { LABS, PATHS, TRACKS, type Path, type RoadmapLab } from "../src/roadmap";
 import { badgeGreen, badgeYellow, bold, box, cyan, dim, field, green, print, yellow } from "../src/ui";
 
+// The file on disk keeps its number prefix, so the folder sorts in teaching order.
 export function labFile(lab: RoadmapLab): string {
   const padded = String(lab.number).padStart(2, "0");
   return `${padded}-${lab.slug}.ts`;
@@ -42,7 +43,7 @@ function stepTable(path: Path, optional: boolean): string[] {
   for (const step of path.steps) {
     if (Boolean(step.optional) !== optional) continue;
     const lab = findLab(step.lab);
-    rows.push(`| ${lab.number}. ${lab.title} | \`bun labs/${labFile(lab)} --demo\` | ${step.note} |`);
+    rows.push(`| ${lab.title} | \`bun run lab ${lab.slug} --demo\` | ${step.note} |`);
   }
   return rows;
 }
@@ -72,10 +73,9 @@ function renderPath(path: Path): string {
 function renderIndex(): string {
   const lines = ["# Learning paths", ""];
   lines.push("Pick the path that matches you. Every path uses the same labs in a different order.", "");
-  lines.push("| Path | For | Labs | Time |", "| --- | --- | --- | --- |");
+  lines.push("| Path | For | Time |", "| --- | --- | --- |");
   for (const path of PATHS) {
-    const count = `${mainSteps(path).length} main, ${path.steps.length - mainSteps(path).length} optional`;
-    lines.push(`| [${path.name}](${path.id}.md) | ${path.forWho} | ${count} | ${hoursText(path)} |`);
+    lines.push(`| [${path.name}](${path.id}.md) | ${path.forWho} | ${hoursText(path)} |`);
   }
   lines.push("", "Not sure? Start with Beginners. If you never code, start with Noobs.", "");
   lines.push("## All labs by track", "");
@@ -83,7 +83,7 @@ function renderIndex(): string {
     lines.push(`### ${track.name}`, "", track.idea, "");
     lines.push("| Lab | What it teaches |", "| --- | --- |");
     for (const lab of LABS.filter((item) => item.track === track.id)) {
-      lines.push(`| ${lab.number}. ${lab.title} | ${lab.idea} |`);
+      lines.push(`| ${lab.title} | ${lab.idea} |`);
     }
     lines.push("");
   }
@@ -115,7 +115,7 @@ function showPath(path: Path) {
     const lab = findLab(step.lab);
     const ready = isReady(lab) ? badgeGreen("READY") : badgeYellow("COMING");
     const tag = step.optional ? dim("optional") : "        ";
-    console.log(`${ready} ${tag} ${String(lab.number).padStart(2)}. ${bold(lab.title)}`);
+    console.log(`${ready} ${tag} ${bold(lab.title)} ${dim(`(${lab.slug})`)}`);
     console.log(`${" ".repeat(26)}${dim(step.note)}`);
   }
   console.log(`\n${green("Finish:")} ${path.finish}`);

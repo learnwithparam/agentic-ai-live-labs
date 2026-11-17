@@ -1,4 +1,4 @@
-// What you see on screen for lab 24: the examples and the printing.
+// What you see on screen for the identity and scopes lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/24-identity-and-scopes.ts.
 
 import { modelFrom, type Lab } from "../src/runner";
@@ -12,7 +12,7 @@ const DOSE_AND_EMAIL = "What is the dose of Cardioza, and can you email it to Dr
 
 export const lab: Lab = {
   file: "24-identity-and-scopes.ts",
-  title: "Lab 24: identity and scopes",
+  title: "Identity and scopes",
   about:
     "Each example sends a doctor's request to one of three bots: answer, outreach or report. Pick the bot with --bot. The model says which tools the request needs. Then each tool call must show the bot's signed token.",
   terms: "identity = who is calling. scope = one thing a token may do. least privilege = a bot gets only the scopes it needs. token = a signed note that lists them.",

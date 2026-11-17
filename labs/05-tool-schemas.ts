@@ -1,4 +1,4 @@
-// Lab 5: Tool schemas and structured output
+// Tool schemas and structured output
 //
 // Dr. Lee asks: "What is the Cardioza dose in the US?" The model must turn that into a tool call.
 // It writes the call as text. Text can be wrong: a small letter where a capital belongs, a field
@@ -9,17 +9,17 @@
 // The examples and the screen output are in show/05-tool-schemas.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/05-tool-schemas.ts --question "What is the Cardioza dose in the US?" --call '{"drug": "Cardioza", "country": "us"}' --naive
-//   bun labs/05-tool-schemas.ts --question "What is the Cardioza dose in the US?"
-//   bun labs/05-tool-schemas.ts --question "What is the Cardioza dose in the US?" --call '{"drug": "Cardioza", "country": "us"}'
-//   bun labs/05-tool-schemas.ts --question "What is the Cardioza dose in the US?" --call '{"drug": "Cardioza", "country": "FR"}'
-//   bun labs/05-tool-schemas.ts --question "What is the Cardioza dose in the US?" --call "Please search for Cardioza in the US"
-//   bun labs/05-tool-schemas.ts --demo
+//   bun run lab tool-schemas --question "What is the Cardioza dose in the US?" --call '{"drug": "Cardioza", "country": "us"}' --naive
+//   bun run lab tool-schemas --question "What is the Cardioza dose in the US?"
+//   bun run lab tool-schemas --question "What is the Cardioza dose in the US?" --call '{"drug": "Cardioza", "country": "us"}'
+//   bun run lab tool-schemas --question "What is the Cardioza dose in the US?" --call '{"drug": "Cardioza", "country": "FR"}'
+//   bun run lab tool-schemas --question "What is the Cardioza dose in the US?" --call "Please search for Cardioza in the US"
+//   bun run lab tool-schemas --demo
 
 import { NO_DOC } from "../src/data";
 import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";
-import { searchApprovedDocs } from "./01-agent-loop"; // the search tool from lab 1
+import { searchApprovedDocs } from "./01-agent-loop";
 import { isInSchema, reject, searchSchema, tidy } from "../src/schema"; // the schema and its small fixes
 import type { Args, Field, Verdict } from "../src/schema";
 

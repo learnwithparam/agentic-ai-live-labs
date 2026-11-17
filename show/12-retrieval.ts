@@ -1,4 +1,4 @@
-// What you see on screen for lab 12: the examples and the printing.
+// What you see on screen for the retrieval lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/12-retrieval.ts.
 
 import { modelFrom, type Lab } from "../src/runner";
@@ -10,7 +10,7 @@ import { retrieveByMeaning } from "../src/meaning";
 
 export const lab: Lab = {
   file: "12-retrieval.ts",
-  title: "Lab 12: retrieval",
+  title: "Retrieval",
   about:
     "Each example is a question about a drug. Six invented chunks are searched. Use --country DE for a German doctor. Only chunks from the doctor's country are searched.",
   terms: "chunk = a small piece of a document. score = how well a chunk matches the question (BM25, the standard word ranking). retrieval = finding the best chunks to send.",

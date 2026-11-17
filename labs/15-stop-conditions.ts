@@ -1,4 +1,4 @@
-// Lab 15: When the loop must stop
+// When the loop must stop
 //
 // Dr. Lee asks about a drug that has no approved document. The model searches, finds nothing, and
 // searches again with other words. A model that is stuck never says it is done. A loop that trusts
@@ -8,17 +8,17 @@
 // The examples and the screen output are in show/15-stop-conditions.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/15-stop-conditions.ts --question "What is the dose of Zorbex?" --model stuck --naive
-//   bun labs/15-stop-conditions.ts --question "What is the dose of Cardioza?"
-//   bun labs/15-stop-conditions.ts --question "What is the dose of Zorbex?" --model stuck
-//   bun labs/15-stop-conditions.ts --question "What is the dose of Zorbex?" --model wanders
-//   bun labs/15-stop-conditions.ts --question "What is the dose of Cardioza?" --budget 20
-//   bun labs/15-stop-conditions.ts --demo
+//   bun run lab stop-conditions --question "What is the dose of Zorbex?" --model stuck --naive
+//   bun run lab stop-conditions --question "What is the dose of Cardioza?"
+//   bun run lab stop-conditions --question "What is the dose of Zorbex?" --model stuck
+//   bun run lab stop-conditions --question "What is the dose of Zorbex?" --model wanders
+//   bun run lab stop-conditions --question "What is the dose of Cardioza?" --budget 20
+//   bun run lab stop-conditions --demo
 
 import type { CallLlm, Message } from "../src/model";
 import { runLab } from "../src/runner";
-import { countTokens } from "./10-context-budget"; // the counter from lab 10
-import { searchApprovedDocs } from "./01-agent-loop"; // the search from lab 1
+import { countTokens } from "./10-context-budget";
+import { searchApprovedDocs } from "./01-agent-loop";
 
 export type Limits = { maxSteps: number; maxRepeats: number; budget: number };
 export type Run = { answer: string; stopped: string; steps: number; spent: number; log: string[] };

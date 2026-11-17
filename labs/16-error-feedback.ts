@@ -1,4 +1,4 @@
-// Lab 16: Giving the model a useful error
+// Giving the model a useful error
 //
 // Dr. Weber asks about "What is the dose of Cardioza in Germany?". The model writes a tool call with country "Germany".
 // The tool only knows US and DE, so it fails. If the error says what was wrong and what is valid,
@@ -8,16 +8,16 @@
 // The examples and the screen output are in show/16-error-feedback.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/16-error-feedback.ts --question "What is the dose of Cardioza in Germany?" --naive
-//   bun labs/16-error-feedback.ts --question "What is the dose of Cardioza in the US?"
-//   bun labs/16-error-feedback.ts --question "What is the dose of Cardioza in Germany?"
-//   bun labs/16-error-feedback.ts --question "What is the dose of Cardiozza in the US?"
-//   bun labs/16-error-feedback.ts --demo
+//   bun run lab error-feedback --question "What is the dose of Cardioza in Germany?" --naive
+//   bun run lab error-feedback --question "What is the dose of Cardioza in the US?"
+//   bun run lab error-feedback --question "What is the dose of Cardioza in Germany?"
+//   bun run lab error-feedback --question "What is the dose of Cardiozza in the US?"
+//   bun run lab error-feedback --demo
 
 import { KNOWN_DRUGS, NO_DOC } from "../src/data";
 import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";
-import { searchApprovedDocs } from "./01-agent-loop"; // the search from lab 1
+import { searchApprovedDocs } from "./01-agent-loop";
 
 export type Pair = { drug: string; country: string };
 export type Tool = { (guess: Pair): string };

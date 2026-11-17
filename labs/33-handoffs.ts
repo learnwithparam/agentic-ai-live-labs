@@ -1,4 +1,4 @@
-// Lab 33: Handing work between bots
+// Handing work between bots
 //
 // A doctor writes: "Email Dr. Lee the dose of Cardioza." The intake bot sorts the message.
 // The outreach bot writes emails. It needs a dose, so it hands the message to the answer bot.
@@ -10,19 +10,19 @@
 // The examples and the screen output are in show/33-handoffs.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/33-handoffs.ts --question "Please email Dr. Lee the dose of Cardioza." --hcp H-1 --naive
-//   bun labs/33-handoffs.ts --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1
-//   bun labs/33-handoffs.ts --question "Please email Dr. Weber about the new Cardioza label." --hcp H-2
-//   bun labs/33-handoffs.ts --question "Please email Dr. Lee the dose of Cardioza." --hcp H-1
-//   bun labs/33-handoffs.ts --question "Please call me back about my last invoice." --hcp H-1
-//   bun labs/33-handoffs.ts --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1 --limit 0
-//   bun labs/33-handoffs.ts --demo
+//   bun run lab handoffs --question "Please email Dr. Lee the dose of Cardioza." --hcp H-1 --naive
+//   bun run lab handoffs --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1
+//   bun run lab handoffs --question "Please email Dr. Weber about the new Cardioza label." --hcp H-2
+//   bun run lab handoffs --question "Please email Dr. Lee the dose of Cardioza." --hcp H-1
+//   bun run lab handoffs --question "Please call me back about my last invoice." --hcp H-1
+//   bun run lab handoffs --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1 --limit 0
+//   bun run lab handoffs --demo
 
 import { CRM } from "../src/data";
 import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";
-import { runAgentLoop } from "./01-agent-loop"; // lab 1
-import { draftEmail } from "./21-crash-and-resume"; // the email writer from lab 21
+import { runAgentLoop } from "./01-agent-loop";
+import { draftEmail } from "./21-crash-and-resume";
 
 export type Envelope = { id: string; task: string; hcpId: string; hops: number; path: string[] };
 export type Handled = { outcome: string; reply: string; envelope: Envelope; log: string[] };

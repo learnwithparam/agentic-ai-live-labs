@@ -1,4 +1,4 @@
-// Lab 9: Function, CLI or MCP
+// Function, CLI or MCP
 //
 // Dr. Lee asks: "What is the Cardioza dose?" One job, three doors to the tool: a plain function,
 // a shell command, and an MCP server. The answer should be the same. The cost, the risk and the
@@ -7,18 +7,18 @@
 // The examples and the screen output are in show/09-three-doors.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/09-three-doors.ts --question "What is the dose of Cardioza?" --naive --door cli
-//   bun labs/09-three-doors.ts --question "What is the Cardioza dose?" --door function
-//   bun labs/09-three-doors.ts --question "What is the dose of Cardioza?" --door mcp
-//   bun labs/09-three-doors.ts --question "What is the dose of Cardioza?" --door all
-//   bun labs/09-three-doors.ts --demo
+//   bun run lab three-doors --question "What is the dose of Cardioza?" --naive --door cli
+//   bun run lab three-doors --question "What is the Cardioza dose?" --door function
+//   bun run lab three-doors --question "What is the dose of Cardioza?" --door mcp
+//   bun run lab three-doors --question "What is the dose of Cardioza?" --door all
+//   bun run lab three-doors --demo
 
 import { NO_DOC } from "../src/data";
 import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";
-import { searchApprovedDocs } from "./01-agent-loop"; // the search from lab 1
-import { runShell } from "./06-shell-tool"; // the safe shell from lab 6
-import { callMcpTool, SERVER } from "./07-mcp-basics"; // the MCP client from lab 7
+import { searchApprovedDocs } from "./01-agent-loop";
+import { runShell } from "./06-shell-tool";
+import { callMcpTool, SERVER } from "./07-mcp-basics"; // the MCP client from the MCP basics lab
 
 export type Door = { name: string; ask(drug: string, country: string, server: string): string };
 
@@ -85,7 +85,7 @@ export const DOORS: Door[] = [
 
 export type Trip = { door: string; answer: string; milliseconds: number; outcome: string };
 
-// What the answer is worth. Only an answer with a document id can be checked by lab 2's guardrail.
+// What the answer is worth. Only an answer with a document id can be checked by the guardrails lab's guardrail.
 export function outcomeOf(answer: string): string {
   if (answer.startsWith("ERROR")) return "door-error";
   if (answer === NO_DOC) return "no-source";

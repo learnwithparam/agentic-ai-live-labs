@@ -14,7 +14,7 @@ function fresh(): void {
 
 // PROMISE: a call never starts if its worst case would pass the run cap or the day cap.
 // What a call really cost is written to disk. A run handed on too many times is refused.
-test("lab 22: a stuck run stops at the run cap and the ledger holds what it spent", () => {
+test("a stuck run stops at the run cap and the ledger holds what it spent", () => {
   fresh();
   const who = { user: "u1", day, hops: 0 };
   const run = runWithBudget("What is the dose of Zorbex?", "US", makeModel("stuck"), caps, who);
@@ -24,7 +24,7 @@ test("lab 22: a stuck run stops at the run cap and the ledger holds what it spen
   expect(spentOn("u1", "2026-11-18")).toBe(0);
 });
 
-test("lab 22: money spent earlier today counts against the day cap", () => {
+test("money spent earlier today counts against the day cap", () => {
   fresh();
   charge("u2", day, 2500);
   const who = { user: "u2", day, hops: 0 };
@@ -33,7 +33,7 @@ test("lab 22: money spent earlier today counts against the day cap", () => {
   expect(spentOn("u2", day)).toBe(2500);
 });
 
-test("lab 22: the third hand-over is refused before any call or any money", () => {
+test("the third hand-over is refused before any call or any money", () => {
   fresh();
   const who = { user: "u3", day, hops: 3 };
   expect(runWithBudget("What is the dose of Cardioza?", "US", makeModel("ok"), caps, who).stopped).toBe("hop-cap");

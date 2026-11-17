@@ -1,4 +1,4 @@
-// Lab 34: Memory the bots share
+// Memory the bots share
 //
 // The answer bot looks up the Cardioza dose for Dr. Lee. The outreach bot needs the same dose later.
 // A shared memory saves the second search. But a bad fact in memory is copied by every bot.
@@ -9,19 +9,19 @@
 // The examples and the screen output are in show/34-shared-memory.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/34-shared-memory.ts --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1 --model invent --naive
-//   bun labs/34-shared-memory.ts --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1
-//   bun labs/34-shared-memory.ts --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1 --model invent
-//   bun labs/34-shared-memory.ts --question "What is the dose of Cardioza for Dr. Weber?" --hcp H-1 --then H-2
-//   bun labs/34-shared-memory.ts --question "What is the dose of Zorbex for Dr. Lee?" --hcp H-1
-//   bun labs/34-shared-memory.ts --demo
+//   bun run lab shared-memory --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1 --model invent --naive
+//   bun run lab shared-memory --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1
+//   bun run lab shared-memory --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1 --model invent
+//   bun run lab shared-memory --question "What is the dose of Cardioza for Dr. Weber?" --hcp H-1 --then H-2
+//   bun run lab shared-memory --question "What is the dose of Zorbex for Dr. Lee?" --hcp H-1
+//   bun run lab shared-memory --demo
 
 import { CRM, KNOWN_DRUGS } from "../src/data";
 import { findProblems } from "../src/draft-check";
 import { appendLine, readLines } from "../src/jobs";
 import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";
-import { runAgentLoop, searchApprovedDocs } from "./01-agent-loop"; // lab 1
+import { runAgentLoop, searchApprovedDocs } from "./01-agent-loop";
 
 export type Fact = { drug: string; country: string; text: string; by: string };
 export type Said = { answer: string; from: string; saved: boolean };
@@ -37,7 +37,7 @@ export function answerShared(question: string, hcpId: string, llm: CallLlm, seat
   if (fact && findProblems(fact.text, searchApprovedDocs(drug, fact.country)).length === 0) {
     return { answer: fact.text, from: "memory", saved: false };
   }
-  // Step 3: no good fact. Do the real search, as in lab 1.
+  // Step 3: no good fact. Do the real search, as in the agent loop.
   const answer = runAgentLoop(question, country, llm, undefined, 5, hcpId).answer;
   // Step 4: save the answer only if it passes the dose check. A bad answer is never shared.
   const source = searchApprovedDocs(drug, country);

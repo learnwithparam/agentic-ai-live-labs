@@ -76,11 +76,13 @@ function styleProblems(code: string): string[] {
 }
 
 // Every block is graded alone, so one hard block cannot hide inside an easy file.
+// A heading such as "Routing" has no full stop, so it is a title, not a sentence. Titles are not graded.
 function blockProblems(text: string): string[] {
   const found: string[] = [];
   for (const block of text.split("\n\n")) {
     const sentences = sentencesOf(block);
     if (sentences.length === 0) continue;
+    if (!/[.!?:]/.test(block)) continue;
     const grade = readingGrade(sentences);
     if (grade > 6.5) found.push(`grade ${grade.toFixed(1)} block "${block.trim().slice(0, 50)}..."`);
   }

@@ -1,4 +1,4 @@
-// Search by meaning. Lab 12 ranks chunks by shared words. This ranks them by what they mean.
+// Search by meaning. The retrieval lab ranks chunks by shared words. This ranks them by what they mean.
 // Ask how much of the heart pill an adult should take.
 // No word matches the Cardioza dose chunk. The meaning does, so the two embeddings are close.
 // It needs a real embedding model, so it runs only with --meaning --live.

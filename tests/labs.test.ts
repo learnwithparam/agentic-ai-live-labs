@@ -24,7 +24,7 @@ function silent<T>(work: () => T): T {
   }
 }
 
-describe("lab 1: agent loop", () => {
+describe("agent loop", () => {
   test("searches then answers with a citation", () => {
     const result = runAgentLoop("What is the dose of Cardioza?", "US", makeModel());
     expect(result.steps.map((step) => step.kind)).toEqual(["tool", "answer"]);
@@ -45,7 +45,7 @@ describe("lab 1: agent loop", () => {
   });
 });
 
-describe("lab 2: guardrails", () => {
+describe("guardrails", () => {
   test("masks ssn, phone, email, mrn and patient name", () => {
     const raw = "Patient: Jane Doe SSN 123-45-6789 call 555-123-4567 mail jane@x.com MRN 1234567";
     const { clean, found } = redactPhi(raw);
@@ -62,7 +62,7 @@ describe("lab 2: guardrails", () => {
   });
 });
 
-describe("lab 3: gates", () => {
+describe("gates", () => {
   test("approved question is sent with no gate", () => {
     expect(silent(() => handleHcpInquiry("What is the dose of Cardioza?", "US", makeModel(), no)).status).toBe("SENT");
   });
@@ -91,7 +91,7 @@ describe("lab 3: gates", () => {
   });
 });
 
-describe("lab 4: shapes", () => {
+describe("shapes", () => {
   test("workflow joins records with no model", () => {
     const result = hcpContextWorkflow("H-2");
     expect(result.profile?.country).toBe("DE");

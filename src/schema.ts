@@ -1,4 +1,4 @@
-// The schema for lab 5, and the small safe fixes the check can make.
+// The schema for the tool schema lab, and the small safe fixes the check can make.
 // You do not need to read this file to learn the lab. The check itself is in labs/05-tool-schemas.ts.
 export type Field = {
   name: string; kind: string; required: boolean;

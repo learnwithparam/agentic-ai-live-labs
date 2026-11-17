@@ -11,7 +11,7 @@ function loadedNames(manifest: Manifest, known = pins): string[] {
 }
 
 // PROMISE: a tool that is unapproved, new, changed or carrying an order is never loaded.
-test("lab 8: only a pinned, unchanged, order-free tool is loaded", () => {
+test("only a pinned, unchanged, order-free tool is loaded", () => {
   expect(loadedNames(approved)).toEqual(["search", "profile"]);
   expect(loadedNames({ server: "other", tools: [SEARCH] })).toEqual([]);
   const stranger: Manifest = { server: "other", tools: [SEARCH] };
@@ -22,7 +22,7 @@ test("lab 8: only a pinned, unchanged, order-free tool is loaded", () => {
   expect(loadedNames({ server: "hcp-docs", tools: [bad] }, pinAll({ server: "hcp-docs", tools: [bad] }))).toEqual([]);
 });
 
-test("lab 8: re-approving pins the new text", () => {
+test("re-approving pins the new text", () => {
   const edited: Manifest = { server: "hcp-docs", tools: [{ ...SEARCH, description: "Search all documents." }] };
   expect(loadedNames(edited)).toEqual([]);
   expect(loadedNames(edited, pinAll(edited))).toEqual(["search"]);

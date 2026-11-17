@@ -1,22 +1,29 @@
-// bun scripts/readme.ts --write   writes docs/labs/NN-*.md, one page per lab, from the lab itself
-// bun scripts/readme.ts --check   fails if a page is missing or out of date (bun run check runs this)
+// bun scripts/readme.ts --write   writes docs/labs/*.md, one page per lab, and the lab index in README.md
+// bun scripts/readme.ts --check   fails if a page or the README index is missing or out of date (bun run check runs this)
 //
-// The page is made from the lab's own words (about, terms, challenge, promise, production, cases),
-// so it cannot drift from the code. Nobody writes these by hand.
+// The page is made from the lab's own words (about, terms, challenge, promise, production, cases)
+// and its picture in src/pictures.ts, so it cannot drift from the code. Nobody writes these by hand.
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { PICTURES } from "../src/pictures";
+import { LABS, TRACKS, slugFromFile } from "../src/roadmap";
 import { shellWord } from "../src/runner";
 import type { Case, Lab } from "../src/runner";
+import { labFile } from "./path";
 
 const FOLDER = "docs/labs";
+const README = "README.md";
+const INDEX_START = "<!-- AUTO_LAB_INDEX_START -->";
+const INDEX_END = "<!-- AUTO_LAB_INDEX_END -->";
 
 function cell(text: string): string {
   return text.replaceAll("|", "/").replaceAll("\n", " ");
 }
 
-// The command that runs one case by itself.
+// The command that runs one case by itself. It uses the concept name, so it never goes stale.
 export function commandFor(file: string, item: Case): string {
-  let command = `bun labs/${file} --question "${item.question}"`;
-  if (item.question.length > 50) return `bun labs/${file} --demo`;
+  const name = slugFromFile(file);
+  if (item.question.length > 50) return `bun run lab ${name} --demo`;
+  let command = `bun run lab ${name} --question "${item.question}"`;
   const flags = item.flags || {};
   for (const key of Object.keys(flags)) {
     const value = flags[key];
@@ -25,16 +32,25 @@ export function commandFor(file: string, item: Case): string {
   return command;
 }
 
+// The picture of the lab's story. Every lab needs one, so a page is never missing it.
+export function pictureOf(file: string): string {
+  const slug = slugFromFile(file);
+  const picture = PICTURES[slug];
+  if (!picture) throw new Error(`No picture for "${slug}". Add it to src/pictures.ts.`);
+  return picture;
+}
+
 export function pageFor(file: string, lab: Lab): string {
-  const number = Number(file.slice(0, 2));
+  const name = slugFromFile(file);
   const out: string[] = [`# ${lab.title}`, "", lab.about, ""];
+  out.push("## The story in one picture", "", "```mermaid", pictureOf(file), "```", "");
   if (lab.challenge) out.push("## The problem", "", lab.challenge, "");
   if (lab.terms) out.push("## New words", "", lab.terms, "");
   out.push("## Run it", "", "Copy any line into your terminal. Each one is a real example from this lab.", "");
   out.push("```bash");
   lab.cases.forEach((item) => out.push(commandFor(file, item)));
-  out.push(`bun labs/${file} --demo`, "```", "");
-  out.push(`Run \`bun labs/${file}\` with nothing else to pick an example from a menu.`, "");
+  out.push(`bun run lab ${name} --demo`, "```", "");
+  out.push(`Run \`bun run lab ${name}\` with nothing else to pick an example from a menu.`, "");
   const naive = lab.cases[0].title.startsWith("NAIVE");
   out.push("## The cases", "");
   if (naive) out.push("Case 1 is the naive way. Read what goes wrong, then read the rest.", "");
@@ -55,6 +71,28 @@ export function pageFor(file: string, lab: Lab): string {
   return out.join("\n");
 }
 
+// The lab index in README.md. It sits between two markers and is rewritten on every check.
+export function indexFor(): string {
+  const out: string[] = [];
+  for (const track of TRACKS) {
+    out.push(`### ${track.name}`, "", `*${track.idea}*`, "");
+    out.push("| Lab | Run it | Guide |", "| --- | --- | --- |");
+    for (const lab of LABS.filter((item) => item.track === track.id)) {
+      const page = labFile(lab).replace(".ts", ".md");
+      out.push(`| ${lab.title} | \`bun run lab ${lab.slug} --demo\` | [Read](${FOLDER}/${page}) |`);
+    }
+    out.push("");
+  }
+  return out.join("\n").trimEnd();
+}
+
+export function withIndex(readme: string): string {
+  const start = readme.indexOf(INDEX_START);
+  const end = readme.indexOf(INDEX_END);
+  if (start < 0 || end < start) throw new Error(`README.md needs ${INDEX_START} and ${INDEX_END} markers.`);
+  return `${readme.slice(0, start + INDEX_START.length)}\n${indexFor()}\n${readme.slice(end)}`;
+}
+
 async function pages(): Promise<Record<string, string>> {
   const result: Record<string, string> = {};
   for (const file of readdirSync("labs").sort()) {
@@ -63,6 +101,7 @@ async function pages(): Promise<Record<string, string>> {
     const loaded = await import(`../${place}/${file}`);
     result[`${FOLDER}/${file.replace(".ts", ".md")}`] = pageFor(file, loaded.lab);
   }
+  result[README] = withIndex(readFileSync(README, "utf8"));
   return result;
 }
 
@@ -72,13 +111,13 @@ if (import.meta.main) {
   if (mode === "--write") {
     mkdirSync(FOLDER, { recursive: true });
     for (const name of Object.keys(all)) writeFileSync(name, all[name]);
-    console.log(`Wrote ${Object.keys(all).length} lab pages to ${FOLDER}.`);
+    console.log(`Wrote ${Object.keys(all).length} files: the lab pages and the README index.`);
   } else {
     const stale = Object.keys(all).filter((name) => !existsSync(name) || readFileSync(name, "utf8") !== all[name]);
     if (stale.length > 0) {
-      console.error(`Lab pages out of date: ${stale.join(", ")}. Run: bun scripts/readme.ts --write`);
+      console.error(`Out of date: ${stale.join(", ")}. Run: bun scripts/readme.ts --write`);
       process.exit(1);
     }
-    console.log("The lab pages are up to date.");
+    console.log("The lab pages and the README index are up to date.");
   }
 }

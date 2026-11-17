@@ -1,4 +1,4 @@
-// Lab 17: Write the plan first, then act
+// Write the plan first, then act
 //
 // Dr. Lee asks the agent to look up the Cardioza dose and email it to them.
 // An agent can act one step at a time. Then it finds out too late that a step was a bad idea.
@@ -8,11 +8,11 @@
 // The examples and the screen output are in show/17-plan-then-act.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/17-plan-then-act.ts --question "Look up the Cardioza dose and email it to me" --naive
-//   bun labs/17-plan-then-act.ts --question "Look up the Cardioza dose and write a reply"
-//   bun labs/17-plan-then-act.ts --question "Look up the Cardioza dose and email it to me"
-//   bun labs/17-plan-then-act.ts --question "Look up the Cardioza dose and email it to me" --approve true
-//   bun labs/17-plan-then-act.ts --demo
+//   bun run lab plan-then-act --question "Look up the Cardioza dose and email it to me" --naive
+//   bun run lab plan-then-act --question "Look up the Cardioza dose and write a reply"
+//   bun run lab plan-then-act --question "Look up the Cardioza dose and email it to me"
+//   bun run lab plan-then-act --question "Look up the Cardioza dose and email it to me" --approve true
+//   bun run lab plan-then-act --demo
 
 import { NO_DOC } from "../src/data";
 import type { CallLlm } from "../src/model";

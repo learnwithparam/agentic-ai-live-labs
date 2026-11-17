@@ -1,4 +1,4 @@
-// What you see on screen for lab 3: the examples and the printing.
+// What you see on screen for the gates lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/03-gates.ts.
 
 import { modelFrom, type Lab } from "../src/runner";
@@ -7,7 +7,7 @@ import { handleHcpInquiry, handleWithoutGate } from "../labs/03-gates";
 
 export const lab: Lab = {
   file: "03-gates.ts",
-  title: "Lab 3: human in the loop gates",
+  title: "Human in the loop gates",
   about:
     "A gate stops the run and hands the full story to a person. Gate 1 fires before the model runs, when there is no approved document. Gate 2 fires after, when the reply fails the output check. Add --approve y or --approve n to answer the gate. With no answer, the gate says no.",
   terms: "gate = a stop in the run where a person must say yes. human in the loop = a person who decides before anything goes out. escalate = send it to a person.",

@@ -10,19 +10,19 @@ const STEP = '{"tool":"search","input":"Cardioza"}';
 const LONG = `[${STEP},${STEP},${STEP},${STEP},${STEP},${STEP}]`;
 
 // PROMISE: a plan is checked before it runs. A risky step needs a person. A failed step stops the rest.
-test("lab 17: a bad plan runs nothing at all", () => {
+test("a bad plan runs nothing at all", () => {
   expect(planThenAct(DELETE, true, model)).toMatchObject({ outcome: "rejected", done: [] });
   expect(planThenAct(LONG, true, model)).toMatchObject({ outcome: "rejected", done: [] });
   expect(checkPlan([{ tool: "send_email", input: "a@b.c" }]).risky.length).toBe(1);
 });
 
-test("lab 17: a risky step waits for a person", () => {
+test("a risky step waits for a person", () => {
   expect(planThenAct(MAIL, false, model)).toMatchObject({ outcome: "needs-approval", done: [], sent: [] });
   expect(planThenAct(MAIL, true, model).sent).toEqual(["dr.lee@example.com"]);
   expect(actUnchecked(MAIL, model).sent.length).toBe(1);
 });
 
-test("lab 17: a step that finds nothing stops the rest", () => {
+test("a step that finds nothing stops the rest", () => {
   const result = planThenAct("Look up the Zorbex dose and write a reply", false, model);
   expect(result.outcome).toBe("stopped");
   expect(result.done).toEqual([]);

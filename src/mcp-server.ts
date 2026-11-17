@@ -1,4 +1,4 @@
-// A TINY MCP SERVER. You do not need to read this file. Lab 7 reads the CLIENT side.
+// A TINY MCP SERVER. You do not need to read this file. The MCP basics lab reads the CLIENT side.
 // MCP is JSON messages over standard input and output, one message per line.
 // This server knows four methods: initialize, tools/list, tools/call and one notification.
 // It answers each line as soon as it arrives, and exits when the input ends.

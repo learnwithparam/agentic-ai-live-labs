@@ -1,4 +1,4 @@
-// The three sources of facts on the shelf in lab 13.
+// The three sources of facts on the shelf in the picking context lab.
 
 import { APPROVED_DOCS, EMAILS } from "./data";
 import type { Source } from "../labs/13-pick-context";

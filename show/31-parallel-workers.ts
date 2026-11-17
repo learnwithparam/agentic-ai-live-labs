@@ -1,4 +1,4 @@
-// What you see on screen for lab 31: the examples and the printing.
+// What you see on screen for the parallel workers lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/31-parallel-workers.ts.
 // Each worker is a real child program. Each of the three systems takes a second to answer.
 
@@ -13,7 +13,7 @@ const LIMIT_MS = 8000;
 
 export const lab: Lab = {
   file: "31-parallel-workers.ts",
-  title: "Lab 31: parallel workers",
+  title: "Parallel workers",
   about:
     "Each example prepares a call brief from three systems: documents, the profile and the emails. Pick the doctor with --hcp. Make a system fail with --stuck or --crash, and give the system name: docs, profile or emails.",
   terms: "parallel = at the same time. deadline = the time we stop waiting. merge = put the parts of the result together. worker = one program that does one part.",

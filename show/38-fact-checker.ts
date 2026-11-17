@@ -1,4 +1,4 @@
-// What you see on screen for lab 38: the examples and the printing.
+// What you see on screen for the claim checker lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/38-fact-checker.ts.
 // A draft comes in with --draft. The check itself is plain code, so the model only reviews in the naive case.
 
@@ -13,7 +13,7 @@ const CALL = "Please call us with questions.";
 
 export const lab: Lab = {
   file: "38-fact-checker.ts",
-  title: "Lab 38: check every sentence of a draft",
+  title: "Check every sentence of a draft",
   about:
     "Each example is an email draft that a person wrote. Give the draft with --draft, and the doctor's country with --country. Code checks each sentence against the approved documents.",
   terms: "claim = a sentence that says something about a drug. citation = the document id in brackets, such as [DOC-101]. word for word = the same words as the document.",

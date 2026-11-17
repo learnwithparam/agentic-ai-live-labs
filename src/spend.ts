@@ -1,4 +1,4 @@
-// Money for lab 22. Every amount is a whole number of millicents: 1000 millicents is one cent.
+// Money for the budgets lab. Every amount is a whole number of millicents: 1000 millicents is one cent.
 // Whole numbers never drift the way decimals do, so a total is always exact.
 // The day ledger is one line per charge. Each line is forced to disk, so a restart still knows what was spent.
 

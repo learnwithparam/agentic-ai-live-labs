@@ -1,4 +1,4 @@
-// Lab 27: Traces and the audit ledger
+// Traces and the audit ledger
 //
 // A month later, a compliance officer asks: "Why did the bot tell Dr. Weber the dose is 5mg?"
 // We need the record of what happened: the question, the search, the document, the answer.
@@ -9,20 +9,20 @@
 // The examples and the screen output are in show/27-traces-and-audit.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/27-traces-and-audit.ts --question "What is the dose of Cardioza?" --hcp H-2 --tamper edit --naive
-//   bun labs/27-traces-and-audit.ts --question "What is the dose of Cardioza?" --hcp H-2
-//   bun labs/27-traces-and-audit.ts --question "What is the dose of Cardioza?" --hcp H-2 --tamper edit
-//   bun labs/27-traces-and-audit.ts --question "What is the dose of Cardioza?" --hcp H-2 --tamper delete
-//   bun labs/27-traces-and-audit.ts --question "What is the dose of Cardioza?" --hcp H-2 --tamper cut
-//   bun labs/27-traces-and-audit.ts --question "What is the dose of Cardioza?" --hcp H-2 --tamper rewrite
-//   bun labs/27-traces-and-audit.ts --demo
+//   bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp H-2 --tamper edit --naive
+//   bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp H-2
+//   bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp H-2 --tamper edit
+//   bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp H-2 --tamper delete
+//   bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp H-2 --tamper cut
+//   bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp H-2 --tamper rewrite
+//   bun run lab traces-and-audit --demo
 
 import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";
 import { appendLine, readLines } from "../src/jobs"; // lines forced to disk
 import { sha } from "../src/trace";
 import { CRM } from "../src/data";
-import { runAgentLoop, searchApprovedDocs } from "./01-agent-loop"; // lab 1
+import { runAgentLoop, searchApprovedDocs } from "./01-agent-loop";
 import type { Tool } from "./01-agent-loop";
 
 export type Entry = { n: number; kind: string; detail: string; prev: string; hash: string };

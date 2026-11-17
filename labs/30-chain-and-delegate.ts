@@ -1,4 +1,4 @@
-// Lab 30: Chains and delegation
+// Chains and delegation
 //
 // The medical team says: "Write the Cardioza update for Dr. Lee, Dr. Weber and Dr. Rao."
 // One big job for one bot goes wrong in a quiet way. It searches once, for one country,
@@ -9,17 +9,17 @@
 // The examples and the screen output are in show/30-chain-and-delegate.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/30-chain-and-delegate.ts --question "Write the Cardioza update for Dr. Lee, Dr. Weber and Dr. Rao." --naive
-//   bun labs/30-chain-and-delegate.ts --question "Write the Cardioza update for Dr. Lee, Dr. Weber and Dr. Rao."
-//   bun labs/30-chain-and-delegate.ts --question "Write the Cardioza update for Dr. Weber please." --hcps H-2
-//   bun labs/30-chain-and-delegate.ts --question "Write the Neurovex update for Dr. Lee, Dr. Weber and Dr. Rao."
-//   bun labs/30-chain-and-delegate.ts --demo
+//   bun run lab chain-and-delegate --question "Write the Cardioza update for Dr. Lee, Dr. Weber and Dr. Rao." --naive
+//   bun run lab chain-and-delegate --question "Write the Cardioza update for Dr. Lee, Dr. Weber and Dr. Rao."
+//   bun run lab chain-and-delegate --question "Write the Cardioza update for Dr. Weber please." --hcps H-2
+//   bun run lab chain-and-delegate --question "Write the Neurovex update for Dr. Lee, Dr. Weber and Dr. Rao."
+//   bun run lab chain-and-delegate --demo
 
 import { CRM, KNOWN_DRUGS, NO_DOC } from "../src/data";
 import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";
-import { findProblems } from "../src/draft-check"; // the answer check from lab 18
-import { searchApprovedDocs } from "./01-agent-loop"; // lab 1
+import { findProblems } from "../src/draft-check";
+import { searchApprovedDocs } from "./01-agent-loop";
 
 export type Letter = { hcp: string; sent: boolean; text: string; log: string[] };
 

@@ -1,4 +1,4 @@
-// What you see on screen for lab 6: the examples and the printing.
+// What you see on screen for the shell tool lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/06-shell-tool.ts.
 
 import { modelFrom, type Lab } from "../src/runner";
@@ -10,7 +10,7 @@ const ASK_FILE = "Can you show me what is in the doses file?";
 
 export const lab: Lab = {
   file: "06-shell-tool.ts",
-  title: "Lab 6: a shell tool, safely",
+  title: "A shell tool, safely",
   about:
     "Describe a task and the model writes the command. Or pass a command yourself with --command, as if the model wrote it. Four rules decide if it starts. The agent works in one folder called sandbox, which holds two small files.",
   terms: "shell = a program that runs commands. allow-list = the only commands we permit. sandbox = a folder it cannot leave.",
@@ -27,7 +27,7 @@ export const lab: Lab = {
     { title: "Chaining a second command", why: "The first part is allowed. The semicolon would add a delete. We refuse the whole line.", question: ASK_FILE, flags: { command: "cat notes.txt; rm notes.txt"}, expect: "refused" },
     { title: "Climbing out of the folder", why: "Two dots mean the folder above. The sandbox is only a rule if code enforces it.", question: ASK_FILE, flags: { command: "cat ../package.json"}, expect: "refused" },
     { title: "An absolute path", why: "A path from the top of the disk could read any file. It is refused.", question: ASK_FILE, flags: { command: "cat /etc/hosts"}, expect: "refused" },
-    { title: "A file that is not there", why: "The command is allowed, but it fails. The error goes back to the agent, so it can try again. That is lab 16.", question: ASK_FILE, flags: { command: "cat missing.txt"}, expect: "failed" },
+    { title: "A file that is not there", why: "The command is allowed, but it fails. The error goes back to the agent, so it can try again. That is the error feedback lab.", question: ASK_FILE, flags: { command: "cat missing.txt"}, expect: "failed" },
     { title: "A command that never ends", why: "Sleep for 5 seconds with a limit of 1. The time limit stops it. Without one, a stuck command would hang the agent.", question: ASK_FILE, flags: { command: "sleep 5", limit: "1" }, expect: "timeout" },
   ],
   play(question, flags) {

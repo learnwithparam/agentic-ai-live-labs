@@ -1,4 +1,4 @@
-// What you see on screen for lab 16: the examples and the printing.
+// What you see on screen for the error feedback lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/16-error-feedback.ts.
 
 import { modelFrom, type Lab } from "../src/runner";
@@ -9,7 +9,7 @@ export const MAX_TRIES = 3;
 
 export const lab: Lab = {
   file: "16-error-feedback.ts",
-  title: "Lab 16: a useful error",
+  title: "A useful error",
   about:
     "Each example is a question like Cardioza in Germany. The model writes the tool call, reads each error, and fixes the call, up to 3 tries.",
   terms: "retry = try the call again. hint = what the error says is valid. ask a person = stop, because only they know what was meant.",

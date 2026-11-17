@@ -1,4 +1,4 @@
-// What you see on screen for lab 10: the examples and the printing.
+// What you see on screen for the context budget lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/10-context-budget.ts.
 
 import { modelFrom, type Lab } from "../src/runner";
@@ -27,7 +27,7 @@ function partsFor(question: string): Part[] {
 
 export const lab: Lab = {
   file: "10-context-budget.ts",
-  title: "Lab 10: the context budget",
+  title: "The context budget",
   about:
     "Each example builds the prompt for one question under a token budget. Use --window 80 to change the budget. The prompt holds rules, a doctor note, documents, chat history and the question.",
   terms: "context window = the most text a model reads at once. token = a small piece of text, counted by a real tokenizer (o200k). budget = the tokens we allow ourselves.",

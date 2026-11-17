@@ -1,33 +1,33 @@
-// Lab 40: Put it all together
+// Put it all together
 //
 // Dr. Lee types a note that holds a patient's private details and asks for the Cardioza dose.
 // One answer needs many of the ideas from the labs before this one. Each idea guards one risk.
-// Hide the private details (lab 2). Never use a withdrawn document (lab 39).
-// Check every sentence of the reply (lab 38). Ask a person when a check fails (lab 3).
-// Write every step in a record that nobody can edit without it showing (lab 27).
+// Hide the private details (the guardrails lab). Never use a withdrawn document (the revocation lab).
+// Check every sentence of the reply (the claim checker lab). Ask a person when a check fails (the gates lab).
+// Write every step in a record that nobody can edit without it showing (the traces and audit lab).
 // The run prints each step as it happens, with the same number as the step in the code.
 // The examples and the screen output are in show/40-end-to-end.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/40-end-to-end.ts --question "Call from Dr. Lee about Patient: Jane Doe (SSN 123-45-6789) on Cardioza dose" --naive
-//   bun labs/40-end-to-end.ts --question "Call from Dr. Lee about Patient: Jane Doe (SSN 123-45-6789) on Cardioza dose"
-//   bun labs/40-end-to-end.ts --question "What is the dose of Cardioza for Dr. Lee?" --model nocite --approve y
-//   bun labs/40-end-to-end.ts --question "What is the dose of Cardioza for Dr. Lee?" --model nocite --approve n
-//   bun labs/40-end-to-end.ts --question "What is the dose of Cardioza for Dr. Lee?" --withdraw DOC-101 --approve n
-//   bun labs/40-end-to-end.ts --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-9
-//   bun labs/40-end-to-end.ts --demo
+//   bun run lab end-to-end --question "Call from Dr. Lee about Patient: Jane Doe (SSN 123-45-6789) on Cardioza dose" --naive
+//   bun run lab end-to-end --question "Call from Dr. Lee about Patient: Jane Doe (SSN 123-45-6789) on Cardioza dose"
+//   bun run lab end-to-end --question "What is the dose of Cardioza for Dr. Lee?" --model nocite --approve y
+//   bun run lab end-to-end --question "What is the dose of Cardioza for Dr. Lee?" --model nocite --approve n
+//   bun run lab end-to-end --question "What is the dose of Cardioza for Dr. Lee?" --withdraw DOC-101 --approve n
+//   bun run lab end-to-end --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-9
+//   bun run lab end-to-end --demo
 
 import { CRM } from "../src/data";
 import { appendLine, readLines } from "../src/jobs"; // lines forced to disk
 import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";
 import type { Ask } from "../src/runner";
-import { runAgentLoop } from "./01-agent-loop"; // lab 1
-import { redactPhi } from "./02-guardrails"; // lab 2
-import { humanApprovalGate } from "./03-gates"; // lab 3
-import { seal } from "./27-traces-and-audit"; // lab 27
-import { checkClaims, type Row } from "./38-fact-checker"; // lab 38
-import { answerChecked } from "./39-revocation"; // lab 39
+import { runAgentLoop } from "./01-agent-loop";
+import { redactPhi } from "./02-guardrails";
+import { humanApprovalGate } from "./03-gates";
+import { seal } from "./27-traces-and-audit";
+import { checkClaims, type Row } from "./38-fact-checker";
+import { answerChecked } from "./39-revocation";
 
 export type Result = { status: string; reply: string; head: string; log: string[] };
 

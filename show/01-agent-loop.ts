@@ -1,4 +1,4 @@
-// What you see on screen for lab 1: the examples and the printing.
+// What you see on screen for the agent loop: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/01-agent-loop.ts.
 
 import { modelFrom, type Lab } from "../src/runner";
@@ -7,7 +7,7 @@ import { runAgentLoop, searchOnly } from "../labs/01-agent-loop";
 
 export const lab: Lab = {
   file: "01-agent-loop.ts",
-  title: "Lab 1: the agent loop",
+  title: "The agent loop",
   about:
     "The model asks for a tool. Our code runs it. The model reads the result. This repeats until the model answers. The only source of facts is the approved document search. The country decides which documents the doctor may see.",
   cases: [

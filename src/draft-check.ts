@@ -1,4 +1,4 @@
-// The check lab 18 runs on every draft: a citation, and only doses the document has.
+// The check the reflect and fix lab runs on every draft: a citation, and only doses the document has.
 
 // A real model adds stars, odd hyphens and spaces. Take them out before checking.
 function tidy(text: string): string {

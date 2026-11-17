@@ -1,4 +1,4 @@
-// A small real web service for lab 20: the approved documents behind an HTTP address.
+// A small real web service for the tool failures lab: the approved documents behind an HTTP address.
 // It runs as its own program, so a slow or broken reply is a real one.
 // Start it with startService. It has four moods.
 // ok: every call works. flaky: the first two calls fail with 503, then it works.

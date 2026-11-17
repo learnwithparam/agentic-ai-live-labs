@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { readdirSync, readFileSync } from "node:fs";
 import { LABS, PATHS, TRACKS, whereAmI } from "../src/roadmap";
+import { PICTURES } from "../src/pictures";
 import { labFile, renderAll } from "../scripts/path";
 
 describe("the roadmap", () => {
@@ -13,6 +14,14 @@ describe("the roadmap", () => {
     for (const lab of LABS) expect(trackIds).toContain(lab.track);
     const used = LABS.map((lab) => trackIds.indexOf(lab.track));
     expect(used).toEqual([...used].sort((first, second) => first - second));
+  });
+  test("titles hold no numbers, so they never go stale", () => {
+    for (const lab of LABS) expect(lab.title).not.toMatch(/\d/);
+  });
+  test("every lab has one picture, and no picture is left without a lab", () => {
+    const slugs = LABS.map((lab) => lab.slug);
+    expect(Object.keys(PICTURES).sort()).toEqual([...slugs].sort());
+    for (const slug of slugs) expect(PICTURES[slug].startsWith("flowchart")).toBe(true);
   });
   test("every lab file in labs/ is on the roadmap with the same file name", () => {
     const files = readdirSync("labs").filter((name) => /^\d\d-.*\.ts$/.test(name));
@@ -60,7 +69,8 @@ describe("the learning paths", () => {
 
 describe("where am I", () => {
   test("every lab says its track place, and the ends have no before or next", () => {
-    expect(whereAmI(7)).toBe(`You are here: lab 7 of ${LABS.length}, Tools and protocols (3 of 5). Before: 6. Next: 8.`);
+    expect(whereAmI(7)).toBe(`You are here: ${LABS[6].title}, in Tools and protocols. Before: ${LABS[5].title}. Next: ${LABS[7].title}.`);
+    expect(whereAmI(7)).not.toMatch(/\d/);
     expect(whereAmI(1)).not.toContain("Before");
     expect(whereAmI(LABS.length)).not.toContain("Next");
   });

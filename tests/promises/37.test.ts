@@ -12,7 +12,7 @@ const TWO =
 const fresh = () => mkdtempSync(`${tmpdir()}/t37-`);
 
 // PROMISE: the model sees tokens only. Same value, same token. Only a reviewer sees real values.
-test("lab 37: the model never sees a real value", () => {
+test("the model never sees a real value", () => {
   const seen: string[] = [];
   const spy: CallLlm = (messages, tools) => {
     for (const message of messages) seen.push(message.content);
@@ -24,21 +24,21 @@ test("lab 37: the model never sees a real value", () => {
   expect(seen.join(" ")).toContain("[SSN-1]");
 });
 
-test("lab 37: a reviewer sees the real values", () => {
+test("a reviewer sees the real values", () => {
   const result = recordCase(NOTE, { role: "reviewer", who: "Sam" }, ok, fresh());
   expect(result.shown).toContain("123-45-6789");
   expect(result.shown).toContain("Jane Doe");
   expect(result.revealed).toBe(2);
 });
 
-test("lab 37: an agent keeps the tokens and gets no real value", () => {
+test("an agent keeps the tokens and gets no real value", () => {
   const result = recordCase(NOTE, { role: "agent", who: "Sam" }, ok, fresh());
   expect(result.shown).toContain("[SSN-1]");
   expect(result.shown).not.toContain("123-45-6789");
   expect(result.revealed).toBe(0);
 });
 
-test("lab 37: the same value gets the same token, and a new value gets a new one", () => {
+test("the same value gets the same token, and a new value gets a new one", () => {
   const clean = tokenize(TWO, fresh());
   expect(clean.split("[SSN-1]").length).toBe(3);
   expect(clean).toContain("[PHONE-1]");
@@ -47,19 +47,19 @@ test("lab 37: the same value gets the same token, and a new value gets a new one
   expect(tokenize("Call 555-987-6543 now", dir)).toContain("[PHONE-2]");
 });
 
-test("lab 37: a token made in one run is revealed in a later run", () => {
+test("a token made in one run is revealed in a later run", () => {
   const dir = fresh();
   tokenize(NOTE, dir);
   expect(reveal("see [SSN-1]", "reviewer", "Sam", dir).text).toBe("see 123-45-6789");
 });
 
-test("lab 37: a token the vault never made stays as it is", () => {
+test("a token the vault never made stays as it is", () => {
   const dir = fresh();
   tokenize(NOTE, dir);
   expect(reveal("see [SSN-99]", "reviewer", "Sam", dir).text).toBe("see [SSN-99]");
 });
 
-test("lab 37: every try is audited, the refused one too", () => {
+test("every try is audited, the refused one too", () => {
   const dir = fresh();
   recordCase(NOTE, { role: "reviewer", who: "Sam" }, ok, dir);
   recordCase(NOTE, { role: "agent", who: "Alex" }, ok, dir);
@@ -70,7 +70,7 @@ test("lab 37: every try is audited, the refused one too", () => {
   expect(JSON.stringify(audit)).not.toContain("123-45-6789");
 });
 
-test("lab 37: a fixed mask cannot be reversed", () => {
+test("a fixed mask cannot be reversed", () => {
   const result = recordNaive(NOTE, ok);
   expect(result.shown).toContain("[SSN]");
   expect(result.shown).not.toContain("123-45-6789");

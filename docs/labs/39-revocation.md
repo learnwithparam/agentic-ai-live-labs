@@ -1,6 +1,17 @@
-# Lab 39: withdrawn documents and the cache
+# Withdrawn documents and the cache
 
 Each example asks one question twice. In between, a document may be withdrawn. Use --withdraw to withdraw it after the first answer. Use --late to withdraw it while the second answer is made.
+
+## The story in one picture
+
+```mermaid
+flowchart LR
+  A["Document withdrawn in a country"] --> B["Mark it revoked"]
+  B --> C["Search skips it"]
+  B --> D["Cache drops it"]
+  C --> E["Doctor never sees it"]
+  D --> E
+```
 
 ## The problem
 
@@ -15,15 +26,15 @@ withdrawn = the company took the document back. cache = saved answers, so the ne
 Copy any line into your terminal. Each one is a real example from this lab.
 
 ```bash
-bun labs/39-revocation.ts --question "What is the dose of Cardioza for Dr. Lee?" --withdraw DOC-101 --naive
-bun labs/39-revocation.ts --question "What is the dose of Cardioza for Dr. Lee?" --withdraw DOC-101
-bun labs/39-revocation.ts --question "What is the dose of Cardioza for Dr. Lee?" --withdraw DOC-102
-bun labs/39-revocation.ts --question "What is the dose of Cardioza for Dr. Lee?"
-bun labs/39-revocation.ts --question "What is the dose of Cardioza for Dr. Lee?" --late DOC-101
-bun labs/39-revocation.ts --demo
+bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?" --withdraw DOC-101 --naive
+bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?" --withdraw DOC-101
+bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?" --withdraw DOC-102
+bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?"
+bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?" --late DOC-101
+bun run lab revocation --demo
 ```
 
-Run `bun labs/39-revocation.ts` with nothing else to pick an example from a menu.
+Run `bun run lab revocation` with nothing else to pick an example from a menu.
 
 ## The cases
 
@@ -31,11 +42,11 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
-| 1 | NAIVE: serve the saved answer | DOC-101 is withdrawn after the first answer. The saved answer still holds its dose, and it goes out again. | stale | `bun labs/39-revocation.ts --question "What is the dose of Cardioza for Dr. Lee?" --withdraw DOC-101 --naive` |
-| 2 | A withdrawn document | The saved answer cites DOC-101. It is deleted. Nothing else is approved for Cardioza in the US, so there is no answer. | no-answer | `bun labs/39-revocation.ts --question "What is the dose of Cardioza for Dr. Lee?" --withdraw DOC-101` |
-| 3 | Another country's document | DOC-102 is for Germany. It is withdrawn, but Dr. Lee is in the US, so the saved answer is still good. | cache | `bun labs/39-revocation.ts --question "What is the dose of Cardioza for Dr. Lee?" --withdraw DOC-102` |
-| 4 | Nothing withdrawn | The second ask is served from the saved answer. It is fast, and it is still approved. | cache | `bun labs/39-revocation.ts --question "What is the dose of Cardioza for Dr. Lee?"` |
-| 5 | EDGE: withdrawn during the run | There is no saved answer. The document is withdrawn after the search and before the send. The last check catches it. | blocked | `bun labs/39-revocation.ts --question "What is the dose of Cardioza for Dr. Lee?" --late DOC-101` |
+| 1 | NAIVE: serve the saved answer | DOC-101 is withdrawn after the first answer. The saved answer still holds its dose, and it goes out again. | stale | `bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?" --withdraw DOC-101 --naive` |
+| 2 | A withdrawn document | The saved answer cites DOC-101. It is deleted. Nothing else is approved for Cardioza in the US, so there is no answer. | no-answer | `bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?" --withdraw DOC-101` |
+| 3 | Another country's document | DOC-102 is for Germany. It is withdrawn, but Dr. Lee is in the US, so the saved answer is still good. | cache | `bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?" --withdraw DOC-102` |
+| 4 | Nothing withdrawn | The second ask is served from the saved answer. It is fast, and it is still approved. | cache | `bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?"` |
+| 5 | EDGE: withdrawn during the run | There is no saved answer. The document is withdrawn after the search and before the send. The last check catches it. | blocked | `bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?" --late DOC-101` |
 
 ## The promise, and its test
 

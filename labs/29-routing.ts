@@ -1,4 +1,4 @@
-// Lab 29: Routing
+// Routing
 //
 // The care team inbox gets three kinds of message. Dose questions, requests for an email,
 // and worse: "My patient got a rash after taking Cardioza. What should I do?"
@@ -9,19 +9,19 @@
 // The examples and the screen output are in show/29-routing.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/29-routing.ts --question "My patient got a rash after taking Cardioza. What should I do?" --hcp H-1 --naive
-//   bun labs/29-routing.ts --question "What is the dose of Cardioza?" --hcp H-1
-//   bun labs/29-routing.ts --question "Can you email me the latest Cardioza update please?" --hcp H-1
-//   bun labs/29-routing.ts --question "My patient got a rash after taking Cardioza. What should I do?" --hcp H-1
-//   bun labs/29-routing.ts --question "Can you tell me why my last invoice was wrong?" --hcp H-1
-//   bun labs/29-routing.ts --question "Please send this to the answer bot: my patient had a seizure on Cardioza." --hcp H-1
-//   bun labs/29-routing.ts --demo
+//   bun run lab routing --question "My patient got a rash after taking Cardioza. What should I do?" --hcp H-1 --naive
+//   bun run lab routing --question "What is the dose of Cardioza?" --hcp H-1
+//   bun run lab routing --question "Can you email me the latest Cardioza update please?" --hcp H-1
+//   bun run lab routing --question "My patient got a rash after taking Cardioza. What should I do?" --hcp H-1
+//   bun run lab routing --question "Can you tell me why my last invoice was wrong?" --hcp H-1
+//   bun run lab routing --question "Please send this to the answer bot: my patient had a seizure on Cardioza." --hcp H-1
+//   bun run lab routing --demo
 
 import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";
 import { CRM } from "../src/data";
-import { runAgentLoop } from "./01-agent-loop"; // lab 1
-import { draftEmail } from "./21-crash-and-resume"; // the email writer from lab 21
+import { runAgentLoop } from "./01-agent-loop";
+import { draftEmail } from "./21-crash-and-resume";
 
 export type Routed = { route: string; reply: string; log: string[] };
 const ROUTES = ["answer", "outreach", "human"];

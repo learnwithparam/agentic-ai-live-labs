@@ -1,4 +1,4 @@
-// The review box a person sees at a gate. Lab 3 uses it.
+// The review box a person sees at a gate. The gates lab uses it.
 import { badgeYellow, box, field, highlight, yellow } from "./ui";
 
 export function showReview(reason: string, question: string, draft: string) {

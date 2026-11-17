@@ -1,4 +1,4 @@
-// What you see on screen for lab 15: the examples and the printing.
+// What you see on screen for the stop conditions lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/15-stop-conditions.ts.
 
 import { modelFrom, type Lab } from "../src/runner";
@@ -8,7 +8,7 @@ import type { Limits } from "../labs/15-stop-conditions";
 
 export const lab: Lab = {
   file: "15-stop-conditions.ts",
-  title: "Lab 15: when the loop must stop",
+  title: "When the loop must stop",
   about:
     "Each example asks one question. The loop allows 6 steps, 2 identical calls and 400 tokens. Change them with --steps, --repeats and --budget. A real model answers fast, so two pretend habits are on the shelf: --model stuck repeats one search, and --model wanders tries new words every time.",
   terms: "step = one trip round the loop. repeat = the same call again. budget = the most we allow a run to spend.",

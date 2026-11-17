@@ -1,6 +1,18 @@
-# Lab 21: crash and resume
+# Crash and resume
 
 Each example emails three doctors. Some examples kill the program part way, for real, and start it again. Pick one with --scenario: naive, clean, resume, between or done.
+
+## The story in one picture
+
+```mermaid
+flowchart LR
+  A["Job: a list of doctors"] --> B["Send one email"]
+  B --> C["Write it in the ledger"]
+  C -->|"crash here"| D["Restart"]
+  D --> E["Read the ledger"]
+  E --> F["Skip what was sent"]
+  F --> G["Finish the rest"]
+```
 
 ## The problem
 
@@ -15,15 +27,15 @@ ledger = a list of finished steps on disk. idempotency key = a name for one send
 Copy any line into your terminal. Each one is a real example from this lab.
 
 ```bash
-bun labs/21-crash-and-resume.ts --question "Email the Cardioza update to three doctors" --scenario naive
-bun labs/21-crash-and-resume.ts --question "Email the Cardioza update to three doctors" --scenario clean
-bun labs/21-crash-and-resume.ts --question "Email the Cardioza update to three doctors" --scenario resume
-bun labs/21-crash-and-resume.ts --question "Email the Cardioza update to three doctors" --scenario between
-bun labs/21-crash-and-resume.ts --question "Email the Cardioza update to three doctors" --scenario done
-bun labs/21-crash-and-resume.ts --demo
+bun run lab crash-and-resume --question "Email the Cardioza update to three doctors" --scenario naive
+bun run lab crash-and-resume --question "Email the Cardioza update to three doctors" --scenario clean
+bun run lab crash-and-resume --question "Email the Cardioza update to three doctors" --scenario resume
+bun run lab crash-and-resume --question "Email the Cardioza update to three doctors" --scenario between
+bun run lab crash-and-resume --question "Email the Cardioza update to three doctors" --scenario done
+bun run lab crash-and-resume --demo
 ```
 
-Run `bun labs/21-crash-and-resume.ts` with nothing else to pick an example from a menu.
+Run `bun run lab crash-and-resume` with nothing else to pick an example from a menu.
 
 ## The cases
 
@@ -31,11 +43,11 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
-| 1 | NAIVE: start over after a kill | The program dies after it emails Dr. Weber. The restart begins at the top. Dr. Lee and Dr. Weber get a second email. | duplicates | `bun labs/21-crash-and-resume.ts --question "Email the Cardioza update to three doctors" --scenario naive` |
-| 2 | No crash | All three doctors get one email, and the ledger lists all three. | ok | `bun labs/21-crash-and-resume.ts --question "Email the Cardioza update to three doctors" --scenario clean` |
-| 3 | A kill, then a restart | The program dies after the ledger holds Dr. Weber. The restart skips two doctors and emails Dr. Rao. | ok | `bun labs/21-crash-and-resume.ts --question "Email the Cardioza update to three doctors" --scenario resume` |
-| 4 | EDGE: a kill between the send and the ledger | The email went out but the ledger line was not written. The restart tries Dr. Weber again, and the outbox refuses the key. | ok | `bun labs/21-crash-and-resume.ts --question "Email the Cardioza update to three doctors" --scenario between` |
-| 5 | EDGE: run a finished job again | Every doctor is in the ledger. The second run does nothing at all. | ok | `bun labs/21-crash-and-resume.ts --question "Email the Cardioza update to three doctors" --scenario done` |
+| 1 | NAIVE: start over after a kill | The program dies after it emails Dr. Weber. The restart begins at the top. Dr. Lee and Dr. Weber get a second email. | duplicates | `bun run lab crash-and-resume --question "Email the Cardioza update to three doctors" --scenario naive` |
+| 2 | No crash | All three doctors get one email, and the ledger lists all three. | ok | `bun run lab crash-and-resume --question "Email the Cardioza update to three doctors" --scenario clean` |
+| 3 | A kill, then a restart | The program dies after the ledger holds Dr. Weber. The restart skips two doctors and emails Dr. Rao. | ok | `bun run lab crash-and-resume --question "Email the Cardioza update to three doctors" --scenario resume` |
+| 4 | EDGE: a kill between the send and the ledger | The email went out but the ledger line was not written. The restart tries Dr. Weber again, and the outbox refuses the key. | ok | `bun run lab crash-and-resume --question "Email the Cardioza update to three doctors" --scenario between` |
+| 5 | EDGE: run a finished job again | Every doctor is in the ledger. The second run does nothing at all. | ok | `bun run lab crash-and-resume --question "Email the Cardioza update to three doctors" --scenario done` |
 
 ## The promise, and its test
 

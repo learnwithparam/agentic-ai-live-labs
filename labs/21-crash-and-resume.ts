@@ -1,4 +1,4 @@
-// Lab 21: Crash and resume
+// Crash and resume
 //
 // The agent must email three doctors about Cardioza. After the second email, the program is killed.
 // Maybe the machine restarted. Maybe memory ran out. Now what? If we start over, Dr. Lee and
@@ -9,12 +9,12 @@
 // The examples and the screen output are in show/21-crash-and-resume.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/21-crash-and-resume.ts --question "Email the Cardioza update to three doctors" --scenario naive
-//   bun labs/21-crash-and-resume.ts --question "Email the Cardioza update to three doctors" --scenario clean
-//   bun labs/21-crash-and-resume.ts --question "Email the Cardioza update to three doctors" --scenario resume
-//   bun labs/21-crash-and-resume.ts --question "Email the Cardioza update to three doctors" --scenario between
-//   bun labs/21-crash-and-resume.ts --question "Email the Cardioza update to three doctors" --scenario done
-//   bun labs/21-crash-and-resume.ts --demo
+//   bun run lab crash-and-resume --question "Email the Cardioza update to three doctors" --scenario naive
+//   bun run lab crash-and-resume --question "Email the Cardioza update to three doctors" --scenario clean
+//   bun run lab crash-and-resume --question "Email the Cardioza update to three doctors" --scenario resume
+//   bun run lab crash-and-resume --question "Email the Cardioza update to three doctors" --scenario between
+//   bun run lab crash-and-resume --question "Email the Cardioza update to three doctors" --scenario done
+//   bun run lab crash-and-resume --demo
 
 import { APPROVED_DOCS, CRM } from "../src/data";
 import type { CallLlm } from "../src/model";

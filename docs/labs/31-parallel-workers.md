@@ -1,6 +1,18 @@
-# Lab 31: parallel workers
+# Parallel workers
 
 Each example prepares a call brief from three systems: documents, the profile and the emails. Pick the doctor with --hcp. Make a system fail with --stuck or --crash, and give the system name: docs, profile or emails.
+
+## The story in one picture
+
+```mermaid
+flowchart LR
+  A["One job"] --> W1["Worker 1"]
+  A --> W2["Worker 2"]
+  A --> W3["Worker 3"]
+  W1 --> M["Merge, no duplicates"]
+  W2 --> M
+  W3 --> M
+```
 
 ## The problem
 
@@ -15,15 +27,15 @@ parallel = at the same time. deadline = the time we stop waiting. merge = put th
 Copy any line into your terminal. Each one is a real example from this lab.
 
 ```bash
-bun labs/31-parallel-workers.ts --question "Please prepare a call brief for Dr. Lee." --hcp H-1 --naive
-bun labs/31-parallel-workers.ts --question "Please prepare a call brief for Dr. Lee." --hcp H-1
-bun labs/31-parallel-workers.ts --question "Please prepare a call brief for Dr. Weber." --hcp H-2
-bun labs/31-parallel-workers.ts --question "Please prepare a call brief for Dr. Lee." --hcp H-1 --stuck emails
-bun labs/31-parallel-workers.ts --question "Please prepare a call brief for Dr. Lee." --hcp H-1 --crash profile
-bun labs/31-parallel-workers.ts --demo
+bun run lab parallel-workers --question "Please prepare a call brief for Dr. Lee." --hcp H-1 --naive
+bun run lab parallel-workers --question "Please prepare a call brief for Dr. Lee." --hcp H-1
+bun run lab parallel-workers --question "Please prepare a call brief for Dr. Weber." --hcp H-2
+bun run lab parallel-workers --question "Please prepare a call brief for Dr. Lee." --hcp H-1 --stuck emails
+bun run lab parallel-workers --question "Please prepare a call brief for Dr. Lee." --hcp H-1 --crash profile
+bun run lab parallel-workers --demo
 ```
 
-Run `bun labs/31-parallel-workers.ts` with nothing else to pick an example from a menu.
+Run `bun run lab parallel-workers` with nothing else to pick an example from a menu.
 
 ## The cases
 
@@ -31,11 +43,11 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
-| 1 | NAIVE: one system after another | The systems run in a line. Three seconds go by before the brief is ready. | slow | `bun labs/31-parallel-workers.ts --question "Please prepare a call brief for Dr. Lee." --hcp H-1 --naive` |
-| 2 | Three workers at once | All three start together. The brief is ready in about one second. | complete | `bun labs/31-parallel-workers.ts --question "Please prepare a call brief for Dr. Lee." --hcp H-1` |
-| 3 | A German doctor | Dr. Weber has no emails. That worker answers that there are none, and the brief is still complete. | complete | `bun labs/31-parallel-workers.ts --question "Please prepare a call brief for Dr. Weber." --hcp H-2` |
-| 4 | EDGE: one system is stuck | The emails system never answers. The lead stops it at the deadline and sends the rest. | partial | `bun labs/31-parallel-workers.ts --question "Please prepare a call brief for Dr. Lee." --hcp H-1 --stuck emails` |
-| 5 | EDGE: one worker crashes | The profile worker dies. The brief names the missing part, and the other two come through. | partial | `bun labs/31-parallel-workers.ts --question "Please prepare a call brief for Dr. Lee." --hcp H-1 --crash profile` |
+| 1 | NAIVE: one system after another | The systems run in a line. Three seconds go by before the brief is ready. | slow | `bun run lab parallel-workers --question "Please prepare a call brief for Dr. Lee." --hcp H-1 --naive` |
+| 2 | Three workers at once | All three start together. The brief is ready in about one second. | complete | `bun run lab parallel-workers --question "Please prepare a call brief for Dr. Lee." --hcp H-1` |
+| 3 | A German doctor | Dr. Weber has no emails. That worker answers that there are none, and the brief is still complete. | complete | `bun run lab parallel-workers --question "Please prepare a call brief for Dr. Weber." --hcp H-2` |
+| 4 | EDGE: one system is stuck | The emails system never answers. The lead stops it at the deadline and sends the rest. | partial | `bun run lab parallel-workers --question "Please prepare a call brief for Dr. Lee." --hcp H-1 --stuck emails` |
+| 5 | EDGE: one worker crashes | The profile worker dies. The brief names the missing part, and the other two come through. | partial | `bun run lab parallel-workers --question "Please prepare a call brief for Dr. Lee." --hcp H-1 --crash profile` |
 
 ## The promise, and its test
 

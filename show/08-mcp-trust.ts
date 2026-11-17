@@ -1,4 +1,4 @@
-// What you see on screen for lab 8: the examples and the printing.
+// What you see on screen for the MCP trust lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/08-mcp-trust.ts.
 
 import type { CallLlm } from "../src/model";
@@ -27,7 +27,7 @@ const ASK = "What is the dose of Cardioza?";
 
 export const lab: Lab = {
   file: "08-mcp-trust.ts",
-  title: "Lab 8: trusting an MCP server",
+  title: "Trusting an MCP server",
   about:
     "Each example is a server and the tools it lists. Only the server hcp-docs is approved, and its tools were pinned when a person reviewed them. Pick a scene by typing its name.",
   terms: "pin = remember what a tool looked like when approved. rug pull = a tool changes after approval. fingerprint = a short code for a text.",

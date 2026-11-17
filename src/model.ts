@@ -132,7 +132,7 @@ function routeFor(prompt: string): string {
   return "human";
 }
 
-// The pretend bots in lab 33. Each one reads the message and names the next bot, or says done.
+// The pretend bots in the handoffs lab. Each one reads the message and names the next bot, or says done.
 function handFor(prompt: string): string {
   const bot = (prompt.split("You are the ")[1] || "").split(" bot")[0];
   const message = (prompt.split("Message: ")[1] || "").toLowerCase();

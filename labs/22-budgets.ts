@@ -1,6 +1,6 @@
-// Lab 22: Money caps
+// Money caps
 //
-// A model that is stuck keeps calling a paid model. Lab 15 stopped it by counting tokens.
+// A model that is stuck keeps calling a paid model. The stop conditions lab stopped it by counting tokens.
 // A company pays in money, not tokens, and one person can start many runs in a day.
 // So we keep three caps in whole cents: one for a run, one for a person's day, one for the hops.
 // A hop is one agent handing work to another. Too many hops means two agents are passing a ball.
@@ -9,19 +9,19 @@
 // The examples and the screen output are in show/22-budgets.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/22-budgets.ts --question "What is the dose of Zorbex?" --model stuck --naive
-//   bun labs/22-budgets.ts --question "What is the dose of Cardioza?"
-//   bun labs/22-budgets.ts --question "What is the dose of Zorbex?" --model stuck --run 1
-//   bun labs/22-budgets.ts --question "What is the dose of Cardioza?" --before 2900
-//   bun labs/22-budgets.ts --question "What is the dose of Cardioza?" --hops 3
-//   bun labs/22-budgets.ts --question "What is the dose of Cardioza?" --again 3
-//   bun labs/22-budgets.ts --demo
+//   bun run lab budgets --question "What is the dose of Zorbex?" --model stuck --naive
+//   bun run lab budgets --question "What is the dose of Cardioza?"
+//   bun run lab budgets --question "What is the dose of Zorbex?" --model stuck --run 1
+//   bun run lab budgets --question "What is the dose of Cardioza?" --before 2900
+//   bun run lab budgets --question "What is the dose of Cardioza?" --hops 3
+//   bun run lab budgets --question "What is the dose of Cardioza?" --again 3
+//   bun run lab budgets --demo
 
 import type { CallLlm, Message } from "../src/model";
 import { runLab } from "../src/runner";
 import { charge, costOf, PRICES, spentOn } from "../src/spend"; // money in whole millicents
 import { countTokens } from "./10-context-budget"; // the estimate, used when the provider sends no count
-import { searchApprovedDocs } from "./01-agent-loop"; // the search from lab 1
+import { searchApprovedDocs } from "./01-agent-loop";
 
 export type Caps = { run: number; day: number; hops: number; rounds: number; maxOut: number };
 export type Who = { user: string; day: string; hops: number };

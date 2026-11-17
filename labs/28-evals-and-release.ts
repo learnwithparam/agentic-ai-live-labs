@@ -1,4 +1,4 @@
-// Lab 28: Evals and the release gate
+// Evals and the release gate
 //
 // A teammate changes the document search so it is faster. It still answers every question.
 // But Dr. Weber in Germany now gets the US dose. Nobody tested it, so it shipped on Friday.
@@ -8,18 +8,18 @@
 // The examples and the screen output are in show/28-evals-and-release.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/28-evals-and-release.ts --question "Is this new version ready to release?" --version wide --naive
-//   bun labs/28-evals-and-release.ts --question "Is this new version ready to release?" --version current
-//   bun labs/28-evals-and-release.ts --question "Is this new version ready to release?" --version wide
-//   bun labs/28-evals-and-release.ts --question "Is this new version ready to release?" --version invents
-//   bun labs/28-evals-and-release.ts --question "Is this new version ready to release?" --evals none
-//   bun labs/28-evals-and-release.ts --demo
+//   bun run lab evals-and-release --question "Is this new version ready to release?" --version wide --naive
+//   bun run lab evals-and-release --question "Is this new version ready to release?" --version current
+//   bun run lab evals-and-release --question "Is this new version ready to release?" --version wide
+//   bun run lab evals-and-release --question "Is this new version ready to release?" --version invents
+//   bun run lab evals-and-release --question "Is this new version ready to release?" --evals none
+//   bun run lab evals-and-release --demo
 
 import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";
 import { CRM } from "../src/data";
 import { toolFor } from "../src/releases"; // the versions we test
-import { runAgentLoop } from "./01-agent-loop"; // lab 1
+import { runAgentLoop } from "./01-agent-loop";
 
 export type Eval = { ask: string; hcp: string; mustHave: string[]; mustNot: string[] };
 export type Result = { ask: string; hcp: string; answer: string; passed: boolean; why: string };

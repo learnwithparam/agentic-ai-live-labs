@@ -1,4 +1,4 @@
-// What you see on screen for lab 39: the examples and the printing.
+// What you see on screen for the revocation lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/39-revocation.ts.
 // Each example first asks once, so the answer is saved. Then a document is withdrawn, and the same question comes again.
 
@@ -12,7 +12,7 @@ const ASK = "What is the dose of Cardioza for Dr. Lee?";
 
 export const lab: Lab = {
   file: "39-revocation.ts",
-  title: "Lab 39: withdrawn documents and the cache",
+  title: "Withdrawn documents and the cache",
   about:
     "Each example asks one question twice. In between, a document may be withdrawn. Use --withdraw to withdraw it after the first answer. Use --late to withdraw it while the second answer is made.",
   terms: "withdrawn = the company took the document back. cache = saved answers, so the next ask is fast. revoke = make a saved answer stop working.",

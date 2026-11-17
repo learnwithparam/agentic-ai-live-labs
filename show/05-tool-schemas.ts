@@ -1,4 +1,4 @@
-// What you see on screen for lab 5: the examples and the printing.
+// What you see on screen for the tool schema lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/05-tool-schemas.ts.
 
 import { NO_DOC } from "../src/data";
@@ -16,7 +16,7 @@ const GOOD = '{"drug": "Cardioza", "country": "US", "limit": 2}';
 
 export const lab: Lab = {
   file: "05-tool-schemas.ts",
-  title: "Lab 5: tool schemas and structured output",
+  title: "Tool schemas and structured output",
   about:
     "Each example asks the same plain question. The model writes a tool call. To test a bad call, pass the text yourself with --call. A schema checks it first. A good call runs. An easy fix is made and noted. A bad call is rejected, and the tool never runs.",
   terms: "schema = the shape of a good call. JSON = text that holds fields. reject = refuse to run.",

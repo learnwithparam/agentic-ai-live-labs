@@ -1,6 +1,18 @@
-# Lab 9: function, CLI or MCP
+# Function, CLI or MCP
 
 The question box takes a drug name. The same lookup runs through three doors. Pick one with --door function, cli or mcp, or use --door all to compare them.
+
+## The story in one picture
+
+```mermaid
+flowchart LR
+  Job["One job: find a dose"] --> F["Door 1: a function"]
+  Job --> S["Door 2: a command"]
+  Job --> M["Door 3: an MCP server"]
+  F --> R["Same answer, compare risk"]
+  S --> R
+  M --> R
+```
 
 ## The problem
 
@@ -15,18 +27,18 @@ door = the way an agent reaches a tool. latency = how long a call takes. structu
 Copy any line into your terminal. Each one is a real example from this lab.
 
 ```bash
-bun labs/09-three-doors.ts --question "What is the dose of Cardioza?" --naive --door cli
-bun labs/09-three-doors.ts --question "What is the dose of Cardioza?" --door function
-bun labs/09-three-doors.ts --question "What is the dose of Cardioza?" --door mcp
-bun labs/09-three-doors.ts --question "What is the dose of Cardioza?" --door all
-bun labs/09-three-doors.ts --question "What is the dose of Cardioza?" --door mcp --country DE
-bun labs/09-three-doors.ts --question "What is the dose of Zorbex?" --door function
-bun labs/09-three-doors.ts --question "What is the dose of Cardioza; rm notes.txt?" --door cli
-bun labs/09-three-doors.ts --question "What is the dose of Cardioza?" --door mcp --script src/missing-server.ts
-bun labs/09-three-doors.ts --demo
+bun run lab three-doors --question "What is the dose of Cardioza?" --naive --door cli
+bun run lab three-doors --question "What is the dose of Cardioza?" --door function
+bun run lab three-doors --question "What is the dose of Cardioza?" --door mcp
+bun run lab three-doors --question "What is the dose of Cardioza?" --door all
+bun run lab three-doors --question "What is the dose of Cardioza?" --door mcp --country DE
+bun run lab three-doors --question "What is the dose of Zorbex?" --door function
+bun run lab three-doors --question "What is the dose of Cardioza; rm notes.txt?" --door cli
+bun run lab three-doors --question "What is the dose of Cardioza?" --door mcp --script src/missing-server.ts
+bun run lab three-doors --demo
 ```
 
-Run `bun labs/09-three-doors.ts` with nothing else to pick an example from a menu.
+Run `bun run lab three-doors` with nothing else to pick an example from a menu.
 
 ## The cases
 
@@ -34,14 +46,14 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
-| 1 | NAIVE: always use the shell | A command is easy to start with, so we use it for everything. The answer has no document id, so the output guardrail of lab 2 cannot check it. | uncited | `bun labs/09-three-doors.ts --question "What is the dose of Cardioza?" --naive --door cli` |
-| 2 | The function door | The same search as lab 1. It answers with the document id. | answered | `bun labs/09-three-doors.ts --question "What is the dose of Cardioza?" --door function` |
-| 3 | The MCP door | The same answer, with the same document id, from a separate program. It is slower, because a server has to start. | answered | `bun labs/09-three-doors.ts --question "What is the dose of Cardioza?" --door mcp` |
-| 4 | Compare all three | One table: the time, and whether the answer can be cited. Look at the time column and at the cited column. | compared | `bun labs/09-three-doors.ts --question "What is the dose of Cardioza?" --door all` |
-| 5 | Another country | A German doctor. The function and MCP doors filter by country in the tool. The shell door filters by hand. | answered | `bun labs/09-three-doors.ts --question "What is the dose of Cardioza?" --door mcp --country DE` |
-| 6 | A drug with no document | Every door says there is nothing. Good. No door guesses. | no-source | `bun labs/09-three-doors.ts --question "What is the dose of Zorbex?" --door function` |
-| 7 | A bad drug name through the shell | The name hides a second command. The function door would only find nothing. The shell door must rely on lab 6's rules, and they refuse it. | door-error | `bun labs/09-three-doors.ts --question "What is the dose of Cardioza; rm notes.txt?" --door cli` |
-| 8 | The MCP server is down | The function door has nothing to start, so it cannot be down. The MCP door fails with a clear error. | door-error | `bun labs/09-three-doors.ts --question "What is the dose of Cardioza?" --door mcp --script src/missing-server.ts` |
+| 1 | NAIVE: always use the shell | A command is easy to start with, so we use it for everything. The answer has no document id, so the output guardrail of the guardrails lab cannot check it. | uncited | `bun run lab three-doors --question "What is the dose of Cardioza?" --naive --door cli` |
+| 2 | The function door | The same search as the agent loop. It answers with the document id. | answered | `bun run lab three-doors --question "What is the dose of Cardioza?" --door function` |
+| 3 | The MCP door | The same answer, with the same document id, from a separate program. It is slower, because a server has to start. | answered | `bun run lab three-doors --question "What is the dose of Cardioza?" --door mcp` |
+| 4 | Compare all three | One table: the time, and whether the answer can be cited. Look at the time column and at the cited column. | compared | `bun run lab three-doors --question "What is the dose of Cardioza?" --door all` |
+| 5 | Another country | A German doctor. The function and MCP doors filter by country in the tool. The shell door filters by hand. | answered | `bun run lab three-doors --question "What is the dose of Cardioza?" --door mcp --country DE` |
+| 6 | A drug with no document | Every door says there is nothing. Good. No door guesses. | no-source | `bun run lab three-doors --question "What is the dose of Zorbex?" --door function` |
+| 7 | A bad drug name through the shell | The name hides a second command. The function door would only find nothing. The shell door must rely on the shell tool lab's rules, and they refuse it. | door-error | `bun run lab three-doors --question "What is the dose of Cardioza; rm notes.txt?" --door cli` |
+| 8 | The MCP server is down | The function door has nothing to start, so it cannot be down. The MCP door fails with a clear error. | door-error | `bun run lab three-doors --question "What is the dose of Cardioza?" --door mcp --script src/missing-server.ts` |
 
 ## The promise, and its test
 

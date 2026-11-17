@@ -1,4 +1,4 @@
-// Lab 31: Workers side by side
+// Workers side by side
 //
 // Dr. Lee has a call soon. The rep wants a short brief. It needs the dose, the profile and the emails.
 // Three systems hold these. Each one takes a second.
@@ -9,12 +9,12 @@
 // The examples and the screen output are in show/31-parallel-workers.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/31-parallel-workers.ts --question "Please prepare a call brief for Dr. Lee." --hcp H-1 --naive
-//   bun labs/31-parallel-workers.ts --question "Please prepare a call brief for Dr. Lee." --hcp H-1
-//   bun labs/31-parallel-workers.ts --question "Please prepare a call brief for Dr. Weber." --hcp H-2
-//   bun labs/31-parallel-workers.ts --question "Please prepare a call brief for Dr. Lee." --hcp H-1 --stuck emails
-//   bun labs/31-parallel-workers.ts --question "Please prepare a call brief for Dr. Lee." --hcp H-1 --crash profile
-//   bun labs/31-parallel-workers.ts --demo
+//   bun run lab parallel-workers --question "Please prepare a call brief for Dr. Lee." --hcp H-1 --naive
+//   bun run lab parallel-workers --question "Please prepare a call brief for Dr. Lee." --hcp H-1
+//   bun run lab parallel-workers --question "Please prepare a call brief for Dr. Weber." --hcp H-2
+//   bun run lab parallel-workers --question "Please prepare a call brief for Dr. Lee." --hcp H-1 --stuck emails
+//   bun run lab parallel-workers --question "Please prepare a call brief for Dr. Lee." --hcp H-1 --crash profile
+//   bun run lab parallel-workers --demo
 
 import { mkdirSync, existsSync, readFileSync } from "node:fs";
 import { CRM, EMAILS } from "../src/data";
@@ -22,7 +22,7 @@ import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";
 import { isRunning, startWorker, stopWorker } from "../src/workers"; // real child programs
 import type { Child } from "../src/workers";
-import { runAgentLoop } from "./01-agent-loop"; // lab 1
+import { runAgentLoop } from "./01-agent-loop";
 
 export type Part = { name: string; ok: boolean; text: string; why: string };
 export type Brief = { parts: Part[]; late: string[]; seconds: number };

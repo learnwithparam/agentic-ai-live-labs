@@ -1,4 +1,4 @@
-// What you see on screen for lab 32: the examples and the printing.
+// What you see on screen for the subagent isolation lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/32-subagent-isolation.ts.
 
 import { modelFrom, type Lab } from "../src/runner";
@@ -10,7 +10,7 @@ export const SPACE_LIMIT = 1500;
 
 export const lab: Lab = {
   file: "32-subagent-isolation.ts",
-  title: "Lab 32: keep noisy work apart",
+  title: "Keep noisy work apart",
   about:
     "Each example asks for a dose. The document search returns forty old drafts with wrong doses. Pick the doctor with --hcp, and pick how the model acts with --model.",
   terms: "helper = a second agent with its own space. context = everything an agent has read so far. report = the short answer the helper sends back.",

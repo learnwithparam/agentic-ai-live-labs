@@ -1,4 +1,4 @@
-// The tools and types lab 26 runs hooks around. The lesson is in labs/26-hooks.ts.
+// The tools and types the hooks lab runs hooks around. The lesson is in labs/26-hooks.ts.
 
 import { searchApprovedDocs } from "../labs/01-agent-loop";
 

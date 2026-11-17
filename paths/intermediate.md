@@ -16,42 +16,42 @@
 
 | Lab | Command | What to do |
 | --- | --- | --- |
-| 3. Human in the loop gates | `bun labs/03-gates.ts --demo` | Where should a person stop the run? |
-| 4. Workflow, one agent, multi-agent | `bun labs/04-shapes.ts --demo` | Pick a shape for your own product. |
-| 5. Tool schemas and structured output | `bun labs/05-tool-schemas.ts --demo` | Validate every tool call the model makes. |
-| 6. A shell tool, safely | `bun labs/06-shell-tool.ts --demo` | Give an agent a shell without giving away the machine. |
-| 7. MCP basics | `bun labs/07-mcp-basics.ts --demo` | Call tools from a real MCP server. |
-| 10. The context budget | `bun labs/10-context-budget.ts --demo` | Set a budget for the prompt. |
-| 11. Trimming long history | `bun labs/11-history-trimming.ts --demo` | Trim history without losing facts. |
-| 12. Retrieval | `bun labs/12-retrieval.ts --demo` | Retrieve, rank and cite. |
-| 13. Picking the right context | `bun labs/13-pick-context.ts --demo` | Filter by rule before you search. |
-| 14. Instructions versus data | `bun labs/14-instructions-vs-data.ts --demo` | Keep outside text from becoming instructions. |
-| 15. Stop conditions | `bun labs/15-stop-conditions.ts --demo` | Stop loops with caps and stuck-call checks. |
-| 16. Error feedback and retries | `bun labs/16-error-feedback.ts --demo` | Retry with the error as feedback. |
-| 17. Plan, then act | `bun labs/17-plan-then-act.ts --demo` | Plan, then act. |
-| 18. Reflect and fix | `bun labs/18-reflect-and-fix.ts --demo` | Add a critic and see where it fails. |
-| 19. Run state | `bun labs/19-run-state.ts --demo` | Record every run. |
-| 20. When tools fail | `bun labs/20-tool-failures.ts --demo` | Handle slow and flaky tools. |
-| 24. Identity and scopes | `bun labs/24-identity-and-scopes.ts --demo` | Give each bot only the tools it needs. |
-| 26. Hooks | `bun labs/26-hooks.ts --demo` | Move rules out of the prompt and into hooks. |
-| 27. Traces and the audit ledger | `bun labs/27-traces-and-audit.ts --demo` | Trace every step. |
-| 28. Evals and the release gate | `bun labs/28-evals-and-release.ts --demo` | Write evals and block a bad release. |
-| 29. Routing | `bun labs/29-routing.ts --demo` | Route to specialists. |
-| 30. Chains and delegation | `bun labs/30-chain-and-delegate.ts --demo` | Chain steps and delegate to workers. |
+| Human in the loop gates | `bun run lab gates --demo` | Where should a person stop the run? |
+| Workflow, one agent, multi-agent | `bun run lab shapes --demo` | Pick a shape for your own product. |
+| Tool schemas and structured output | `bun run lab tool-schemas --demo` | Validate every tool call the model makes. |
+| A shell tool, safely | `bun run lab shell-tool --demo` | Give an agent a shell without giving away the machine. |
+| MCP basics | `bun run lab mcp-basics --demo` | Call tools from a real MCP server. |
+| The context budget | `bun run lab context-budget --demo` | Set a budget for the prompt. |
+| Trimming long history | `bun run lab history-trimming --demo` | Trim history without losing facts. |
+| Retrieval | `bun run lab retrieval --demo` | Retrieve, rank and cite. |
+| Picking the right context | `bun run lab pick-context --demo` | Filter by rule before you search. |
+| Instructions versus data | `bun run lab instructions-vs-data --demo` | Keep outside text from becoming instructions. |
+| Stop conditions | `bun run lab stop-conditions --demo` | Stop loops with caps and stuck-call checks. |
+| Error feedback and retries | `bun run lab error-feedback --demo` | Retry with the error as feedback. |
+| Plan, then act | `bun run lab plan-then-act --demo` | Plan, then act. |
+| Reflect and fix | `bun run lab reflect-and-fix --demo` | Add a critic and see where it fails. |
+| Run state | `bun run lab run-state --demo` | Record every run. |
+| When tools fail | `bun run lab tool-failures --demo` | Handle slow and flaky tools. |
+| Identity and scopes | `bun run lab identity-and-scopes --demo` | Give each bot only the tools it needs. |
+| Hooks | `bun run lab hooks --demo` | Move rules out of the prompt and into hooks. |
+| Traces and the audit ledger | `bun run lab traces-and-audit --demo` | Trace every step. |
+| Evals and the release gate | `bun run lab evals-and-release --demo` | Write evals and block a bad release. |
+| Routing | `bun run lab routing --demo` | Route to specialists. |
+| Chains and delegation | `bun run lab chain-and-delegate --demo` | Chain steps and delegate to workers. |
 
 ## Optional
 
 | Lab | Command | What to do |
 | --- | --- | --- |
-| 1. The agent loop | `bun labs/01-agent-loop.ts --demo` | Skim. You know this loop. |
-| 2. Guardrails and PHI redaction | `bun labs/02-guardrails.ts --demo` | Skim the guardrails and note their limits. |
-| 8. Trusting an MCP server | `bun labs/08-mcp-trust.ts --demo` | Pin tool schemas and catch a changed tool. |
-| 9. Function, CLI or MCP | `bun labs/09-three-doors.ts --demo` | Pick between a function, a command and MCP. |
-| 21. Crash and resume | `bun labs/21-crash-and-resume.ts --demo` | Resume after a crash. |
-| 22. Budgets | `bun labs/22-budgets.ts --demo` | Cap cost and time. |
-| 23. Model routing and caching | `bun labs/23-model-routing.ts --demo` | Route by difficulty and cache repeats. |
-| 34. Memory the bots share | `bun labs/34-shared-memory.ts --demo` | Share memory without poisoning it. |
-| 36. One profile per doctor | `bun labs/36-hcp-360.ts --demo` | Use the ideas on one real job. |
+| The agent loop | `bun run lab agent-loop --demo` | Skim. You know this loop. |
+| Guardrails and PHI redaction | `bun run lab guardrails --demo` | Skim the guardrails and note their limits. |
+| Trusting an MCP server | `bun run lab mcp-trust --demo` | Pin tool schemas and catch a changed tool. |
+| Function, CLI or MCP | `bun run lab three-doors --demo` | Pick between a function, a command and MCP. |
+| Crash and resume | `bun run lab crash-and-resume --demo` | Resume after a crash. |
+| Budgets | `bun run lab budgets --demo` | Cap cost and time. |
+| Model routing and caching | `bun run lab model-routing --demo` | Route by difficulty and cache repeats. |
+| Memory the bots share | `bun run lab shared-memory --demo` | Share memory without poisoning it. |
+| One profile per doctor | `bun run lab hcp-360 --demo` | Use the ideas on one real job. |
 
 ## When you finish
 

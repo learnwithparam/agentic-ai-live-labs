@@ -1,4 +1,4 @@
-// Lab 3: Human in the loop gates
+// Human in the loop gates
 //
 // Dr. Lee asks: "What is the dose of Zorbex?" We have no approved document for Zorbex.
 // A model would still write an answer. So we put a gate in the way. A gate stops the run
@@ -7,19 +7,19 @@
 // The examples and the screen output are in show/03-gates.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/03-gates.ts --question "What is the dose of Cardioza?" --model nocite --naive
-//   bun labs/03-gates.ts --question "What is the dose of Cardioza?"
-//   bun labs/03-gates.ts --question "What is the dose of Zorbex?" --approve y
-//   bun labs/03-gates.ts --question "What is the dose of Zorbex?" --approve n
-//   bun labs/03-gates.ts --question "What is the dose of Cardioza?" --model nocite --approve y
-//   bun labs/03-gates.ts --demo
+//   bun run lab gates --question "What is the dose of Cardioza?" --model nocite --naive
+//   bun run lab gates --question "What is the dose of Cardioza?"
+//   bun run lab gates --question "What is the dose of Zorbex?" --approve y
+//   bun run lab gates --question "What is the dose of Zorbex?" --approve n
+//   bun run lab gates --question "What is the dose of Cardioza?" --model nocite --approve y
+//   bun run lab gates --demo
 
 import { APPROVED_DOCS, NO_DOC } from "../src/data";
 import type { CallLlm } from "../src/model";
 import { showReview } from "../src/review";
 import { runLab, type Ask } from "../src/runner";
-import { runAgentLoop, searchApprovedDocs } from "./01-agent-loop"; // the loop and search from lab 1
-import { labelsOf, redactPhi, verifyOutput } from "./02-guardrails"; // the guardrails from lab 2
+import { runAgentLoop, searchApprovedDocs } from "./01-agent-loop";
+import { labelsOf, redactPhi, verifyOutput } from "./02-guardrails";
 
 export type Outcome = {
   status: string; // SENT, SENT_AFTER_HUMAN_APPROVAL, BLOCKED_BY_REVIEWER or SENT_UNCHECKED
@@ -36,7 +36,7 @@ export function handleHcpInquiry(
 ): Outcome {
   const log: string[] = [];
 
-  // Step 1: hide the patient details (lab 2).
+  // Step 1: hide the patient details (the guardrails lab).
   const { clean, found } = redactPhi(question);
   log.push(`Step 1: hid ${found.length} private pieces ${labelsOf(found).join(", ")}.`);
 
@@ -49,11 +49,11 @@ export function handleHcpInquiry(
   }
   log.push("Step 2: an approved document exists. No gate yet.");
 
-  // Step 3: the model answers, with the loop from lab 1.
+  // Step 3: the model answers, with the loop from the agent loop.
   const { answer } = runAgentLoop(clean, country, callLlm);
   log.push(`Step 3: the model wrote: ${answer}`);
 
-  // Step 4: check the reply (lab 2). If it fails, gate 2 stops the run. A person decides.
+  // Step 4: check the reply (the guardrails lab). If it fails, gate 2 stops the run. A person decides.
   const check = verifyOutput(answer, Object.keys(APPROVED_DOCS));
   if (!check.ok) {
     log.push(`Step 4: ${check.reason} Gate 2 stops the run. A person decides.`);

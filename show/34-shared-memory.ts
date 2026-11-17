@@ -1,4 +1,4 @@
-// What you see on screen for lab 34: the examples and the printing.
+// What you see on screen for the shared memory lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/34-shared-memory.ts.
 // Two bots ask in turn. The first one may use a model that makes up a dose. The second one is honest.
 
@@ -13,7 +13,7 @@ const DOSE = "What is the dose of Cardioza for Dr. Lee?";
 
 export const lab: Lab = {
   file: "34-shared-memory.ts",
-  title: "Lab 34: memory the bots share",
+  title: "Memory the bots share",
   about:
     "Each example has two bots ask for a dose, one after the other. The first bot may use a model that makes up a dose, with --model invent. Pick the first doctor with --hcp and the second with --then.",
   terms: "shared memory = facts that every bot can read. poisoned = a wrong fact that got in. provenance = who saved a fact, and from which source.",

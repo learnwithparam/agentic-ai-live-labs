@@ -1,4 +1,4 @@
-// Lab 8: Trusting an MCP server
+// Trusting an MCP server
 //
 // Dr. Lee asks: "What is the Cardioza dose?" The agent finds its tools on an MCP server.
 // A tool description is text that goes into the model's prompt. So whoever writes it can give the
@@ -7,11 +7,11 @@
 // The examples and the screen output are in show/08-mcp-trust.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/08-mcp-trust.ts --question "What is the dose of Cardioza?" --server unknown-server --naive
-//   bun labs/08-mcp-trust.ts --question "What is the dose of Cardioza?" --server approved
-//   bun labs/08-mcp-trust.ts --question "What is the dose of Cardioza?" --server unknown-server
-//   bun labs/08-mcp-trust.ts --question "What is the dose of Cardioza?" --server rug-pull
-//   bun labs/08-mcp-trust.ts --demo
+//   bun run lab mcp-trust --question "What is the dose of Cardioza?" --server unknown-server --naive
+//   bun run lab mcp-trust --question "What is the dose of Cardioza?" --server approved
+//   bun run lab mcp-trust --question "What is the dose of Cardioza?" --server unknown-server
+//   bun run lab mcp-trust --question "What is the dose of Cardioza?" --server rug-pull
+//   bun run lab mcp-trust --demo
 
 import { createHash } from "node:crypto";
 import type { CallLlm } from "../src/model";

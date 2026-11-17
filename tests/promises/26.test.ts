@@ -8,7 +8,7 @@ const ok = "Please read the last call note for Dr. Lee and email it to lee@hospi
 
 // PROMISE: every tool call passes the before hooks and every output passes the after hooks.
 // A hook that crashes blocks the call.
-test("lab 26: with no hooks the note leaks, and with hooks it does not", () => {
+test("with no hooks the note leaks, and with hooks it does not", () => {
   const open: Mail[] = [];
   runWithHooks(bad, makeModel("ok"), NO_HOOKS, open);
   expect(open[0].text).toContain("123-45-6789");
@@ -19,14 +19,14 @@ test("lab 26: with no hooks the note leaks, and with hooks it does not", () => {
   expect(ran.outputs.join(" ")).not.toContain("123-45-6789");
 });
 
-test("lab 26: an approved address gets a clean email", () => {
+test("an approved address gets a clean email", () => {
   const sent: Mail[] = [];
   runWithHooks(ok, makeModel("ok"), GOOD_HOOKS, sent);
   expect(sent.length).toBe(1);
   expect(sent[0].text).not.toContain("123-45-6789");
 });
 
-test("lab 26: a hook that crashes blocks every call", () => {
+test("a hook that crashes blocks every call", () => {
   const broken: Before = { name: "broken", check() { throw new Error("bug"); } };
   const sent: Mail[] = [];
   const ran = runWithHooks(ok, makeModel("ok"), { before: [broken], after: [] }, sent);
@@ -34,7 +34,7 @@ test("lab 26: a hook that crashes blocks every call", () => {
   expect(ran.blocked.length).toBeGreaterThan(0);
 });
 
-test("lab 26: with no after hook, the before hook still stops a dirty email", () => {
+test("with no after hook, the before hook still stops a dirty email", () => {
   const sent: Mail[] = [];
   const hooks = { before: GOOD_HOOKS.before, after: [] };
   const ran = runWithHooks(ok, makeModel("ok"), hooks, sent);

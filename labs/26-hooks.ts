@@ -1,4 +1,4 @@
-// Lab 26: Hooks
+// Hooks
 //
 // The doctor asks the agent to read a call note. Then the agent must email it to a Gmail address.
 // The note holds a patient name and an SSN. The address is a private mailbox, not the hospital.
@@ -9,17 +9,17 @@
 // The examples and the screen output are in show/26-hooks.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/26-hooks.ts --question "Please read the last call note for Dr. Lee and email it to dr.lee.notes@gmail.com." --naive
-//   bun labs/26-hooks.ts --question "Can you read the last call note for Dr. Lee?"
-//   bun labs/26-hooks.ts --question "Please read the last call note for Dr. Lee and email it to lee@hospital-example.org."
-//   bun labs/26-hooks.ts --question "Please read the last call note for Dr. Lee and email it to dr.lee.notes@gmail.com."
-//   bun labs/26-hooks.ts --question "What is the dose of Cardioza?"
-//   bun labs/26-hooks.ts --question "Please read the last call note for Dr. Lee and email it to lee@hospital-example.org." --broken true
-//   bun labs/26-hooks.ts --demo
+//   bun run lab hooks --question "Please read the last call note for Dr. Lee and email it to dr.lee.notes@gmail.com." --naive
+//   bun run lab hooks --question "Can you read the last call note for Dr. Lee?"
+//   bun run lab hooks --question "Please read the last call note for Dr. Lee and email it to lee@hospital-example.org."
+//   bun run lab hooks --question "Please read the last call note for Dr. Lee and email it to dr.lee.notes@gmail.com."
+//   bun run lab hooks --question "What is the dose of Cardioza?"
+//   bun run lab hooks --question "Please read the last call note for Dr. Lee and email it to lee@hospital-example.org." --broken true
+//   bun run lab hooks --demo
 
 import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";
-import { redactPhi } from "./02-guardrails"; // the private-detail finder from lab 2
+import { redactPhi } from "./02-guardrails"; // the private-detail finder from the guardrails lab
 import { TOOLS, addressIn, runTool } from "../src/mailtools";
 import type { After, Before, Call, Hooks, Mail, Ran } from "../src/mailtools";
 

@@ -1,4 +1,4 @@
-// A signed token for lab 24. It says which bot is calling, what that bot may do, and until when.
+// A signed token for the identity and scopes lab. It says which bot is calling, what that bot may do, and until when.
 // The signature is an HMAC with a secret only our code knows. Change one letter and it fails.
 
 import { createHmac, timingSafeEqual } from "node:crypto";

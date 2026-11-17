@@ -1,4 +1,4 @@
-// What you see on screen for lab 37: the examples and the printing.
+// What you see on screen for the PHI vault lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/37-phi-vault.ts.
 // All the patients here are invented.
 
@@ -16,7 +16,7 @@ const TWICE =
 
 export const lab: Lab = {
   file: "37-phi-vault.ts",
-  title: "Lab 37: private data in a vault",
+  title: "Private data in a vault",
   about:
     "Each example saves a case record for a doctor's note. Pick who looks at it with --role: reviewer or agent. The model never reads the real private data.",
   terms: "token = a stand-in such as [SSN-1]. vault = the place that keeps the real values. role = what a person is allowed to do. audit = a file that lists every try.",

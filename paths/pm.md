@@ -16,26 +16,26 @@
 
 | Lab | Command | What to do |
 | --- | --- | --- |
-| 1. The agent loop | `bun labs/01-agent-loop.ts --demo` | Ask: what stops the loop when the model never finishes? |
-| 2. Guardrails and PHI redaction | `bun labs/02-guardrails.ts --demo` | Ask: what private data could reach the model today? |
-| 3. Human in the loop gates | `bun labs/03-gates.ts --demo` | Ask: which cases wait for a person, and who is that person? |
-| 4. Workflow, one agent, multi-agent | `bun labs/04-shapes.ts --demo` | Ask: why did we pick this shape and not a simpler one? |
-| 8. Trusting an MCP server | `bun labs/08-mcp-trust.ts --demo` | Ask: who approved each outside tool server, and what if its tools change? |
-| 9. Function, CLI or MCP | `bun labs/09-three-doors.ts --demo` | Ask: which door do our tools use, and who checked it? |
-| 10. The context budget | `bun labs/10-context-budget.ts --demo` | Ask: what goes in each prompt, and what happens when it is too long? |
-| 22. Budgets | `bun labs/22-budgets.ts --demo` | Ask: what is the most one run can cost, and who gets the alert? |
-| 27. Traces and the audit ledger | `bun labs/27-traces-and-audit.ts --demo` | Ask: can we show why the system sent a message, a month later? |
-| 28. Evals and the release gate | `bun labs/28-evals-and-release.ts --demo` | Ask: what blocks a release when a safety check fails? |
-| 36. One profile per doctor | `bun labs/36-hcp-360.ts --demo` | Ask: do doctors get two emails about one product? |
-| 39. Country rules and revocation | `bun labs/39-revocation.ts --demo` | Ask: how fast does a withdrawn document stop being used? |
-| 40. Put it all together | `bun labs/40-end-to-end.ts --demo` | Ask: which guards did one answer pass, and can we see the record? |
+| The agent loop | `bun run lab agent-loop --demo` | Ask: what stops the loop when the model never finishes? |
+| Guardrails and PHI redaction | `bun run lab guardrails --demo` | Ask: what private data could reach the model today? |
+| Human in the loop gates | `bun run lab gates --demo` | Ask: which cases wait for a person, and who is that person? |
+| Workflow, one agent, multi-agent | `bun run lab shapes --demo` | Ask: why did we pick this shape and not a simpler one? |
+| Trusting an MCP server | `bun run lab mcp-trust --demo` | Ask: who approved each outside tool server, and what if its tools change? |
+| Function, CLI or MCP | `bun run lab three-doors --demo` | Ask: which door do our tools use, and who checked it? |
+| The context budget | `bun run lab context-budget --demo` | Ask: what goes in each prompt, and what happens when it is too long? |
+| Budgets | `bun run lab budgets --demo` | Ask: what is the most one run can cost, and who gets the alert? |
+| Traces and the audit ledger | `bun run lab traces-and-audit --demo` | Ask: can we show why the system sent a message, a month later? |
+| Evals and the release gate | `bun run lab evals-and-release --demo` | Ask: what blocks a release when a safety check fails? |
+| One profile per doctor | `bun run lab hcp-360 --demo` | Ask: do doctors get two emails about one product? |
+| Country rules and revocation | `bun run lab revocation --demo` | Ask: how fast does a withdrawn document stop being used? |
+| Put it all together | `bun run lab end-to-end --demo` | Ask: which guards did one answer pass, and can we see the record? |
 
 ## Optional
 
 | Lab | Command | What to do |
 | --- | --- | --- |
-| 25. Acting for a user | `bun labs/25-act-for-user.ts --demo` | Ask: can a bot do more than the person who asked? |
-| 35. Wakeups and the mission board | `bun labs/35-wakeups-and-board.ts --demo` | Ask: which jobs run without being asked, and where can we see them? |
+| Acting for a user | `bun run lab act-for-user --demo` | Ask: can a bot do more than the person who asked? |
+| Wakeups and the mission board | `bun run lab wakeups-and-board --demo` | Ask: which jobs run without being asked, and where can we see them? |
 
 ## When you finish
 

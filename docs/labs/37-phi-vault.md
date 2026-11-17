@@ -1,6 +1,17 @@
-# Lab 37: private data in a vault
+# Private data in a vault
 
 Each example saves a case record for a doctor's note. Pick who looks at it with --role: reviewer or agent. The model never reads the real private data.
+
+## The story in one picture
+
+```mermaid
+flowchart LR
+  A["Note with a real name"] --> B["Swap the name for a token"]
+  B --> C["Model sees only the token"]
+  C --> D{"Reviewer approves?"}
+  D -->|"Yes"| E["Vault puts the name back"]
+  D -->|"No"| F["Token stays"]
+```
 
 ## The problem
 
@@ -15,14 +26,14 @@ token = a stand-in such as [SSN-1]. vault = the place that keeps the real values
 Copy any line into your terminal. Each one is a real example from this lab.
 
 ```bash
-bun labs/37-phi-vault.ts --demo
-bun labs/37-phi-vault.ts --demo
-bun labs/37-phi-vault.ts --demo
-bun labs/37-phi-vault.ts --demo
-bun labs/37-phi-vault.ts --demo
+bun run lab phi-vault --demo
+bun run lab phi-vault --demo
+bun run lab phi-vault --demo
+bun run lab phi-vault --demo
+bun run lab phi-vault --demo
 ```
 
-Run `bun labs/37-phi-vault.ts` with nothing else to pick an example from a menu.
+Run `bun run lab phi-vault` with nothing else to pick an example from a menu.
 
 ## The cases
 
@@ -30,10 +41,10 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
-| 1 | NAIVE: a fixed mask | The reviewer opens the record. It says [SSN], and the real number is gone for good. | lost | `bun labs/37-phi-vault.ts --demo` |
-| 2 | A reviewer opens the record | The model read [SSN-1]. The reviewer sees the real number, and the audit file has one line. | revealed | `bun labs/37-phi-vault.ts --demo` |
-| 3 | An agent opens the record | An agent is not a reviewer. The record keeps its tokens, and the refused try is in the audit file. | hidden | `bun labs/37-phi-vault.ts --demo` |
-| 4 | EDGE: the same number twice | The SSN is in the note two times. Both get [SSN-1], and the phone gets its own token. | hidden | `bun labs/37-phi-vault.ts --demo` |
+| 1 | NAIVE: a fixed mask | The reviewer opens the record. It says [SSN], and the real number is gone for good. | lost | `bun run lab phi-vault --demo` |
+| 2 | A reviewer opens the record | The model read [SSN-1]. The reviewer sees the real number, and the audit file has one line. | revealed | `bun run lab phi-vault --demo` |
+| 3 | An agent opens the record | An agent is not a reviewer. The record keeps its tokens, and the refused try is in the audit file. | hidden | `bun run lab phi-vault --demo` |
+| 4 | EDGE: the same number twice | The SSN is in the note two times. Both get [SSN-1], and the phone gets its own token. | hidden | `bun run lab phi-vault --demo` |
 
 ## The promise, and its test
 

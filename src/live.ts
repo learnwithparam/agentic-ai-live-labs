@@ -64,7 +64,7 @@ export function replyFrom(response: any): Reply {
   return { text: cleanText(String(message.content || "")).trim(), usage };
 }
 
-// The tokens the provider billed for this call. Lab 22 charges from these, not from a guess.
+// The tokens the provider billed for this call. The budgets lab charges from these, not from a guess.
 function usageFrom(response: any): Usage | undefined {
   if (!response.usage) return undefined;
   return { tokensIn: response.usage.prompt_tokens || 0, tokensOut: response.usage.completion_tokens || 0 };

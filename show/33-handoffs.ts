@@ -1,4 +1,4 @@
-// What you see on screen for lab 33: the examples and the printing.
+// What you see on screen for the handoffs lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/33-handoffs.ts.
 
 import { modelFrom, type Lab } from "../src/runner";
@@ -10,7 +10,7 @@ const DOSE = "What is the dose of Cardioza for Dr. Lee?";
 
 export const lab: Lab = {
   file: "33-handoffs.ts",
-  title: "Lab 33: handing work between bots",
+  title: "Handing work between bots",
   about:
     "Each example sends one message through a team of bots: intake, answer and outreach. Pick the doctor with --hcp. Change the hop limit with --limit.",
   terms: "handoff = one bot passes work to another. envelope = the wrapper that travels with the message. hop = one handoff. loop breaker = a rule that stops a message that goes in circles.",

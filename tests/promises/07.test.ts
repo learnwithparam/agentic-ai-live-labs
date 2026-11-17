@@ -18,7 +18,7 @@ for (const line of (await Bun.stdin.text()).split("\\n")) {
 `;
 
 // PROMISE: the agent learns its tools from the server, so a new server tool needs no agent change.
-test("lab 7: tools come from the server, not from the agent", () => {
+test("tools come from the server, not from the agent", () => {
   const folder = mkdtempSync(join(tmpdir(), "lab7-"));
   const script = join(folder, "server.ts");
   writeFileSync(script, OTHER_SERVER);
@@ -28,7 +28,7 @@ test("lab 7: tools come from the server, not from the agent", () => {
   expect(discoverTools()).toEqual(["get_hcp_profile", "search_approved_docs", "check_recent_outreach"]);
 });
 
-test("lab 7: every failure comes back as text that starts with ERROR", () => {
+test("every failure comes back as text that starts with ERROR", () => {
   expect(callMcpTool("delete_everything", {})).toStartWith("ERROR");
   expect(callMcpTool("get_hcp_profile", { hcpId: "H-9" })).toStartWith("ERROR");
   expect(callMcpTool("search_approved_docs", {}, "src/missing-server.ts")).toStartWith("ERROR");
@@ -36,7 +36,7 @@ test("lab 7: every failure comes back as text that starts with ERROR", () => {
 });
 
 // PROMISE: the server answers while the input is still open, as a real MCP client expects.
-test("lab 7: the server replies before the input closes", async () => {
+test("the server replies before the input closes", async () => {
   const child = Bun.spawn(["bun", "src/mcp-server.ts"], { stdin: "pipe", stdout: "pipe" });
   child.stdin.write(JSON.stringify(HELLO[0]) + "\n");
   child.stdin.flush();

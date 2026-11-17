@@ -10,7 +10,7 @@ const byName = (brief: { parts: { name: string; ok: boolean; text: string }[] },
 
 // PROMISE: all workers start at once. A late worker is stopped, a crashed one is named,
 // and the brief goes out with the parts that came back.
-test("lab 31: three workers at once are faster than one after another", () => {
+test("three workers at once are faster than one after another", () => {
   const together = makeBrief("H-1", fresh(), {}, 6000);
   const inLine = makeBriefSlowly("H-1", fresh(), 20000);
   expect(together.parts.every((part) => part.ok)).toBe(true);
@@ -18,14 +18,14 @@ test("lab 31: three workers at once are faster than one after another", () => {
   expect(together.seconds).toBeLessThan(inLine.seconds * 0.7);
 });
 
-test("lab 31: each worker's result is its own and is right", () => {
+test("each worker's result is its own and is right", () => {
   const brief = makeBrief("H-1", fresh(), {}, 6000);
   expect(byName(brief, "docs").text).toContain("DOC-101");
   expect(byName(brief, "profile").text).toContain("Dr. Lee");
   expect(byName(brief, "emails").text).toContain("launch");
 });
 
-test("lab 31: a stuck worker is stopped at the deadline and the others still come", async () => {
+test("a stuck worker is stopped at the deadline and the others still come", async () => {
   const dir = fresh();
   const brief = makeBrief("H-1", dir, { emails: "stuck" }, 2000);
   expect(brief.late).toEqual(["emails"]);
@@ -36,7 +36,7 @@ test("lab 31: a stuck worker is stopped at the deadline and the others still com
   expect(Bun.spawnSync(["pgrep", "-f", dir]).exitCode).toBe(1);
 });
 
-test("lab 31: a worker that crashes is named and the others still come", () => {
+test("a worker that crashes is named and the others still come", () => {
   const brief = makeBrief("H-1", fresh(), { profile: "crash" }, 6000);
   expect(byName(brief, "profile").ok).toBe(false);
   expect(brief.late).toEqual([]);

@@ -1,4 +1,4 @@
-// What you see on screen for lab 35: the examples and the printing.
+// What you see on screen for the wakeups and board lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/35-wakeups-and-board.ts.
 // Time is a number of hours. A tick at hour 5 and a tick at hour 25 are in different days.
 
@@ -21,7 +21,7 @@ function broken(): CallLlm {
 
 export const lab: Lab = {
   file: "35-wakeups-and-board.ts",
-  title: "Lab 35: wake the bot and show its work",
+  title: "Wake the bot and show its work",
   about:
     "Each example wakes a bot. Give the hours of each wakeup with --times. Give webhook ids with --events, and send the same id twice to see a repeat. Add --fail true to make the model fail.",
   terms: "wakeup = a moment when a bot starts by itself. slot = one period, such as one day. board = a list of cards that show every run. idempotent = safe to run twice.",

@@ -17,14 +17,14 @@ function lines(file: string): string[] {
 }
 
 // PROMISE: any edit, removed line, cut end or full rewrite is found when we check against the head.
-test("lab 27: an untouched trace is intact, and it records question, search, result and answer", () => {
+test("an untouched trace is intact, and it records question, search, result and answer", () => {
   const { file, head } = fresh();
   expect(verifyTrace(file, head).ok).toBe(true);
   const kinds = lines(file).map((line) => JSON.parse(line).kind);
   expect(kinds).toEqual(["question", "tool call", "tool result", "answer"]);
 });
 
-test("lab 27: a changed word is caught at its line", () => {
+test("a changed word is caught at its line", () => {
   const { file, head } = fresh();
   const all = lines(file);
   all[2] = all[2].replace("DOC-102", "DOC-101");
@@ -34,7 +34,7 @@ test("lab 27: a changed word is caught at its line", () => {
   expect(checked.line).toBe(3);
 });
 
-test("lab 27: a removed line is caught", () => {
+test("a removed line is caught", () => {
   const { file, head } = fresh();
   const all = lines(file);
   all.splice(1, 1);
@@ -42,7 +42,7 @@ test("lab 27: a removed line is caught", () => {
   expect(verifyTrace(file, head).ok).toBe(false);
 });
 
-test("lab 27: a cut end is caught only by the saved head", () => {
+test("a cut end is caught only by the saved head", () => {
   const { file, head } = fresh();
   const all = lines(file);
   all.pop();
@@ -51,7 +51,7 @@ test("lab 27: a cut end is caught only by the saved head", () => {
   expect(verifyTrace(file, JSON.parse(all[all.length - 1]).hash).ok).toBe(true);
 });
 
-test("lab 27: a full rewrite with new fingerprints is caught by the saved head", () => {
+test("a full rewrite with new fingerprints is caught by the saved head", () => {
   const { file, head } = fresh();
   let prev = "START";
   const rewritten: string[] = [];
@@ -67,7 +67,7 @@ test("lab 27: a full rewrite with new fingerprints is caught by the saved head",
   expect(verifyTrace(file, head).ok).toBe(false);
 });
 
-test("lab 27: a removed line is caught even when the next line's pointers are repaired", () => {
+test("a removed line is caught even when the next line's pointers are repaired", () => {
   const { file, head } = fresh();
   const all = lines(file);
   const third = JSON.parse(all[2]);
@@ -80,7 +80,7 @@ test("lab 27: a removed line is caught even when the next line's pointers are re
   expect(checked.line).toBe(2);
 });
 
-test("lab 27: a line copied in from another trace does not fit, even with its pointer repaired", () => {
+test("a line copied in from another trace does not fit, even with its pointer repaired", () => {
   const a = fresh();
   const other = `${mkdtempSync(`${tmpdir()}/t27-`)}/trace.jsonl`;
   const b = answerWithTrace(ask, "H-1", makeModel("ok"), other);

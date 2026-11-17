@@ -1,4 +1,4 @@
-// A fingerprint of some text, for the chain in lab 27. The same text always gives the same one.
+// A fingerprint of some text, for the chain in the traces and audit lab. The same text always gives the same one.
 
 import { createHash } from "node:crypto";
 

@@ -1,4 +1,4 @@
-// What you see on screen for lab 20: the examples and the printing.
+// What you see on screen for the tool failures lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/20-tool-failures.ts.
 
 import { modelFrom, type Flags, type Lab } from "../src/runner";
@@ -12,7 +12,7 @@ const LIMITS: Limits = { timeoutSeconds: 1, tries: 3, waitMs: 200 };
 
 export const lab: Lab = {
   file: "20-tool-failures.ts",
-  title: "Lab 20: when tools fail",
+  title: "When tools fail",
   about:
     "Each example starts a real document service on your computer. Pick how it behaves with --service: ok, flaky (fails twice), slow (answers after three seconds) or down.",
   terms: "timeout = the most time we will wait. retry = try the same call again. backoff = wait longer before each retry. transient = a failure that may pass.",

@@ -3,7 +3,7 @@ import { callWithSchema } from "../../labs/05-tool-schemas";
 import { searchSchema } from "../../src/schema";
 
 // PROMISE: a call that fails the schema never reaches the tool.
-test("lab 5: rejected calls never run the tool", () => {
+test("rejected calls never run the tool", () => {
   let runs = 0;
   const counter = () => {
     runs++;

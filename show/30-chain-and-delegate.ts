@@ -1,4 +1,4 @@
-// What you see on screen for lab 30: the examples and the printing.
+// What you see on screen for the chains and delegation lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/30-chain-and-delegate.ts.
 
 import { modelFrom, type Lab } from "../src/runner";
@@ -10,7 +10,7 @@ const ALL = "Write the Cardioza update for Dr. Lee, Dr. Weber and Dr. Rao.";
 
 export const lab: Lab = {
   file: "30-chain-and-delegate.ts",
-  title: "Lab 30: chains and delegation",
+  title: "Chains and delegation",
   about:
     "Each example is one job for three doctors. Pick the doctors with --hcps, for example H-1,H-2,H-3. A lead splits the job and gives each doctor to a worker with a short chain.",
   terms: "chain = steps where each result feeds the next. delegate = hand a part of the job to a worker. lead = the one that splits the job and collects. worker = does one small part.",

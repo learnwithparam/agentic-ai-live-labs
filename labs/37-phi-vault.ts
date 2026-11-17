@@ -1,4 +1,4 @@
-// Lab 37: Private data in a vault
+// Private data in a vault
 //
 // Dr. Lee sends a note about a patient. The note has a social security number and a phone number.
 // The model must not read them. But the case record must keep them, and a reviewer must see them.
@@ -9,17 +9,17 @@
 // The examples and the screen output are in show/37-phi-vault.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/37-phi-vault.ts --question "Dr. Lee says Patient: Jane Doe (SSN 123-45-6789) takes Cardioza. What is the dose?" --role reviewer --naive
-//   bun labs/37-phi-vault.ts --question "Dr. Lee says Patient: Jane Doe (SSN 123-45-6789) takes Cardioza. What is the dose?" --role reviewer
-//   bun labs/37-phi-vault.ts --question "Dr. Lee says Patient: Jane Doe (SSN 123-45-6789) takes Cardioza. What is the dose?" --role agent
-//   bun labs/37-phi-vault.ts --question "Dr. Lee says Patient: Jane Doe (SSN 123-45-6789, 555-123-4567) takes Cardioza. Please confirm SSN 123-45-6789 and the dose." --role agent
-//   bun labs/37-phi-vault.ts --demo
+//   bun run lab phi-vault --question "Dr. Lee says Patient: Jane Doe (SSN 123-45-6789) takes Cardioza. What is the dose?" --role reviewer --naive
+//   bun run lab phi-vault --question "Dr. Lee says Patient: Jane Doe (SSN 123-45-6789) takes Cardioza. What is the dose?" --role reviewer
+//   bun run lab phi-vault --question "Dr. Lee says Patient: Jane Doe (SSN 123-45-6789) takes Cardioza. What is the dose?" --role agent
+//   bun run lab phi-vault --question "Dr. Lee says Patient: Jane Doe (SSN 123-45-6789, 555-123-4567) takes Cardioza. Please confirm SSN 123-45-6789 and the dose." --role agent
+//   bun run lab phi-vault --demo
 
 import { appendLine, readLines } from "../src/jobs";
 import type { CallLlm } from "../src/model";
 import { findPrivate, hidePrivate } from "../src/phi";
 import { runLab } from "../src/runner";
-import { runAgentLoop } from "./01-agent-loop"; // lab 1
+import { runAgentLoop } from "./01-agent-loop";
 
 export type Entry = { token: string; value: string; label: string };
 export type Shown = { sentToModel: string; shown: string; revealed: number };
@@ -32,7 +32,7 @@ export function recordCase(note: string, asker: Asker, callLlm: CallLlm, dir: st
   const { role, who } = asker;
   // Step 1: swap each private piece for a token. The real value stays in the vault.
   const clean = tokenize(note, dir);
-  // Step 2: the model reads tokens only. This is the loop from lab 1.
+  // Step 2: the model reads tokens only. This is the loop from the agent loop.
   const answer = runAgentLoop(clean, "US", callLlm).answer;
   const record = `Note: ${clean}\nAnswer: ${answer}`;
   // Step 3: turn tokens back only for a role that may see them.

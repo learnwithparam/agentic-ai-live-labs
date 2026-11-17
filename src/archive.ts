@@ -1,4 +1,4 @@
-// The noisy search for lab 32. It returns the real approved hits, then a long pile of old notes.
+// The noisy search for the subagent isolation lab. It returns the real approved hits, then a long pile of old notes.
 // Real document stores do this: the answer is in there, with pages of old drafts around it.
 import { searchApprovedDocs } from "../labs/01-agent-loop";
 import { NO_DOC } from "./data";

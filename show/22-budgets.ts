@@ -1,4 +1,4 @@
-// What you see on screen for lab 22: the examples and the printing.
+// What you see on screen for the budgets lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/22-budgets.ts.
 
 import { mkdtempSync } from "node:fs";
@@ -13,7 +13,7 @@ const DAY = "2026-11-17";
 
 export const lab: Lab = {
   file: "22-budgets.ts",
-  title: "Lab 22: money caps",
+  title: "Money caps",
   about:
     "Each example runs the loop with a cost cap. The run cap is 1 cent and the day cap is 3 cents, so you see them hit. Change them with --run and --day (whole cents). Also use --before (millicents spent today), --hops and --again (runs in a row).",
   terms: "millicent = a thousandth of a cent, so every amount is a whole number. cap = a limit we set. worst case = the price if the model uses its longest answer. hop = one agent handing work to another.",

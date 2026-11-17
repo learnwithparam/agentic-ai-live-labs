@@ -1,4 +1,4 @@
-// What you see on screen for lab 28: the examples and the printing.
+// What you see on screen for the evals and release lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/28-evals-and-release.ts.
 
 import { modelFrom, type Lab } from "../src/runner";
@@ -9,7 +9,7 @@ const ASK = "Is this new version ready to release?";
 
 export const lab: Lab = {
   file: "28-evals-and-release.ts",
-  title: "Lab 28: evals and the release gate",
+  title: "Evals and the release gate",
   about:
     "Each example is a new version of the document search. Pick it with --version: current, wide or invents. We run every eval question through it, then decide if it may ship.",
   terms: "eval = a real question with the facts a right answer must have. eval set = the list of evals. release gate = the check that blocks a bad version. regression = something that worked and now does not.",

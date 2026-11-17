@@ -1,6 +1,17 @@
-# Lab 27: traces and the audit ledger
+# Traces and the audit ledger
 
 Each example answers Dr. Weber, writes the trace, and then someone edits the file. Pick the edit with --tamper: edit, delete, cut or rewrite. Then we check the chain.
+
+## The story in one picture
+
+```mermaid
+flowchart LR
+  A["Record 1"] -->|"fingerprint"| B["Record 2"]
+  B -->|"fingerprint"| C["Record 3"]
+  C --> D{"Any line changed?"}
+  D -->|"Yes"| X["Checker catches the edit"]
+  D -->|"No"| OK["Trace is intact"]
+```
 
 ## The problem
 
@@ -15,16 +26,16 @@ trace = the record of every step. hash = a fingerprint of some text. chain = eac
 Copy any line into your terminal. Each one is a real example from this lab.
 
 ```bash
-bun labs/27-traces-and-audit.ts --question "What is the dose of Cardioza?" --hcp H-2 --tamper edit --naive
-bun labs/27-traces-and-audit.ts --question "What is the dose of Cardioza?" --hcp H-2
-bun labs/27-traces-and-audit.ts --question "What is the dose of Cardioza?" --hcp H-2 --tamper edit
-bun labs/27-traces-and-audit.ts --question "What is the dose of Cardioza?" --hcp H-2 --tamper delete
-bun labs/27-traces-and-audit.ts --question "What is the dose of Cardioza?" --hcp H-2 --tamper cut
-bun labs/27-traces-and-audit.ts --question "What is the dose of Cardioza?" --hcp H-2 --tamper rewrite
-bun labs/27-traces-and-audit.ts --demo
+bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp H-2 --tamper edit --naive
+bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp H-2
+bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp H-2 --tamper edit
+bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp H-2 --tamper delete
+bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp H-2 --tamper cut
+bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp H-2 --tamper rewrite
+bun run lab traces-and-audit --demo
 ```
 
-Run `bun labs/27-traces-and-audit.ts` with nothing else to pick an example from a menu.
+Run `bun run lab traces-and-audit` with nothing else to pick an example from a menu.
 
 ## The cases
 
@@ -32,12 +43,12 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
-| 1 | NAIVE: a plain log | Someone changes the document id in the log. The file still reads fine, and nothing notices. | unnoticed | `bun labs/27-traces-and-audit.ts --question "What is the dose of Cardioza?" --hcp H-2 --tamper edit --naive` |
-| 2 | Nobody touches the trace | Every line is in order and every fingerprint matches. | intact | `bun labs/27-traces-and-audit.ts --question "What is the dose of Cardioza?" --hcp H-2` |
-| 3 | EDGE: one word is changed | The document id in the result line is changed. The fingerprint of that line no longer matches. | caught | `bun labs/27-traces-and-audit.ts --question "What is the dose of Cardioza?" --hcp H-2 --tamper edit` |
-| 4 | EDGE: a line is removed | The search line is deleted. The next line points at a line that is gone. | caught | `bun labs/27-traces-and-audit.ts --question "What is the dose of Cardioza?" --hcp H-2 --tamper delete` |
-| 5 | EDGE: the end is cut off | The answer line is removed. The chain is still fine, but the last fingerprint is not the saved one. | caught | `bun labs/27-traces-and-audit.ts --question "What is the dose of Cardioza?" --hcp H-2 --tamper cut` |
-| 6 | EDGE: the whole file is rewritten | Someone edits a line and works every fingerprint out again. The chain is fine, but the head is not the saved one. | caught | `bun labs/27-traces-and-audit.ts --question "What is the dose of Cardioza?" --hcp H-2 --tamper rewrite` |
+| 1 | NAIVE: a plain log | Someone changes the document id in the log. The file still reads fine, and nothing notices. | unnoticed | `bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp H-2 --tamper edit --naive` |
+| 2 | Nobody touches the trace | Every line is in order and every fingerprint matches. | intact | `bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp H-2` |
+| 3 | EDGE: one word is changed | The document id in the result line is changed. The fingerprint of that line no longer matches. | caught | `bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp H-2 --tamper edit` |
+| 4 | EDGE: a line is removed | The search line is deleted. The next line points at a line that is gone. | caught | `bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp H-2 --tamper delete` |
+| 5 | EDGE: the end is cut off | The answer line is removed. The chain is still fine, but the last fingerprint is not the saved one. | caught | `bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp H-2 --tamper cut` |
+| 6 | EDGE: the whole file is rewritten | Someone edits a line and works every fingerprint out again. The chain is fine, but the head is not the saved one. | caught | `bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp H-2 --tamper rewrite` |
 
 ## The promise, and its test
 

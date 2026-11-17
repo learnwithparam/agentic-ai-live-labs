@@ -1,4 +1,4 @@
-// Lab 24: Identity and scopes
+// Identity and scopes
 //
 // Our system has three bots. One answers dose questions. One writes to doctors. One reads reports.
 // A doctor asks the answer bot: "What is the dose of Cardioza, and can you email it to Dr. Lee?"
@@ -9,19 +9,19 @@
 // The examples and the screen output are in show/24-identity-and-scopes.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/24-identity-and-scopes.ts --question "What is the dose of Cardioza, and can you email it to Dr. Lee?" --bot answer --naive
-//   bun labs/24-identity-and-scopes.ts --question "What is the dose of Cardioza?" --bot answer
-//   bun labs/24-identity-and-scopes.ts --question "What is the dose of Cardioza, and can you email it to Dr. Lee?" --bot answer
-//   bun labs/24-identity-and-scopes.ts --question "What is the dose of Cardioza, and can you email it to Dr. Lee?" --bot outreach
-//   bun labs/24-identity-and-scopes.ts --question "What is the dose of Cardioza?" --bot answer --forge true
-//   bun labs/24-identity-and-scopes.ts --question "What is the dose of Cardioza?" --bot answer --expired true
-//   bun labs/24-identity-and-scopes.ts --demo
+//   bun run lab identity-and-scopes --question "What is the dose of Cardioza, and can you email it to Dr. Lee?" --bot answer --naive
+//   bun run lab identity-and-scopes --question "What is the dose of Cardioza?" --bot answer
+//   bun run lab identity-and-scopes --question "What is the dose of Cardioza, and can you email it to Dr. Lee?" --bot answer
+//   bun run lab identity-and-scopes --question "What is the dose of Cardioza, and can you email it to Dr. Lee?" --bot outreach
+//   bun run lab identity-and-scopes --question "What is the dose of Cardioza?" --bot answer --forge true
+//   bun run lab identity-and-scopes --question "What is the dose of Cardioza?" --bot answer --expired true
+//   bun run lab identity-and-scopes --demo
 
 import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";
 import { botSecret, issue, verify } from "../src/identity"; // the signed token
 import type { Claims } from "../src/identity";
-import { searchApprovedDocs } from "./01-agent-loop"; // the search tool from lab 1
+import { searchApprovedDocs } from "./01-agent-loop";
 import { CRM } from "../src/data";
 
 export type Decision = { tool: string; allowed: boolean; reason: string; result: string };

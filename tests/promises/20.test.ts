@@ -12,7 +12,7 @@ afterAll(() => [flaky, down, slow, healthy].forEach((service) => service.stop())
 
 // PROMISE: bad input never leaves our code. A slow call stops at the time limit.
 // A failure that may pass is tried again. A no from the service is never tried again.
-test("lab 20: bad input makes no call, and a no is never tried again", () => {
+test("bad input makes no call, and a no is never tried again", () => {
   const empty = askService(healthy.url, "  ", "US", limits);
   expect(empty).toMatchObject({ outcome: "bad-input", attempts: 0 });
   const no = askService(healthy.url, "What is the dose of Cardioza?", "FR", limits);
@@ -20,7 +20,7 @@ test("lab 20: bad input makes no call, and a no is never tried again", () => {
   expect(askService(healthy.url, "What is the dose of Cardioza?", "US", limits)).toMatchObject({ outcome: "ok", attempts: 1 });
 });
 
-test("lab 20: a flaky service is retried until it works, and one try is not enough", () => {
+test("a flaky service is retried until it works, and one try is not enough", () => {
   const fixed = askService(flaky.url, "What is the dose of Cardioza?", "US", limits);
   expect(fixed).toMatchObject({ outcome: "ok", attempts: 3 });
   expect(fixed.text).toContain("DOC-101");
@@ -29,7 +29,7 @@ test("lab 20: a flaky service is retried until it works, and one try is not enou
   naive.stop();
 });
 
-test("lab 20: a slow service stops at the time limit, and a service that is down gives up", () => {
+test("a slow service stops at the time limit, and a service that is down gives up", () => {
   const started = Date.now();
   const tight = { timeoutSeconds: 1, tries: 2, waitMs: 10 };
   expect(askService(slow.url, "What is the dose of Cardioza?", "US", tight).outcome).toBe("unavailable");

@@ -1,4 +1,4 @@
-// What you see on screen for lab 27: the examples and the printing.
+// What you see on screen for the traces and audit lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/27-traces-and-audit.ts.
 
 import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
@@ -13,7 +13,7 @@ const ASK = "What is the dose of Cardioza?";
 
 export const lab: Lab = {
   file: "27-traces-and-audit.ts",
-  title: "Lab 27: traces and the audit ledger",
+  title: "Traces and the audit ledger",
   about:
     "Each example answers Dr. Weber, writes the trace, and then someone edits the file. Pick the edit with --tamper: edit, delete, cut or rewrite. Then we check the chain.",
   terms: "trace = the record of every step. hash = a fingerprint of some text. chain = each line holds the fingerprint of the line before it. head = the last fingerprint, saved elsewhere.",

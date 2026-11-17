@@ -248,16 +248,20 @@ export const PATHS: Path[] = [
   },
 ];
 
+// The concept name of a lab file: "07-mcp-basics.ts" gives "mcp-basics".
+// The number in front only sets the file order. Nobody types it.
+export function slugFromFile(file: string): string {
+  return file.replace(/^\d+-/, "").replace(/\.ts$/, "");
+}
+
 // "You are here": the lab, its track, and the labs just before and after it.
 export function whereAmI(number: number): string {
-  const lab = LABS.find((item) => item.number === number);
-  if (!lab) return "";
-  const mates = LABS.filter((item) => item.track === lab.track);
-  const place = mates.findIndex((item) => item.number === number) + 1;
+  const index = LABS.findIndex((item) => item.number === number);
+  if (index < 0) return "";
+  const lab = LABS[index];
   const track = TRACKS.find((item) => item.id === lab.track);
-  const name = track ? track.name : lab.track;
-  let text = `You are here: lab ${number} of ${LABS.length}, ${name} (${place} of ${mates.length}).`;
-  if (number > 1) text += ` Before: ${number - 1}.`;
-  if (number < LABS.length) text += ` Next: ${number + 1}.`;
+  let text = `You are here: ${lab.title}, in ${track ? track.name : lab.track}.`;
+  if (index > 0) text += ` Before: ${LABS[index - 1].title}.`;
+  if (index < LABS.length - 1) text += ` Next: ${LABS[index + 1].title}.`;
   return text;
 }

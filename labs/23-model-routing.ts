@@ -1,4 +1,4 @@
-// Lab 23: Which model answers
+// Which model answers
 //
 // A strong model costs ten times more than a small one. Most questions are easy.
 // Sending every question to the strong model wastes money. Sending every one to the small model
@@ -8,21 +8,21 @@
 // The examples and the screen output are in show/23-model-routing.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/23-model-routing.ts --question "What is the dose of Cardioza?" --naive
-//   bun labs/23-model-routing.ts --question "What is the dose of Cardioza?"
-//   bun labs/23-model-routing.ts --question "What is the dose of Cardioza?" --small nocite
-//   bun labs/23-model-routing.ts --question "What is the dose of Cardioza?" --small invent
-//   bun labs/23-model-routing.ts --question "What is the dose of Cardioza?" --small nocite --big nocite
-//   bun labs/23-model-routing.ts --question "What is the dose of Zorbex?"
-//   bun labs/23-model-routing.ts --demo
+//   bun run lab model-routing --question "What is the dose of Cardioza?" --naive
+//   bun run lab model-routing --question "What is the dose of Cardioza?"
+//   bun run lab model-routing --question "What is the dose of Cardioza?" --small nocite
+//   bun run lab model-routing --question "What is the dose of Cardioza?" --small invent
+//   bun run lab model-routing --question "What is the dose of Cardioza?" --small nocite --big nocite
+//   bun run lab model-routing --question "What is the dose of Zorbex?"
+//   bun run lab model-routing --demo
 
 import { NO_DOC } from "../src/data";
 import type { CallLlm, Reply } from "../src/model";
 import { runLab } from "../src/runner";
-import { dosesIn, findProblems } from "../src/draft-check"; // the answer check from lab 18
-import { costOf, PRICES } from "../src/spend"; // prices in whole millicents, from lab 22
+import { dosesIn, findProblems } from "../src/draft-check";
+import { costOf, PRICES } from "../src/spend"; // prices in whole millicents, from the budgets lab
 import { countTokens } from "./10-context-budget"; // the estimate, used when the provider sends no count
-import { runAgentLoop, searchApprovedDocs } from "./01-agent-loop"; // lab 1
+import { runAgentLoop, searchApprovedDocs } from "./01-agent-loop";
 
 export type Meter = { calls: number; tokensIn: number; tokensOut: number };
 export type Routed = { answer: string; tier: string; cost: number; bigOnly: number; log: string[] };

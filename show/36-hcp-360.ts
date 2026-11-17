@@ -1,4 +1,4 @@
-// What you see on screen for lab 36: the examples and the printing.
+// What you see on screen for the HCP profiles lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/36-hcp-360.ts.
 // All the doctors here are invented. The rows are in src/hcp360.ts.
 
@@ -10,7 +10,7 @@ const LEE = "Please email Dr. Lee the new Dermalin label.";
 
 export const lab: Lab = {
   file: "36-hcp-360.ts",
-  title: "Lab 36: one profile for each doctor",
+  title: "One profile for each doctor",
   about:
     "Each example asks to email one doctor. Pick the doctor with --npi, the number that belongs to that doctor. The bot merges four systems and then decides.",
   terms: "NPI = a 10-digit number for one doctor. merge = join rows from many systems. opt-out = the doctor said no emails. quiet days = days we wait after any contact.",

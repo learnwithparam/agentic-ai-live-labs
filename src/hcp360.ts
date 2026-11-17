@@ -1,4 +1,4 @@
-// The four systems behind lab 36. All the people and the numbers here are invented.
+// The four systems behind the HCP profiles lab. All the people and the numbers here are invented.
 // Each system keeps its own list. They share one key: the NPI, a 10-digit number for each doctor.
 // Some rows have no NPI. Names are not a key, because two doctors can share one name.
 

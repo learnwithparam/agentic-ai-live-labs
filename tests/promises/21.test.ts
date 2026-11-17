@@ -16,7 +16,7 @@ function emailsTo(jobId: string, doctor: string): number {
 
 // PROMISE: after a kill and a restart, every doctor has exactly one email.
 // A step in the ledger is never done again. A key the outbox holds is never sent again.
-test("lab 21: a kill after the ledger line resumes with the doctors still to do", () => {
+test("a kill after the ledger line resumes with the doctors still to do", () => {
   const dir = mkdtempSync(`${tmpdir()}/p21-`);
   process.env.JOBS_DIR = dir;
   expect(run(dir, "a", "safe", "ledger:H-2").killed).toBe(true);
@@ -27,7 +27,7 @@ test("lab 21: a kill after the ledger line resumes with the doctors still to do"
   for (const doctor of ["H-1", "H-2", "H-3"]) expect(emailsTo("a", doctor)).toBe(1);
 });
 
-test("lab 21: a kill between the send and the ledger never sends twice", () => {
+test("a kill between the send and the ledger never sends twice", () => {
   const dir = mkdtempSync(`${tmpdir()}/p21-`);
   process.env.JOBS_DIR = dir;
   expect(run(dir, "b", "safe", "send:H-2").killed).toBe(true);
@@ -36,7 +36,7 @@ test("lab 21: a kill between the send and the ledger never sends twice", () => {
   for (const doctor of ["H-1", "H-2", "H-3"]) expect(emailsTo("b", doctor)).toBe(1);
 });
 
-test("lab 21: the naive restart sends twice, and a finished job does nothing", () => {
+test("the naive restart sends twice, and a finished job does nothing", () => {
   const dir = mkdtempSync(`${tmpdir()}/p21-`);
   process.env.JOBS_DIR = dir;
   run(dir, "c", "naive", "send:H-2");

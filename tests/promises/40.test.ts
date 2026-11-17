@@ -24,7 +24,7 @@ const no = () => "n";
 
 // PROMISE: private details never reach the model. Only a checked reply goes out, or one a person
 // approved. Every step is in a record that shows any edit.
-test("lab 40: a good note goes out, the model never sees the patient, and the record is whole", () => {
+test("a good note goes out, the model never sees the patient, and the record is whole", () => {
   const dir = fresh();
   const result = answerEndToEnd(NOTE, "H-1", makeModel("ok"), no, dir);
   expect(result.status).toBe("sent");
@@ -41,12 +41,12 @@ test("lab 40: a good note goes out, the model never sees the patient, and the re
   expect(kinds).toEqual(["asked", "hid", "answered", "checked"]);
 });
 
-test("lab 40: the naive way sends the reply unchecked", () => {
+test("the naive way sends the reply unchecked", () => {
   const result = answerNaive(NOTE, "H-1", makeModel("nocite"));
   expect(result.status).toBe("sent-unchecked");
 });
 
-test("lab 40: a reply that fails a check waits for a person, and only a yes sends it", () => {
+test("a reply that fails a check waits for a person, and only a yes sends it", () => {
   const bad = makeModel("nocite");
   const approved = answerEndToEnd(DOSE, "H-1", bad, yes, fresh());
   expect(approved.status).toBe("sent-after-approval");
@@ -54,12 +54,12 @@ test("lab 40: a reply that fails a check waits for a person, and only a yes send
   expect(refused).toMatchObject({ status: "blocked", reply: "" });
 });
 
-test("lab 40: an unknown doctor gets nothing", () => {
+test("an unknown doctor gets nothing", () => {
   const dir = fresh();
   expect(answerEndToEnd(DOSE, "H-9", makeModel("ok"), yes, dir)).toMatchObject({ status: "refused", reply: "" });
 });
 
-test("lab 40: an edit to the record is found", () => {
+test("an edit to the record is found", () => {
   const dir = fresh();
   const result = answerEndToEnd(NOTE, "H-1", makeModel("ok"), no, dir);
   const lines = readLines(`${dir}/record.jsonl`);

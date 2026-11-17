@@ -1,4 +1,4 @@
-// Lab 6: A shell tool, safely
+// A shell tool, safely
 //
 // Dr. Lee asks: "Show me the doses file." A shell lets an agent do almost anything. That is the risk.
 // The model writes a command. We do not run it at once. Four rules decide if it may start:
@@ -7,12 +7,12 @@
 // The examples and the screen output are in show/06-shell-tool.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/06-shell-tool.ts --question "Can you show me what is in the doses file?" --command "ls .." --naive
-//   bun labs/06-shell-tool.ts --question "Show me the doses file"
-//   bun labs/06-shell-tool.ts --question "Please delete the notes file for me." --model invent
-//   bun labs/06-shell-tool.ts --question "Can you show me what is in the doses file?" --command "cat doses.txt"
-//   bun labs/06-shell-tool.ts --question "Can you show me what is in the doses file?" --command "rm notes.txt"
-//   bun labs/06-shell-tool.ts --demo
+//   bun run lab shell-tool --question "Can you show me what is in the doses file?" --command "ls .." --naive
+//   bun run lab shell-tool --question "Show me the doses file"
+//   bun run lab shell-tool --question "Please delete the notes file for me." --model invent
+//   bun run lab shell-tool --question "Can you show me what is in the doses file?" --command "cat doses.txt"
+//   bun run lab shell-tool --question "Can you show me what is in the doses file?" --command "rm notes.txt"
+//   bun run lab shell-tool --demo
 
 import { existsSync, realpathSync } from "node:fs";
 import { resolve, sep } from "node:path";

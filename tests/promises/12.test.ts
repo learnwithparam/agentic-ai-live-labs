@@ -9,7 +9,7 @@ const questions = [
 
 // PROMISE: only chunks from the doctor's country, with a strong score, are returned.
 // Otherwise we say there is no source.
-test("lab 12: every hit is from the right country, strong, few and sorted", () => {
+test("every hit is from the right country, strong, few and sorted", () => {
   for (const country of ["US", "DE", "FR"]) {
     for (const question of questions) {
       const found = retrieve(question, country, CHUNKS);
@@ -26,7 +26,7 @@ test("lab 12: every hit is from the right country, strong, few and sorted", () =
   }
 });
 
-test("lab 12: a drug with no chunk in the country is never answered from another one", () => {
+test("a drug with no chunk in the country is never answered from another one", () => {
   expect(retrieve("How do I use the Dermalin cream?", "DE", CHUNKS).outcome).toBe("no-source");
   expect(retrieve("What is the dose of Cardioza?", "DE", CHUNKS).hits[0].chunk.id).toBe("C-2");
   expect(retrieve("Can you tell me about Cardioza please?", "US", CHUNKS).outcome).toBe("too-vague");

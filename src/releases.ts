@@ -1,4 +1,4 @@
-// Three versions of the document search, for lab 28. Each is a real change to the code.
+// Three versions of the document search, for the evals and release lab. Each is a real change to the code.
 // The current one uses the doctor's country. The others are changes that look fine and are not.
 
 import { NO_DOC } from "./data";

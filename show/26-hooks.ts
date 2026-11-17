@@ -1,4 +1,4 @@
-// What you see on screen for lab 26: the examples and the printing.
+// What you see on screen for the hooks lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/26-hooks.ts.
 
 import { modelFrom, type Lab } from "../src/runner";
@@ -19,7 +19,7 @@ const BROKEN: Before = {
 
 export const lab: Lab = {
   file: "26-hooks.ts",
-  title: "Lab 26: hooks",
+  title: "Hooks",
   about:
     "Each example asks the bot to use tools. The model says which tools. Before hooks can block a call. An after hook cleans what comes back. The first example runs with no hooks, to show the harm.",
   terms: "hook = code that runs on every tool call. before hook = may stop the call. after hook = may change the output. fail closed = if the check breaks, say no.",

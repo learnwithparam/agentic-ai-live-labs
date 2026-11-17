@@ -1,4 +1,4 @@
-// What you see on screen for lab 23: the examples and the printing.
+// What you see on screen for the model routing lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/23-model-routing.ts.
 
 import { modelFrom, type Flags, type Lab } from "../src/runner";
@@ -9,7 +9,7 @@ const DOSE = "What is the dose of Cardioza?";
 
 export const lab: Lab = {
   file: "23-model-routing.ts",
-  title: "Lab 23: which model answers",
+  title: "Which model answers",
   about:
     "Each example has a small model and a strong model. Our code checks the small model's answer. Pretend habits: --small and --big can be ok, nocite (no citation) or invent (a wrong dose). With --live both tiers use the real model, so the check is real too.",
   terms: "route = pick which model answers. cascade = try the cheap one first, then a better one. check = a rule in our code that an answer must pass.",

@@ -1,4 +1,4 @@
-// Lab 4: Three ways to build one job
+// Three ways to build one job
 //
 // Dr. Lee needs help with Cardioza. There are three ways to build the helper.
 // A workflow is plain code with fixed steps. One agent is a model that picks its own tools.
@@ -7,17 +7,17 @@
 // The examples and the screen output are in show/04-shapes.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/04-shapes.ts --question "What is the dose of Cardioza?" --shape agent --hcp H-1 --model invent
-//   bun labs/04-shapes.ts --question "What do we know about this doctor?" --shape workflow --hcp H-2
-//   bun labs/04-shapes.ts --question "What is the dose of Cardioza?" --shape agent --hcp H-1
-//   bun labs/04-shapes.ts --question "What is the dose of Cardioza?" --shape multi --model invent --approve n
-//   bun labs/04-shapes.ts --demo
+//   bun run lab shapes --question "What is the dose of Cardioza?" --shape agent --hcp H-1 --model invent
+//   bun run lab shapes --question "What do we know about this doctor?" --shape workflow --hcp H-2
+//   bun run lab shapes --question "What is the dose of Cardioza?" --shape agent --hcp H-1
+//   bun run lab shapes --question "What is the dose of Cardioza?" --shape multi --model invent --approve n
+//   bun run lab shapes --demo
 
 import { APPROVED_DOCS, CRM, EMAILS } from "../src/data";
 import type { CallLlm, ToolInput } from "../src/model";
 import { runLab, type Ask } from "../src/runner";
-import { runAgentLoop, searchApprovedDocs, type Tool } from "./01-agent-loop"; // loop and search from lab 1
-import { humanApprovalGate } from "./03-gates"; // the gate from lab 3
+import { runAgentLoop, searchApprovedDocs, type Tool } from "./01-agent-loop"; // loop and search from the agent loop
+import { humanApprovalGate } from "./03-gates";
 
 // Shape 1, a workflow. Fixed steps in plain code. Same input, same output. No model.
 export function hcpContextWorkflow(hcpId: string) {
@@ -37,7 +37,7 @@ export function hcpContextWorkflow(hcpId: string) {
   return { profile, recentEmails, allowedDocs };
 }
 
-// Shape 2, one agent. The same loop as lab 1, but the model has three tools to choose from.
+// Shape 2, one agent. The same loop as the agent loop, but the model has three tools to choose from.
 export function singleHcpAgent(question: string, hcpId: string, callLlm: CallLlm) {
   // Step 1: find the doctor's country, so the search shows only approved documents.
   let country = "US";
@@ -76,7 +76,7 @@ export type Turn = { who: string; text: string };
 export function multiAgentPipeline(question: string, country: string, callLlm: CallLlm, ask: Ask) {
   const trace: Turn[] = [];
 
-  // Step 1: the researcher writes a draft, with the loop from lab 1.
+  // Step 1: the researcher writes a draft, with the loop from the agent loop.
   const draft = runAgentLoop(question, country, callLlm).answer;
   trace.push({ who: "researcher", text: draft });
 
@@ -92,7 +92,7 @@ export function multiAgentPipeline(question: string, country: string, callLlm: C
   // Step 3: if the auditor passes the draft, send it.
   if (passed) return { reply: draft, trace, passed };
 
-  // Step 4: the auditor has doubts, so a person decides. This is the gate from lab 3.
+  // Step 4: the auditor has doubts, so a person decides. This is the gate from the gates lab.
   const approved = humanApprovalGate(verdictText, question, draft, ask);
   if (approved) return { reply: draft, trace, passed };
   return { reply: "REJECTED_BY_COMPLIANCE", trace, passed };

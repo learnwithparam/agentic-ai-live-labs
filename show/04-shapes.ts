@@ -1,4 +1,4 @@
-// What you see on screen for lab 4: the examples and the printing.
+// What you see on screen for the shapes lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/04-shapes.ts.
 
 import { CRM } from "../src/data";
@@ -15,7 +15,7 @@ const SHAPES: Record<string, string> = {
 
 export const lab: Lab = {
   file: "04-shapes.ts",
-  title: "Lab 4: three ways to build one job",
+  title: "Three ways to build one job",
   about:
     "Three ways to build the same helper. Pick the shape with --shape workflow, agent or multi. Pick the doctor with --hcp H-1 (US), H-2 (Germany) or H-3 (US neurology).",
   terms: "workflow = fixed steps in plain code. agent = a model that picks its own tools. many agents = several models, each with one job. auditor = a model that only checks another model's work.",
@@ -30,7 +30,7 @@ export const lab: Lab = {
     { title: "One agent: a doctor with no recent outreach", why: "Same agent, different doctor. Dr. Weber has no emails, and gets the German dose.", question: "What is the dose of Cardioza?", flags: { shape: "agent", hcp: "H-2" }, expect: "answered" },
     { title: "One agent: no approved document", why: "The agent refuses to guess, but nothing double checks it. That is the gap multi-agent fills.", question: "What is the dose of Zorbex?", flags: { shape: "agent", hcp: "H-3" }, expect: "no-source" },
     { title: "Multi-agent: auditor passes a true draft", why: "The researcher drafts. The auditor finds every cited sentence in its document word for word. No person is needed.", question: "What is the dose of Cardioza?", flags: { shape: "multi", hcp: "H-1" }, expect: "passed" },
-    { title: "Multi-agent: auditor catches a wrong dose", why: "The draft says 20mg and cites the real document, so lab 2's citation check passed it. The auditor compares the claim to the source and fails it. A person rejects it.", question: "What is the dose of Cardioza?", flags: { shape: "multi", hcp: "H-1", model: "invent", approve: "n" }, expect: "rejected" },
+    { title: "Multi-agent: auditor catches a wrong dose", why: "The draft says 20mg and cites the real document, so the guardrails lab's citation check passed it. The auditor compares the claim to the source and fails it. A person rejects it.", question: "What is the dose of Cardioza?", flags: { shape: "multi", hcp: "H-1", model: "invent", approve: "n" }, expect: "rejected" },
     { title: "Multi-agent: a person overrides", why: "Same wrong draft, but the reviewer says yes. The gate is only as good as the person behind it.", question: "What is the dose of Cardioza?", flags: { shape: "multi", hcp: "H-1", model: "invent", approve: "y" }, expect: "approved by person" },
     { title: "Multi-agent: nothing to audit", why: "The researcher finds no source, so the draft has no cited claim. The auditor fails it and a person decides.", question: "What is the dose of Zorbex?", flags: { shape: "multi", hcp: "H-1", approve: "n" }, expect: "rejected" },
   ],

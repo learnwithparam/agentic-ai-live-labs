@@ -1,4 +1,4 @@
-// Lab 12: Retrieval, finding the right pieces
+// Retrieval, finding the right pieces
 //
 // A German doctor asks: "What is the Cardioza dose?" We cannot send every document to the model.
 // So we cut the documents into small chunks. We score each chunk against the question.
@@ -7,12 +7,12 @@
 // The examples and the screen output are in show/12-retrieval.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/12-retrieval.ts --question "What is the dose of Cardioza?" --naive --country DE
-//   bun labs/12-retrieval.ts --question "What is the dose of Cardioza?" --country US
-//   bun labs/12-retrieval.ts --question "What is the dose of Cardioza?" --country DE
-//   bun labs/12-retrieval.ts --question "What are the side effects of Cardioza?" --country US
-//   bun labs/12-retrieval.ts --question "How much of the heart pill should an adult take?" --country US --meaning --live
-//   bun labs/12-retrieval.ts --demo
+//   bun run lab retrieval --question "What is the dose of Cardioza?" --naive --country DE
+//   bun run lab retrieval --question "What is the dose of Cardioza?" --country US
+//   bun run lab retrieval --question "What is the dose of Cardioza?" --country DE
+//   bun run lab retrieval --question "What are the side effects of Cardioza?" --country US
+//   bun run lab retrieval --question "How much of the heart pill should an adult take?" --country US --meaning --live
+//   bun run lab retrieval --demo
 
 import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";

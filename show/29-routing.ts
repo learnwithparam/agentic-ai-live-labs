@@ -1,4 +1,4 @@
-// What you see on screen for lab 29: the examples and the printing.
+// What you see on screen for the routing lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/29-routing.ts.
 
 import { modelFrom, type Lab } from "../src/runner";
@@ -9,7 +9,7 @@ const RASH = "My patient got a rash after taking Cardioza. What should I do?";
 
 export const lab: Lab = {
   file: "29-routing.ts",
-  title: "Lab 29: routing",
+  title: "Routing",
   about:
     "Each example is one message in the care team inbox, from the doctor you pick with --hcp. The router sends it to the answer bot, the outreach bot or a person.",
   terms: "router = the step that picks who handles a message. specialist = a bot or person that does one job well. fallback = where a message goes when nothing fits.",

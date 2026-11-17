@@ -1,4 +1,4 @@
-// Lab 20: When tools fail
+// When tools fail
 //
 // Dr. Lee asks for the Cardioza dose. The agent asks a document service over the network.
 // A network service is not a function. It can be slow. It can fail for a moment. It can say no.
@@ -7,19 +7,19 @@
 // The examples and the screen output are in show/20-tool-failures.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/20-tool-failures.ts --question "What is the dose of Cardioza?" --service flaky --naive
-//   bun labs/20-tool-failures.ts --question "What is the dose of Cardioza?"
-//   bun labs/20-tool-failures.ts --question "What is the dose of Cardioza?" --service flaky
-//   bun labs/20-tool-failures.ts --question "What is the dose of Cardioza?" --service slow
-//   bun labs/20-tool-failures.ts --question "What is the dose of Cardioza?" --service down
-//   bun labs/20-tool-failures.ts --question "What is the dose of Cardioza?" --country FR
-//   bun labs/20-tool-failures.ts --question "What is the dose of Cardioza?" --empty true
-//   bun labs/20-tool-failures.ts --demo
+//   bun run lab tool-failures --question "What is the dose of Cardioza?" --service flaky --naive
+//   bun run lab tool-failures --question "What is the dose of Cardioza?"
+//   bun run lab tool-failures --question "What is the dose of Cardioza?" --service flaky
+//   bun run lab tool-failures --question "What is the dose of Cardioza?" --service slow
+//   bun run lab tool-failures --question "What is the dose of Cardioza?" --service down
+//   bun run lab tool-failures --question "What is the dose of Cardioza?" --country FR
+//   bun run lab tool-failures --question "What is the dose of Cardioza?" --empty true
+//   bun run lab tool-failures --demo
 
 import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";
 import { fetchOnce } from "../src/docs-service"; // one real call, with a time limit
-import { runAgentLoop } from "./01-agent-loop"; // lab 1
+import { runAgentLoop } from "./01-agent-loop";
 import type { Tool } from "./01-agent-loop";
 
 export type Limits = { timeoutSeconds: number; tries: number; waitMs: number };
@@ -74,7 +74,7 @@ function describe(status: number): string {
 // The naive limits: one try, no wait, and a very long time limit.
 export const NAIVE_LIMITS: Limits = { timeoutSeconds: 60, tries: 1, waitMs: 0 };
 
-// The search tool for the loop in lab 1. It calls the service, and remembers each call.
+// The search tool for the loop in the agent loop. It calls the service, and remembers each call.
 export function serviceTool(url: string, limits: Limits, calls: Called[]): Tool {
   return {
     name: "search_approved_docs",

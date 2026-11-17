@@ -1,4 +1,4 @@
-// Small text tools for lab 38. They cut a draft into sentences and read the citation in each one.
+// Small text tools for the claim checker lab. They cut a draft into sentences and read the citation in each one.
 // A citation looks like [DOC-101]. A model may put it before or after the full stop.
 
 // Cut a draft into sentences. A citation stays with the sentence it follows.

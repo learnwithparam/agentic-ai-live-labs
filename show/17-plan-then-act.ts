@@ -1,4 +1,4 @@
-// What you see on screen for lab 17: the examples and the printing.
+// What you see on screen for the plan then act lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/17-plan-then-act.ts.
 
 import { modelFrom, type Lab } from "../src/runner";
@@ -12,7 +12,7 @@ const TOO_LONG = `[${STEP},${STEP},${STEP},${STEP},${STEP},${STEP}]`;
 
 export const lab: Lab = {
   file: "17-plan-then-act.ts",
-  title: "Lab 17: plan, then act",
+  title: "Plan, then act",
   about:
     "Each example is a plan the model wrote. Pick one by name: look-up, send-reply, delete-files, too-long or no-source. The code checks the plan before any step runs.",
   terms: "plan = the list of steps, written before the first one runs. risky step = one that cannot be undone, like sending an email.",

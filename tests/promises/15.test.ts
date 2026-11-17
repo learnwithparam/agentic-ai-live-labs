@@ -12,7 +12,7 @@ const wanders: CallLlm = (messages) => search(`topic ${messages.length}`);
 const limits = { maxSteps: 6, maxRepeats: 2, budget: 400 };
 
 // PROMISE: a run always stops within its steps and its budget, and says why it stopped.
-test("lab 15: every test model stops inside the limits, with a reason", () => {
+test("every test model stops inside the limits, with a reason", () => {
   for (const model of [answers, stuck, wanders]) {
     const run = runLimited("What is the dose of Zorbex?", "US", model, limits);
     expect(run.steps).toBeLessThanOrEqual(limits.maxSteps);
@@ -21,7 +21,7 @@ test("lab 15: every test model stops inside the limits, with a reason", () => {
   }
 });
 
-test("lab 15: each limit stops the model that breaks it", () => {
+test("each limit stops the model that breaks it", () => {
   expect(runLimited("q", "US", answers, limits).stopped).toBe("answered");
   expect(runLimited("q", "US", stuck, limits).stopped).toBe("repeat");
   expect(runLimited("q", "US", wanders, limits).stopped).toBe("max-steps");

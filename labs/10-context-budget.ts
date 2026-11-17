@@ -1,4 +1,4 @@
-// Lab 10: The context budget
+// The context budget
 //
 // Dr. Lee asks: "What is the Cardioza dose?" The model reads a prompt: our rules, a note about the
 // doctor, the approved documents, the chat so far, and the question. A model reads only a limited
@@ -8,11 +8,11 @@
 // The examples and the screen output are in show/10-context-budget.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/10-context-budget.ts --question "What is the dose of Cardioza?" --naive --window 60
-//   bun labs/10-context-budget.ts --question "What is the dose of Cardioza?" --window 200
-//   bun labs/10-context-budget.ts --question "What is the dose of Cardioza?" --window 70
-//   bun labs/10-context-budget.ts --question "What is the dose of Cardioza?" --window 40
-//   bun labs/10-context-budget.ts --demo
+//   bun run lab context-budget --question "What is the dose of Cardioza?" --naive --window 60
+//   bun run lab context-budget --question "What is the dose of Cardioza?" --window 200
+//   bun run lab context-budget --question "What is the dose of Cardioza?" --window 70
+//   bun run lab context-budget --question "What is the dose of Cardioza?" --window 40
+//   bun run lab context-budget --demo
 
 import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";

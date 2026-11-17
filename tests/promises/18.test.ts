@@ -16,7 +16,7 @@ function run(behaviour: Behaviour, question = DOSE) {
 
 // PROMISE: code checks every draft against the source. A fix gets two rounds at most.
 // With no source there is nothing to check.
-test("lab 18: the check finds a wrong dose and a missing citation", () => {
+test("the check finds a wrong dose and a missing citation", () => {
   expect(findProblems("Take 10mg once daily. [DOC-101]", SOURCE)).toEqual([]);
   expect(findProblems("Take 20mg once daily. [DOC-101]", SOURCE)).toEqual(["dose 20mg is not in the source"]);
   expect(findProblems("Take 10mg once daily.", SOURCE)).toEqual(["no citation"]);
@@ -24,7 +24,7 @@ test("lab 18: the check finds a wrong dose and a missing citation", () => {
   expect(answerWithoutCheck(DOSE, "US", makeModel("invent")).outcome).toBe("self-approved");
 });
 
-test("lab 18: fixes pass the check, and the loop is capped", () => {
+test("fixes pass the check, and the loop is capped", () => {
   expect(run("ok").outcome).toBe("accepted");
   expect(run("nocite").outcome).toBe("fixed");
   expect(run("invent").outcome).toBe("fixed");
@@ -38,7 +38,7 @@ test("lab 18: fixes pass the check, and the loop is capped", () => {
   expect(fixes).toBe(MOST_ROUNDS);
 });
 
-test("lab 18: with no source nothing is checked and no model fix is asked", () => {
+test("with no source nothing is checked and no model fix is asked", () => {
   const result = run("ok", "Is Zorbex safe for children?");
   expect(result).toMatchObject({ outcome: "no-source", draft: "" });
 });

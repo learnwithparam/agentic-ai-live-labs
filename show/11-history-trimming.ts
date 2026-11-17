@@ -1,4 +1,4 @@
-// What you see on screen for lab 11: the examples and the printing.
+// What you see on screen for the history trimming lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/11-history-trimming.ts.
 
 import { modelFrom, type Lab } from "../src/runner";
@@ -33,7 +33,7 @@ const ASK = "What is the dose of Cardioza for me?";
 
 export const lab: Lab = {
   file: "11-history-trimming.ts",
-  title: "Lab 11: trimming the chat history",
+  title: "Trimming the chat history",
   about:
     "Each example is a chat between a doctor and the agent. The last question needs a fact from the start. Pick a chat by name: short, long, two-facts, no-facts or empty. Use --keep 4 to change how many recent turns stay.",
   terms: "history = the earlier turns of a chat. trim = leave out old turns. pinned fact = a turn we keep whatever its age. The model decides which turns are facts.",
@@ -45,7 +45,7 @@ export const lab: Lab = {
     { title: "A short chat", why: "The chat is shorter than the limit, so nothing is cut.", question: ASK, flags: { chat: "short", keep: "4" }, expect: "nothing-to-trim" },
     { title: "A long chat, fact pinned", why: "The old chatter is cut. The country turn stays, because it is pinned.", question: ASK, flags: { chat: "long", keep: "4" }, expect: "trimmed" },
     { title: "Two pinned facts", why: "Two old facts are pinned, one early and one in the middle. Both stay.", question: ASK, flags: { chat: "two-facts", keep: "3" }, expect: "trimmed" },
-    { title: "Facts only", why: "We keep zero recent turns. Only the pinned facts remain. The current question is sent on its own, as in lab 10.", question: ASK, flags: { chat: "long", keep: "0" }, expect: "facts-only" },
+    { title: "Facts only", why: "We keep zero recent turns. Only the pinned facts remain. The current question is sent on its own, as in the context budget lab.", question: ASK, flags: { chat: "long", keep: "0" }, expect: "facts-only" },
     { title: "A chat with no facts", why: "Nothing is pinned, so only the last turns stay. This is safe, because nothing there was needed.", question: ASK, flags: { chat: "no-facts", keep: "4" }, expect: "trimmed" },
     { title: "A limit larger than the chat", why: "We allow 50 recent turns, and the chat has fewer. Nothing is cut.", question: ASK, flags: { chat: "long", keep: "50" }, expect: "nothing-to-trim" },
     { title: "An empty chat", why: "A new chat has no history. There is nothing to trim, and nothing breaks.", question: ASK, flags: { chat: "empty", keep: "4" }, expect: "empty" },

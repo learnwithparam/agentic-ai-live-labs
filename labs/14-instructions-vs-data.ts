@@ -1,4 +1,4 @@
-// Lab 14: Rules are not facts
+// Rules are not facts
 //
 // The agent reads a document with two lines.
 // Line one says: "Cardioza dose is 10mg."
@@ -11,11 +11,11 @@
 // The examples and the screen output are in show/14-instructions-vs-data.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun labs/14-instructions-vs-data.ts --question "What is the dose of Cardioza?" --document injected --naive
-//   bun labs/14-instructions-vs-data.ts --question "What is the dose of Cardioza?" --document clean
-//   bun labs/14-instructions-vs-data.ts --question "What is the dose of Cardioza?" --document injected
-//   bun labs/14-instructions-vs-data.ts --question "What is the dose of Cardioza?" --document breakout
-//   bun labs/14-instructions-vs-data.ts --demo
+//   bun run lab instructions-vs-data --question "What is the dose of Cardioza?" --document injected --naive
+//   bun run lab instructions-vs-data --question "What is the dose of Cardioza?" --document clean
+//   bun run lab instructions-vs-data --question "What is the dose of Cardioza?" --document injected
+//   bun run lab instructions-vs-data --question "What is the dose of Cardioza?" --document breakout
+//   bun run lab instructions-vs-data --demo
 
 import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";

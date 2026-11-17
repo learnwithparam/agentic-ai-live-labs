@@ -1,4 +1,4 @@
-// What you see on screen for lab 25: the examples and the printing.
+// What you see on screen for the acting for a user lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/25-act-for-user.ts.
 
 import { modelFrom, type Lab } from "../src/runner";
@@ -12,7 +12,7 @@ const NOW = 1000;
 
 export const lab: Lab = {
   file: "25-act-for-user.ts",
-  title: "Lab 25: act for the user",
+  title: "Act for the user",
   about:
     "Each example is one doctor asking the bot a question. Pick the doctor with --hcp: H-1 is Dr. Lee in the US, H-2 is Dr. Weber in Germany. The bot carries a token that names her, and the search uses her country.",
   terms: "act for = do a job as a named person. delegation = a person lets a bot act for her. service key = one shared key with no person on it.",

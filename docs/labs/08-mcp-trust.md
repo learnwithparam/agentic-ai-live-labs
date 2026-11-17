@@ -1,6 +1,17 @@
-# Lab 8: trusting an MCP server
+# Trusting an MCP server
 
 Each example is a server and the tools it lists. Only the server hcp-docs is approved, and its tools were pinned when a person reviewed them. Pick a scene by typing its name.
+
+## The story in one picture
+
+```mermaid
+flowchart LR
+  A["Server sends its tools"] --> B{"Server approved?"}
+  B -->|"No"| X["Ignore the server"]
+  B -->|"Yes"| C{"Same fingerprint as before?"}
+  C -->|"Yes"| D["Load the tool"]
+  C -->|"No, it changed"| Y["Stop and review"]
+```
 
 ## The problem
 
@@ -15,18 +26,18 @@ pin = remember what a tool looked like when approved. rug pull = a tool changes 
 Copy any line into your terminal. Each one is a real example from this lab.
 
 ```bash
-bun labs/08-mcp-trust.ts --question "What is the dose of Cardioza?" --server unknown-server --naive
-bun labs/08-mcp-trust.ts --question "What is the dose of Cardioza?" --server approved
-bun labs/08-mcp-trust.ts --question "What is the dose of Cardioza?" --server unknown-server
-bun labs/08-mcp-trust.ts --question "What is the dose of Cardioza?" --server rug-pull
-bun labs/08-mcp-trust.ts --question "What is the dose of Cardioza?" --server new-tool
-bun labs/08-mcp-trust.ts --question "What is the dose of Cardioza?" --server typo-fix
-bun labs/08-mcp-trust.ts --question "What is the dose of Cardioza?" --server bad-but-pinned
-bun labs/08-mcp-trust.ts --question "What is the dose of Cardioza?" --server re-approved --reapprove
-bun labs/08-mcp-trust.ts --demo
+bun run lab mcp-trust --question "What is the dose of Cardioza?" --server unknown-server --naive
+bun run lab mcp-trust --question "What is the dose of Cardioza?" --server approved
+bun run lab mcp-trust --question "What is the dose of Cardioza?" --server unknown-server
+bun run lab mcp-trust --question "What is the dose of Cardioza?" --server rug-pull
+bun run lab mcp-trust --question "What is the dose of Cardioza?" --server new-tool
+bun run lab mcp-trust --question "What is the dose of Cardioza?" --server typo-fix
+bun run lab mcp-trust --question "What is the dose of Cardioza?" --server bad-but-pinned
+bun run lab mcp-trust --question "What is the dose of Cardioza?" --server re-approved --reapprove
+bun run lab mcp-trust --demo
 ```
 
-Run `bun labs/08-mcp-trust.ts` with nothing else to pick an example from a menu.
+Run `bun run lab mcp-trust` with nothing else to pick an example from a menu.
 
 ## The cases
 
@@ -34,14 +45,14 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
-| 1 | NAIVE: trust every description | The server hides an order inside a tool description. With no check, the order goes straight into the prompt, and the model may follow it. | poisoned | `bun labs/08-mcp-trust.ts --question "What is the dose of Cardioza?" --server unknown-server --naive` |
-| 2 | An approved server, unchanged | Right server, and both tools match their pins. Both are loaded. | trusted | `bun labs/08-mcp-trust.ts --question "What is the dose of Cardioza?" --server approved` |
-| 3 | A server nobody approved | The name is not on the list. We do not even read its tools. | blocked | `bun labs/08-mcp-trust.ts --question "What is the dose of Cardioza?" --server unknown-server` |
-| 4 | A rug pull | The server was approved, then one tool quietly gained a hidden order. Its fingerprint no longer matches the pin, so it is held back. | changed | `bun labs/08-mcp-trust.ts --question "What is the dose of Cardioza?" --server rug-pull` |
-| 5 | A new tool appears | A tool that can send email shows up. Nobody reviewed it, so it is not loaded. The old tools still work. | new | `bun labs/08-mcp-trust.ts --question "What is the dose of Cardioza?" --server new-tool` |
-| 6 | A harmless fix is also held | Even a one word fix changes the fingerprint. We are strict on purpose. Re-approving takes one step. | changed | `bun labs/08-mcp-trust.ts --question "What is the dose of Cardioza?" --server typo-fix` |
-| 7 | EDGE: an order that was approved by mistake | A person pinned a tool that already held an order. The word scan still catches it. It is a rule list, so a cleverer order could slip past. That is why a person reviews too. | trap | `bun labs/08-mcp-trust.ts --question "What is the dose of Cardioza?" --server bad-but-pinned` |
-| 8 | A person re-approves | After a review the new text is pinned. The tool is trusted again. | trusted | `bun labs/08-mcp-trust.ts --question "What is the dose of Cardioza?" --server re-approved --reapprove` |
+| 1 | NAIVE: trust every description | The server hides an order inside a tool description. With no check, the order goes straight into the prompt, and the model may follow it. | poisoned | `bun run lab mcp-trust --question "What is the dose of Cardioza?" --server unknown-server --naive` |
+| 2 | An approved server, unchanged | Right server, and both tools match their pins. Both are loaded. | trusted | `bun run lab mcp-trust --question "What is the dose of Cardioza?" --server approved` |
+| 3 | A server nobody approved | The name is not on the list. We do not even read its tools. | blocked | `bun run lab mcp-trust --question "What is the dose of Cardioza?" --server unknown-server` |
+| 4 | A rug pull | The server was approved, then one tool quietly gained a hidden order. Its fingerprint no longer matches the pin, so it is held back. | changed | `bun run lab mcp-trust --question "What is the dose of Cardioza?" --server rug-pull` |
+| 5 | A new tool appears | A tool that can send email shows up. Nobody reviewed it, so it is not loaded. The old tools still work. | new | `bun run lab mcp-trust --question "What is the dose of Cardioza?" --server new-tool` |
+| 6 | A harmless fix is also held | Even a one word fix changes the fingerprint. We are strict on purpose. Re-approving takes one step. | changed | `bun run lab mcp-trust --question "What is the dose of Cardioza?" --server typo-fix` |
+| 7 | EDGE: an order that was approved by mistake | A person pinned a tool that already held an order. The word scan still catches it. It is a rule list, so a cleverer order could slip past. That is why a person reviews too. | trap | `bun run lab mcp-trust --question "What is the dose of Cardioza?" --server bad-but-pinned` |
+| 8 | A person re-approves | After a review the new text is pinned. The tool is trusted again. | trusted | `bun run lab mcp-trust --question "What is the dose of Cardioza?" --server re-approved --reapprove` |
 
 ## The promise, and its test
 

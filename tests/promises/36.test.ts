@@ -6,7 +6,7 @@ const ok = makeModel("ok");
 const LEE = "Please email Dr. Lee the new Dermalin label.";
 
 // PROMISE: one profile by NPI. An opt-out or a contact in 7 days blocks. No NPI is never guessed.
-test("lab 36: the profile joins every system by NPI, and same names stay apart", () => {
+test("the profile joins every system by NPI, and same names stay apart", () => {
   const first = mergeByNpi("1000000001");
   const second = mergeByNpi("1000000004");
   expect(first.contacts.length).toBe(3);
@@ -14,34 +14,34 @@ test("lab 36: the profile joins every system by NPI, and same names stay apart",
   expect(second.contacts[0].system).toBe("inquiries");
 });
 
-test("lab 36: a contact in another system blocks the email", () => {
+test("a contact in another system blocks the email", () => {
   const result = planOutreach(LEE, "1000000004", ok);
   expect(result.verdict).toBe("blocked");
   expect(result.why).toContain("inquiries");
 });
 
-test("lab 36: the naive bot reads the email system only and sends", () => {
+test("the naive bot reads the email system only and sends", () => {
   expect(planNaive(LEE, "1000000004", ok).verdict).toBe("sent");
 });
 
-test("lab 36: a doctor who opted out is blocked, even with no recent contact", () => {
+test("a doctor who opted out is blocked, even with no recent contact", () => {
   const result = planOutreach("Please email Dr. Rao the new Neurovex label.", "1000000003", ok);
   expect(result.verdict).toBe("blocked");
   expect(result.why).toContain("opted out");
 });
 
-test("lab 36: an old contact does not block, and the email is written", () => {
+test("an old contact does not block, and the email is written", () => {
   const result = planOutreach("Please email Dr. Weber the new Cardioza label.", "1000000002", ok);
   expect(result.verdict).toBe("sent");
   expect(result.letter.length).toBeGreaterThan(0);
 });
 
-test("lab 36: the reason names the system and the days", () => {
+test("the reason names the system and the days", () => {
   const result = planOutreach("Please email Dr. Lee the new Cardioza label.", "1000000001", ok);
   expect(result.why).toContain("3 days");
 });
 
-test("lab 36: a row with no NPI holds the email for a person", () => {
+test("a row with no NPI holds the email for a person", () => {
   const result = planOutreach("Please email Dr. Okafor the new Dermalin label.", "1000000005", ok);
   expect(result.verdict).toBe("held");
 });

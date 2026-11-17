@@ -1,6 +1,17 @@
-# Lab 30: chains and delegation
+# Chains and delegation
 
 Each example is one job for three doctors. Pick the doctors with --hcps, for example H-1,H-2,H-3. A lead splits the job and gives each doctor to a worker with a short chain.
+
+## The story in one picture
+
+```mermaid
+flowchart LR
+  A["Big job"] --> B["Step 1: find facts"]
+  B --> C["Step 2: write draft"]
+  C --> D["Step 3: check draft"]
+  A -->|"hand one part to"| W["Worker"]
+  W --> C
+```
 
 ## The problem
 
@@ -15,14 +26,14 @@ chain = steps where each result feeds the next. delegate = hand a part of the jo
 Copy any line into your terminal. Each one is a real example from this lab.
 
 ```bash
-bun labs/30-chain-and-delegate.ts --demo
-bun labs/30-chain-and-delegate.ts --demo
-bun labs/30-chain-and-delegate.ts --question "Write the Cardioza update for Dr. Weber please." --hcps H-2
-bun labs/30-chain-and-delegate.ts --demo
-bun labs/30-chain-and-delegate.ts --demo
+bun run lab chain-and-delegate --demo
+bun run lab chain-and-delegate --demo
+bun run lab chain-and-delegate --question "Write the Cardioza update for Dr. Weber please." --hcps H-2
+bun run lab chain-and-delegate --demo
+bun run lab chain-and-delegate --demo
 ```
 
-Run `bun labs/30-chain-and-delegate.ts` with nothing else to pick an example from a menu.
+Run `bun run lab chain-and-delegate` with nothing else to pick an example from a menu.
 
 ## The cases
 
@@ -30,10 +41,10 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
-| 1 | NAIVE: one letter for everyone | One search runs for Dr. Lee's country. Dr. Weber gets the US dose in his letter. | wrong-label | `bun labs/30-chain-and-delegate.ts --demo` |
-| 2 | Three doctors, three chains | Each worker searches its own doctor's country. Dr. Weber's letter cites the German document. | all-sent | `bun labs/30-chain-and-delegate.ts --demo` |
-| 3 | One doctor | A job for one doctor is one worker and one chain. | all-sent | `bun labs/30-chain-and-delegate.ts --question "Write the Cardioza update for Dr. Weber please." --hcps H-2` |
-| 4 | EDGE: one worker has nothing to write from | There is no German Neurovex document. Dr. Weber's worker holds its letter, and the other two still go. | partial | `bun labs/30-chain-and-delegate.ts --demo` |
+| 1 | NAIVE: one letter for everyone | One search runs for Dr. Lee's country. Dr. Weber gets the US dose in his letter. | wrong-label | `bun run lab chain-and-delegate --demo` |
+| 2 | Three doctors, three chains | Each worker searches its own doctor's country. Dr. Weber's letter cites the German document. | all-sent | `bun run lab chain-and-delegate --demo` |
+| 3 | One doctor | A job for one doctor is one worker and one chain. | all-sent | `bun run lab chain-and-delegate --question "Write the Cardioza update for Dr. Weber please." --hcps H-2` |
+| 4 | EDGE: one worker has nothing to write from | There is no German Neurovex document. Dr. Weber's worker holds its letter, and the other two still go. | partial | `bun run lab chain-and-delegate --demo` |
 
 ## The promise, and its test
 
