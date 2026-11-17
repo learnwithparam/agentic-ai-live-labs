@@ -124,6 +124,7 @@ function actFor(prompt: string): string {
   const question = (prompt.split("Question: ")[1] || "").toLowerCase();
   const tools: string[] = [];
   if (question.includes("crm")) tools.push("read_crm");
+  else if (question.includes(" note")) tools.push("read_note");
   else tools.push("search_approved_docs");
   if (question.includes("email")) tools.push("send_email");
   return tools.join("\n");

@@ -1,0 +1,59 @@
+# Lab 26: hooks
+
+Each example asks the bot to use tools. The model says which tools. Before hooks can block a call. An after hook cleans what comes back. The first example runs with no hooks, to show the harm.
+
+## The problem
+
+A rule written in the prompt can be ignored. The model can email a note with an SSN to a private mailbox, and nothing stops it.
+
+## New words
+
+hook = code that runs on every tool call. before hook = may stop the call. after hook = may change the output. fail closed = if the check breaks, say no.
+
+## Run it
+
+Copy any line into your terminal. Each one is a real example from this lab.
+
+```bash
+bun labs/26-hooks.ts --demo
+bun labs/26-hooks.ts --question "Can you read the last call note for Dr. Lee?"
+bun labs/26-hooks.ts --demo
+bun labs/26-hooks.ts --demo
+bun labs/26-hooks.ts --question "What is the dose of Cardioza?"
+bun labs/26-hooks.ts --demo
+bun labs/26-hooks.ts --demo
+```
+
+Run `bun labs/26-hooks.ts` with nothing else to pick an example from a menu.
+
+## The cases
+
+Case 1 is the naive way. Read what goes wrong, then read the rest.
+
+| # | Case | Why it matters | Result | Run it alone |
+| --- | --- | --- | --- | --- |
+| 1 | NAIVE: no hooks | The note is read and emailed to a private mailbox, with the patient name and SSN in it. | leaked | `bun labs/26-hooks.ts --demo` |
+| 2 | Read the note, clean | The tool returns the note. The after hook swaps the private details for tokens. | clean | `bun labs/26-hooks.ts --question "Can you read the last call note for Dr. Lee?"` |
+| 3 | Email to the hospital | The address is on an approved domain, and the text is already clean. The email goes. | sent-clean | `bun labs/26-hooks.ts --demo` |
+| 4 | Email to a private mailbox | The before hook sees the domain is not approved. The email never goes. | blocked | `bun labs/26-hooks.ts --demo` |
+| 5 | A question that needs no hook | A plain dose search. No hook has anything to say, and the answer comes through. | clean | `bun labs/26-hooks.ts --question "What is the dose of Cardioza?"` |
+| 6 | EDGE: a hook that crashes | A buggy hook throws an error. We do not let the call through. Every call is blocked. | blocked | `bun labs/26-hooks.ts --demo` |
+
+## The promise, and its test
+
+Every tool call passes the before hooks, and every output passes the after hooks. A hook that crashes blocks the call.
+
+```bash
+bun test tests/promises/26.test.ts
+```
+
+To see the test do its job, break the rule in PART 1 on purpose. The test must fail. Then undo it.
+
+## In production
+
+Keep hooks in one list for every tool. Log each block with the hook name. Test a hook by making it crash.
+
+## Read the code
+
+Open `labs/26-hooks.ts`. Read the code from the top. It holds only the lesson.
+The screen output is in `show/`. You do not need it to learn.
