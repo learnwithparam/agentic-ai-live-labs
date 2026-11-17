@@ -24,3 +24,19 @@ export function citedId(sentence: string): string {
 export function withoutCitation(sentence: string): string {
   return sentence.replace(/\s*\[DOC-\d+\]/, "").trim();
 }
+
+// The ids of the documents a text cites, in order. One id looks like DOC-101.
+export function idsIn(text: string): string[] {
+  const ids: string[] = [];
+  for (const hit of text.matchAll(/\[(DOC-\d+)\]/g)) ids.push(hit[1]);
+  return ids;
+}
+
+// The drug a question names, in lower case, or an empty text when it names none.
+export function drugNamed(question: string, drugs: string[]): string {
+  for (const drug of drugs) if (question.toLowerCase().includes(drug.toLowerCase())) return drug.toLowerCase();
+  return "";
+}
+
+// A step that runs between two steps of a lab. Tests and examples use it to make a late change.
+export type Hook = () => void;
