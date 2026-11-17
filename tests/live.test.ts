@@ -1,4 +1,7 @@
 import { expect, test } from "bun:test";
+import { CHUNKS } from "../src/chunks";
+import { retrieveByMeaning } from "../src/meaning";
+import { retrieve } from "../labs/12-retrieval";
 import { buildBody, cleanText, replyFrom, toChatMessages } from "../src/live";
 
 test("live: tool results go to the model as text, and the key is never in the body", () => {
@@ -26,4 +29,18 @@ test("live: a tool call and a text answer both become a reply", () => {
 
 test("live: odd marks from a real model become plain marks", () => {
   expect(cleanText("**10\u00a0mg** (see \u3010DOC\u2011101\u3011)")).toBe("10 mg (see [DOC-101])");
+});
+
+// These two tests call a real embedding model. They run only when a key is set.
+const realKey = process.env.OPENROUTER_API_KEY ? test : test.skip;
+
+realKey("live: a question with no shared word still finds its chunk by meaning", () => {
+  const found = retrieveByMeaning("How much of the heart pill should an adult take?", "US", CHUNKS);
+  expect(found.outcome).toBe("found");
+  expect(found.hits[0].chunk.id).toBe("C-1");
+  expect(retrieve("How much of the heart pill should an adult take?", "US", CHUNKS).outcome).toBe("no-source");
+});
+
+realKey("live: a question about nothing we hold finds nothing", () => {
+  expect(retrieveByMeaning("What is the weather in Berlin today?", "DE", CHUNKS).outcome).toBe("no-source");
 });

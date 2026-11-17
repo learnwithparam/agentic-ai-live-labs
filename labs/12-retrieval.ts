@@ -11,6 +11,7 @@
 //   bun labs/12-retrieval.ts --question "What is the dose of Cardioza?" --country US
 //   bun labs/12-retrieval.ts --question "What is the dose of Cardioza?" --country DE
 //   bun labs/12-retrieval.ts --question "What are the side effects of Cardioza?" --country US
+//   bun labs/12-retrieval.ts --question "How much of the heart pill should an adult take?" --country US --meaning --live
 //   bun labs/12-retrieval.ts --demo
 
 import type { CallLlm } from "../src/model";

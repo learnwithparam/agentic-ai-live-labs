@@ -57,7 +57,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Add embeddings to the word score, and log which chunk ids were sent on every answer.
+Rank by meaning too, as src/meaning.ts does with --meaning --live. Log which chunk ids were sent on every answer.
 
 ## Read the code
 

@@ -6,6 +6,7 @@ import { CHUNKS } from "../src/chunks";
 import { badgeGreen, badgeRed, badgeYellow, box, dim, field, green, print, red, rule, yellow } from "../src/ui";
 import { answerFromChunks, naiveRetrieve } from "../labs/12-retrieval";
 import type { Hit } from "../labs/12-retrieval";
+import { retrieveByMeaning } from "../src/meaning";
 
 export const lab: Lab = {
   file: "12-retrieval.ts",
@@ -15,7 +16,7 @@ export const lab: Lab = {
   terms: "chunk = a small piece of a document. score = how well a chunk matches the question (BM25, the standard word ranking). retrieval = finding the best chunks to send.",
   challenge: "The model cannot read every document. If we send the wrong chunk, it answers from the wrong source.",
   promise: "Only chunks from the doctor's country, with a strong score, are returned. Otherwise we say there is no source.",
-  production: "Add embeddings to the word score, and log which chunk ids were sent on every answer.",
+  production: "Rank by meaning too, as src/meaning.ts does with --meaning --live. Log which chunk ids were sent on every answer.",
   cases: [
     { title: "NAIVE: best chunk from anywhere", why: "A German doctor asks for the dose. Two chunks match equally well and the US chunk comes first. The doctor gets the US dose.", question: "What is the dose of Cardioza?", flags: { naive: "true", country: "DE" }, expect: "wrong-country" },
     { title: "A US doctor asks for a dose", why: "The right chunk matches on two words. The side effects chunk matches on only one, so it stays out.", question: "What is the dose of Cardioza?", flags: { country: "US" }, expect: "found" },
@@ -32,6 +33,7 @@ export const lab: Lab = {
     print(field("Question", question));
     print(field("Doctor's country", country));
     if (flags.naive) return showNaive(question, country);
+    if (flags.meaning) return showMeaning(question, country);
     const answered = answerFromChunks(question, country, CHUNKS, modelFrom(flags));
     const found = answered.found;
     rule("LOG, STEP BY STEP");
@@ -57,4 +59,14 @@ function showNaive(question: string, country: string): string {
   if (hit.chunk.country === country) return "found";
   box(badgeRed("WRONG COUNTRY"), [red(`A ${hit.chunk.country} chunk was sent to a ${country} doctor.`)], red);
   return "wrong-country";
+}
+
+// --meaning --live: rank by what the chunks mean, using a real embedding model.
+function showMeaning(question: string, country: string): string {
+  if (!process.env.OPENROUTER_API_KEY) throw new Error("--meaning needs a real model. Add --live and set OPENROUTER_API_KEY.");
+  const found = retrieveByMeaning(question, country, CHUNKS);
+  rule("CHUNKS THAT MEAN THE SAME");
+  for (const hit of found.hits) console.log(`${badgeGreen(`meaning ${hit.score}`)} ${dim(`${hit.chunk.id} ${hit.chunk.country}`)} ${green(hit.chunk.text)}`);
+  if (found.outcome === "no-source") box(badgeRed("NO SOURCE"), [red("Nothing means the same as the question.")], red);
+  return found.outcome;
 }

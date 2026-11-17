@@ -8,6 +8,8 @@ import type { CallLlm, Message, Reply, Usage } from "./model";
 
 export const LIVE_MODEL = "nvidia/nemotron-3.5-lightning";
 const ENDPOINT = process.env.OPENROUTER_URL || "https://openrouter.ai/api/v1/chat/completions";
+const EMBED_ENDPOINT = ENDPOINT.replace("/chat/completions", "/embeddings");
+export const EMBED_MODEL = "nvidia/nemotron-3.5-embed-1b:free";
 
 const TOOL_TEXT: Record<string, string> = {
   search_approved_docs: "Find the approved documents for a drug in one country.",
@@ -69,13 +71,13 @@ function usageFrom(response: any): Usage | undefined {
 }
 
 // The key goes to curl through its config on stdin, never on the command line.
-function post(body: Record<string, unknown>): any {
+function post(body: Record<string, unknown>, endpoint = ENDPOINT): any {
   const key = (process.env.OPENROUTER_API_KEY || "").trim().replaceAll('"', "").replaceAll("'", "");
   if (!key) throw new Error("Set OPENROUTER_API_KEY to use --live.");
   if (process.env.LIVE_TRACE) console.error("live-call");
   const file = join(mkdtempSync(join(tmpdir(), "live-")), "body.json");
   writeFileSync(file, JSON.stringify(body));
-  const config = `url = "${ENDPOINT}"\nheader = "Authorization: Bearer ${key}"\nheader = "Content-Type: application/json"\n`;
+  const config = `url = "${endpoint}"\nheader = "Authorization: Bearer ${key}"\nheader = "Content-Type: application/json"\n`;
   const run = Bun.spawnSync(["curl", "-sS", "--max-time", "90", "--config", "-", "--data-binary", `@${file}`], {
     stdin: new TextEncoder().encode(config),
   });
@@ -85,4 +87,26 @@ function post(body: Record<string, unknown>): any {
 
 export function makeLiveModel(model = LIVE_MODEL): CallLlm {
   return (messages, toolNames) => replyFrom(post(buildBody(messages, toolNames, model)));
+}
+
+// Real embeddings: one list of numbers for each text. Two texts with the same meaning get close lists.
+export function embedTexts(texts: string[]): number[][] {
+  const response = post({ model: EMBED_MODEL, input: texts }, EMBED_ENDPOINT);
+  if (response.error || !response.data) throw new Error(`The embedding call failed: ${JSON.stringify(response)}`);
+  const vectors: number[][] = [];
+  for (const item of response.data) vectors.push(item.embedding);
+  return vectors;
+}
+
+// How close two lists are, from 0 (nothing alike) to 1 (the same meaning).
+export function cosine(first: number[], second: number[]): number {
+  let dot = 0;
+  let sizeFirst = 0;
+  let sizeSecond = 0;
+  for (let i = 0; i < first.length; i++) {
+    dot += first[i] * second[i];
+    sizeFirst += first[i] * first[i];
+    sizeSecond += second[i] * second[i];
+  }
+  return dot / Math.sqrt(sizeFirst * sizeSecond);
 }
