@@ -16,14 +16,14 @@ function fileOf(jobId: string, name: string): string {
 }
 
 // Add one line to the end of a file, and make sure the disk has it.
-function appendLine(file: string, line: object): void {
+export function appendLine(file: string, line: object): void {
   const handle = openSync(file, "a");
   writeSync(handle, JSON.stringify(line) + "\n");
   fsyncSync(handle);
   closeSync(handle);
 }
 
-function readLines(file: string): any[] {
+export function readLines(file: string): any[] {
   if (!existsSync(file)) return [];
   const lines = readFileSync(file, "utf8").split("\n");
   const found: any[] = [];

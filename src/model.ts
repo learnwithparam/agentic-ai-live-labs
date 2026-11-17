@@ -7,7 +7,8 @@ import { APPROVED_DOCS, KNOWN_DRUGS, NO_DOC } from "./data";
 export type Message = { role: "system" | "user" | "tool"; content: string; name?: string };
 export type ToolInput = { query: string; country: string; hcpId: string };
 export type ToolCall = { name: string; args: ToolInput };
-export type Reply = { toolCall?: ToolCall; text?: string };
+export type Usage = { tokensIn: number; tokensOut: number }; // what the provider says it billed
+export type Reply = { toolCall?: ToolCall; text?: string; usage?: Usage };
 export type CallLlm = (messages: Message[], toolNames: string[]) => Reply;
 
 // How the pretend model behaves.

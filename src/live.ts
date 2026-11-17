@@ -4,7 +4,7 @@
 import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import type { CallLlm, Message, Reply } from "./model";
+import type { CallLlm, Message, Reply, Usage } from "./model";
 
 export const LIVE_MODEL = "nvidia/nemotron-3.5-lightning";
 const ENDPOINT = process.env.OPENROUTER_URL || "https://openrouter.ai/api/v1/chat/completions";
@@ -53,12 +53,19 @@ export function cleanText(text: string): string {
 export function replyFrom(response: any): Reply {
   if (response.error) throw new Error(`The model call failed: ${JSON.stringify(response.error)}`);
   const message = response.choices[0].message;
+  const usage = usageFrom(response);
   const call = message.tool_calls?.[0];
   if (call) {
     const args = JSON.parse(call.function.arguments || "{}");
-    return { toolCall: { name: call.function.name, args: { query: "", country: "", hcpId: "none", ...args } } };
+    return { toolCall: { name: call.function.name, args: { query: "", country: "", hcpId: "none", ...args } }, usage };
   }
-  return { text: cleanText(String(message.content || "")).trim() };
+  return { text: cleanText(String(message.content || "")).trim(), usage };
+}
+
+// The tokens the provider billed for this call. Lab 22 charges from these, not from a guess.
+function usageFrom(response: any): Usage | undefined {
+  if (!response.usage) return undefined;
+  return { tokensIn: response.usage.prompt_tokens || 0, tokensOut: response.usage.completion_tokens || 0 };
 }
 
 // The key goes to curl through its config on stdin, never on the command line.
