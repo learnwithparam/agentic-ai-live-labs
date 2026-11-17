@@ -81,7 +81,7 @@ It uses OpenRouter and your own key in `OPENROUTER_API_KEY`. The key is never pr
 | The run asks for a key | You added `--live` | Set `OPENROUTER_API_KEY`, or remove `--live` |
 | A case says SURPRISE | The result is not the one the lab expected | Read its "Why". With `--live`, a real model can differ |
 | `bun run check` fails on a long line | A lab breaks the plain style | Split the line. Keep each line under 101 letters |
-| A lab file will not run | The command has no file name | Write `bun labs/01-agent-loop.ts`, not a number |
+| `bun labs/7` will not run | A path needs the full file name | Write `bun labs/07-mcp-basics.ts`, or use `bun run lab 7` |
 
 Common wrong turn: you read `show/NN-name.ts` first. It only prints things. The lesson is in `labs/NN-name.ts`.
 
@@ -104,8 +104,8 @@ Each lab has a page in `docs/labs/`. It lists the new words, the problem, the pr
 
 ## Add a lab
 
-1. Copy `scripts/lab-template.ts` to `labs/40-your-name.ts`.
-2. Write the lesson as plain steps. Write the examples in `show/40-your-name.ts`.
+1. Copy `scripts/lab-template.ts` to `labs/41-your-name.ts`.
+2. Write the lesson as plain steps. Write the examples in `show/41-your-name.ts`.
 3. Write one test in `tests/promises/` that proves the promise.
 4. Run `bun run check`.
 
