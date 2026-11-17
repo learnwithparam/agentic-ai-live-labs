@@ -95,7 +95,7 @@ How several agents work as one team.
 | 31. Parallel workers | Run workers side by side, then merge their results. |
 | 32. Subagents with their own context | Keep noisy work out of the main context. |
 | 33. Handoffs between agents | Pass work between bots with a hop limit that breaks loops. |
-| 34. Shared memory and skills | Share checked facts across bots, and save a good run as a skill. |
+| 34. Memory the bots share | Share checked facts across bots, without letting a wrong fact in. |
 | 35. Wakeups and the mission board | Wake agents on a schedule or an event, and show their work on a board. |
 
 ### HCP case study

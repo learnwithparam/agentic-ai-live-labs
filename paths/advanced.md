@@ -29,7 +29,7 @@
 | 28. Evals and the release gate | `bun labs/28-evals-and-release.ts --demo` | Evals that block a release. |
 | 32. Subagents with their own context | `bun labs/32-subagent-isolation.ts --demo` | Isolate noisy work in a subagent. |
 | 33. Handoffs between agents | `bun labs/33-handoffs.ts --demo` | Break handoff loops with a hop limit. |
-| 34. Shared memory and skills | `bun labs/34-shared-memory-and-skills.ts --demo` | Memory that cannot be poisoned. |
+| 34. Memory the bots share | `bun labs/34-shared-memory.ts --demo` | Memory that cannot be poisoned. |
 | 35. Wakeups and the mission board | `bun labs/35-wakeups-and-board.ts --demo` | Wake agents on events and show a board. |
 
 ## Optional

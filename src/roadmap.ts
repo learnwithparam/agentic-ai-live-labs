@@ -62,7 +62,7 @@ export const LABS: RoadmapLab[] = [
   { number: 31, slug: "parallel-workers", track: "patterns", title: "Parallel workers", idea: "Run workers side by side, then merge their results." },
   { number: 32, slug: "subagent-isolation", track: "patterns", title: "Subagents with their own context", idea: "Keep noisy work out of the main context." },
   { number: 33, slug: "handoffs", track: "patterns", title: "Handoffs between agents", idea: "Pass work between bots with a hop limit that breaks loops." },
-  { number: 34, slug: "shared-memory-and-skills", track: "patterns", title: "Shared memory and skills", idea: "Share checked facts across bots, and save a good run as a skill." },
+  { number: 34, slug: "shared-memory", track: "patterns", title: "Memory the bots share", idea: "Share checked facts across bots, without letting a wrong fact in." },
   { number: 35, slug: "wakeups-and-board", track: "patterns", title: "Wakeups and the mission board", idea: "Wake agents on a schedule or an event, and show their work on a board." },
   { number: 36, slug: "hcp-360", track: "hcp", title: "One profile per doctor", idea: "Merge four systems into one profile and stop repeat outreach." },
   { number: 37, slug: "phi-vault", track: "hcp", title: "The PHI vault", idea: "Swap private data for tokens that only a reviewer can reverse." },

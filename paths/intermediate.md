@@ -50,7 +50,7 @@
 | 21. Crash and resume | `bun labs/21-crash-and-resume.ts --demo` | Resume after a crash. |
 | 22. Budgets | `bun labs/22-budgets.ts --demo` | Cap cost and time. |
 | 23. Model routing and caching | `bun labs/23-model-routing.ts --demo` | Route by difficulty and cache repeats. |
-| 34. Shared memory and skills | `bun labs/34-shared-memory-and-skills.ts --demo` | Share memory without poisoning it. |
+| 34. Memory the bots share | `bun labs/34-shared-memory.ts --demo` | Share memory without poisoning it. |
 | 36. One profile per doctor | `bun labs/36-hcp-360.ts --demo` | Use the ideas on one real job. |
 
 ## When you finish
