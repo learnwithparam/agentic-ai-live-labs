@@ -40,6 +40,7 @@ export function makeModel(behaviour: Behaviour = "ok"): CallLlm {
     if (first.startsWith("AUDIT:")) return { text: audit(first) };
     if (first.startsWith("ACT:")) return { text: actFor(first) };
     if (first.startsWith("ROUTE:")) return { text: routeFor(first) };
+    if (first.startsWith("HAND:")) return { text: handFor(first) };
     if (first.startsWith("REVIEW:")) return { text: "Looks good. The draft is fine." };
     if (first.startsWith("FIX:")) return { text: fix(first, behaviour) };
 
@@ -128,6 +129,20 @@ function routeFor(prompt: string): string {
   if (message.includes("dose")) return "answer";
   if (message.includes("invoice")) return "billing";
   return "human";
+}
+
+// The pretend bots in lab 33. Each one reads the message and names the next bot, or says done.
+function handFor(prompt: string): string {
+  const bot = (prompt.split("You are the ")[1] || "").split(" bot")[0];
+  const message = (prompt.split("Message: ")[1] || "").toLowerCase();
+  const wantsEmail = message.includes("email");
+  const wantsDose = message.includes("dose");
+  if (bot === "intake" && wantsEmail) return "outreach";
+  if (bot === "intake" && wantsDose) return "answer";
+  if (bot === "intake") return "human";
+  if (bot === "answer" && wantsEmail) return "outreach";
+  if (bot === "outreach" && wantsDose) return "answer";
+  return "done";
 }
 
 function actFor(prompt: string): string {
