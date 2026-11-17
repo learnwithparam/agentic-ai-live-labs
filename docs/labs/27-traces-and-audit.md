@@ -1,0 +1,59 @@
+# Lab 27: traces and the audit ledger
+
+Each example answers Dr. Weber, writes the trace, and then someone edits the file. Pick the edit with --tamper: edit, delete, cut or rewrite. Then we check the chain.
+
+## The problem
+
+A month later someone asks why the bot said 5mg. A plain log can be edited to tell any story, and nobody can tell.
+
+## New words
+
+trace = the record of every step. hash = a fingerprint of some text. chain = each line holds the fingerprint of the line before it. head = the last fingerprint, saved elsewhere.
+
+## Run it
+
+Copy any line into your terminal. Each one is a real example from this lab.
+
+```bash
+bun labs/27-traces-and-audit.ts --question "What is the dose of Cardioza?" --hcp H-2 --tamper edit --naive
+bun labs/27-traces-and-audit.ts --question "What is the dose of Cardioza?" --hcp H-2
+bun labs/27-traces-and-audit.ts --question "What is the dose of Cardioza?" --hcp H-2 --tamper edit
+bun labs/27-traces-and-audit.ts --question "What is the dose of Cardioza?" --hcp H-2 --tamper delete
+bun labs/27-traces-and-audit.ts --question "What is the dose of Cardioza?" --hcp H-2 --tamper cut
+bun labs/27-traces-and-audit.ts --question "What is the dose of Cardioza?" --hcp H-2 --tamper rewrite
+bun labs/27-traces-and-audit.ts --demo
+```
+
+Run `bun labs/27-traces-and-audit.ts` with nothing else to pick an example from a menu.
+
+## The cases
+
+Case 1 is the naive way. Read what goes wrong, then read the rest.
+
+| # | Case | Why it matters | Result | Run it alone |
+| --- | --- | --- | --- | --- |
+| 1 | NAIVE: a plain log | Someone changes the document id in the log. The file still reads fine, and nothing notices. | unnoticed | `bun labs/27-traces-and-audit.ts --question "What is the dose of Cardioza?" --hcp H-2 --tamper edit --naive` |
+| 2 | Nobody touches the trace | Every line is in order and every fingerprint matches. | intact | `bun labs/27-traces-and-audit.ts --question "What is the dose of Cardioza?" --hcp H-2` |
+| 3 | EDGE: one word is changed | The document id in the result line is changed. The fingerprint of that line no longer matches. | caught | `bun labs/27-traces-and-audit.ts --question "What is the dose of Cardioza?" --hcp H-2 --tamper edit` |
+| 4 | EDGE: a line is removed | The search line is deleted. The next line points at a line that is gone. | caught | `bun labs/27-traces-and-audit.ts --question "What is the dose of Cardioza?" --hcp H-2 --tamper delete` |
+| 5 | EDGE: the end is cut off | The answer line is removed. The chain is still fine, but the last fingerprint is not the saved one. | caught | `bun labs/27-traces-and-audit.ts --question "What is the dose of Cardioza?" --hcp H-2 --tamper cut` |
+| 6 | EDGE: the whole file is rewritten | Someone edits a line and works every fingerprint out again. The chain is fine, but the head is not the saved one. | caught | `bun labs/27-traces-and-audit.ts --question "What is the dose of Cardioza?" --hcp H-2 --tamper rewrite` |
+
+## The promise, and its test
+
+Every step is written down. Any edit, removed line, cut end or full rewrite is found when we check the chain against the saved head.
+
+```bash
+bun test tests/promises/27.test.ts
+```
+
+To see the test do its job, break the rule in PART 1 on purpose. The test must fail. Then undo it.
+
+## In production
+
+Send each line to storage that cannot be changed, and save the head in a second place with a different owner. Check the chain on a schedule, not only in an audit.
+
+## Read the code
+
+Open `labs/27-traces-and-audit.ts`. Read the code from the top. It holds only the lesson.
+The screen output is in `show/`. You do not need it to learn.
