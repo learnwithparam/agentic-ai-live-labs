@@ -31,7 +31,7 @@ Each word has one meaning in every lab.
 Copy any line into your terminal. Each one is a real example from this lab.
 
 ```bash
-bun run lab gates --question "What is the dose of Cardioza?" --model nocite --naive
+bun run lab gates --demo
 bun run lab gates --question "What is the dose of Cardioza?"
 bun run lab gates --question "What is the dose of Zorbex?" --approve y
 bun run lab gates --question "What is the dose of Zorbex?" --approve n
@@ -51,7 +51,7 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
-| 1 | NAIVE: no gate | The model forgets the citation. With no gate, the uncited reply goes straight to the doctor. | SENT_UNCHECKED | `bun run lab gates --question "What is the dose of Cardioza?" --model nocite --naive` |
+| 1 | NAIVE: no gate | The model forgets the citation. With no gate, the uncited reply goes straight to the doctor. | SENT_UNCHECKED | `bun run lab gates --demo` |
 | 2 | No gate needed | Approved document found, reply cited. Nothing to stop, so it is sent. | SENT | `bun run lab gates --question "What is the dose of Cardioza?"` |
 | 3 | Gate 1, reviewer approves | No approved document, so the model is never called. A person sees the fallback message and approves it. | SENT_AFTER_HUMAN_APPROVAL | `bun run lab gates --question "What is the dose of Zorbex?" --approve y` |
 | 4 | Gate 1, reviewer rejects | Same stop, but the person says no. Nothing is sent. | BLOCKED_BY_REVIEWER | `bun run lab gates --question "What is the dose of Zorbex?" --approve n` |
@@ -87,7 +87,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Send the gate to a real queue with a name, a time and a reason. Log who approved what. Keep the default as no.
+A real gate saves the run, tells the reviewer by chat card or queue, and then stops. The decision is an event. It wakes the run from its save. Check again at send time, and expire a draft after a day. Log who approved what, and keep the default as no.
 
 ## Read the code
 

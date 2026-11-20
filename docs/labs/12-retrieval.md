@@ -29,7 +29,7 @@ Each word has one meaning in every lab.
 Copy any line into your terminal. Each one is a real example from this lab.
 
 ```bash
-bun run lab retrieval --question "What is the dose of Cardioza?" --naive --country DE
+bun run lab retrieval --question "What dose of Cardioza should an adult take?" --naive --country DE
 bun run lab retrieval --question "What is the dose of Cardioza?" --country US
 bun run lab retrieval --question "What is the dose of Cardioza?" --country DE
 bun run lab retrieval --question "What are the side effects of Cardioza?" --country US
@@ -49,7 +49,7 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
-| 1 | NAIVE: best chunk from anywhere | A German doctor asks for the dose. Two chunks match equally well and the US chunk comes first. The doctor gets the US dose. | wrong-country | `bun run lab retrieval --question "What is the dose of Cardioza?" --naive --country DE` |
+| 1 | NAIVE: best chunk from anywhere | A German doctor asks for the dose. Two chunks match equally well and the US chunk comes first. The doctor gets the US dose. | wrong-country | `bun run lab retrieval --question "What dose of Cardioza should an adult take?" --naive --country DE` |
 | 2 | A US doctor asks for a dose | The right chunk matches on two words. The side effects chunk matches on only one, so it stays out. | found | `bun run lab retrieval --question "What is the dose of Cardioza?" --country US` |
 | 3 | A German doctor asks for a dose | The same question gives the German chunk, because we filter by country first. | found | `bun run lab retrieval --question "What is the dose of Cardioza?" --country DE` |
 | 4 | A different topic for one drug | Side effects of the same drug. The score picks the side effects chunk and not the dose chunk. | found | `bun run lab retrieval --question "What are the side effects of Cardioza?" --country US` |
@@ -85,7 +85,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-The search ranks with BM25, a standard ranking for words. Rank by meaning too, as src/meaning.ts does with --meaning --live. Log which chunk ids were sent on every answer.
+The search ranks with BM25, a standard ranking for words. Rank by meaning too, as src/meaning.ts does with --meaning --live. Clean the data first. Filter by country and approval before the search. Log which chunk ids were sent on every answer.
 
 ## Read the code
 

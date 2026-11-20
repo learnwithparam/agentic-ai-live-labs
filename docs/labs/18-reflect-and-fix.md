@@ -29,7 +29,7 @@ Each word has one meaning in every lab.
 Copy any line into your terminal. Each one is a real example from this lab.
 
 ```bash
-bun run lab reflect-and-fix --question "What is the dose of Cardioza?" --model invent --naive
+bun run lab reflect-and-fix --question "How much Cardioza does an adult take each day?" --model invent --naive
 bun run lab reflect-and-fix --question "What is the dose of Cardioza?"
 bun run lab reflect-and-fix --question "What is the dose of Cardioza?" --model nocite
 bun run lab reflect-and-fix --question "What is the dose of Cardioza?" --model invent
@@ -46,7 +46,7 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
-| 1 | NAIVE: ask the model if it is fine | The model writes 20mg. The document says 10mg. We ask the model if the draft is fine. It has no new facts, so it says yes. | self-approved | `bun run lab reflect-and-fix --question "What is the dose of Cardioza?" --model invent --naive` |
+| 1 | NAIVE: ask the model if it is fine | The model writes 20mg. The document says 10mg. We ask the model if the draft is fine. It has no new facts, so it says yes. | self-approved | `bun run lab reflect-and-fix --question "How much Cardioza does an adult take each day?" --model invent --naive` |
 | 2 | A good draft | It cites the document and the dose matches. No fix is needed. | accepted | `bun run lab reflect-and-fix --question "What is the dose of Cardioza?"` |
 | 3 | A missing citation | The check finds no citation. The model adds one, and the second check passes. | fixed | `bun run lab reflect-and-fix --question "What is the dose of Cardioza?" --model nocite` |
 | 4 | A wrong dose | The check finds 20mg is not in the document. The model changes it to 10mg. | fixed | `bun run lab reflect-and-fix --question "What is the dose of Cardioza?" --model invent` |
@@ -79,7 +79,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Check what code can check, like numbers and citations. Send the rest to a person, and keep every round in the log.
+Check what code can check, like numbers and citations. The model fills a small form. Code looks the number up in the newest label. A separate critic with no writer context checks the rest. Send what is left to a person, and keep every round in the log.
 
 ## Read the code
 

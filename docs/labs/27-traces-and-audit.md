@@ -31,7 +31,7 @@ Each word has one meaning in every lab.
 Copy any line into your terminal. Each one is a real example from this lab.
 
 ```bash
-bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp dr-weber --tamper edit --naive
+bun run lab traces-and-audit --question "What is the adult dose of Cardioza in Germany?" --hcp dr-weber --tamper edit --naive
 bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp dr-weber
 bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp dr-weber --tamper edit
 bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp dr-weber --tamper delete
@@ -48,7 +48,7 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
-| 1 | NAIVE: a plain log | Someone changes the document id in the log. The file still reads fine, and nothing notices. | unnoticed | `bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp dr-weber --tamper edit --naive` |
+| 1 | NAIVE: a plain log | Someone changes the document id in the log. The file still reads fine, and nothing notices. | unnoticed | `bun run lab traces-and-audit --question "What is the adult dose of Cardioza in Germany?" --hcp dr-weber --tamper edit --naive` |
 | 2 | Nobody touches the trace | Every line is in order and every fingerprint matches. | intact | `bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp dr-weber` |
 | 3 | EDGE: one word is changed | The document id in the result line is changed. The fingerprint of that line no longer matches. | caught | `bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp dr-weber --tamper edit` |
 | 4 | EDGE: a line is removed | The search line is deleted. The next line points at a line that is gone. | caught | `bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp dr-weber --tamper delete` |

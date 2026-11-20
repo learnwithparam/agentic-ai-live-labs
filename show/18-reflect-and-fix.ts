@@ -13,9 +13,9 @@ export const lab: Lab = {
   terms: ["draft", "check", "round"],
   challenge: "A model that grades its own work has no new facts. It says the draft looks good, even when the dose is wrong.",
   promise: "Code runs a check on every draft against the source. A fix gets two rounds at most. With no source there is nothing to check.",
-  production: "Check what code can check, like numbers and citations. Send the rest to a person, and keep every round in the log.",
+  production: "Check what code can check, like numbers and citations. The model fills a small form. Code looks the number up in the newest label. A separate critic with no writer context checks the rest. Send what is left to a person, and keep every round in the log.",
   cases: [
-    { title: "NAIVE: ask the model if it is fine", why: "The model writes 20mg. The document says 10mg. We ask the model if the draft is fine. It has no new facts, so it says yes.", question: "What is the dose of Cardioza?", flags: { model: "invent", naive: "true" }, expect: "self-approved" },
+    { title: "NAIVE: ask the model if it is fine", why: "The model writes 20mg. The document says 10mg. We ask the model if the draft is fine. It has no new facts, so it says yes.", question: "How much Cardioza does an adult take each day?", flags: { model: "invent", naive: "true" }, expect: "self-approved" },
     { title: "A good draft", why: "It cites the document and the dose matches. No fix is needed.", question: "What is the dose of Cardioza?", expect: "accepted" },
     { title: "A missing citation", why: "The check finds no citation. The model adds one, and the second check passes.", question: "What is the dose of Cardioza?", flags: { model: "nocite" }, expect: "fixed" },
     { title: "A wrong dose", why: "The check finds 20mg is not in the document. The model changes it to 10mg.", question: "What is the dose of Cardioza?", flags: { model: "invent" }, expect: "fixed" },

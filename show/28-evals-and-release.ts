@@ -15,7 +15,7 @@ export const lab: Lab = {
   terms: ["eval", "eval-set", "release-gate", "regression"],
   challenge: "A change that looks fine ships, because it still answers. It can give a German doctor the US dose, and nobody finds out until she does. That is a regression.",
   promise: "A version ships only when every eval passes. A failed eval blocks it and names the question. An empty eval set blocks everything.",
-  production: "Run the evals on every change, on the same model you ship. Add a new eval each time a bug gets out. Never delete one to make a release pass.",
+  production: "Write the golden set first, with traps, tricks and any trace a doctor flagged. Score every prompt version on the model you ship, and ship only a higher score. Add an eval each time a bug gets out. Never delete one to make a release pass.",
   cases: [
     { title: "NAIVE: ship if it runs", why: "The wide version answers every question, so the naive gate ships it. Dr. Weber gets the US dose.", question: ASK, flags: { version: "wide", naive: "true" }, expect: "shipped-wrong" },
     { title: "The current version", why: "Every eval passes, so the release goes out.", question: ASK, flags: { version: "current" }, expect: "released" },

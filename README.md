@@ -2,7 +2,7 @@
 
 Learn to build AI agents that stay safe. Each lab shows one idea in plain TypeScript.
 
-All the labs use one story. A doctor asks a drug question. The agent must answer with a source, or say no.
+The labs tell two stories. In the first, a doctor asks a drug question. The agent must cite a source or say no. In the second, AI teammates run a design studio. Each lab is a different bot with a different job.
 
 ```mermaid
 flowchart LR

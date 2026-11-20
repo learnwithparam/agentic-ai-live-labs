@@ -79,7 +79,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Log every route with the message id. Review the person queue each week, and add a danger word when one slips past.
+A cheap check reads the intent and says how sure it is. A side effect goes to safety, a question to medical, a complaint to legal. Low confidence goes to a person. Log every route with the message id. Add a danger word when one slips past.
 
 ## Read the code
 

@@ -21,7 +21,7 @@ export const lab: Lab = {
   promise: "Every step is written down. Each line holds a fingerprint of the line before it. The chain is checked against the saved head, and it finds any edit.",
   production: "Send each line to storage that cannot be changed. Save the head in a second place with a different owner. Check the chain on a schedule.",
   cases: [
-    { title: "NAIVE: a plain log", why: "Someone changes the document id in the log. The file still reads fine, and nothing notices.", question: ASK, flags: { hcp: "dr-weber", tamper: "edit", naive: "true" }, expect: "unnoticed" },
+    { title: "NAIVE: a plain log", why: "Someone changes the document id in the log. The file still reads fine, and nothing notices.", question: "What is the adult dose of Cardioza in Germany?", flags: { hcp: "dr-weber", tamper: "edit", naive: "true" }, expect: "unnoticed" },
     { title: "Nobody touches the trace", why: "Every line is in order and every fingerprint matches.", question: ASK, flags: { hcp: "dr-weber" }, expect: "intact" },
     { title: "EDGE: one word is changed", why: "The document id in the result line is changed. The fingerprint of that line no longer matches.", question: ASK, flags: { hcp: "dr-weber", tamper: "edit" }, expect: "caught" },
     { title: "EDGE: a line is removed", why: "The search line is deleted. The next line points at a line that is gone.", question: ASK, flags: { hcp: "dr-weber", tamper: "delete" }, expect: "caught" },

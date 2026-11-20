@@ -18,7 +18,7 @@ export const lab: Lab = {
   terms: ["identity", "scope", "least-privilege", "signed-token"],
   challenge: "If every bot shares one key, any bot can do anything. A bot that only answers questions could still send email, which is more than it needs.",
   promise: "A tool call runs only when the token is real and not expired. The token must list the scope the tool needs. Least privilege means a bot never does more than its list.",
-  production: "Keep the secret in a vault and rotate it. Issue short tokens from one place. Log the bot name on every call.",
+  production: "Country and scopes come from the signed token, never from the prompt. Keep the secret in a vault and rotate it. Issue short tokens from one place. Log the bot name on every call.",
   cases: [
     { title: "NAIVE: one key for every bot", why: "All bots share one key that may do everything. The answer bot was asked to email Dr. Lee, and it did.", question: DOSE_AND_EMAIL, flags: { bot: "answer", naive: "true" }, expect: "overreach" },
     { title: "The answer bot answers", why: "The request needs only the search tool. The answer bot's token lists docs.read, so it runs.", question: DOSE, flags: { bot: "answer" }, expect: "allowed" },

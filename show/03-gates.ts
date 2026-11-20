@@ -13,9 +13,9 @@ export const lab: Lab = {
   terms: ["gate", "human-in-the-loop", "escalate"],
   challenge: "A model always writes something. A human in the loop is the safety net. With no gate, a reply with no source goes straight to a doctor.",
   promise: "We escalate to a person when there is no approved document or no source. Nothing goes out until a person says yes. No answer means no.",
-  production: "Send the gate to a real queue with a name, a time and a reason. Log who approved what. Keep the default as no.",
+  production: "A real gate saves the run, tells the reviewer by chat card or queue, and then stops. The decision is an event. It wakes the run from its save. Check again at send time, and expire a draft after a day. Log who approved what, and keep the default as no.",
   cases: [
-    { title: "NAIVE: no gate", why: "The model forgets the citation. With no gate, the uncited reply goes straight to the doctor.", question: "What is the dose of Cardioza?", flags: { model: "nocite", naive: "true" }, expect: "SENT_UNCHECKED" },
+    { title: "NAIVE: no gate", why: "The model forgets the citation. With no gate, the uncited reply goes straight to the doctor.", question: "Can I use Cardioza in a patient with kidney disease?", flags: { model: "nocite", naive: "true" }, expect: "SENT_UNCHECKED" },
     { title: "No gate needed", why: "Approved document found, reply cited. Nothing to stop, so it is sent.", question: "What is the dose of Cardioza?", expect: "SENT" },
     { title: "Gate 1, reviewer approves", why: "No approved document, so the model is never called. A person sees the fallback message and approves it.", question: "What is the dose of Zorbex?", flags: { approve: "y" }, expect: "SENT_AFTER_HUMAN_APPROVAL" },
     { title: "Gate 1, reviewer rejects", why: "Same stop, but the person says no. Nothing is sent.", question: "What is the dose of Zorbex?", flags: { approve: "n" }, expect: "BLOCKED_BY_REVIEWER" },

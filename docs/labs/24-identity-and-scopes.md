@@ -85,7 +85,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Keep the secret in a vault and rotate it. Issue short tokens from one place. Log the bot name on every call.
+Country and scopes come from the signed token, never from the prompt. Keep the secret in a vault and rotate it. Issue short tokens from one place. Log the bot name on every call.
 
 ## Read the code
 

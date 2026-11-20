@@ -78,7 +78,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Run the evals on every change, on the same model you ship. Add a new eval each time a bug gets out. Never delete one to make a release pass.
+Write the golden set first, with traps, tricks and any trace a doctor flagged. Score every prompt version on the model you ship, and ship only a higher score. Add an eval each time a bug gets out. Never delete one to make a release pass.
 
 ## Read the code
 

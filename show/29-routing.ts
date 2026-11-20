@@ -15,7 +15,7 @@ export const lab: Lab = {
   terms: ["router", "specialist", "fallback"],
   challenge: "One bot that answers everything also answers the rash message with a dose. A doctor reads it and trusts it.",
   promise: "A message with a danger word always goes to a person. Any route not on our list goes to a person. The other messages reach the specialist that fits.",
-  production: "Log every route with the message id. Review the person queue each week, and add a danger word when one slips past.",
+  production: "A cheap check reads the intent and says how sure it is. A side effect goes to safety, a question to medical, a complaint to legal. Low confidence goes to a person. Log every route with the message id. Add a danger word when one slips past.",
   cases: [
     { title: "NAIVE: one bot for everything", why: "The rash message reaches the answer bot, which replies from a dose document.", question: RASH, flags: { hcp: "dr-lee", naive: "true" }, expect: "unsafe" },
     { title: "A dose question", why: "The model says answer, and the answer bot finds the label.", question: "What is the dose of Cardioza?", flags: { hcp: "dr-lee" }, expect: "answer" },

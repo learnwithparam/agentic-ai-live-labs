@@ -16,9 +16,9 @@ export const lab: Lab = {
   terms: ["chunk", "bm25", "score", "retrieval"],
   challenge: "The model cannot read every document. If retrieval sends the wrong chunk, the model answers from the wrong source.",
   promise: "Only chunks from the doctor's country, with a strong score, are returned. Otherwise we say there is no source.",
-  production: "The search ranks with BM25, a standard ranking for words. Rank by meaning too, as src/meaning.ts does with --meaning --live. Log which chunk ids were sent on every answer.",
+  production: "The search ranks with BM25, a standard ranking for words. Rank by meaning too, as src/meaning.ts does with --meaning --live. Clean the data first. Filter by country and approval before the search. Log which chunk ids were sent on every answer.",
   cases: [
-    { title: "NAIVE: best chunk from anywhere", why: "A German doctor asks for the dose. Two chunks match equally well and the US chunk comes first. The doctor gets the US dose.", question: "What is the dose of Cardioza?", flags: { naive: "true", country: "DE" }, expect: "wrong-country" },
+    { title: "NAIVE: best chunk from anywhere", why: "A German doctor asks for the dose. Two chunks match equally well and the US chunk comes first. The doctor gets the US dose.", question: "What dose of Cardioza should an adult take?", flags: { naive: "true", country: "DE" }, expect: "wrong-country" },
     { title: "A US doctor asks for a dose", why: "The right chunk matches on two words. The side effects chunk matches on only one, so it stays out.", question: "What is the dose of Cardioza?", flags: { country: "US" }, expect: "found" },
     { title: "A German doctor asks for a dose", why: "The same question gives the German chunk, because we filter by country first.", question: "What is the dose of Cardioza?", flags: { country: "DE" }, expect: "found" },
     { title: "A different topic for one drug", why: "Side effects of the same drug. The score picks the side effects chunk and not the dose chunk.", question: "What are the side effects of Cardioza?", flags: { country: "US" }, expect: "found" },
