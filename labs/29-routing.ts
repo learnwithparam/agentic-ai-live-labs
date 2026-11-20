@@ -21,7 +21,7 @@ import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";
 import { CRM } from "../src/data";
 import { runAgentLoop } from "./01-agent-loop";
-import { draftEmail } from "./21-crash-and-resume";
+import { draftDoctorEmail } from "../src/mailtools";
 
 export type Routed = { route: string; reply: string; log: string[] };
 const ROUTES = ["answer", "outreach", "human"];
@@ -66,7 +66,7 @@ function run(route: string, hcpId: string, message: string, callLlm: CallLlm, lo
   const country = CRM[hcpId].country;
   let reply = "Passed to a person on the care team. They will answer you today.";
   if (route === "answer") reply = answerFor(message, country, hcpId, callLlm);
-  if (route === "outreach") reply = draftEmail(hcpId, callLlm);
+  if (route === "outreach") reply = draftDoctorEmail(hcpId, callLlm);
   log.push(`Step 4: the ${route} specialist wrote the reply.`);
   return { route, reply, log };
 }

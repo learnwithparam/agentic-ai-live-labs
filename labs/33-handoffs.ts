@@ -22,7 +22,7 @@ import { CRM } from "../src/data";
 import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";
 import { runAgentLoop } from "./01-agent-loop";
-import { draftEmail } from "./21-crash-and-resume";
+import { draftDoctorEmail } from "../src/mailtools";
 
 export type Envelope = { id: string; task: string; hcpId: string; hops: number; path: string[] };
 export type Handled = { outcome: string; reply: string; envelope: Envelope; log: string[] };
@@ -74,7 +74,7 @@ function nameFrom(said: string, bot: string): string {
 // The bot that said done does its own work, and its work is the reply.
 function finish(bot: string, envelope: Envelope, callLlm: CallLlm, log: string[]): Handled {
   const country = CRM[envelope.hcpId].country;
-  let reply = draftEmail(envelope.hcpId, callLlm);
+  let reply = draftDoctorEmail(envelope.hcpId, callLlm);
   const { task, hcpId } = envelope;
   if (bot === "answer") reply = runAgentLoop(task, country, callLlm, undefined, 5, hcpId).answer;
   log.push(`Step 6: the ${bot} bot finished after ${envelope.hops} hops.`);

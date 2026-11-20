@@ -25,6 +25,7 @@ export function makeModel(behaviour: Behaviour = "ok"): CallLlm {
     const first = messages.find((message) => message.role === "user")!.content;
     if (first.startsWith("PLAN:")) return { text: planFor(first) };
     if (first.startsWith("MAIL:")) return { text: mailFor(first) };
+    if (first.startsWith("FOLLOWUP:")) return { text: followUpFor(first) };
     if (first.startsWith("TRY:")) return { text: tryFor(first) };
     if (first.startsWith("RULES:")) return { text: rulesFor(first) };
     if (first.startsWith("CONTEXT:")) return { text: contextFor(first) };
@@ -279,6 +280,12 @@ function planFor(prompt: string): string {
 function mailFor(prompt: string): string {
   const source = prompt.split("SOURCE: ")[1] || "";
   return `Dear doctor, ${source.replace(/\n/g, " ")}`;
+}
+
+// A model asked to write a follow-up to a quiet lead. It names the company and offers a call.
+function followUpFor(prompt: string): string {
+  const company = prompt.split("follow-up to ")[1]?.split(".")[0] ?? "there";
+  return `Hi ${company}, we spoke last month about your site. Can we book a call this week? Maya, Juniper Studio`;
 }
 
 // A model asked which sources a question needs. It reads the question and names the sources.

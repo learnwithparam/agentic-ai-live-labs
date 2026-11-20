@@ -139,7 +139,7 @@ export const PICTURES: Record<string, string> = {
   D -->|"No"| E["Stop with a clear message"]`,
 
   "crash-and-resume": `flowchart LR
-  A["Job: a list of doctors"] --> B["Send one email"]
+  A["Job: 40 follow-up emails"] --> B["Send one email"]
   B --> C["Write it in the ledger"]
   C -->|"crash here"| D["Restart"]
   D --> E["Read the ledger"]

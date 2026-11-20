@@ -213,10 +213,10 @@ export const STUCK: Record<string, Stuck> = {
   },
   "crash-and-resume": {
     correct: "Record each finished step in the ledger. After a kill, restart from the ledger and skip what was sent.",
-    wrong: "Starting again from the top. The first doctors get the same email twice.",
+    wrong: "Starting again from the top. The first leads get the same email twice.",
     hint: "Where does the program record what it already did?",
     rows: [
-      ["The demo prints outcome: duplicates on the NAIVE case", "Doctors got the email twice after a restart", "Read the ledger before each send"],
+      ["The demo prints outcome: duplicates on the NAIVE case", "Leads got the email twice after a restart", "Read the ledger before each send"],
       ["A send carries an idempotency key", "The key stops the same send twice", "Keep each key, and never change it"],
       ["The job finishes but sends again", "The ledger line was not written", "Write the ledger line right after each send"],
     ],

@@ -1,6 +1,8 @@
 // The tools and types the hooks lab runs hooks around. The lesson is in labs/26-hooks.ts.
 
 import { searchApprovedDocs } from "../labs/01-agent-loop";
+import { APPROVED_DOCS, CRM } from "./data";
+import type { CallLlm } from "./model";
 
 export type Call = { tool: string; to: string; text: string };
 export type Before = { name: string; check(call: Call): string };
@@ -29,4 +31,11 @@ export function addressIn(question: string): string {
     return word;
   }
   return "";
+}
+
+// Ask the model for one short email to a doctor. The source is the approved label, nothing else.
+export function draftDoctorEmail(doctor: string, callLlm: CallLlm): string {
+  const source = APPROVED_DOCS["CARDIOZA-US"].text;
+  const prompt = `MAIL: Write one short email to ${CRM[doctor].name}. Use this source only.\nSOURCE: ${source}`;
+  return (callLlm([{ role: "user", content: prompt }], []).text || "").trim();
 }
