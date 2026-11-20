@@ -1,12 +1,12 @@
 # A useful error
 
-Each example is a question like Cardioza in Germany. The model writes the tool call, reads each error, and fixes the call, up to 3 tries. Each try after a failure is a retry.
+Each example is a receipt the Expense Manager must file, such as the font licence. The model writes the filing call, reads each error, and fixes the call, up to 3 tries. Each try after a failure is a retry.
 
 ## The story in one picture
 
 ```mermaid
 flowchart LR
-  A["Model's input is wrong"] --> B["Send the error and a hint"]
+  A["Filing call has a wrong category"] --> B["API names the allowed ones"]
   B --> C["Model tries again"]
   C --> D{"Fixed, within the retry limit?"}
   D -->|"Yes"| E["Done"]
@@ -30,14 +30,13 @@ Each word has one meaning in every lab.
 Copy any line into your terminal. Each one is a real example from this lab.
 
 ```bash
-bun run lab error-feedback --question "What is the dose of Cardioza in Germany?" --naive
-bun run lab error-feedback --question "What is the dose of Cardioza in the US?"
-bun run lab error-feedback --question "What is the dose of Cardioza in Germany?"
-bun run lab error-feedback --question "What is the dose of Cardiozza in the US?"
-bun run lab error-feedback --question "What is the dose of Cardiozza in Germany?"
-bun run lab error-feedback --question "What is the dose of Cardioza in France?"
-bun run lab error-feedback --question "What is the dose of Zorbex in the US?"
-bun run lab error-feedback --question "What is the dose of Dermalin in Germany?"
+bun run lab error-feedback --question "File the font licence receipt." --naive
+bun run lab error-feedback --question "File the cloud hosting bill as hosting."
+bun run lab error-feedback --question "File the Acme client lunch."
+bun run lab error-feedback --question "Please book the train ticket as travel."
+bun run lab error-feedback --question "Next, the font licence receipt."
+bun run lab error-feedback --question "Can you file the team gift cards?"
+bun run lab error-feedback --question "Please handle the parking fine from Friday."
 bun run lab error-feedback --demo
 ```
 
@@ -49,14 +48,13 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
-| 1 | NAIVE: an error that says nothing | The country is Germany, which the tool does not accept. The error only says ERROR, so the model sends the same call three times and gives up. | gave-up | `bun run lab error-feedback --question "What is the dose of Cardioza in Germany?" --naive` |
-| 2 | A call that works | Nothing to fix. One try. | answered | `bun run lab error-feedback --question "What is the dose of Cardioza in the US?"` |
-| 3 | A country spelled out | The error says to use US or DE. The model maps Germany to DE and tries again. | fixed | `bun run lab error-feedback --question "What is the dose of Cardioza in Germany?"` |
-| 4 | A drug with a typo | The error lists the known drugs. The model picks the one that looks like its typo. | fixed | `bun run lab error-feedback --question "What is the dose of Cardiozza in the US?"` |
-| 5 | EDGE: two mistakes in one call | The country is fixed first, then the drug. That is three tries, which is exactly the limit. | fixed | `bun run lab error-feedback --question "What is the dose of Cardiozza in Germany?"` |
-| 6 | A country we do not serve | France is not US or DE. The model must not swap it for US, because that is a different doctor's label. A person decides. | ask-person | `bun run lab error-feedback --question "What is the dose of Cardioza in France?"` |
-| 7 | A drug nobody knows | Zorbex is not close to any known drug. Guessing could be dangerous, so a person decides. | ask-person | `bun run lab error-feedback --question "What is the dose of Zorbex in the US?"` |
-| 8 | Valid call, no document | Dermalin has no German document. That is not an error, so there is no retry. The answer is no source. | no-source | `bun run lab error-feedback --question "What is the dose of Dermalin in Germany?"` |
+| 1 | NAIVE: an error that says nothing | The model writes the category fonts, which the API does not accept. The error only says ERROR, so the model sends the same call three times and gives up. | gave-up | `bun run lab error-feedback --question "File the font licence receipt." --naive` |
+| 2 | A call that works | The task names the category. Nothing to fix, so one try. | answered | `bun run lab error-feedback --question "File the cloud hosting bill as hosting."` |
+| 3 | A category the API does not know | The model writes lunch. The error lists the five categories, so the model picks meals and tries again. | fixed | `bun run lab error-feedback --question "File the Acme client lunch."` |
+| 4 | A receipt id with a typo | The model writes a receipt id that does not exist. The error lists the real ids, so the model picks the right one. | fixed | `bun run lab error-feedback --question "Please book the train ticket as travel."` |
+| 5 | EDGE: two mistakes in one call | The receipt id is fixed first, then the category. That is three tries, which is exactly the limit. | fixed | `bun run lab error-feedback --question "Next, the font licence receipt."` |
+| 6 | A receipt that fits no category | Gift cards are not software, meals, hosting, travel or office. The model must not pick one at random, so a person decides. | ask-person | `bun run lab error-feedback --question "Can you file the team gift cards?"` |
+| 7 | A receipt nobody has seen | There is no parking receipt in the books. The model cannot guess one, so a person decides. | ask-person | `bun run lab error-feedback --question "Please handle the parking fine from Friday."` |
 
 ## Stuck points
 
@@ -68,13 +66,13 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | What you see | What it means | Fix |
 | --- | --- | --- |
-| The demo prints outcome: gave-up on the NAIVE case | The same call was sent three times | Send the valid countries in the error text |
+| The demo prints outcome: gave-up on the NAIVE case | The same call was sent three times | Name the allowed categories in the error text |
 | The model fixed its call, and the tool ran | The error said what was wrong | This is correct. The hint did its job |
 | A retry never stops | The retry cap is missing | Cap the retries, then ask a person |
 
 ## The promise, and its test
 
-An error says what is valid. Retries are capped. A call that cannot be fixed means we ask a person.
+An error says what is valid. Retries are capped. A receipt that fits no category means we ask a person.
 
 ```bash
 bun test tests/promises/16.test.ts
@@ -84,7 +82,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Write every tool error for a reader that cannot ask questions, and count how often each error appears.
+Write every tool error for a reader that cannot ask questions. Name the allowed values, and count how often each error appears.
 
 ## Read the code
 

@@ -1,94 +1,86 @@
 // Trimming the chat history
 //
-// Dr. Weber chats with the agent for a long time. In the first turn, the doctor said: "I work in
-// Germany, so use German labels." Ten turns later comes the question:
-// "Which dose label should I use?"
-//
-// A long chat does not fit in the window, so old turns must go. But some old turns hold a fact we
-// still need, like the doctor's country. We pin those, and we trim the rest.
+// The Intake bot chats with a new client, Priya from Bloom Bakery. Over more than 20 messages
+// she gives a budget, a deadline, the scope and a contact. The bot must fill a brief with them.
+// A long chat does not fit in the window, so old messages must go. But the deadline was said
+// early, in a message we cut. So the bot keeps a brief: one line for each fact, filled as it is said.
+// The prompt is the brief plus the last four messages. Everything else is trimmed.
 // The run prints each step as it happens, with the same number as the step in the code.
 // The examples and the screen output are in show/11-history-trimming.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun run lab history-trimming --question "What is the dose of Cardioza for me?" --chat long --naive --keep 4
-//   bun run lab history-trimming --question "What is the dose of Cardioza for me?" --chat short --keep 4
-//   bun run lab history-trimming --question "What is the dose of Cardioza for me?" --chat long --keep 4
-//   bun run lab history-trimming --question "What is the dose of Cardioza for me?" --chat two-facts --keep 3
+//   bun run lab history-trimming --question "Can you send me the quote today?" --chat long --naive --keep 8
+//   bun run lab history-trimming --question "What do you need from me next?" --chat short --keep 4
+//   bun run lab history-trimming --question "Could you put the price and date in mail?" --chat long --keep 4
+//   bun run lab history-trimming --question "So are we still starting on Monday?" --chat changed
 //   bun run lab history-trimming --demo
 
 import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";
+import { FIELDS, NOT_KNOWN, parseFacts } from "../src/intake";
 
-// One turn of the chat. A fact is a turn we must never lose. The model decides which turns are facts.
-export type Turn = { text: string; fact: boolean };
-export type Trimmed = { kept: Turn[]; dropped: number; note: string };
+// One message in the chat. The client or the bot said it.
+export type Turn = { from: string; text: string };
+// The brief holds one answer for each field. An empty text means we do not know it yet.
+export type Brief = Record<string, string>;
+export type Replied = { brief: Brief; kept: Turn[]; reply: string; log: string[] };
 
-export type Replied = { kept: Turn[]; reply: string; log: string[] };
-
-// Pin the facts, trim the chat, then answer the last question. Read the steps in order.
+// Fill the brief, trim the chat, then answer. Read the steps in order.
 export function replyAfterTrim(turns: Turn[], keepLast: number, callLlm: CallLlm): Replied {
-  // Step 1: ask the model about each old turn. Is it a lasting fact? The last turns stay anyway.
-  const pinned = pinFacts(turns, keepLast, callLlm);
-  const found = countFacts(pinned);
-  const log = [`Step 1: the model pinned ${found} facts out of ${turns.length} turns.`];
+  // Step 1: read every client message. Each fact goes into the brief, even from an old message.
+  const brief = fillBrief(turns, callLlm);
+  const log = [`Step 1: the brief holds ${countFilled(brief)} of ${FIELDS.length} facts.`];
 
-  // Step 2: trim the chat. Pinned facts and the last few turns stay.
-  const trimmed = trimHistory(pinned, keepLast);
-  log.push(`Step 2: kept ${trimmed.kept.length} of ${turns.length} turns. ${trimmed.note}`);
+  // Step 2: trim the chat. Only the last few messages stay.
+  const kept = lastTurns(turns, keepLast);
+  log.push(`Step 2: kept ${kept.length} of ${turns.length} messages.`);
 
-  // Step 3: the model reads what is left, and answers the last question.
-  const lines: string[] = [];
-  for (const turn of trimmed.kept) lines.push(turn.text);
-  const prompt = `CHAT: Answer the last question from this chat only.\n${lines.join("\n")}`;
-  const reply = (callLlm([{ role: "user", content: prompt }], []).text || "").trim();
-  log.push(`Step 3: the model wrote: ${reply}`);
-  return { kept: trimmed.kept, reply, log };
+  // Step 3: the model reads the brief and the kept messages, then answers.
+  const prompt = `INTAKE: Answer.\nBRIEF:\n${briefText(brief)}\nCHAT:\n${chatText(kept)}`;
+  const reply = ask(callLlm, prompt);
+  log.push(`Step 3: the bot wrote: ${reply}`);
+  return { brief, kept, reply, log };
 }
 
-function countFacts(turns: Turn[]): number {
-  let found = 0;
-  for (const turn of turns) if (turn.fact) found += 1;
-  return found;
-}
-
-// Ask the model about one old turn at a time. Is the turn a fact that later answers need?
-export function pinFacts(turns: Turn[], keepLast: number, callLlm: CallLlm): Turn[] {
-  const firstRecent = turns.length - keepLast;
-  const result: Turn[] = [];
-  for (let index = 0; index < turns.length; index++) {
-    const turn = turns[index];
-    if (index >= firstRecent) {
-      result.push({ text: turn.text, fact: turn.fact });
-      continue;
-    }
-    const question = "Is this turn a lasting fact about the doctor or the patient? Say YES or NO.";
-    const prompt = `PIN: ${question}\nTURN: ${turn.text}`;
-    const said = (callLlm([{ role: "user", content: prompt }], []).text || "").toUpperCase();
-    result.push({ text: turn.text, fact: said.startsWith("YES") });
+// The model reads one client message at a time. A newer answer replaces an older one.
+function fillBrief(turns: Turn[], callLlm: CallLlm): Brief {
+  const brief: Brief = {};
+  for (const field of FIELDS) brief[field] = "";
+  for (const turn of turns) {
+    if (turn.from !== "Client") continue;
+    const said = ask(callLlm, `BRIEF: Which facts does this message give?\nMESSAGE: ${turn.text}`);
+    const found = parseFacts(said);
+    for (const field in found) brief[field] = found[field];
   }
-  return result;
+  return brief;
 }
 
-// Keep every pinned fact, and keep the last few turns. Everything else is left out.
-export function trimHistory(turns: Turn[], keepLast: number): Trimmed {
-  if (keepLast < 0) keepLast = 0;
-  const firstRecent = turns.length - keepLast;
-  const kept: Turn[] = [];
-  let dropped = 0;
-  for (let index = 0; index < turns.length; index++) {
-    const turn = turns[index];
-    if (turn.fact || index >= firstRecent) kept.push(turn);
-    else dropped += 1;
-  }
-  let note = "Nothing was left out.";
-  if (dropped > 0) note = `${dropped} older turns were left out.`;
-  return { kept, dropped, note };
-}
-
-// The naive way: keep only the last few turns. Old facts go with the old chatter.
-export function naiveTrim(turns: Turn[], keepLast: number): Turn[] {
+function lastTurns(turns: Turn[], keepLast: number): Turn[] {
   if (keepLast <= 0) return [];
   return turns.slice(-keepLast);
+}
+
+export function countFilled(brief: Brief): number {
+  let filled = 0;
+  for (const field of FIELDS) if (brief[field] !== "") filled += 1;
+  return filled;
+}
+
+export function briefText(brief: Brief): string {
+  const lines: string[] = [];
+  for (const field of FIELDS) lines.push(`${field}: ${brief[field] || NOT_KNOWN}`);
+  return lines.join("\n");
+}
+
+export function chatText(turns: Turn[]): string {
+  const lines: string[] = [];
+  for (const turn of turns) lines.push(`${turn.from}: ${turn.text}`);
+  return lines.join("\n");
+}
+
+export function ask(callLlm: CallLlm, prompt: string): string {
+  const reply = callLlm([{ role: "user", content: prompt }], []);
+  return (reply.text || "").trim();
 }
 
 // Run the lab from the command line. The examples and the screen output are in the show file.

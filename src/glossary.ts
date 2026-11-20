@@ -54,12 +54,14 @@ export const GLOSSARY: Record<string, Word> = {
   // The context budget lab
   "context-window": { word: "context window", meaning: "The most text a model can read at one time, counted in tokens." },
   "model-token": { word: "model token", meaning: "A small piece of text that a model counts. Often part of a word." },
+  receipt: { word: "receipt", meaning: "A one-line stand-in for a big tool result. The full result is saved on disk." },
+  compaction: { word: "compaction", meaning: "Folding old work into short notes when the prompt fills up. The full text stays on disk." },
   budget: { word: "budget", meaning: "The most we allow ourselves to spend, in tokens, money, steps or time." },
 
   // Trimming long history lab
   history: { word: "history", meaning: "The earlier turns of a chat, which the model reads again on each call." },
   trim: { word: "trim", meaning: "Leave out old turns to make room in the prompt." },
-  "pinned-fact": { word: "pinned fact", meaning: "A fact, such as a country or an allergy, that we always keep." },
+  brief: { word: "brief", meaning: "A short record of the facts a client gave. We fill it as the chat goes on." },
 
   // Retrieval lab
   chunk: { word: "chunk", meaning: "A small piece of a document, such as one paragraph." },
@@ -74,8 +76,8 @@ export const GLOSSARY: Record<string, Word> = {
 
   // Instructions versus data lab
   "prompt-injection": { word: "prompt injection", meaning: "A hidden order in data, such as an email, that tries to steer the model." },
-  fence: { word: "data fence", meaning: "A labelled box that tells the model where the data starts and ends." },
-  held: { word: "held", meaning: "Taken out of the prompt, so the model never sees it." },
+  fence: { word: "data fence", meaning: "A labelled box that tells the model where the mail starts and ends." },
+  held: { word: "held", meaning: "Kept back for a person to look at, so the bot does not act on it." },
 
   // Stop conditions lab
   step: { word: "step", meaning: "One trip round the loop: the model acts, then the code reacts." },
@@ -88,7 +90,7 @@ export const GLOSSARY: Record<string, Word> = {
 
   // Plan, then act lab
   plan: { word: "plan", meaning: "A list of steps, written before the first step runs." },
-  "risky-step": { word: "risky step", meaning: "A step that cannot be undone, such as sending an email." },
+  "risky-step": { word: "risky step", meaning: "A step that cannot be undone, such as booking a room." },
 
   // Reflect and fix lab
   draft: { word: "draft", meaning: "The first answer, before it is checked." },
@@ -97,7 +99,7 @@ export const GLOSSARY: Record<string, Word> = {
 
   // Run state lab
   run: { word: "run", meaning: "One job from its start to its end." },
-  "run-record": { word: "run record", meaning: "A file that saves the run's id, its status and its steps." },
+  "run-record": { word: "run record", meaning: "A file that saves the run's id, its status and one line for each applicant." },
   stalled: { word: "stalled", meaning: "Still marked as running, but no step has finished for too long." },
 
   // When tools fail lab

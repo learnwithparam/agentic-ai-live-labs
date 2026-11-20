@@ -67,16 +67,19 @@ export const PICTURES: Record<string, string> = {
   M --> R`,
 
   "context-budget": `flowchart LR
-  A["Rules and question: must fit"] --> P["Prompt"]
-  B["Old chat and notes"] --> C{"Room left in the window?"}
-  C -->|"Yes"| P
-  C -->|"No"| D["Leave it out"]`,
+  A["Big result: mail, calls, contract"] --> B["Save in full on disk"]
+  B --> C["One-line receipt in the prompt"]
+  C --> D{"Over 40 percent of the window?"}
+  D -->|"Yes"| E["Fold old phases into notes"]
+  D -->|"No"| F["Keep going"]
+  E --> G["Read back only the file the question needs"]
+  F --> G`,
 
   "history-trimming": `flowchart LR
-  A["Long chat"] --> B["Keep pinned facts: country, allergy"]
-  A --> C["Old turns"]
-  C --> D["Short summary"]
-  B --> E["Short prompt"]
+  A["Client message"] --> B["Fill the brief: budget, deadline, scope, contact"]
+  A --> C["Old messages"]
+  C --> D["Trim"]
+  B --> E["Prompt: the brief and the last four messages"]
   D --> E`,
 
   retrieval: `flowchart LR
@@ -91,10 +94,13 @@ export const PICTURES: Record<string, string> = {
   C --> E["Model sees only allowed text"]`,
 
   "instructions-vs-data": `flowchart LR
-  A["Our rules: instructions"] --> P["Prompt"]
-  B["Email from outside"] --> F["Put in a labelled box"]
-  F --> P
-  P --> M["Model reads the box as data only"]`,
+  A["Mail from outside"] --> F["Wrapped as data"]
+  F --> R["Reader with no tools: facts"]
+  R --> G{"Guard score"}
+  G -->|"High"| H["Held for Maya"]
+  G -->|"Off the job"| N["Polite no"]
+  G -->|"Low"| T["Actor picks an action"]
+  T --> S["Tool: never outside the company"]`,
 
   "stop-conditions": `flowchart LR
   A["Loop runs a step"] --> B{"Done?"}
@@ -106,19 +112,19 @@ export const PICTURES: Record<string, string> = {
   D -->|"No"| A`,
 
   "error-feedback": `flowchart LR
-  A["Model's input is wrong"] --> B["Send the error and a hint"]
+  A["Filing call has a wrong category"] --> B["API names the allowed ones"]
   B --> C["Model tries again"]
   C --> D{"Fixed, within the retry limit?"}
   D -->|"Yes"| E["Done"]
   D -->|"No"| F["Ask a person"]`,
 
   "plan-then-act": `flowchart LR
-  A["Write the plan first"] --> B{"Plan is safe?"}
+  A["Maya: prep me for the board"] --> P["Bot writes the whole plan"]
+  P --> B{"Plan is safe?"}
   B -->|"No"| X["Run nothing"]
-  B -->|"Yes"| C["Run step 1"]
-  C --> D["Tick it off"]
-  D --> E["Next step"]
-  C -->|"risky step"| W["Wait for a person"]`,
+  B -->|"Books a room"| W["Maya approves first"]
+  B -->|"Yes"| C["Run each step in order"]
+  W --> C`,
 
   "reflect-and-fix": `flowchart LR
   A["Writer drafts"] --> B["Critic checks the draft"]
@@ -127,16 +133,19 @@ export const PICTURES: Record<string, string> = {
   C --> B`,
 
   "run-state": `flowchart LR
-  A["Run starts: record it"] --> B["Each step saved to disk"]
-  B --> C["Run ends: done or failed"]
-  B -->|"no news for too long"| D["Flag: stalled"]`,
+  A["Screening starts: open the record"] --> B["Each applicant saved to disk"]
+  B --> C["All done"]
+  B -->|"Two fails on one applicant"| E["Stop and ask a person"]
+  B -->|"Program restarts"| R["Read the record, skip done ones"]
+  B -->|"No news for too long"| D["Flag: stalled"]`,
 
   "tool-failures": `flowchart LR
-  A["Call the service"] --> B{"Answer in time?"}
-  B -->|"Yes"| C["Use the answer"]
-  B -->|"Timeout or error"| D{"Tries left?"}
-  D -->|"Yes"| A
-  D -->|"No"| E["Stop with a clear message"]`,
+  A["Send the follow-up"] --> B{"What came back?"}
+  B -->|"Sent"| C["Done"]
+  B -->|"Bounced: a clear no"| X["Stop, never retry"]
+  B -->|"429, slow or down"| D{"Tries left?"}
+  D -->|"Yes: wait, then retry"| A
+  D -->|"No"| E["Keep the lead for later"]`,
 
   "crash-and-resume": `flowchart LR
   A["Job: 40 follow-up emails"] --> B["Send one email"]

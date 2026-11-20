@@ -1,57 +1,55 @@
 // When tools fail
 //
-// Dr. Lee asks for the Cardioza dose. The agent asks a document service over the network.
-// A network service is not a function. It can be slow. It can fail for a moment. It can say no.
-// Each failure needs its own answer: wait, try again, or stop.
+// The Sales Outbound bot sends follow-up emails to leads that went quiet. It uses a mail service.
+// A network service is not a function. It can be slow. It can say "too many requests" (a 429).
+// Some of those failures pass if we wait. A bounced address never passes, so we must stop.
+// Each failure needs its own answer: wait and try again, or stop at once.
 // The run prints each step as it happens, with the same number as the step in the code.
 // The examples and the screen output are in show/20-tool-failures.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun run lab tool-failures --question "What is the dose of Cardioza?" --service flaky --naive
-//   bun run lab tool-failures --question "What is the dose of Cardioza?"
-//   bun run lab tool-failures --question "What is the dose of Cardioza?" --service flaky
-//   bun run lab tool-failures --question "What is the dose of Cardioza?" --service slow
-//   bun run lab tool-failures --question "What is the dose of Cardioza?" --service down
-//   bun run lab tool-failures --question "What is the dose of Cardioza?" --country FR
-//   bun run lab tool-failures --question "What is the dose of Cardioza?" --empty true
+//   bun run lab tool-failures --question "Send the follow-up to Quill Stationery." --lead quill-stationery --naive
+//   bun run lab tool-failures --question "Send the follow-up to Harbor Dental." --lead harbor-dental
+//   bun run lab tool-failures --question "Send the follow-up to Maple Legal." --lead maple-legal --service busy
+//   bun run lab tool-failures --question "Send the follow-up to Cedar Books." --lead cedar-books --service slow
+//   bun run lab tool-failures --question "Send the follow-up to Atlas Movers." --lead atlas-movers --service down
+//   bun run lab tool-failures --question "Send the follow-up to Xylo Music." --lead xylo-music
+//   bun run lab tool-failures --question "Send the follow-up to a new lead." --lead unknown-lead
 //   bun run lab tool-failures --demo
 
-import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";
-import { fetchOnce } from "../src/docs-service"; // one real call, with a time limit
-import { runAgentLoop } from "./01-agent-loop";
-import type { Tool } from "./01-agent-loop";
+import { fetchOnce } from "../src/mail-service"; // one real call, with a time limit
+import { emailOf } from "../src/team";
 
 export type Limits = { timeoutSeconds: number; tries: number; waitMs: number };
-export type Called = { outcome: string; text: string; attempts: number; log: string[] };
+export type Sent = { outcome: string; text: string; attempts: number; log: string[] };
 
-// Call the service the careful way. Read the steps in order.
-export function askService(url: string, query: string, country: string, limits: Limits): Called {
-  // Step 1: check the input first. A bad call never leaves our code.
-  if (query.trim() === "") {
-    const text = "BAD_INPUT: the search words are empty.";
-    const log = ["Step 1: the query is empty. No call."];
-    return { outcome: "bad-input", text, attempts: 0, log };
+// Send one follow-up the careful way. Read the steps in order.
+export function sendFollowUp(url: string, leadId: string, limits: Limits): Sent {
+  // Step 1: check the lead first. A lead we do not know never reaches the service.
+  const address = emailOf(leadId);
+  if (address === "") {
+    const log = [`Step 1: no lead named ${leadId}. No call.`];
+    return { outcome: "bad-input", text: "No address, so nothing was sent.", attempts: 0, log };
   }
-  const log = ["Step 1: the input looks fine."];
-  const address = `${url}/search?query=${encodeURIComponent(query)}&country=${country}`;
+  const log = [`Step 1: the lead ${leadId} has an address.`];
+  const link = `${url}/send?to=${encodeURIComponent(address)}`;
 
   for (let attempt = 1; attempt <= limits.tries; attempt++) {
     // Step 2: call the service, with a time limit.
-    const reply = fetchOnce(address, limits.timeoutSeconds);
+    const reply = fetchOnce(link, limits.timeoutSeconds);
     log.push(`Step 2: try ${attempt} of ${limits.tries}: ${describe(reply.status)}.`);
 
     // Step 3: a good reply ends the loop.
-    if (reply.status === 200) return { outcome: "ok", text: reply.body, attempts: attempt, log };
+    if (reply.status === 200) return { outcome: "sent", text: reply.body, attempts: attempt, log };
 
-    // Step 4: a 4xx means our call is wrong. Trying again cannot fix it.
-    if (reply.status >= 400 && reply.status < 500) {
-      const text = `BAD_INPUT: the service said: ${reply.body}`;
-      log.push("Step 4: our call is wrong, so we do not try again.");
-      return { outcome: "rejected", text, attempts: attempt, log };
+    // Step 4: a no is a no. A bounced address will bounce again, so we stop.
+    if (isNo(reply.status)) {
+      log.push("Step 4: the address bounced, so we do not try again.");
+      return { outcome: "bounced", text: reply.body, attempts: attempt, log };
     }
 
-    // Step 5: no reply or a 5xx is a failure that may pass. Wait longer each time.
+    // Step 5: a 429, a 5xx or no reply may pass. Wait longer each time.
     if (attempt < limits.tries) {
       const wait = limits.waitMs * (1 << (attempt - 1));
       log.push(`Step 5: waiting ${wait} ms before the next try.`);
@@ -59,10 +57,15 @@ export function askService(url: string, query: string, country: string, limits: 
     }
   }
 
-  // Step 6: out of tries. Tell the model plainly, so it does not guess.
-  const text = "SERVICE_UNAVAILABLE: the document service did not answer. Say so. Do not guess.";
-  log.push("Step 6: out of tries. The service is unavailable.");
-  return { outcome: "unavailable", text, attempts: limits.tries, log };
+  // Step 6: out of tries. Keep the lead for later, and say plainly that nothing was sent.
+  log.push("Step 6: out of tries. Nothing was sent. The lead stays in the queue.");
+  return { outcome: "gave-up", text: "Not sent. Try again later.", attempts: limits.tries, log };
+}
+
+// A no is a 4xx, except 429. A 429 means "come back later".
+export function isNo(status: number): boolean {
+  if (status === 429) return false;
+  return status >= 400 && status < 500;
 }
 
 // Words for a status. 0 means the service never answered in time.
@@ -73,31 +76,6 @@ function describe(status: number): string {
 
 // The naive limits: one try, no wait, and a very long time limit.
 export const NAIVE_LIMITS: Limits = { timeoutSeconds: 60, tries: 1, waitMs: 0 };
-
-// The search tool for the loop in the agent loop. It calls the service, and remembers each call.
-export function serviceTool(url: string, limits: Limits, calls: Called[]): Tool {
-  return {
-    name: "search_approved_docs",
-    run(input) {
-      const called = askService(url, input.query, input.country, limits);
-      calls.push(called);
-      return called.text;
-    },
-  };
-}
-
-export function answerFromService(
-  question: string,
-  country: string,
-  callLlm: CallLlm,
-  url: string,
-  limits: Limits,
-) {
-  const calls: Called[] = [];
-  const tool = serviceTool(url, limits, calls);
-  const answer = runAgentLoop(question, country, callLlm, [tool]).answer;
-  return { answer, calls };
-}
 
 // Run the lab from the command line. The examples and the screen output are in the show file.
 if (import.meta.main) {

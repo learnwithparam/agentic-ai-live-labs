@@ -1,42 +1,43 @@
 # Plan, then act
 
-Each example is a plan the model wrote. Pick one by name: look-up, send-reply, delete-files, too-long or no-source. The code checks the plan before any step runs.
+Each example is a job for the Chief of Staff bot, or a plan someone typed. The model writes the plan. The code checks the plan before any step runs, and Maya approves it if a step is risky.
 
 ## The story in one picture
 
 ```mermaid
 flowchart LR
-  A["Write the plan first"] --> B{"Plan is safe?"}
+  A["Maya: prep me for the board"] --> P["Bot writes the whole plan"]
+  P --> B{"Plan is safe?"}
   B -->|"No"| X["Run nothing"]
-  B -->|"Yes"| C["Run step 1"]
-  C --> D["Tick it off"]
-  D --> E["Next step"]
-  C -->|"risky step"| W["Wait for a person"]
+  B -->|"Books a room"| W["Maya approves first"]
+  B -->|"Yes"| C["Run each step in order"]
+  W --> C
 ```
 
 ## The problem
 
-Step by step, an email can go out before anyone sees the plan was wrong. A risky step, such as sending an email, cannot be undone.
+Step by step, the bot forgets what it did and books the room twice. A risky step, such as booking a room, cannot be undone.
 
 ## New words
 
 Each word has one meaning in every lab.
 
 - **plan**: A list of steps, written before the first step runs.
-- **risky step**: A step that cannot be undone, such as sending an email.
+- **risky step**: A step that cannot be undone, such as booking a room.
 
 ## Run it
 
 Copy any line into your terminal. Each one is a real example from this lab.
 
 ```bash
-bun run lab plan-then-act --question "Look up the Cardioza dose and email it to me" --naive
-bun run lab plan-then-act --question "Look up the Cardioza dose and write a reply"
-bun run lab plan-then-act --question "Look up the Cardioza dose and email it to me"
-bun run lab plan-then-act --question "Look up the Cardioza dose and email it to me" --approve
+bun run lab plan-then-act --question "Prep me for Thursday's board meeting." --naive
+bun run lab plan-then-act --question "Draft the agenda for the board meeting."
+bun run lab plan-then-act --question "Prep me for Thursday's board meeting."
+bun run lab plan-then-act --question "Prep me for Thursday's board meeting." --approve
 bun run lab plan-then-act --demo
 bun run lab plan-then-act --demo
-bun run lab plan-then-act --question "Look up the Zorbex dose and write a reply"
+bun run lab plan-then-act --demo
+bun run lab plan-then-act --question "Prep me for Monday's board meeting." --approve
 bun run lab plan-then-act --demo
 ```
 
@@ -48,31 +49,32 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
-| 1 | NAIVE: act with no plan | The plan runs as it is written. The email is sent before anyone could say no. | ran-unchecked | `bun run lab plan-then-act --question "Look up the Cardioza dose and email it to me" --naive` |
-| 2 | A safe plan | Search, then draft. Nothing risky, so it runs. | done | `bun run lab plan-then-act --question "Look up the Cardioza dose and write a reply"` |
-| 3 | A plan that sends an email | Sending cannot be undone. Nothing runs until a person approves, not even the safe steps. | needs-approval | `bun run lab plan-then-act --question "Look up the Cardioza dose and email it to me"` |
-| 4 | The same plan, approved | A person said yes, so every step runs. | done | `bun run lab plan-then-act --question "Look up the Cardioza dose and email it to me" --approve` |
-| 5 | A plan with a tool we never gave | A typed plan. There is no delete_records tool. The plan is rejected, and the search never runs. | rejected | `bun run lab plan-then-act --demo` |
-| 6 | EDGE: a plan that is too long | A typed plan of six steps is over our limit of five. A long plan is a sign the model is lost. | rejected | `bun run lab plan-then-act --demo` |
-| 7 | EDGE: the first step finds nothing | There is no approved document for Zorbex. The draft would be made up, so the run stops. | stopped | `bun run lab plan-then-act --question "Look up the Zorbex dose and write a reply"` |
+| 1 | NAIVE: act with no plan | The bot sees only the last result. It books the room, then books it again after the agenda. | ran-unchecked | `bun run lab plan-then-act --question "Prep me for Thursday's board meeting." --naive` |
+| 2 | A safe plan | Papers, numbers, agenda. Nothing risky, so it runs. | done | `bun run lab plan-then-act --question "Draft the agenda for the board meeting."` |
+| 3 | A plan that books a room | A booking cannot be undone. Nothing runs until Maya approves, not even the safe steps. | needs-approval | `bun run lab plan-then-act --question "Prep me for Thursday's board meeting."` |
+| 4 | The same plan, approved | Maya said yes, so every step runs, and the room is booked once. | done | `bun run lab plan-then-act --question "Prep me for Thursday's board meeting." --approve` |
+| 5 | A plan with a tool we never gave | A typed plan. There is no pay_invoice tool. The plan is rejected, and the calendar is never read. | rejected | `bun run lab plan-then-act --demo` |
+| 6 | EDGE: a plan that books twice | The same booking appears two times. The check rejects it, so the double booking never happens. | rejected | `bun run lab plan-then-act --demo` |
+| 7 | EDGE: a plan that is too long | A typed plan of six steps is over our limit of five. A long plan is a sign the model is lost. | rejected | `bun run lab plan-then-act --demo` |
+| 8 | EDGE: the first step finds nothing | Monday has no free slot. Booking a room anyway would be a guess, so the run stops. | stopped | `bun run lab plan-then-act --question "Prep me for Monday's board meeting." --approve` |
 
 ## Stuck points
 
 **Correct run:** Check the whole plan before any step runs. A risky step waits for a person, and a failed step stops the rest.
 
-**Common wrong turn:** Running each step as it is written. The email goes out before anyone sees the plan was wrong.
+**Common wrong turn:** Picking one step at a time. The bot forgets what it did and books the room twice.
 
-**Hint to give:** Which step can never be undone? Should it run before a person checks?
+**Hint to give:** Which step can never be undone? Should it run before Maya checks?
 
 | What you see | What it means | Fix |
 | --- | --- | --- |
-| The demo prints outcome: ran-unchecked on the NAIVE case | The plan ran with no check | Check the plan before the first step |
-| The run waits at a risky step | The step cannot be undone, so a person decides | Approve the step, or stop the plan |
+| The demo prints outcome: ran-unchecked on the NAIVE case | The bot ran with no plan and no check | Write the plan first, and check it before step one |
+| The demo prints outcome: needs-approval on the booking plan | The step cannot be undone, so Maya decides | Approve the plan, or stop it |
 | The plan stops at one step | A failed step stops the rest | This is correct. Fix that step, then run again |
 
 ## The promise, and its test
 
-A plan is checked before it runs. A risky step needs a person. A failed step stops the rest.
+A plan is checked before it runs. A risky step needs Maya. A failed step stops the rest.
 
 ```bash
 bun test tests/promises/17.test.ts
@@ -82,7 +84,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Show the plan to the person and keep it with the run. Then compare what ran with the plan.
+Show Maya the plan and keep it with the run. Then compare what ran with the plan.
 
 ## Read the code
 

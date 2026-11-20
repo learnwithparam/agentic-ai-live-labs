@@ -3,6 +3,7 @@
 // The loop only needs one thing from a model: given the messages and tool names, return a tool call or text.
 // Swap callLlm for a real provider and nothing else changes.
 import { APPROVED_DOCS, KNOWN_DRUGS, NO_DOC } from "./data";
+import { opsReply } from "./model-ops";
 
 export type Message = { role: "system" | "user" | "tool"; content: string; name?: string };
 export type ToolInput = { query: string; country: string; hcpId: string };
@@ -23,6 +24,8 @@ const grab = (text: string, label: string) => text.match(new RegExp(`${label}: (
 export function makeModel(behaviour: Behaviour = "ok"): CallLlm {
   return (messages, toolNames) => {
     const first = messages.find((message) => message.role === "user")!.content;
+    const bot = opsReply(first); // the Juniper Studio bots live in src/model-ops.ts
+    if (bot !== undefined) return { text: bot };
     if (first.startsWith("PLAN:")) return { text: planFor(first) };
     if (first.startsWith("MAIL:")) return { text: mailFor(first) };
     if (first.startsWith("FOLLOWUP:")) return { text: followUpFor(first) };

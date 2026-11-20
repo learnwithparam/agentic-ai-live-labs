@@ -1,78 +1,88 @@
 // Run state
 //
-// Dr. Lee asks for the Cardioza dose. The agent works for a while. Then someone asks:
-// "What is run R-7 doing?" With only a printed log, nobody can say. The log is gone.
-// So the agent keeps a run record: an id, a status and a list of steps.
-// It saves the record after every step. Anyone can read it, even if the agent dies.
+// The Talent Scout bot screens 120 applicants overnight. It scores each CV, one by one.
+// Halfway through, the program is restarted. If the bot kept its progress in memory, it is gone.
+// The bot would start again from applicant one. So the bot keeps a run record on disk.
+// The record holds one entry for each applicant. It is saved after every try.
+// A restart reads the record and leaves the done applicants alone. Then it goes on.
+// If one applicant fails twice, the bot stops. It asks a person, because a third try would not help.
 // The run prints each step as it happens, with the same number as the step in the code.
 // The examples and the screen output are in show/19-run-state.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun run lab run-state --question "What is the dose of Cardioza?" --naive
-//   bun run lab run-state --question "What is the dose of Cardioza?"
-//   bun run lab run-state --question "Is Zorbex safe for children?"
-//   bun run lab run-state --question "What is the dose of Cardioza?" --stalled true
-//   bun run lab run-state --question "What is the dose of Cardioza?" --ask true --run R-nothing
+//   bun run lab run-state --question "Screen the first 30 applicants." --naive --crash 12
+//   bun run lab run-state --question "Screen the first 30 applicants, and stop at 12." --crash 12
+//   bun run lab run-state --question "Screen all 120 applicants tonight." --from 1 --count 120
+//   bun run lab run-state --question "Screen the applicants from 71 on." --from 71 --count 10
 //   bun run lab run-state --demo
 
-import { NO_DOC } from "../src/data";
 import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";
 import { loadRun, saveRun } from "../src/runs"; // saving and reading the record
-import { runAgentLoop, searchApprovedDocs } from "./01-agent-loop";
+import { closeRun, countDone, entryFor, isDone, openRun, screenOne, type Scored } from "../src/screening";
+import type { Applicant } from "../src/team";
 
-export type RunStep = { n: number; name: string; status: string; note: string; at: number };
+export type Entry = { status: string; tries: number; score: number; note: string };
 export type Run = {
   id: string;
   task: string;
-  status: string; // running, done or failed
+  status: string; // running, done or needs-person
   startedAt: number;
   updatedAt: number;
-  steps: RunStep[];
+  total: number;
+  reason: string;
+  results: Record<string, Entry>;
 };
+export type Screened = { run: Run; calls: number; log: string[] };
 
 export const STALL_SECONDS = 120;
+export const MOST_FAILS = 2;
 
-// Answer a question and keep a record of the run. Read the steps in order.
-export function runWithRecord(question: string, country: string, callLlm: CallLlm): Run {
-  // Step 1: open the record before any work starts. From now on, anyone can ask.
-  const run = openRun(question);
-
-  // Step 2: search the approved documents. Save the step as soon as it ends.
-  const source = searchApprovedDocs(question, country);
-  addStep(run, "search", "done", source.split("\n")[0]);
-
-  // Step 3: with no document, close the record as failed. Say why.
-  if (source === NO_DOC) return closeRun(run, "failed", "no approved document");
-
-  // Step 4: the model answers. Save the step, then close the record as done.
-  const answer = runAgentLoop(question, country, callLlm).answer;
-  addStep(run, "answer", "done", answer);
-  return closeRun(run, "done", "");
+// Screen the applicants and keep a record. Pass a run id to pick up where it stopped.
+export function screenRun(
+  task: string,
+  list: Applicant[],
+  callLlm: CallLlm,
+  runId = "",
+  crashAfter = 0,
+): Screened {
+  // Step 1: load the saved record, or open a new one before any work starts.
+  const run = loadRun(runId) || openRun(task, list.length);
+  const log = [`Step 1: run ${run.id} starts with ${countDone(run)} of ${list.length} done.`];
+  let calls = 0;
+  let screened = 0;
+  for (const applicant of list) {
+    // Step 2: a done applicant is not screened again. This is how a restart goes on.
+    if (isDone(run, applicant.id)) continue;
+    if (crashAfter > 0 && screened >= crashAfter) {
+      log.push(`Step 5: the program died after ${screened} applicants.`);
+      return { run, calls, log };
+    }
+    // Step 3: score the applicant. Save the record after every try.
+    let tries = 0;
+    let scored: Scored = { ok: false, score: 0, note: "" };
+    while (tries < MOST_FAILS && !scored.ok) {
+      tries += 1;
+      calls += 1;
+      scored = screenOne(applicant, tries, callLlm);
+      saveEntry(run, applicant.id, entryFor(scored, tries));
+    }
+    // Step 4: two fails on one applicant. Stop and ask a person.
+    if (!scored.ok) {
+      log.push(`Step 4: ${applicant.id} failed ${tries} times. A person must look.`);
+      return { run: closeRun(run, "needs-person", `${applicant.id} failed twice`), calls, log };
+    }
+    screened += 1;
+  }
+  log.push(`Step 6: ${countDone(run)} applicants are done.`);
+  return { run: closeRun(run, "done", ""), calls, log };
 }
 
-// A new record has an id, a status and no steps yet.
-export function openRun(task: string, now = Date.now()): Run {
-  const id = "R-" + crypto.randomUUID().slice(0, 6);
-  const run: Run = { id, task, status: "running", startedAt: now, updatedAt: now, steps: [] };
-  saveRun(run);
-  return run;
-}
-
-// Add one step and save the record at once. A reader sees it within a moment.
-export function addStep(run: Run, name: string, status: string, note: string, now = Date.now()) {
-  run.steps.push({ n: run.steps.length + 1, name, status, note, at: now });
+// Add one result and save the record at once. A reader sees it within a moment.
+export function saveEntry(run: Run, id: string, entry: Entry, now = Date.now()) {
+  run.results[id] = entry;
   run.updatedAt = now;
   saveRun(run);
-}
-
-// Close the record. A failed run keeps its reason, so nobody has to guess.
-export function closeRun(run: Run, status: string, reason: string, now = Date.now()): Run {
-  run.status = status;
-  run.updatedAt = now;
-  if (reason) addStep(run, "stop", status, reason, now);
-  saveRun(run);
-  return run;
 }
 
 // Say what a record means right now. A run that says "running" but has gone quiet is stalled.
@@ -81,16 +91,9 @@ export function describeRun(run: Run, now = Date.now()): string {
   if (run.status === "running" && quiet > STALL_SECONDS) {
     return `stalled: quiet for ${quiet} seconds`;
   }
-  if (run.status === "running") return `running: ${run.steps.length} steps so far`;
-  return `${run.status}: ${run.steps.length} steps`;
-}
-
-// The naive way: the steps are only printed. When the program ends, nothing is left to read.
-export function runWithoutRecord(question: string, country: string, callLlm: CallLlm): string {
-  console.log("searching...");
-  const answer = runAgentLoop(question, country, callLlm).answer;
-  console.log("answering...");
-  return answer;
+  if (run.status === "running") return `running: ${countDone(run)} of ${run.total} done`;
+  if (run.status === "needs-person") return `needs a person: ${run.reason}`;
+  return `${run.status}: ${countDone(run)} of ${run.total} done`;
 }
 
 // Read a record back from disk, as another process would.

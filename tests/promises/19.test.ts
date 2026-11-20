@@ -3,41 +3,48 @@ import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { makeModel } from "../../src/model";
 import { loadRun } from "../../src/runs";
-import {
-  addStep,
-  describeRun,
-  openRun,
-  runWithRecord,
-  STALL_SECONDS,
-  whatIsItDoing,
-} from "../../labs/19-run-state";
+import { pickApplicants } from "../../src/screening";
+import { naiveScreen } from "../../show/19-run-state";
+import { describeRun, MOST_FAILS, screenRun, STALL_SECONDS, whatIsItDoing } from "../../labs/19-run-state";
+import { openRun } from "../../src/screening";
 
 process.env.RUNS_DIR = mkdtempSync(`${tmpdir()}/runs-`);
 const model = makeModel();
+const TASK = "Screen the applicants.";
 
-// PROMISE: every run has a record from its first step, saved after every step.
-// A failed run says why. A run that went quiet reads as stalled.
-test("the record is on disk after each step, before the run ends", () => {
-  const run = openRun("What is the dose of Cardioza?", 1000);
-  expect(loadRun(run.id)).toMatchObject({ status: "running", steps: [] });
-  addStep(run, "search", "done", "found", 2000);
-  expect(loadRun(run.id)?.steps.length).toBe(1);
-  expect(loadRun(run.id)?.updatedAt).toBe(2000);
+// PROMISE: every run has a record, saved after every try. A restart picks up where it stopped.
+// Two fails on one applicant stop the run. A run that went quiet reads as stalled.
+test("the record is on disk after each try, even if the program dies", () => {
+  const list = pickApplicants(1, 30);
+  const first = screenRun(TASK, list, model, "", 12);
+  expect(first.calls).toBe(12);
+  const saved = loadRun(first.run.id);
+  expect(saved?.status).toBe("running");
+  expect(Object.keys(saved?.results || {}).length).toBe(12);
 });
 
-test("a finished run reads back done, and a failed run keeps its reason", () => {
-  const done = runWithRecord("What is the dose of Cardioza?", "US", model);
-  expect(loadRun(done.id)).toMatchObject({ status: "done" });
-  expect(loadRun(done.id)?.steps.map((step) => step.name)).toEqual(["search", "answer"]);
-  const failed = runWithRecord("Is Zorbex safe for children?", "US", model);
-  const record = loadRun(failed.id);
-  expect(record?.status).toBe("failed");
-  expect(record?.steps[record.steps.length - 1].note).toBe("no approved document");
+test("a restart screens only the applicants left, and naive screens them twice", () => {
+  const list = pickApplicants(1, 30);
+  const first = screenRun(TASK, list, model, "", 12);
+  const second = screenRun(TASK, list, model, first.run.id);
+  expect(second.calls).toBe(18);
+  expect(second.run.status).toBe("done");
+  expect(naiveScreen(list, model, 12)).toEqual([12, 30]);
+});
+
+test("a busy service is tried again, and two fails stop the run", () => {
+  const busy = screenRun(TASK, pickApplicants(71, 10), model);
+  expect(busy.run.status).toBe("done");
+  expect(busy.run.results["applicant-077"].tries).toBe(2);
+  const broken = screenRun(TASK, pickApplicants(1, 120), model);
+  expect(broken.run).toMatchObject({ status: "needs-person", reason: "applicant-040 failed twice" });
+  expect(broken.run.results["applicant-040"].tries).toBe(MOST_FAILS);
+  expect(whatIsItDoing(broken.run.id)).toBe("needs a person: applicant-040 failed twice");
   expect(whatIsItDoing("R-nothing")).toBe("no run named R-nothing");
 });
 
 test("a running record with no news for too long is stalled", () => {
-  const run = openRun("What is the dose of Cardioza?", 0);
-  expect(describeRun(run, 10_000)).toBe("running: 0 steps so far");
+  const run = openRun(TASK, 120, 0);
+  expect(describeRun(run, 10_000)).toBe("running: 0 of 120 done");
   expect(describeRun(run, (STALL_SECONDS + 1) * 1000)).toContain("stalled");
 });

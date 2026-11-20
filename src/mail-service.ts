@@ -1,11 +1,11 @@
-// A small real web service for the tool failures lab: the approved documents behind an HTTP address.
+// A small real web service for the tool failures lab: the mail sender behind an HTTP address.
 // It runs as its own program, so a slow or broken reply is a real one.
 // Start it with startService. It has four moods.
-// ok: every call works. flaky: the first two calls fail with 503, then it works.
+// ok: every send works. busy: the first two sends get a 429 (too many requests), then it works.
 // slow: every call waits before it answers. down: every call fails with 503.
+// In every mood, a bounced address gets a 422. That is a clear no.
 
-import { NO_DOC } from "./data";
-import { searchApprovedDocs } from "../labs/01-agent-loop";
+import { BOUNCED, LEADS } from "./team";
 
 export type Service = { url: string; stop(): void };
 export type Reply = { status: number; body: string }; // status 0 means no reply came in time
@@ -23,7 +23,7 @@ export function fetchOnce(url: string, timeoutSeconds: number): Reply {
 // Start the service in its own program on a free port, and wait until it answers.
 export function startService(mood: string, slowMs = 3000): Service {
   const port = 40000 + Math.floor(Math.random() * 20000);
-  const child = Bun.spawn(["bun", "src/docs-service.ts", String(port), mood, String(slowMs)], {
+  const child = Bun.spawn(["bun", "src/mail-service.ts", String(port), mood, String(slowMs)], {
     stdout: "ignore",
     stderr: "ignore",
   });
@@ -38,6 +38,7 @@ export function startService(mood: string, slowMs = 3000): Service {
 // The service itself. It only runs when this file is started as a program.
 function serve(port: number, mood: string, slowMs: number) {
   let calls = 0;
+  const bouncedAddresses = LEADS.filter((lead) => BOUNCED.includes(lead.id)).map((lead) => lead.email);
   Bun.serve({
     port,
     async fetch(request) {
@@ -45,16 +46,13 @@ function serve(port: number, mood: string, slowMs: number) {
       if (url.pathname === "/health") return new Response("ok");
       calls += 1;
       if (mood === "slow") await Bun.sleep(slowMs);
-      if (mood === "down" || (mood === "flaky" && calls <= 2)) {
-        return new Response("service unavailable", { status: 503 });
+      if (mood === "down") return new Response("service unavailable", { status: 503 });
+      if (mood === "busy" && calls <= 2) return new Response("too many requests", { status: 429 });
+      const recipient = url.searchParams.get("to") || "";
+      if (bouncedAddresses.includes(recipient)) {
+        return new Response("mailbox does not exist", { status: 422 });
       }
-      const query = url.searchParams.get("query") || "";
-      const country = url.searchParams.get("country") || "";
-      if (query.trim() === "") return new Response("query is empty", { status: 400 });
-      if (country !== "US" && country !== "DE") {
-        return new Response("country must be US or DE", { status: 400 });
-      }
-      return new Response(searchApprovedDocs(query, country) || NO_DOC);
+      return new Response(`queued for ${recipient}`);
     },
   });
 }

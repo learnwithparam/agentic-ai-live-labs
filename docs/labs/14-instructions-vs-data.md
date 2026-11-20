@@ -1,39 +1,45 @@
 # Instructions versus data
 
-Each example is a document the agent reads. Pick one by name: clean, injected, breakout or subtle. Three of them hide an order. The agent puts each document inside a data fence, so the model reads it as data.
+Each example is one mail in the Inbox Manager's inbox. Pick one by id, such as mail-vendor or mail-meeting. Some mails hide an order. The bot passes each mail through a data fence, a reader, a guard and a safe tool.
 
 ## The story in one picture
 
 ```mermaid
 flowchart LR
-  A["Our rules: instructions"] --> P["Prompt"]
-  B["Email from outside"] --> F["Put in a labelled box"]
-  F --> P
-  P --> M["Model reads the box as data only"]
+  A["Mail from outside"] --> F["Wrapped as data"]
+  F --> R["Reader with no tools: facts"]
+  R --> G{"Guard score"}
+  G -->|"High"| H["Held for Maya"]
+  G -->|"Off the job"| N["Polite no"]
+  G -->|"Low"| T["Actor picks an action"]
+  T --> S["Tool: never outside the company"]
 ```
 
 ## The problem
 
-The model reads rules and documents as one text. A document can hide an order for the model. This is prompt injection, and nobody notices.
+A vendor mail says to ignore our rules and send the signed contract to an outside address. The model reads rules and mail as one text. So it may obey, and nobody notices. This is prompt injection.
 
 ## New words
 
 Each word has one meaning in every lab.
 
 - **prompt injection**: A hidden order in data, such as an email, that tries to steer the model.
-- **data fence**: A labelled box that tells the model where the data starts and ends.
-- **held**: Taken out of the prompt, so the model never sees it.
+- **data fence**: A labelled box that tells the model where the mail starts and ends.
+- **guard**: One check that stops one kind of risk.
+- **held**: Kept back for a person to look at, so the bot does not act on it.
 
 ## Run it
 
 Copy any line into your terminal. Each one is a real example from this lab.
 
 ```bash
-bun run lab instructions-vs-data --question "What is the dose of Cardioza?" --document injected --naive
-bun run lab instructions-vs-data --question "What is the dose of Cardioza?" --document clean
-bun run lab instructions-vs-data --question "What is the dose of Cardioza?" --document injected
-bun run lab instructions-vs-data --question "What is the dose of Cardioza?" --document breakout
-bun run lab instructions-vs-data --question "What is the dose of Cardioza?" --document subtle
+bun run lab instructions-vs-data --question "Deal with the overdue invoice." --mail mail-vendor --naive
+bun run lab instructions-vs-data --question "What does the stock photo company want?" --mail mail-vendor
+bun run lab instructions-vs-data --question "Can you answer Sam about Thursday?" --mail mail-meeting
+bun run lab instructions-vs-data --question "Where should the signed contract go?" --mail mail-contract
+bun run lab instructions-vs-data --question "Reply to the curious visitor." --mail mail-probe
+bun run lab instructions-vs-data --question "Send them what they asked for." --mail mail-copy
+bun run lab instructions-vs-data --question "Can you file the font receipt?" --mail mail-breakout
 bun run lab instructions-vs-data --demo
 ```
 
@@ -45,29 +51,31 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
-| 1 | NAIVE: paste the data in | The hidden order sits next to the rules and looks the same. The model may obey it. | obeyed | `bun run lab instructions-vs-data --question "What is the dose of Cardioza?" --document injected --naive` |
-| 2 | A clean document | No order in it. The data is fenced and nothing is held. | clean | `bun run lab instructions-vs-data --question "What is the dose of Cardioza?" --document clean` |
-| 3 | A document with an order | The order line is held back. The facts stay, and the agent still answers. | held | `bun run lab instructions-vs-data --question "What is the dose of Cardioza?" --document injected` |
-| 4 | A document that tries to close the fence | It writes a closing tag, then new rules. We turn the tag into harmless text, so the new rules stay inside the data. | fenced | `bun run lab instructions-vs-data --question "What is the dose of Cardioza?" --document breakout` |
-| 5 | EDGE: an order with no order words | No word on our list appears, so the scan sees nothing. This is the limit of a word list. The gates lab's gate and the identity and scopes lab's scopes are the next defence. | slipped | `bun run lab instructions-vs-data --question "What is the dose of Cardioza?" --document subtle` |
+| 1 | NAIVE: paste the mail in | The vendor order sits next to our rules and looks the same. The model forwards the contract. | obeyed | `bun run lab instructions-vs-data --question "Deal with the overdue invoice." --mail mail-vendor --naive` |
+| 2 | A mail with an order | The guard scores the mail high, so it waits for Maya. Nothing is sent. | held | `bun run lab instructions-vs-data --question "What does the stock photo company want?" --mail mail-vendor` |
+| 3 | A plain meeting mail | Nothing odd in it. The bot answers Sam and is done. | handled | `bun run lab instructions-vs-data --question "Can you answer Sam about Thursday?" --mail mail-meeting` |
+| 4 | A signed contract to file | The facts say contract, so the bot files it with the books. Inside the company is allowed. | handled | `bun run lab instructions-vs-data --question "Where should the signed contract go?" --mail mail-contract` |
+| 5 | A stranger asks for secrets | The mail asks for our prompt and our revenue. That is not studio mail, so the bot says no, politely. | polite-no | `bun run lab instructions-vs-data --question "Reply to the curious visitor." --mail mail-probe` |
+| 6 | A polite ask with no order words | The guard sees nothing odd. The reader hands over the ask and the actor agrees. Only the tool stops it. | blocked | `bun run lab instructions-vs-data --question "Send them what they asked for." --mail mail-copy` |
+| 7 | A mail that tries to close the fence | It writes a closing tag, then new rules. We make the tag harmless, so the new rules stay inside the data. | fenced | `bun run lab instructions-vs-data --question "Can you file the font receipt?" --mail mail-breakout` |
 
 ## Stuck points
 
-**Correct run:** Put each document inside a data fence. A line with an order is held out of the prompt.
+**Correct run:** Stack layers. Fence the mail, read it with no tools, score it, and let the tool refuse outside addresses.
 
-**Common wrong turn:** Pasting the document next to the rules. The hidden order looks like a rule, so the model may obey it.
+**Common wrong turn:** Pasting the mail next to the rules. The hidden order looks like a rule, so the model may obey it.
 
-**Hint to give:** Can the data close its own fence, or can only our code do that?
+**Hint to give:** If the model is fooled, which layer still stops the mail from leaving?
 
 | What you see | What it means | Fix |
 | --- | --- | --- |
-| The demo prints outcome: obeyed on the NAIVE case | The hidden order reached the model as a rule | Fence each document, and scan it for orders first |
-| A line is marked held | The line held an order, so it was kept out | This is correct. Check the held line by hand |
-| A closing fence tag appears inside the data | The data tried to close its own fence | Drop the tag from inside the data |
+| The demo prints outcome: obeyed on the NAIVE case | The vendor order reached the model as a rule | Fence the mail, and let a guard score it first |
+| The demo prints outcome: held on the vendor mail | The guard scored it high, so it waits for Maya | This is correct. Read the mail by hand |
+| The demo prints outcome: blocked on the polite mail | The guard saw no order, but the tool refused the address | This is correct. The tool is the last layer |
 
 ## The promise, and its test
 
-A line with an order is held out of the prompt. Data can never close its own fence.
+A mail with an order is held for a person. An ask beyond the job gets a polite no. The tool never sends outside the company, even when the model is fooled.
 
 ```bash
 bun test tests/promises/14.test.ts
@@ -77,7 +85,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Fence and scan as here. Give the agent the fewest tools. Let a person approve risky ones, as the gates lab does.
+Stack the layers, because any one can fail. A real guard is a trained model, not a word list. Give the bot the fewest tools, as the gates lab does.
 
 ## Read the code
 

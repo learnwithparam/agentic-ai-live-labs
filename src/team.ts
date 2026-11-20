@@ -98,3 +98,10 @@ export const LEAD_IDS: string[] = LEADS.map((lead) => lead.id);
 export function companyOf(leadId: string): string {
   return LEADS.find((lead) => lead.id === leadId)!.company;
 }
+
+// The address of a lead, or an empty text when we have no such lead.
+export function emailOf(leadId: string): string {
+  const found = LEADS.find((lead) => lead.id === leadId);
+  if (found === undefined) return "";
+  return found.email;
+}

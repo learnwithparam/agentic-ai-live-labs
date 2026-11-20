@@ -1,20 +1,23 @@
 # The context budget
 
-Each example builds the prompt for one question under a token budget. The model reads only the context window, so the budget keeps the prompt inside it. Use --window 80 to change the budget. The prompt holds rules, a doctor note, documents, chat history and the question.
+Each example preps a renewal for Acme Dental. The file holds mail, call notes and a contract. Use --window to change the size of the context window. Use --naive to put it all in. The answer must name the price limit in clause 7.
 
 ## The story in one picture
 
 ```mermaid
 flowchart LR
-  A["Rules and question: must fit"] --> P["Prompt"]
-  B["Old chat and notes"] --> C{"Room left in the window?"}
-  C -->|"Yes"| P
-  C -->|"No"| D["Leave it out"]
+  A["Big result: mail, calls, contract"] --> B["Save in full on disk"]
+  B --> C["One-line receipt in the prompt"]
+  C --> D{"Over 40 percent of the window?"}
+  D -->|"Yes"| E["Fold old phases into notes"]
+  D -->|"No"| F["Keep going"]
+  E --> G["Read back only the file the question needs"]
+  F --> G
 ```
 
 ## The problem
 
-A prompt grows every turn. A model counts its text in model tokens. When the prompt passes the context window, something is cut, and nobody chooses what.
+Every turn sends the whole prompt again, so the bill grows. A long prompt also hides its middle. The key clause sits in the middle, and the bot says there is no limit.
 
 ## New words
 
@@ -22,20 +25,20 @@ Each word has one meaning in every lab.
 
 - **context window**: The most text a model can read at one time, counted in tokens.
 - **model token**: A small piece of text that a model counts. Often part of a word.
-- **budget**: The most we allow ourselves to spend, in tokens, money, steps or time.
+- **compaction**: Folding old work into short notes when the prompt fills up. The full text stays on disk.
+- **receipt**: A one-line stand-in for a big tool result. The full result is saved on disk.
 
 ## Run it
 
 Copy any line into your terminal. Each one is a real example from this lab.
 
 ```bash
-bun run lab context-budget --question "What is the dose of Cardioza?" --naive --window 60
-bun run lab context-budget --question "What is the dose of Cardioza?" --window 200
-bun run lab context-budget --question "What is the dose of Cardioza?" --window 70
-bun run lab context-budget --question "What is the dose of Cardioza?" --window 50
-bun run lab context-budget --question "What are the doses of Cardioza and Neurovex?" --window 60
-bun run lab context-budget --question "What is the dose of Cardioza?" --window 10
-bun run lab context-budget --demo
+bun run lab context-budget --question "How much can we raise Acme's price at renewal?" --naive
+bun run lab context-budget --question "Maya calls Sam tomorrow. What is the price limit?" --window 6000
+bun run lab context-budget --question "Is there a cap on the renewal price?" --window 2000
+bun run lab context-budget --question "What did Maya promise Sam on the last call?" --window 6000
+bun run lab context-budget --question "What does clause 7 say about the price?" --window 1200
+bun run lab context-budget --question "What does clause 7 say about the price?" --window 500
 bun run lab context-budget --demo
 ```
 
@@ -47,31 +50,30 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
-| 1 | NAIVE: let the window cut the oldest text | The rules come first, so they are the oldest text. When the window is full, they are the first thing cut. The model now answers with no rules. | rules-lost | `bun run lab context-budget --question "What is the dose of Cardioza?" --naive --window 60` |
-| 2 | Plenty of room | Everything fits, so everything is sent. | all-fit | `bun run lab context-budget --question "What is the dose of Cardioza?" --window 200` |
-| 3 | A tighter window | The chat history is the least useful part, so it goes first. | dropped: history | `bun run lab context-budget --question "What is the dose of Cardioza?" --window 70` |
-| 4 | A tight window | The documents also stop fitting. We keep the rules, the question and the small doctor note. The model has to refuse, which is safe. | dropped: documents, history | `bun run lab context-budget --question "What is the dose of Cardioza?" --window 50` |
-| 5 | Two drugs, bigger documents | Two documents are larger. The window drops the history and then the documents, and the doctor note survives. | dropped: documents, history | `bun run lab context-budget --question "What are the doses of Cardioza and Neurovex?" --window 60` |
-| 6 | The must parts do not fit | A budget of 10 cannot hold the rules and the question. We say so. We never send a prompt without its rules. | too-small | `bun run lab context-budget --question "What is the dose of Cardioza?" --window 10` |
-| 7 | A very long question | The question alone is bigger than the window. The doctor must shorten it. We do not cut it for them. | too-small | `bun run lab context-budget --demo` |
+| 1 | NAIVE: put the whole file in | Three years of mail, the notes and the contract all go in. Clause 7 lands in the middle. The model says there is no limit. | clause-lost | `bun run lab context-budget --question "How much can we raise Acme's price at renewal?" --naive` |
+| 2 | A roomy window | The mail becomes a receipt. The calls and the contract fit, so nothing is folded. The clause is read back. | answered | `bun run lab context-budget --question "Maya calls Sam tomorrow. What is the price limit?" --window 6000` |
+| 3 | A tight window | Old phases fold into one-line notes. The full contract is still on disk. The question needs it, so it is read back. | compacted | `bun run lab context-budget --question "Is there a cap on the renewal price?" --window 2000` |
+| 4 | A different question: the last call | This question needs the call notes, not the contract. Our code reads back the notes and leaves the contract on disk. | answered | `bun run lab context-budget --question "What did Maya promise Sam on the last call?" --window 6000` |
+| 5 | A very tight window | Almost everything folds. The contract is read back whole, and it is the only text that must fit. | compacted | `bun run lab context-budget --question "What does clause 7 say about the price?" --window 1200` |
+| 6 | EDGE: the window is too small | The contract alone is bigger than 500 tokens. We say so. We never send a prompt that does not fit. | too-small | `bun run lab context-budget --question "What does clause 7 say about the price?" --window 500` |
 
 ## Stuck points
 
-**Correct run:** Count each part, keep the must parts, and cut the least useful part first. The demo prints what was dropped.
+**Correct run:** Count tokens in our code and shrink big results to a receipt. Fold old phases into notes and read back only what is needed.
 
-**Common wrong turn:** Letting the window cut from the top. The rules are the oldest text, so they are lost first.
+**Common wrong turn:** Putting the whole file in. The bill grows on every turn, and the model misses the clause in the middle.
 
-**Hint to give:** Which part does the model need most? Keep that one.
+**Hint to give:** Where is the full contract? Our code can read it back from disk.
 
 | What you see | What it means | Fix |
 | --- | --- | --- |
-| The demo prints outcome: rules-lost on the NAIVE case | The oldest text, the rules, was cut | Keep the rules and the question as must parts |
-| The demo prints outcome: too-small | The must parts do not fit the budget | Raise the window, or shorten the note. Never send without the rules |
-| The reply is a refusal | The documents were cut, so there is no source | This is safe. Refusing beats guessing |
+| The demo prints outcome: clause-lost on the NAIVE case | The key clause sits in the middle of a long prompt | Save big results to disk and read back only the file the question needs |
+| The demo prints outcome: too-small | The prompt needs more than the window holds | Raise the window, or read back less. Never send a prompt that does not fit |
+| The bill is high but the answer is right | Old phases were never folded | Fold the oldest phases into notes at 40 percent of the window |
 
 ## The promise, and its test
 
-The prompt never passes the budget, and the rules and the question are never dropped.
+Our code counts model tokens. A big result becomes a receipt. Compaction folds old phases into notes at 40 percent. The key clause is read back from disk.
 
 ```bash
 bun test tests/promises/10.test.ts
@@ -81,7 +83,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Count with the model's own counter. Keep a reserve for the reply. Log what was dropped on every call.
+Count tokens in your own code, not in the model. Save every big result to disk and keep a receipt in the prompt. Fold old phases into notes at 40 percent.
 
 ## Read the code
 

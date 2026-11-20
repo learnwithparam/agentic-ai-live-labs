@@ -1,17 +1,26 @@
-// The pieces the plan then act lab uses to write and run a plan.
+// The pieces the plan then act lab uses. The Chief of Staff bot gets Maya ready for a meeting.
+// All the calendars, papers and numbers here are invented.
 
 import type { CallLlm } from "./model";
 import type { Outcome, Plan, Step } from "../labs/17-plan-then-act";
-import { searchApprovedDocs } from "../labs/01-agent-loop";
 
-// One step. The search is the agent loop's search. The draft is written by the model. Email goes to an outbox.
-export function runStep(step: Step, found: string, sent: string[], callLlm: CallLlm): string {
-  if (step.tool === "search") return searchApprovedDocs(step.input, "US");
-  if (step.tool === "draft") {
-    const prompt = `MAIL: Write a short reply to the doctor from this source only.\nSOURCE: ${found}`;
-    return (callLlm([{ role: "user", content: prompt }], []).text || "").trim();
+export const NO_SLOT = "No free slot.";
+const MOST_NAIVE_STEPS = 8;
+
+// One step. The room list is the bot's own record of what it booked.
+export function runStep(step: Step, booked: string[]): string {
+  if (step.tool === "calendar") {
+    if (step.input.toLowerCase().includes("thursday")) return "Thursday 10:00 is free.";
+    return NO_SLOT;
   }
-  if (step.tool === "send_email") sent.push(step.input);
+  if (step.tool === "docs") return "Collected 3 board papers.";
+  if (step.tool === "metrics") return "Billed 41200 USD this quarter. 6 projects open.";
+  if (step.tool === "agenda") return "Agenda written. It needs a room.";
+  if (step.tool === "book_room") {
+    booked.push(step.input);
+    if (booked.length > 1) return `Room booked: ${step.input} (again).`;
+    return `Room booked: ${step.input}.`;
+  }
   return `ran ${step.tool}`;
 }
 
@@ -19,9 +28,9 @@ export function runStep(step: Step, found: string, sent: string[], callLlm: Call
 export function writePlan(task: string, callLlm: CallLlm): Plan {
   let text = task;
   if (!task.startsWith("[")) {
-    const rule = "Tools: search, draft, send_email. Reply with a JSON list of steps. " +
-      'Each step looks like {"tool": "search", "input": "..."}.';
-    text = callLlm([{ role: "user", content: `PLAN: ${rule}\nTask: ${task}` }], []).text || "";
+    const rule = "Tools: calendar, docs, metrics, agenda, book_room. Reply with a JSON list of steps. " +
+      'Each step looks like {"tool": "calendar", "input": "..."}.';
+    text = callLlm([{ role: "user", content: `BOARD: ${rule}\nTask: ${task}` }], []).text || "";
   }
   const start = text.indexOf("[");
   const end = text.lastIndexOf("]");
@@ -33,16 +42,21 @@ export function writePlan(task: string, callLlm: CallLlm): Plan {
   }
 }
 
-// The naive way: no check and no person. Each step runs as soon as the plan names it.
+// The naive way: no plan. The model picks one step at a time, and sees only the last result.
 export function actUnchecked(task: string, callLlm: CallLlm): Outcome {
-  const plan = writePlan(task, callLlm);
+  const plan: Plan = [];
   const done: string[] = [];
-  const sent: string[] = [];
-  let found = "";
-  for (const step of plan) {
-    const reply = runStep(step, found, sent, callLlm);
-    if (step.tool === "search") found = reply;
+  const booked: string[] = [];
+  let last = "Nothing yet.";
+  for (let turn = 0; turn < MOST_NAIVE_STEPS; turn++) {
+    const prompt = `NEXT: Pick the next step, or reply DONE.\nTask: ${task}\nLast result: ${last}`;
+    const text = (callLlm([{ role: "user", content: prompt }], []).text || "").trim();
+    if (text === "DONE") break;
+    const step: Step = JSON.parse(text);
+    last = runStep(step, booked);
+    plan.push(step);
     done.push(`${step.tool}: ${step.input}`);
   }
-  return { outcome: "ran-unchecked", plan, done, sent, log: ["Every step ran. Nobody saw the plan first."] };
+  const log = [`Every step ran. Nobody saw a plan first. The room was booked ${booked.length} times.`];
+  return { outcome: "ran-unchecked", plan, done, booked, log };
 }

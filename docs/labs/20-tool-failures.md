@@ -1,21 +1,22 @@
 # When tools fail
 
-Each example starts a real document service on your computer. Pick how it behaves with --service: ok, flaky (fails twice), slow (answers after three seconds) or down.
+Each example starts a real mail service on your computer. Pick how it behaves with --service: ok, busy (says 429 twice), slow (answers after three seconds) or down.
 
 ## The story in one picture
 
 ```mermaid
 flowchart LR
-  A["Call the service"] --> B{"Answer in time?"}
-  B -->|"Yes"| C["Use the answer"]
-  B -->|"Timeout or error"| D{"Tries left?"}
-  D -->|"Yes"| A
-  D -->|"No"| E["Stop with a clear message"]
+  A["Send the follow-up"] --> B{"What came back?"}
+  B -->|"Sent"| C["Done"]
+  B -->|"Bounced: a clear no"| X["Stop, never retry"]
+  B -->|"429, slow or down"| D{"Tries left?"}
+  D -->|"Yes: wait, then retry"| A
+  D -->|"No"| E["Keep the lead for later"]
 ```
 
 ## The problem
 
-A service can be slow, fail for a moment, or say no. One try with no timeout hangs on the slow one and gives up on the flaky one.
+Follow-ups hit 429s, slow replies and bounces. A transient failure passes if we wait. A bounced address never does. A bot that retries everything hammers a dead address and delays the real leads.
 
 ## New words
 
@@ -31,13 +32,13 @@ Each word has one meaning in every lab.
 Copy any line into your terminal. Each one is a real example from this lab.
 
 ```bash
-bun run lab tool-failures --question "What is the dose of Cardioza?" --service flaky --naive
-bun run lab tool-failures --question "What is the dose of Cardioza?"
-bun run lab tool-failures --question "What is the dose of Cardioza?" --service flaky
-bun run lab tool-failures --question "What is the dose of Cardioza?" --service slow
-bun run lab tool-failures --question "What is the dose of Cardioza?" --service down
-bun run lab tool-failures --question "What is the dose of Cardioza?" --country FR
-bun run lab tool-failures --question "What is the dose of Cardioza?" --empty
+bun run lab tool-failures --question "Follow up with Quill Stationery about the quote." --service ok --lead quill-stationery --naive
+bun run lab tool-failures --question "Nudge Harbor Dental about the new price list." --lead harbor-dental
+bun run lab tool-failures --question "Remind Maple Legal about the contract draft." --service busy --lead maple-legal
+bun run lab tool-failures --question "Check in with Cedar Books after the demo." --service slow --lead cedar-books
+bun run lab tool-failures --question "Thank Atlas Movers for the call last week." --service down --lead atlas-movers
+bun run lab tool-failures --question "Ask Xylo Music if they still want the trial." --lead xylo-music
+bun run lab tool-failures --question "Send a note to the lead from the trade show." --lead trade-show-lead
 bun run lab tool-failures --demo
 ```
 
@@ -49,31 +50,31 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
-| 1 | NAIVE: one try, no time limit | The service fails once, as services do. One try gives up on the first 503, and the doctor gets no dose. | unavailable | `bun run lab tool-failures --question "What is the dose of Cardioza?" --service flaky --naive` |
-| 2 | A healthy service | The first try works. No waiting, no retry. | ok | `bun run lab tool-failures --question "What is the dose of Cardioza?"` |
-| 3 | A flaky service | The first two tries fail with 503. We wait 200 ms, then 400 ms. The third try works. | ok | `bun run lab tool-failures --question "What is the dose of Cardioza?" --service flaky` |
-| 4 | A slow service | The service takes three seconds. We stop each try after one second. After three tries we say so and do not guess. | unavailable | `bun run lab tool-failures --question "What is the dose of Cardioza?" --service slow` |
-| 5 | A service that is down | Every try fails. After three tries we stop and say the service is unavailable. | unavailable | `bun run lab tool-failures --question "What is the dose of Cardioza?" --service down` |
-| 6 | EDGE: the service says no | France is not a country we serve. The service answers 400. Trying again cannot help, so we stop at once. | rejected | `bun run lab tool-failures --question "What is the dose of Cardioza?" --country FR` |
-| 7 | EDGE: empty search words | The input check stops an empty query before any call is made. | bad-input | `bun run lab tool-failures --question "What is the dose of Cardioza?" --empty` |
+| 1 | NAIVE: retry everything at once | Quill Stationery bounced last week. The naive bot hears no, and asks again and again, with no wait. | retried-a-no | `bun run lab tool-failures --question "Follow up with Quill Stationery about the quote." --service ok --lead quill-stationery --naive` |
+| 2 | A healthy service | The first try works. No waiting, no retry. | sent | `bun run lab tool-failures --question "Nudge Harbor Dental about the new price list." --lead harbor-dental` |
+| 3 | A busy service | The first two tries get a 429. We wait 200 ms, then 400 ms. The third try works. | sent | `bun run lab tool-failures --question "Remind Maple Legal about the contract draft." --service busy --lead maple-legal` |
+| 4 | A slow service | The service takes three seconds. We stop each try after one second. After three tries the lead stays in the queue. | gave-up | `bun run lab tool-failures --question "Check in with Cedar Books after the demo." --service slow --lead cedar-books` |
+| 5 | A service that is down | Every try fails with a 503. After three tries we stop and keep the lead for later. | gave-up | `bun run lab tool-failures --question "Thank Atlas Movers for the call last week." --service down --lead atlas-movers` |
+| 6 | EDGE: the address bounced | Xylo Music has a dead mailbox. The service says no with a 422. Trying again cannot help, so we stop at once. | bounced | `bun run lab tool-failures --question "Ask Xylo Music if they still want the trial." --lead xylo-music` |
+| 7 | EDGE: a lead we do not know | The lead id is not in our list. The check stops it before any call is made. | bad-input | `bun run lab tool-failures --question "Send a note to the lead from the trade show." --lead trade-show-lead` |
 
 ## Stuck points
 
-**Correct run:** Stop each call at its timeout. Retry a transient failure with a growing backoff, but never retry a no.
+**Correct run:** Stop each call at its timeout. Retry a 429 or a timeout with a growing backoff, but never retry a bounce.
 
-**Common wrong turn:** One try with no time limit. It hangs on a slow service, and gives up on the first flaky error.
+**Common wrong turn:** Retrying every failure at once. A dead address is asked again and again.
 
-**Hint to give:** Which failure is worth another try, and which one is a clear no?
+**Hint to give:** Which failure passes if we wait, and which one is a clear no?
 
 | What you see | What it means | Fix |
 | --- | --- | --- |
-| The demo prints outcome: unavailable on the NAIVE case | One try gave up on a flaky error | Retry transient failures with a backoff |
-| A call stops at the time limit | The service was too slow | This is correct. Raise the timeout only with a reason |
-| The same no is sent again and again | A no was retried | Stop retrying a no at once |
+| The demo prints outcome: retried-a-no on the NAIVE case | A bounce was treated like a busy service | Stop at once on a bounce, and retry only the rest |
+| The demo prints outcome: gave-up on the slow case | Every try ran past the time limit | This is correct. The lead stays in the queue |
+| The demo prints outcome: bounced on the EDGE case | The address is dead | This is correct. Remove it from the list |
 
 ## The promise, and its test
 
-Bad input never leaves our code. A slow call stops at its timeout. A transient failure is retried, with a backoff. A no is never tried again.
+An unknown lead never reaches the service. A slow call stops at its timeout. A 429 or a 5xx is retried, with a backoff. A bounced address is never tried again.
 
 ```bash
 bun test tests/promises/20.test.ts
@@ -83,7 +84,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Add a circuit breaker for a service that stays down. Add a random wait so many agents do not retry together.
+Keep the bounced addresses in a list, so no later run tries them. Add a random wait so many bots do not retry together.
 
 ## Read the code
 
