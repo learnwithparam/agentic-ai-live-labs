@@ -81,10 +81,10 @@ export function labelsOf(found: Found[]): string[] {
 export type Check = { ok: boolean; reason: string };
 
 export function verifyOutput(draft: string, approvedIds: string[]): Check {
-  const pieces = draft.split("[DOC-");
+  const pieces = draft.split("[");
   if (pieces.length === 1) return { ok: false, reason: "BLOCKED: no approved source citation." };
   for (const piece of pieces.slice(1)) {
-    const id = "DOC-" + piece.split("]")[0];
+    const id = piece.split("]")[0];
     if (!approvedIds.includes(id)) return { ok: false, reason: `BLOCKED: unknown source ${id}.` };
   }
   return { ok: true, reason: "" };

@@ -21,7 +21,7 @@ export const BREAKS: Break[] = [
   { lab: 8, file: "08-mcp-trust.ts", rule: "an unknown server is still read",
     find: "if (!APPROVED_SERVERS.includes(manifest.server))", replace: "if (false)" },
   { lab: 9, file: "09-three-doors.ts", rule: "an answer with no document id counts as cited",
-    find: 'if (answer.includes("DOC-")) return "answered";\n  return "uncited";', replace: 'return "answered";' },
+    find: 'if (/\\[[A-Z]+-[A-Z]+\\]/.test(answer)) return "answered";\n  return "uncited";', replace: 'return "answered";' },
   { lab: 10, file: "10-context-budget.ts", rule: "a part that does not fit is sent anyway",
     find: "if (countTokens(tryIt) > budget) keep[part.name] = false;", replace: "if (false) keep[part.name] = false;" },
   { lab: 11, file: "11-history-trimming.ts", rule: "a pinned fact is cut with the old chatter",
@@ -211,7 +211,7 @@ export const BREAKS: Break[] = [
   { lab: 18, file: "../src/draft-check.ts", rule: "a wrong dose passes the check",
     find: "if (!dosesIn(source).includes(dose))", replace: "if (false)" },
   { lab: 18, file: "../src/draft-check.ts", rule: "a draft without a citation passes",
-    find: 'if (!text.includes("DOC-"))', replace: "if (false)" },
+    find: 'if (!/\\[[A-Z]+-[A-Z]+\\]/.test(text))', replace: "if (false)" },
   { lab: 18, file: "18-reflect-and-fix.ts", rule: "fix rounds have no limit",
     find: "round <= MOST_ROUNDS", replace: "round <= 99" },
 ];

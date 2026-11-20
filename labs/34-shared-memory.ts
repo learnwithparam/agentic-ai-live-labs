@@ -9,11 +9,11 @@
 // The examples and the screen output are in show/34-shared-memory.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun run lab shared-memory --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1 --model invent --naive
-//   bun run lab shared-memory --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1
-//   bun run lab shared-memory --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1 --model invent
-//   bun run lab shared-memory --question "What is the dose of Cardioza for Dr. Weber?" --hcp H-1 --then H-2
-//   bun run lab shared-memory --question "What is the dose of Zorbex for Dr. Lee?" --hcp H-1
+//   bun run lab shared-memory --question "What is the dose of Cardioza for Dr. Lee?" --hcp dr-lee --model invent --naive
+//   bun run lab shared-memory --question "What is the dose of Cardioza for Dr. Lee?" --hcp dr-lee
+//   bun run lab shared-memory --question "What is the dose of Cardioza for Dr. Lee?" --hcp dr-lee --model invent
+//   bun run lab shared-memory --question "What is the dose of Cardioza for Dr. Weber?" --hcp dr-lee --then dr-weber
+//   bun run lab shared-memory --question "What is the dose of Zorbex for Dr. Lee?" --hcp dr-lee
 //   bun run lab shared-memory --demo
 
 import { CRM, KNOWN_DRUGS } from "../src/data";

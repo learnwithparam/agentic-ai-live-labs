@@ -31,7 +31,7 @@ export const lab: Lab = {
   cases: [
     { title: "NAIVE: every wakeup runs", why: "The bot wakes at hour 0 and again at hour 5, which is the same day. It does the day's work twice.", question: DAILY, flags: { times: "0,5", naive: "true" }, expect: "duplicates" },
     { title: "One run for each day", why: "Hours 0 and 5 are one day, and hour 25 is the next. The board has two cards.", question: DAILY, flags: { times: "0,5,25" }, expect: "once" },
-    { title: "A webhook arrives twice", why: "The same label event is delivered two times. The second delivery is ignored.", question: LABEL, flags: { events: "label-7,label-7" }, expect: "once" },
+    { title: "A webhook arrives twice", why: "The same label event is delivered two times. The second delivery is ignored.", question: LABEL, flags: { events: "cardioza-label-v2,cardioza-label-v2" }, expect: "once" },
     { title: "EDGE: the model fails", why: "The model is down. The board shows a failed card, so a person can see it.", question: DAILY, flags: { times: "0", fail: "true" }, expect: "failed" },
   ],
   play(question, flags) {
@@ -39,7 +39,7 @@ export const lab: Lab = {
     const llm = flags.fail ? broken() : modelFrom(flags);
     const hours = (flags.times || "").split(",").filter((hour) => hour !== "");
     const ids = (flags.events || "").split(",").filter((id) => id !== "");
-    const jobs = [{ name: "daily-dose-check", everyHours: 24, hcpId: "H-1", question }];
+    const jobs = [{ name: "daily-dose-check", everyHours: 24, hcpId: "dr-lee", question }];
     print(field("Request", question));
     rule("LOG, STEP BY STEP");
     for (const hour of hours) {
@@ -48,7 +48,7 @@ export const lab: Lab = {
       console.log(dim(`Hour ${hour}: ${cards.length} run(s) started.`));
     }
     for (const id of ids) {
-      const plan: Plan = { jobs: [], events: [{ id, hcpId: "H-1", question }] };
+      const plan: Plan = { jobs: [], events: [{ id, hcpId: "dr-lee", question }] };
       console.log(dim(`Webhook ${id}: ${wake(0, plan, llm, file).length} run(s) started.`));
     }
     return judge(file);

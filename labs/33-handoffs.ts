@@ -10,12 +10,12 @@
 // The examples and the screen output are in show/33-handoffs.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun run lab handoffs --question "Please email Dr. Lee the dose of Cardioza." --hcp H-1 --naive
-//   bun run lab handoffs --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1
-//   bun run lab handoffs --question "Please email Dr. Weber about the new Cardioza label." --hcp H-2
-//   bun run lab handoffs --question "Please email Dr. Lee the dose of Cardioza." --hcp H-1
-//   bun run lab handoffs --question "Please call me back about my last invoice." --hcp H-1
-//   bun run lab handoffs --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1 --limit 0
+//   bun run lab handoffs --question "Please email Dr. Lee the dose of Cardioza." --hcp dr-lee --naive
+//   bun run lab handoffs --question "What is the dose of Cardioza for Dr. Lee?" --hcp dr-lee
+//   bun run lab handoffs --question "Please email Dr. Weber about the new Cardioza label." --hcp dr-weber
+//   bun run lab handoffs --question "Please email Dr. Lee the dose of Cardioza." --hcp dr-lee
+//   bun run lab handoffs --question "Please call me back about my last invoice." --hcp dr-lee
+//   bun run lab handoffs --question "What is the dose of Cardioza for Dr. Lee?" --hcp dr-lee --limit 0
 //   bun run lab handoffs --demo
 
 import { CRM } from "../src/data";

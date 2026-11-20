@@ -30,10 +30,10 @@ Copy any line into your terminal. Each one is a real example from this lab.
 
 ```bash
 bun run lab routing --demo
-bun run lab routing --question "What is the dose of Cardioza?" --hcp H-1
+bun run lab routing --question "What is the dose of Cardioza?" --hcp dr-lee
 bun run lab routing --demo
 bun run lab routing --demo
-bun run lab routing --question "Can you tell me why my last invoice was wrong?" --hcp H-1
+bun run lab routing --question "Can you tell me why my last invoice was wrong?" --hcp dr-lee
 bun run lab routing --demo
 bun run lab routing --demo
 ```
@@ -47,10 +47,10 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
 | 1 | NAIVE: one bot for everything | The rash message reaches the answer bot, which replies from a dose document. | unsafe | `bun run lab routing --demo` |
-| 2 | A dose question | The model says answer, and the answer bot finds the label. | answer | `bun run lab routing --question "What is the dose of Cardioza?" --hcp H-1` |
+| 2 | A dose question | The model says answer, and the answer bot finds the label. | answer | `bun run lab routing --question "What is the dose of Cardioza?" --hcp dr-lee` |
 | 3 | A request for an email | The model says outreach, and the outreach bot writes the email. | outreach | `bun run lab routing --demo` |
 | 4 | EDGE: a rash on a patient | A danger word. The code sends it to a person before the model is asked. | human | `bun run lab routing --demo` |
-| 5 | EDGE: a message that fits no specialist | An invoice question is not the job of either bot. It goes to a person. | human | `bun run lab routing --question "Can you tell me why my last invoice was wrong?" --hcp H-1` |
+| 5 | EDGE: a message that fits no specialist | An invoice question is not the job of either bot. It goes to a person. | human | `bun run lab routing --question "Can you tell me why my last invoice was wrong?" --hcp dr-lee` |
 | 6 | EDGE: the doctor tells the router where to go | She asks for the answer bot, but the danger word wins. | human | `bun run lab routing --demo` |
 
 ## Stuck points

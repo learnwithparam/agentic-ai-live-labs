@@ -13,8 +13,8 @@
 //   bun run lab end-to-end --question "Call from Dr. Lee about Patient: Jane Doe (SSN 123-45-6789) on Cardioza dose"
 //   bun run lab end-to-end --question "What is the dose of Cardioza for Dr. Lee?" --model nocite --approve y
 //   bun run lab end-to-end --question "What is the dose of Cardioza for Dr. Lee?" --model nocite --approve n
-//   bun run lab end-to-end --question "What is the dose of Cardioza for Dr. Lee?" --withdraw DOC-101 --approve n
-//   bun run lab end-to-end --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-9
+//   bun run lab end-to-end --question "What is the dose of Cardioza for Dr. Lee?" --withdraw CARDIOZA-US --approve n
+//   bun run lab end-to-end --question "What is the dose of Cardioza for Dr. Lee?" --hcp dr-unknown
 //   bun run lab end-to-end --demo
 
 import { CRM } from "../src/data";

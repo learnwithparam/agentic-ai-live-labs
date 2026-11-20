@@ -26,13 +26,13 @@ const no = () => "n";
 // approved. Every step is in a record that shows any edit.
 test("a good note goes out, the model never sees the patient, and the record is whole", () => {
   const dir = fresh();
-  const result = answerEndToEnd(NOTE, "H-1", makeModel("ok"), no, dir);
+  const result = answerEndToEnd(NOTE, "dr-lee", makeModel("ok"), no, dir);
   expect(result.status).toBe("sent");
-  expect(result.reply).toContain("DOC-101");
+  expect(result.reply).toContain("CARDIOZA-US");
   expect(result.log.join("\n")).not.toContain("Jane Doe");
   expect(result.log.join("\n")).not.toContain("123-45-6789");
   const watched = spy();
-  answerEndToEnd(NOTE, "H-1", watched.model, no, fresh());
+  answerEndToEnd(NOTE, "dr-lee", watched.model, no, fresh());
   expect(watched.seen.length).toBeGreaterThan(0);
   expect(watched.seen.join("")).not.toContain("Jane Doe");
   expect(watched.seen.join("")).not.toContain("123-45-6789");
@@ -42,26 +42,26 @@ test("a good note goes out, the model never sees the patient, and the record is 
 });
 
 test("the naive way sends the reply unchecked", () => {
-  const result = answerNaive(NOTE, "H-1", makeModel("nocite"));
+  const result = answerNaive(NOTE, "dr-lee", makeModel("nocite"));
   expect(result.status).toBe("sent-unchecked");
 });
 
 test("a reply that fails a check waits for a person, and only a yes sends it", () => {
   const bad = makeModel("nocite");
-  const approved = answerEndToEnd(DOSE, "H-1", bad, yes, fresh());
+  const approved = answerEndToEnd(DOSE, "dr-lee", bad, yes, fresh());
   expect(approved.status).toBe("sent-after-approval");
-  const refused = answerEndToEnd(DOSE, "H-1", bad, no, fresh());
+  const refused = answerEndToEnd(DOSE, "dr-lee", bad, no, fresh());
   expect(refused).toMatchObject({ status: "blocked", reply: "" });
 });
 
 test("an unknown doctor gets nothing", () => {
   const dir = fresh();
-  expect(answerEndToEnd(DOSE, "H-9", makeModel("ok"), yes, dir)).toMatchObject({ status: "refused", reply: "" });
+  expect(answerEndToEnd(DOSE, "dr-unknown", makeModel("ok"), yes, dir)).toMatchObject({ status: "refused", reply: "" });
 });
 
 test("an edit to the record is found", () => {
   const dir = fresh();
-  const result = answerEndToEnd(NOTE, "H-1", makeModel("ok"), no, dir);
+  const result = answerEndToEnd(NOTE, "dr-lee", makeModel("ok"), no, dir);
   const lines = readLines(`${dir}/record.jsonl`);
   lines[1].detail = "0 private pieces";
   Bun.write(`${dir}/record.jsonl`, lines.map((line) => JSON.stringify(line)).join("\n") + "\n");

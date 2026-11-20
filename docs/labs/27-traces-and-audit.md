@@ -31,12 +31,12 @@ Each word has one meaning in every lab.
 Copy any line into your terminal. Each one is a real example from this lab.
 
 ```bash
-bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp H-2 --tamper edit --naive
-bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp H-2
-bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp H-2 --tamper edit
-bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp H-2 --tamper delete
-bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp H-2 --tamper cut
-bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp H-2 --tamper rewrite
+bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp dr-weber --tamper edit --naive
+bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp dr-weber
+bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp dr-weber --tamper edit
+bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp dr-weber --tamper delete
+bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp dr-weber --tamper cut
+bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp dr-weber --tamper rewrite
 bun run lab traces-and-audit --demo
 ```
 
@@ -48,12 +48,12 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
-| 1 | NAIVE: a plain log | Someone changes the document id in the log. The file still reads fine, and nothing notices. | unnoticed | `bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp H-2 --tamper edit --naive` |
-| 2 | Nobody touches the trace | Every line is in order and every fingerprint matches. | intact | `bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp H-2` |
-| 3 | EDGE: one word is changed | The document id in the result line is changed. The fingerprint of that line no longer matches. | caught | `bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp H-2 --tamper edit` |
-| 4 | EDGE: a line is removed | The search line is deleted. The next line points at a line that is gone. | caught | `bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp H-2 --tamper delete` |
-| 5 | EDGE: the end is cut off | The answer line is removed. The chain is still fine, but the last fingerprint is not the saved one. | caught | `bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp H-2 --tamper cut` |
-| 6 | EDGE: the whole file is rewritten | Someone edits a line and works every fingerprint out again. The chain is fine, but the head is not the saved one. | caught | `bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp H-2 --tamper rewrite` |
+| 1 | NAIVE: a plain log | Someone changes the document id in the log. The file still reads fine, and nothing notices. | unnoticed | `bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp dr-weber --tamper edit --naive` |
+| 2 | Nobody touches the trace | Every line is in order and every fingerprint matches. | intact | `bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp dr-weber` |
+| 3 | EDGE: one word is changed | The document id in the result line is changed. The fingerprint of that line no longer matches. | caught | `bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp dr-weber --tamper edit` |
+| 4 | EDGE: a line is removed | The search line is deleted. The next line points at a line that is gone. | caught | `bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp dr-weber --tamper delete` |
+| 5 | EDGE: the end is cut off | The answer line is removed. The chain is still fine, but the last fingerprint is not the saved one. | caught | `bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp dr-weber --tamper cut` |
+| 6 | EDGE: the whole file is rewritten | Someone edits a line and works every fingerprint out again. The chain is fine, but the head is not the saved one. | caught | `bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp dr-weber --tamper rewrite` |
 
 ## Stuck points
 

@@ -1,6 +1,6 @@
 # Three ways to build one job
 
-Three ways to build the same helper. A workflow runs fixed steps. One agent picks its own tools. Many agents pass work between them. Pick the shape with --shape workflow, agent or multi, and the doctor with --hcp H-1, H-2 or H-3.
+Three ways to build the same helper. A workflow runs fixed steps. One agent picks its own tools. Many agents pass work between them. Pick the shape with --shape workflow, agent or multi, and the doctor with --hcp dr-lee, dr-weber or dr-rao.
 
 ## The story in one picture
 
@@ -29,16 +29,16 @@ Each word has one meaning in every lab.
 Copy any line into your terminal. Each one is a real example from this lab.
 
 ```bash
-bun run lab shapes --question "What is the dose of Cardioza?" --shape agent --hcp H-1 --model invent
-bun run lab shapes --question "What do we know about this doctor?" --shape workflow --hcp H-2
-bun run lab shapes --question "What do we know about this doctor?" --shape workflow --hcp H-9
-bun run lab shapes --question "What is the dose of Cardioza?" --shape agent --hcp H-1
-bun run lab shapes --question "What is the dose of Cardioza?" --shape agent --hcp H-2
-bun run lab shapes --question "What is the dose of Zorbex?" --shape agent --hcp H-3
-bun run lab shapes --question "What is the dose of Cardioza?" --shape multi --hcp H-1
-bun run lab shapes --question "What is the dose of Cardioza?" --shape multi --hcp H-1 --model invent --approve n
-bun run lab shapes --question "What is the dose of Cardioza?" --shape multi --hcp H-1 --model invent --approve y
-bun run lab shapes --question "What is the dose of Zorbex?" --shape multi --hcp H-1 --approve n
+bun run lab shapes --question "What is the dose of Cardioza?" --shape agent --hcp dr-lee --model invent
+bun run lab shapes --question "What do we know about this doctor?" --shape workflow --hcp dr-weber
+bun run lab shapes --question "What do we know about this doctor?" --shape workflow --hcp dr-unknown
+bun run lab shapes --question "What is the dose of Cardioza?" --shape agent --hcp dr-lee
+bun run lab shapes --question "What is the dose of Cardioza?" --shape agent --hcp dr-weber
+bun run lab shapes --question "What is the dose of Zorbex?" --shape agent --hcp dr-rao
+bun run lab shapes --question "What is the dose of Cardioza?" --shape multi --hcp dr-lee
+bun run lab shapes --question "What is the dose of Cardioza?" --shape multi --hcp dr-lee --model invent --approve n
+bun run lab shapes --question "What is the dose of Cardioza?" --shape multi --hcp dr-lee --model invent --approve y
+bun run lab shapes --question "What is the dose of Zorbex?" --shape multi --hcp dr-lee --approve n
 bun run lab shapes --demo
 ```
 
@@ -50,16 +50,16 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
-| 1 | NAIVE: one agent, and nothing checks it | The model writes a wrong dose and cites the real document. One agent has no second pair of eyes, so the wrong dose goes out. | answered | `bun run lab shapes --question "What is the dose of Cardioza?" --shape agent --hcp H-1 --model invent` |
-| 2 | Workflow: join a doctor's records | No model needed to combine the CRM profile, recent emails and the documents this doctor's country allows. | joined | `bun run lab shapes --question "What do we know about this doctor?" --shape workflow --hcp H-2` |
-| 3 | Workflow: a doctor we do not know | Plain code handles missing data the same way every time. No profile means no allowed documents. | joined | `bun run lab shapes --question "What do we know about this doctor?" --shape workflow --hcp H-9` |
-| 4 | One agent: three tools in turn | The model looks up the profile, searches approved documents, then checks recent outreach before it answers. | answered | `bun run lab shapes --question "What is the dose of Cardioza?" --shape agent --hcp H-1` |
-| 5 | One agent: a doctor with no recent outreach | Same agent, different doctor. Dr. Weber has no emails, and gets the German dose. | answered | `bun run lab shapes --question "What is the dose of Cardioza?" --shape agent --hcp H-2` |
-| 6 | One agent: no approved document | The agent refuses to guess, but nothing double checks it. That is the gap multi-agent fills. | no-source | `bun run lab shapes --question "What is the dose of Zorbex?" --shape agent --hcp H-3` |
-| 7 | Multi-agent: auditor passes a true draft | The researcher drafts. The auditor finds every cited sentence in its document word for word. No person is needed. | passed | `bun run lab shapes --question "What is the dose of Cardioza?" --shape multi --hcp H-1` |
-| 8 | Multi-agent: auditor catches a wrong dose | The draft says 20mg and cites the real document, so the guardrails lab's citation check passed it. The auditor compares the claim to the source and fails it. A person rejects it. | rejected | `bun run lab shapes --question "What is the dose of Cardioza?" --shape multi --hcp H-1 --model invent --approve n` |
-| 9 | Multi-agent: a person overrides | Same wrong draft, but the reviewer says yes. The gate is only as good as the person behind it. | approved by person | `bun run lab shapes --question "What is the dose of Cardioza?" --shape multi --hcp H-1 --model invent --approve y` |
-| 10 | Multi-agent: nothing to audit | The researcher finds no source, so the draft has no cited claim. The auditor fails it and a person decides. | rejected | `bun run lab shapes --question "What is the dose of Zorbex?" --shape multi --hcp H-1 --approve n` |
+| 1 | NAIVE: one agent, and nothing checks it | The model writes a wrong dose and cites the real document. One agent has no second pair of eyes, so the wrong dose goes out. | answered | `bun run lab shapes --question "What is the dose of Cardioza?" --shape agent --hcp dr-lee --model invent` |
+| 2 | Workflow: join a doctor's records | No model needed to combine the CRM profile, recent emails and the documents this doctor's country allows. | joined | `bun run lab shapes --question "What do we know about this doctor?" --shape workflow --hcp dr-weber` |
+| 3 | Workflow: a doctor we do not know | Plain code handles missing data the same way every time. No profile means no allowed documents. | joined | `bun run lab shapes --question "What do we know about this doctor?" --shape workflow --hcp dr-unknown` |
+| 4 | One agent: three tools in turn | The model looks up the profile, searches approved documents, then checks recent outreach before it answers. | answered | `bun run lab shapes --question "What is the dose of Cardioza?" --shape agent --hcp dr-lee` |
+| 5 | One agent: a doctor with no recent outreach | Same agent, different doctor. Dr. Weber has no emails, and gets the German dose. | answered | `bun run lab shapes --question "What is the dose of Cardioza?" --shape agent --hcp dr-weber` |
+| 6 | One agent: no approved document | The agent refuses to guess, but nothing double checks it. That is the gap multi-agent fills. | no-source | `bun run lab shapes --question "What is the dose of Zorbex?" --shape agent --hcp dr-rao` |
+| 7 | Multi-agent: auditor passes a true draft | The researcher drafts. The auditor finds every cited sentence in its document word for word. No person is needed. | passed | `bun run lab shapes --question "What is the dose of Cardioza?" --shape multi --hcp dr-lee` |
+| 8 | Multi-agent: auditor catches a wrong dose | The draft says 20mg and cites the real document, so the guardrails lab's citation check passed it. The auditor compares the claim to the source and fails it. A person rejects it. | rejected | `bun run lab shapes --question "What is the dose of Cardioza?" --shape multi --hcp dr-lee --model invent --approve n` |
+| 9 | Multi-agent: a person overrides | Same wrong draft, but the reviewer says yes. The gate is only as good as the person behind it. | approved by person | `bun run lab shapes --question "What is the dose of Cardioza?" --shape multi --hcp dr-lee --model invent --approve y` |
+| 10 | Multi-agent: nothing to audit | The researcher finds no source, so the draft has no cited claim. The auditor fails it and a person decides. | rejected | `bun run lab shapes --question "What is the dose of Zorbex?" --shape multi --hcp dr-lee --approve n` |
 
 ## Stuck points
 

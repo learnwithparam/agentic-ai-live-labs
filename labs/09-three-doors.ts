@@ -89,7 +89,7 @@ export type Trip = { door: string; answer: string; milliseconds: number; outcome
 export function outcomeOf(answer: string): string {
   if (answer.startsWith("ERROR")) return "door-error";
   if (answer === NO_DOC) return "no-source";
-  if (answer.includes("DOC-")) return "answered";
+  if (/\[[A-Z]+-[A-Z]+\]/.test(answer)) return "answered";
   return "uncited";
 }
 

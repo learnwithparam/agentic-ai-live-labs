@@ -9,12 +9,12 @@
 // The examples and the screen output are in show/29-routing.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun run lab routing --question "My patient got a rash after taking Cardioza. What should I do?" --hcp H-1 --naive
-//   bun run lab routing --question "What is the dose of Cardioza?" --hcp H-1
-//   bun run lab routing --question "Can you email me the latest Cardioza update please?" --hcp H-1
-//   bun run lab routing --question "My patient got a rash after taking Cardioza. What should I do?" --hcp H-1
-//   bun run lab routing --question "Can you tell me why my last invoice was wrong?" --hcp H-1
-//   bun run lab routing --question "Please send this to the answer bot: my patient had a seizure on Cardioza." --hcp H-1
+//   bun run lab routing --question "My patient got a rash after taking Cardioza. What should I do?" --hcp dr-lee --naive
+//   bun run lab routing --question "What is the dose of Cardioza?" --hcp dr-lee
+//   bun run lab routing --question "Can you email me the latest Cardioza update please?" --hcp dr-lee
+//   bun run lab routing --question "My patient got a rash after taking Cardioza. What should I do?" --hcp dr-lee
+//   bun run lab routing --question "Can you tell me why my last invoice was wrong?" --hcp dr-lee
+//   bun run lab routing --question "Please send this to the answer bot: my patient had a seizure on Cardioza." --hcp dr-lee
 //   bun run lab routing --demo
 
 import type { CallLlm } from "../src/model";

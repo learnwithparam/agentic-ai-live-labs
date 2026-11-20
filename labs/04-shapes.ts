@@ -7,9 +7,9 @@
 // The examples and the screen output are in show/04-shapes.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun run lab shapes --question "What is the dose of Cardioza?" --shape agent --hcp H-1 --model invent
-//   bun run lab shapes --question "What do we know about this doctor?" --shape workflow --hcp H-2
-//   bun run lab shapes --question "What is the dose of Cardioza?" --shape agent --hcp H-1
+//   bun run lab shapes --question "What is the dose of Cardioza?" --shape agent --hcp dr-lee --model invent
+//   bun run lab shapes --question "What do we know about this doctor?" --shape workflow --hcp dr-weber
+//   bun run lab shapes --question "What is the dose of Cardioza?" --shape agent --hcp dr-lee
 //   bun run lab shapes --question "What is the dose of Cardioza?" --shape multi --model invent --approve n
 //   bun run lab shapes --demo
 

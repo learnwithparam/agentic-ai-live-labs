@@ -8,11 +8,11 @@ test("live: tool results go to the model as text, and the key is never in the bo
   const messages = [
     { role: "system" as const, content: "Use ONLY the approved documents." },
     { role: "user" as const, content: "Question: dose?" },
-    { role: "tool" as const, name: "search_approved_docs", content: "[DOC-101] 10mg" },
+    { role: "tool" as const, name: "search_approved_docs", content: "[CARDIOZA-US] 10mg" },
   ];
   const chat = toChatMessages(messages);
   expect(chat.length).toBe(3);
-  expect(chat[2].content).toContain("[DOC-101] 10mg");
+  expect(chat[2].content).toContain("[CARDIOZA-US] 10mg");
   const body = buildBody(messages, ["search_approved_docs"], "some/model");
   expect(JSON.stringify(body)).not.toContain("Bearer");
   expect(body.tools).toHaveLength(1);
@@ -28,7 +28,7 @@ test("live: a tool call and a text answer both become a reply", () => {
 });
 
 test("live: odd marks from a real model become plain marks", () => {
-  expect(cleanText("**10\u00a0mg** (see \u3010DOC\u2011101\u3011)")).toBe("10 mg (see [DOC-101])");
+  expect(cleanText("**10\u00a0mg** (see \u3010CARDIOZA\u2011US\u3011)")).toBe("10 mg (see [CARDIOZA-US])");
 });
 
 // These two tests call a real embedding model. They run only when a key is set.

@@ -1,6 +1,6 @@
 # Act for the user
 
-Each example is one doctor asking the bot a question. The bot can act for a user, with that user's rights. Pick the doctor with --hcp: H-1 is Dr Lee (US), H-2 is Dr Weber (Germany).
+Each example is one doctor asking the bot a question. The bot can act for a user, with that user's rights. Pick the doctor with --hcp: dr-lee is Dr Lee (US), dr-weber is Dr Weber (Germany).
 
 ## The story in one picture
 
@@ -29,13 +29,13 @@ Each word has one meaning in every lab.
 Copy any line into your terminal. Each one is a real example from this lab.
 
 ```bash
-bun run lab act-for-user --question "What is the Cardioza dose in the US?" --hcp H-2 --naive
-bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp H-1
-bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp H-2
-bun run lab act-for-user --question "What is the Cardioza dose in the US?" --hcp H-2
-bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp H-9
-bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp H-2 --forge
-bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp H-1 --bot report
+bun run lab act-for-user --question "What is the Cardioza dose in the US?" --hcp dr-weber --naive
+bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp dr-lee
+bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp dr-weber
+bun run lab act-for-user --question "What is the Cardioza dose in the US?" --hcp dr-weber
+bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp dr-unknown
+bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp dr-weber --forge
+bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp dr-lee --bot report
 bun run lab act-for-user --demo
 ```
 
@@ -47,13 +47,13 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
-| 1 | NAIVE: the bot's own key | Dr. Weber is in Germany and asks about the US. The service key searches the US, so she gets 10mg, the wrong label for her. | wrong-label | `bun run lab act-for-user --question "What is the Cardioza dose in the US?" --hcp H-2 --naive` |
-| 2 | A US doctor | The token names Dr. Lee. The search uses US, and she gets the US label. | own-label | `bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp H-1` |
-| 3 | A German doctor | The token names Dr. Weber. The search uses DE, and she gets 5mg. | own-label | `bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp H-2` |
-| 4 | EDGE: she asks about the US | The country comes from her record, not from her words. She still gets the German label. | own-label | `bun run lab act-for-user --question "What is the Cardioza dose in the US?" --hcp H-2` |
-| 5 | EDGE: a doctor who is not in the CRM | The token is real, but nobody by that id exists. Nothing is searched. | denied | `bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp H-9` |
-| 6 | EDGE: a token changed to another doctor | Someone edits Dr. Weber's token to say H-1. The signature breaks, so nothing runs. | denied | `bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp H-2 --forge` |
-| 7 | EDGE: a bot that may not read documents | The report bot's token has no docs.read, even for a real doctor. | denied | `bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp H-1 --bot report` |
+| 1 | NAIVE: the bot's own key | Dr. Weber is in Germany and asks about the US. The service key searches the US, so she gets 10mg, the wrong label for her. | wrong-label | `bun run lab act-for-user --question "What is the Cardioza dose in the US?" --hcp dr-weber --naive` |
+| 2 | A US doctor | The token names Dr. Lee. The search uses US, and she gets the US label. | own-label | `bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp dr-lee` |
+| 3 | A German doctor | The token names Dr. Weber. The search uses DE, and she gets 5mg. | own-label | `bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp dr-weber` |
+| 4 | EDGE: she asks about the US | The country comes from her record, not from her words. She still gets the German label. | own-label | `bun run lab act-for-user --question "What is the Cardioza dose in the US?" --hcp dr-weber` |
+| 5 | EDGE: a doctor who is not in the CRM | The token is real, but nobody by that id exists. Nothing is searched. | denied | `bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp dr-unknown` |
+| 6 | EDGE: a token changed to another doctor | Someone edits Dr. Weber's token to say dr-lee. The signature breaks, so nothing runs. | denied | `bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp dr-weber --forge` |
+| 7 | EDGE: a bot that may not read documents | The report bot's token has no docs.read, even for a real doctor. | denied | `bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp dr-lee --bot report` |
 
 ## Stuck points
 

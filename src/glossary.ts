@@ -198,7 +198,7 @@ export const GLOSSARY: Record<string, Word> = {
 
   // The claim checker lab
   claim: { word: "claim", meaning: "A sentence that says something about a drug, such as its dose." },
-  citation: { word: "citation", meaning: "A document id in brackets, such as [DOC-101], that names the source." },
+  citation: { word: "citation", meaning: "The name of a source in square brackets, such as [CARDIOZA-US]." },
   "word-for-word": { word: "word for word", meaning: "The same words as the source, with nothing changed." },
 
   // Country rules and revocation lab

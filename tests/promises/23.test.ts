@@ -21,7 +21,7 @@ test("a missing citation or a wrong dose goes to the strong model, and the bad a
     const run = answerRouted(ask, "US", makeModel(habit), makeModel("ok"));
     expect(run.tier).toBe("big");
     expect(run.answer).not.toContain("20mg");
-    expect(run.answer).toContain("DOC-101");
+    expect(run.answer).toContain("CARDIOZA-US");
   }
 });
 

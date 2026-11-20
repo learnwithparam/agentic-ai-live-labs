@@ -20,11 +20,11 @@ export const lab: Lab = {
   promise: "A withdrawn document is never sent, even from the cache. That holds for a saved answer, and for an answer made a moment before. A US answer never reaches a German doctor.",
   production: "Keep the withdrawal list in the same store as the documents. Revoke every saved answer that uses the document. Alert the medical team when a saved answer is dropped.",
   cases: [
-    { title: "NAIVE: serve the saved answer", why: "DOC-101 is withdrawn after the first answer. The saved answer still holds its dose, and it goes out again.", question: ASK, flags: { withdraw: "DOC-101", naive: "true" }, expect: "stale" },
-    { title: "A withdrawn document", why: "The saved answer cites DOC-101. It is deleted. Nothing else is approved for Cardioza in the US, so there is no answer.", question: ASK, flags: { withdraw: "DOC-101" }, expect: "no-answer" },
-    { title: "Another country's document", why: "DOC-102 is for Germany. It is withdrawn, but Dr. Lee is in the US, so the saved answer is still good.", question: ASK, flags: { withdraw: "DOC-102" }, expect: "cache" },
+    { title: "NAIVE: serve the saved answer", why: "CARDIOZA-US is withdrawn after the first answer. The saved answer still holds its dose, and it goes out again.", question: ASK, flags: { withdraw: "CARDIOZA-US", naive: "true" }, expect: "stale" },
+    { title: "A withdrawn document", why: "The saved answer cites CARDIOZA-US. It is deleted. Nothing else is approved for Cardioza in the US, so there is no answer.", question: ASK, flags: { withdraw: "CARDIOZA-US" }, expect: "no-answer" },
+    { title: "Another country's document", why: "CARDIOZA-DE is for Germany. It is withdrawn, but Dr. Lee is in the US, so the saved answer is still good.", question: ASK, flags: { withdraw: "CARDIOZA-DE" }, expect: "cache" },
     { title: "Nothing withdrawn", why: "The second ask is served from the saved answer. It is fast, and it is still approved.", question: ASK, flags: {}, expect: "cache" },
-    { title: "EDGE: withdrawn during the run", why: "There is no saved answer. The document is withdrawn after the search and before the send. The last check catches it.", question: ASK, flags: { late: "DOC-101" }, expect: "blocked" },
+    { title: "EDGE: withdrawn during the run", why: "There is no saved answer. The document is withdrawn after the search and before the send. The last check catches it.", question: ASK, flags: { late: "CARDIOZA-US" }, expect: "blocked" },
   ],
   play(question, flags) {
     const dir = mkdtempSync(`${tmpdir()}/lab39-`);

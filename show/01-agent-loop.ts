@@ -35,7 +35,7 @@ export const lab: Lab = {
       box("STOPPED", [verdict.blocked("Step limit reached before the model answered.")], red);
       return "stopped";
     }
-    if (result.answer.includes("DOC-")) {
+    if (/\[[A-Z]+-[A-Z]+\]/.test(result.answer)) {
       box("ANSWER", field("", highlight(result.answer), green, 0), green);
       return "answered";
     }

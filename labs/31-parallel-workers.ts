@@ -9,11 +9,11 @@
 // The examples and the screen output are in show/31-parallel-workers.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun run lab parallel-workers --question "Please prepare a call brief for Dr. Lee." --hcp H-1 --naive
-//   bun run lab parallel-workers --question "Please prepare a call brief for Dr. Lee." --hcp H-1
-//   bun run lab parallel-workers --question "Please prepare a call brief for Dr. Weber." --hcp H-2
-//   bun run lab parallel-workers --question "Please prepare a call brief for Dr. Lee." --hcp H-1 --stuck emails
-//   bun run lab parallel-workers --question "Please prepare a call brief for Dr. Lee." --hcp H-1 --crash profile
+//   bun run lab parallel-workers --question "Please prepare a call brief for Dr. Lee." --hcp dr-lee --naive
+//   bun run lab parallel-workers --question "Please prepare a call brief for Dr. Lee." --hcp dr-lee
+//   bun run lab parallel-workers --question "Please prepare a call brief for Dr. Weber." --hcp dr-weber
+//   bun run lab parallel-workers --question "Please prepare a call brief for Dr. Lee." --hcp dr-lee --stuck emails
+//   bun run lab parallel-workers --question "Please prepare a call brief for Dr. Lee." --hcp dr-lee --crash profile
 //   bun run lab parallel-workers --demo
 
 import { mkdirSync, existsSync, readFileSync } from "node:fs";

@@ -58,7 +58,7 @@ export const rule = (label = "") =>
 // Colour each citation in a sentence.
 export function highlight(text: string): string {
   return text
-    .replace(/\[DOC-\d+\]/g, (match) => bold(cyan(match)))
+    .replace(/\[[A-Z]+-[A-Z]+\]/g, (match) => bold(cyan(match)))
     .replace(/\[(?:SSN|EMAIL|PHONE|MRN|DOB|NAME)\]/g, (match) => bold(magenta(match)));
 }
 

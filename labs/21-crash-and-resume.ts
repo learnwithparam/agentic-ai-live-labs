@@ -22,7 +22,7 @@ import { runLab } from "../src/runner";
 import { dieIf, isDone, markDone, sendAlways, sendOnce } from "../src/jobs"; // the files and the kill
 
 export type Job = { sent: string[]; skipped: string[]; drafted: number; log: string[] };
-export const DOCTORS = ["H-1", "H-2", "H-3"];
+export const DOCTORS = ["dr-lee", "dr-weber", "dr-rao"];
 
 // Email every doctor, and survive a kill. Read the steps in order.
 export function runJob(jobId: string, doctors: string[], callLlm: CallLlm, dieAt = ""): Job {
@@ -62,7 +62,7 @@ export function runJob(jobId: string, doctors: string[], callLlm: CallLlm, dieAt
 // Ask the model for one short email. The source is the approved document, nothing else.
 export function draftEmail(doctor: string, callLlm: CallLlm): string {
   const name = CRM[doctor].name;
-  const source = APPROVED_DOCS["DOC-101"].text;
+  const source = APPROVED_DOCS["CARDIOZA-US"].text;
   const prompt = `MAIL: Write one short email to ${name}. Use this source only.\nSOURCE: ${source}`;
   return (callLlm([{ role: "user", content: prompt }], []).text || "").trim();
 }

@@ -24,16 +24,16 @@ export const lab: Lab = {
   production: "Run each guard as its own service with its own owner. Alert a person when a guard blocks, and keep the record in storage that cannot be changed.",
   cases: [
     { title: "NAIVE: no guards", why: "The model reads the patient's name and number, and its reply goes out with no check.", question: NOTE, flags: { naive: "true" }, expect: "sent-unchecked" },
-    { title: "Every guard passes", why: "The private details are hidden, the reply matches DOC-101, and the record is whole.", question: NOTE, flags: {}, expect: "sent" },
+    { title: "Every guard passes", why: "The private details are hidden, the reply matches CARDIOZA-US, and the record is whole.", question: NOTE, flags: {}, expect: "sent" },
     { title: "EDGE: a reply with no source, and a person says yes", why: "The model forgets the citation, so the check fails. The person reads it and approves.", question: DOSE, flags: { model: "nocite", approve: "y" }, expect: "sent-after-approval" },
     { title: "EDGE: a reply with no source, and a person says no", why: "The same failure, and the person says no. Nothing is sent.", question: DOSE, flags: { model: "nocite", approve: "n" }, expect: "blocked" },
-    { title: "EDGE: the document was withdrawn", why: "DOC-101 is withdrawn, and no other approved document is left. The bot says it has no approved source. That is true, so it goes out. The old dose never does.", question: DOSE, flags: { withdraw: "DOC-101" }, expect: "sent" },
-    { title: "EDGE: a doctor we do not know", why: "H-9 is not in the CRM, so the run stops at step 1.", question: DOSE, flags: { hcp: "H-9" }, expect: "refused" },
+    { title: "EDGE: the document was withdrawn", why: "CARDIOZA-US is withdrawn, and no other approved document is left. The bot says it has no approved source. That is true, so it goes out. The old dose never does.", question: DOSE, flags: { withdraw: "CARDIOZA-US" }, expect: "sent" },
+    { title: "EDGE: a doctor we do not know", why: "dr-unknown is not in the CRM, so the run stops at step 1.", question: DOSE, flags: { hcp: "dr-unknown" }, expect: "refused" },
   ],
   play(question, flags, ask) {
     const dir = mkdtempSync(`${tmpdir()}/lab40-`);
     const llm = modelFrom(flags);
-    const hcp = flags.hcp || "H-1";
+    const hcp = flags.hcp || "dr-lee";
     print(field("Question", question));
     if (flags.withdraw) withdraw(dir, flags.withdraw, "The label changed.");
     rule("LOG, STEP BY STEP");

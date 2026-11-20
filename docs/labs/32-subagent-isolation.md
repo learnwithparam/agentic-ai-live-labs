@@ -27,12 +27,12 @@ Each word has one meaning in every lab.
 Copy any line into your terminal. Each one is a real example from this lab.
 
 ```bash
-bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1 --naive
-bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1
-bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Weber?" --hcp H-2
-bun run lab subagent-isolation --question "What is the dose of Zorbex for Dr. Lee?" --hcp H-1
-bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1 --model invent
-bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1 --model stuck
+bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Lee?" --hcp dr-lee --naive
+bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Lee?" --hcp dr-lee
+bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Weber?" --hcp dr-weber
+bun run lab subagent-isolation --question "What is the dose of Zorbex for Dr. Lee?" --hcp dr-lee
+bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Lee?" --hcp dr-lee --model invent
+bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Lee?" --hcp dr-lee --model stuck
 bun run lab subagent-isolation --demo
 ```
 
@@ -44,12 +44,12 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
-| 1 | NAIVE: the main agent reads everything | The main agent searches by itself. Forty old drafts fill its space. | flooded | `bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1 --naive` |
-| 2 | A helper does the search | The helper reads the drafts. The main agent keeps one short report. | clean | `bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1` |
-| 3 | A German doctor | Dr. Weber is in Germany, so the report holds the German dose. | clean | `bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Weber?" --hcp H-2` |
-| 4 | EDGE: no approved document | There is no approved document for Zorbex. The helper says so, and the main agent makes nothing up. | no-answer | `bun run lab subagent-isolation --question "What is the dose of Zorbex for Dr. Lee?" --hcp H-1` |
-| 5 | EDGE: the helper makes up a dose | The helper writes a dose that no approved document has. The main agent checks the report and refuses it. | no-answer | `bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1 --model invent` |
-| 6 | EDGE: the helper gets stuck | The helper never finishes. The main agent gets a short failure note, not the helper's whole log. | no-answer | `bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1 --model stuck` |
+| 1 | NAIVE: the main agent reads everything | The main agent searches by itself. Forty old drafts fill its space. | flooded | `bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Lee?" --hcp dr-lee --naive` |
+| 2 | A helper does the search | The helper reads the drafts. The main agent keeps one short report. | clean | `bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Lee?" --hcp dr-lee` |
+| 3 | A German doctor | Dr. Weber is in Germany, so the report holds the German dose. | clean | `bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Weber?" --hcp dr-weber` |
+| 4 | EDGE: no approved document | There is no approved document for Zorbex. The helper says so, and the main agent makes nothing up. | no-answer | `bun run lab subagent-isolation --question "What is the dose of Zorbex for Dr. Lee?" --hcp dr-lee` |
+| 5 | EDGE: the helper makes up a dose | The helper writes a dose that no approved document has. The main agent checks the report and refuses it. | no-answer | `bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Lee?" --hcp dr-lee --model invent` |
+| 6 | EDGE: the helper gets stuck | The helper never finishes. The main agent gets a short failure note, not the helper's whole log. | no-answer | `bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Lee?" --hcp dr-lee --model stuck` |
 
 ## Stuck points
 

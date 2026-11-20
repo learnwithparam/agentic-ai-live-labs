@@ -12,5 +12,5 @@ function allDocuments(): string {
 export const SOURCES: Source[] = [
   { name: "documents", about: "approved drug documents: dose, side effects, storage, label", text: allDocuments() },
   { name: "profile", about: "the doctor profile: who they are, their specialty, how they like emails", text: "DOCTOR PROFILE: Dr. Lee, US, cardiology. Prefers short emails." },
-  { name: "emails", about: "recent emails sent to and from the doctor", text: "RECENT EMAILS:\n" + EMAILS["H-1"].join("\n") },
+  { name: "emails", about: "recent emails sent to and from the doctor", text: "RECENT EMAILS:\n" + EMAILS["dr-lee"].join("\n") },
 ];

@@ -12,7 +12,7 @@ export const lab: Lab = {
   file: "30-chain-and-delegate.ts",
   title: "Chains and delegation",
   about:
-    "Each example is one job for three doctors. Pick the doctors with --hcps, for example H-1,H-2,H-3. The lead splits the job and delegates each doctor to a worker. Each step in the chain feeds the next one.",
+    "Each example is one job for three doctors. Pick the doctors with --hcps, for example dr-lee,dr-weber,dr-rao. The lead splits the job and delegates each doctor to a worker. Each step in the chain feeds the next one.",
   terms: ["chain", "delegate", "lead", "worker"],
   challenge: "One bot, one search and one letter for three doctors. The search ran for one country, so the others get the wrong label.",
   promise: "Each doctor's letter is written from a document of the doctor's own country, and it passes a check. A worker that fails is named and the others still go.",
@@ -20,11 +20,11 @@ export const lab: Lab = {
   cases: [
     { title: "NAIVE: one letter for everyone", why: "One search runs for Dr. Lee's country. Dr. Weber gets the US dose in his letter.", question: ALL, flags: { naive: "true" }, expect: "wrong-label" },
     { title: "Three doctors, three chains", why: "Each worker searches its own doctor's country. Dr. Weber's letter cites the German document.", question: ALL, expect: "all-sent" },
-    { title: "One doctor", why: "A job for one doctor is one worker and one chain.", question: "Write the Cardioza update for Dr. Weber please.", flags: { hcps: "H-2" }, expect: "all-sent" },
+    { title: "One doctor", why: "A job for one doctor is one worker and one chain.", question: "Write the Cardioza update for Dr. Weber please.", flags: { hcps: "dr-weber" }, expect: "all-sent" },
     { title: "EDGE: one worker has nothing to write from", why: "There is no German Neurovex document. Dr. Weber's worker holds its letter, and the other two still go.", question: "Write the Neurovex update for Dr. Lee, Dr. Weber and Dr. Rao.", expect: "partial" },
   ],
   play(question, flags) {
-    const hcps = (flags.hcps || "H-1,H-2,H-3").split(",");
+    const hcps = (flags.hcps || "dr-lee,dr-weber,dr-rao").split(",");
     print(field("Job", question));
     const model = modelFrom(flags);
     let letters;

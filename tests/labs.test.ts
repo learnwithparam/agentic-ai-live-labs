@@ -29,7 +29,7 @@ describe("agent loop", () => {
     const result = runAgentLoop("What is the dose of Cardioza?", "US", makeModel());
     expect(result.steps.map((step) => step.kind)).toEqual(["tool", "answer"]);
     expect(result.answer).toContain("10mg");
-    expect(result.answer).toContain("[DOC-101]");
+    expect(result.answer).toContain("[CARDIOZA-US]");
   });
   test("uses the country's own document", () => {
     expect(runAgentLoop("What is the dose of Cardioza?", "DE", makeModel()).answer).toContain("5mg");
@@ -39,7 +39,7 @@ describe("agent loop", () => {
     expect(runAgentLoop("x", "US", stuck, searchOnly, 3).stopped).toBe(true);
   });
   test("refuses a tool that is not on the list", () => {
-    const sneaky = () => ({ toolCall: { name: "get_hcp_profile", args: { query: "x", country: "US", hcpId: "H-1" } } });
+    const sneaky = () => ({ toolCall: { name: "get_hcp_profile", args: { query: "x", country: "US", hcpId: "dr-lee" } } });
     const result = runAgentLoop("x", "US", sneaky, searchOnly, 1);
     expect(result.steps[0]).toMatchObject({ kind: "tool", result: "TOOL_NOT_ALLOWED: get_hcp_profile" });
   });
@@ -57,8 +57,8 @@ describe("guardrails", () => {
   });
   test("blocks a reply with no citation or an unknown one", () => {
     expect(verifyOutput("10mg daily", ids).ok).toBe(false);
-    expect(verifyOutput("10mg daily [DOC-999]", ids).ok).toBe(false);
-    expect(verifyOutput("10mg daily [DOC-101]", ids).ok).toBe(true);
+    expect(verifyOutput("10mg daily [FAKE-LABEL]", ids).ok).toBe(false);
+    expect(verifyOutput("10mg daily [CARDIOZA-US]", ids).ok).toBe(true);
   });
 });
 
@@ -83,7 +83,7 @@ describe("gates", () => {
     let seen = "";
     const spy = (messages: { content: string }[]) => {
       seen = messages.map((message) => message.content).join(" ");
-      return { text: "x [DOC-101]" };
+      return { text: "x [CARDIOZA-US]" };
     };
     silent(() => handleHcpInquiry("Cardioza dose Patient: Jane Doe SSN 123-45-6789", "US", spy as never, no));
     expect(seen).not.toContain("123-45-6789");
@@ -93,17 +93,17 @@ describe("gates", () => {
 
 describe("shapes", () => {
   test("workflow joins records with no model", () => {
-    const result = hcpContextWorkflow("H-2");
+    const result = hcpContextWorkflow("dr-weber");
     expect(result.profile?.country).toBe("DE");
-    expect(result.allowedDocs).toEqual(["DOC-102: Cardioza"]);
+    expect(result.allowedDocs).toEqual(["CARDIOZA-DE: Cardioza"]);
   });
   test("workflow handles an unknown doctor", () => {
-    const result = hcpContextWorkflow("H-9");
+    const result = hcpContextWorkflow("dr-unknown");
     expect(result.profile).toBeUndefined();
     expect(result.allowedDocs).toEqual([]);
   });
   test("one agent picks three tools", () => {
-    const result = singleHcpAgent("What is the dose of Cardioza?", "H-1", makeModel());
+    const result = singleHcpAgent("What is the dose of Cardioza?", "dr-lee", makeModel());
     expect(result.steps.filter((step) => step.kind === "tool").length).toBe(3);
     expect(result.answer).toContain("Recent outreach");
   });

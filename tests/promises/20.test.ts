@@ -23,7 +23,7 @@ test("bad input makes no call, and a no is never tried again", () => {
 test("a flaky service is retried until it works, and one try is not enough", () => {
   const fixed = askService(flaky.url, "What is the dose of Cardioza?", "US", limits);
   expect(fixed).toMatchObject({ outcome: "ok", attempts: 3 });
-  expect(fixed.text).toContain("DOC-101");
+  expect(fixed.text).toContain("CARDIOZA-US");
   const naive = startService("flaky");
   expect(askService(naive.url, "What is the dose of Cardioza?", "US", NAIVE_LIMITS).outcome).toBe("unavailable");
   naive.stop();

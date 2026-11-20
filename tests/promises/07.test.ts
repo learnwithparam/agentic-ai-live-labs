@@ -30,7 +30,7 @@ test("tools come from the server, not from the agent", () => {
 
 test("every failure comes back as text that starts with ERROR", () => {
   expect(callMcpTool("delete_everything", {})).toStartWith("ERROR");
-  expect(callMcpTool("get_hcp_profile", { hcpId: "H-9" })).toStartWith("ERROR");
+  expect(callMcpTool("get_hcp_profile", { hcpId: "dr-unknown" })).toStartWith("ERROR");
   expect(callMcpTool("search_approved_docs", {}, "src/missing-server.ts")).toStartWith("ERROR");
   expect(discoverTools("src/missing-server.ts")).toEqual([]);
 });

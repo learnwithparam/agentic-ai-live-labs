@@ -21,23 +21,23 @@ test("the second ask comes from the cache while the document is approved", () =>
 test("a withdrawn document is never served from the cache", () => {
   const dir = fresh();
   answerChecked(ASK, "US", ok, dir);
-  withdraw(dir, "DOC-101", "The label changed.");
+  withdraw(dir, "CARDIOZA-US", "The label changed.");
   const second = answerChecked(ASK, "US", ok, dir);
   expect(second.answer).not.toContain("10mg");
-  expect(second.answer).not.toContain("DOC-101");
+  expect(second.answer).not.toContain("CARDIOZA-US");
   expect(second.source).toBe("none");
 });
 
 test("a withdrawal for another country leaves the saved answer alone", () => {
   const dir = fresh();
   answerChecked(ASK, "US", ok, dir);
-  withdraw(dir, "DOC-102", "The label changed.");
+  withdraw(dir, "CARDIOZA-DE", "The label changed.");
   expect(answerChecked(ASK, "US", ok, dir).source).toBe("cache");
 });
 
 test("a document withdrawn during the run is caught before the send", () => {
   const dir = fresh();
-  const hook = () => withdraw(dir, "DOC-101", "The label changed.");
+  const hook = () => withdraw(dir, "CARDIOZA-US", "The label changed.");
   const result = answerChecked(ASK, "US", ok, dir, hook);
   expect(result.source).toBe("blocked");
   expect(result.answer).not.toContain("10mg");
@@ -55,13 +55,13 @@ test("a US answer in the cache is never given to a German doctor", () => {
 
 test("the withdrawal stays in the list with its reason", () => {
   const dir = fresh();
-  withdraw(dir, "DOC-101", "The label changed.");
-  expect(withdrawnIds(dir)).toEqual(["DOC-101"]);
+  withdraw(dir, "CARDIOZA-US", "The label changed.");
+  expect(withdrawnIds(dir)).toEqual(["CARDIOZA-US"]);
 });
 
 test("the naive cache serves the withdrawn dose", () => {
   const dir = fresh();
   answerNaive(ASK, "US", ok, dir);
-  withdraw(dir, "DOC-101", "The label changed.");
+  withdraw(dir, "CARDIOZA-US", "The label changed.");
   expect(answerNaive(ASK, "US", ok, dir).answer).toContain("10mg");
 });

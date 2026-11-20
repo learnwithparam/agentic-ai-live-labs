@@ -11,7 +11,7 @@ export const lab: Lab = {
   file: "07-mcp-basics.ts",
   title: "MCP basics",
   about:
-    "The agent gets its tools from a real MCP server. That server runs as a separate program and speaks JSON-RPC messages. Nothing is hard-coded. Use --hcp H-1, H-2 or H-3 to pick the doctor.",
+    "The agent gets its tools from a real MCP server. That server runs as a separate program and speaks JSON-RPC messages. Nothing is hard-coded. Use --hcp dr-lee, dr-weber or dr-rao to pick the doctor.",
   terms: ["mcp", "mcp-server", "json-rpc"],
   challenge: "Every new tool means new glue code in every agent. Tool lists go out of date.",
   promise: "The agent learns its tools from the server, so a new server tool needs no agent change.",
@@ -19,16 +19,16 @@ export const lab: Lab = {
   cases: [
     { title: "NAIVE: a hard-coded tool list", why: "The agent copied one tool into its own code. The server has more. The agent cannot use them, and nobody gets an error.", question: "What is the dose of Cardioza?", flags: { naive: "true" }, expect: "out-of-date" },
     { title: "See the messages", why: "This is all MCP is: lines of JSON in, lines of JSON out. Read the method names and the tool list.", question: "What is the dose of Cardioza?", flags: { show: "wire" }, expect: "listed" },
-    { title: "The agent uses the server's tools", why: "The agent finds three tools, then calls them one by one. The answer cites its document.", question: "What is the dose of Cardioza?", flags: { hcp: "H-1" }, expect: "answered" },
-    { title: "Another country", why: "Same server, a German doctor. The search tool filters by country, so the dose is 5mg.", question: "What is the dose of Cardioza?", flags: { hcp: "H-2", country: "DE" }, expect: "answered" },
+    { title: "The agent uses the server's tools", why: "The agent finds three tools, then calls them one by one. The answer cites its document.", question: "What is the dose of Cardioza?", flags: { hcp: "dr-lee" }, expect: "answered" },
+    { title: "Another country", why: "Same server, a German doctor. The search tool filters by country, so the dose is 5mg.", question: "What is the dose of Cardioza?", flags: { hcp: "dr-weber", country: "DE" }, expect: "answered" },
     { title: "No approved document", why: "The server says nothing was found. The agent refuses to guess.", question: "What is the dose of Zorbex?", expect: "no-source" },
-    { title: "A tool reports an error", why: "Doctor H-9 does not exist. The server marks the result as an error, and the client passes it on as text.", question: "What is the dose of Cardioza?", flags: { hcp: "H-9" }, expect: "tool-error" },
+    { title: "A tool reports an error", why: "Doctor dr-unknown does not exist. The server marks the result as an error, and the client passes it on as text.", question: "What is the dose of Cardioza?", flags: { hcp: "dr-unknown" }, expect: "tool-error" },
     { title: "A tool the server does not have", why: "The agent asks for delete_everything. The server answers with a protocol error. The call goes nowhere.", question: "What is the dose of Cardioza?", flags: { tool: "delete_everything" }, expect: "tool-error" },
     { title: "The server is not there", why: "The path is wrong, so nothing answers. The client finds no tools and says so, instead of hanging.", question: "What is the dose of Cardioza?", flags: { script: "src/missing-server.ts" }, expect: "no-server" },
   ],
   play(question, flags) {
     const script = flags.script || SERVER;
-    const hcpId = flags.hcp || "H-1";
+    const hcpId = flags.hcp || "dr-lee";
     const country = flags.country || (CRM[hcpId] ? CRM[hcpId].country : "US");
     if (flags.naive) return showNaive(script);
     if (flags.show === "wire") return showWire(script);
@@ -52,7 +52,7 @@ export const lab: Lab = {
       box("A TOOL FAILED", [yellow(asked.answer)], yellow);
       return "tool-error";
     }
-    const cited = asked.answer.includes("DOC-");
+    const cited = /\[[A-Z]+-[A-Z]+\]/.test(asked.answer);
     box(cited ? "ANSWER" : "NO APPROVED SOURCE", field("", highlight(asked.answer), cited ? green : yellow, 0), cited ? green : yellow);
     return cited ? "answered" : "no-source";
   },

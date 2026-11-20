@@ -17,26 +17,26 @@ export const lab: Lab = {
   file: "04-shapes.ts",
   title: "Three ways to build one job",
   about:
-    "Three ways to build the same helper. A workflow runs fixed steps. One agent picks its own tools. Many agents pass work between them. Pick the shape with --shape workflow, agent or multi, and the doctor with --hcp H-1, H-2 or H-3.",
+    "Three ways to build the same helper. A workflow runs fixed steps. One agent picks its own tools. Many agents pass work between them. Pick the shape with --shape workflow, agent or multi, and the doctor with --hcp dr-lee, dr-weber or dr-rao.",
   terms: ["workflow", "agent", "many-agents", "auditor"],
   challenge: "One agent has no second pair of eyes. It can write a wrong dose and cite a real document, and nothing stops it. An auditor is a second model that checks the first one.",
   promise: "Pick the simplest shape that does the job. When a wrong answer is costly, an auditor checks it and a person decides on any doubt.",
   production: "Use a workflow when the steps never change. Add an agent only where the path must change. Add an auditor where a mistake would cost real money or safety.",
   cases: [
-    { title: "NAIVE: one agent, and nothing checks it", why: "The model writes a wrong dose and cites the real document. One agent has no second pair of eyes, so the wrong dose goes out.", question: "What is the dose of Cardioza?", flags: { shape: "agent", hcp: "H-1", model: "invent" }, expect: "answered" },
-    { title: "Workflow: join a doctor's records", why: "No model needed to combine the CRM profile, recent emails and the documents this doctor's country allows.", question: "What do we know about this doctor?", flags: { shape: "workflow", hcp: "H-2" }, expect: "joined" },
-    { title: "Workflow: a doctor we do not know", why: "Plain code handles missing data the same way every time. No profile means no allowed documents.", question: "What do we know about this doctor?", flags: { shape: "workflow", hcp: "H-9" }, expect: "joined" },
-    { title: "One agent: three tools in turn", why: "The model looks up the profile, searches approved documents, then checks recent outreach before it answers.", question: "What is the dose of Cardioza?", flags: { shape: "agent", hcp: "H-1" }, expect: "answered" },
-    { title: "One agent: a doctor with no recent outreach", why: "Same agent, different doctor. Dr. Weber has no emails, and gets the German dose.", question: "What is the dose of Cardioza?", flags: { shape: "agent", hcp: "H-2" }, expect: "answered" },
-    { title: "One agent: no approved document", why: "The agent refuses to guess, but nothing double checks it. That is the gap multi-agent fills.", question: "What is the dose of Zorbex?", flags: { shape: "agent", hcp: "H-3" }, expect: "no-source" },
-    { title: "Multi-agent: auditor passes a true draft", why: "The researcher drafts. The auditor finds every cited sentence in its document word for word. No person is needed.", question: "What is the dose of Cardioza?", flags: { shape: "multi", hcp: "H-1" }, expect: "passed" },
-    { title: "Multi-agent: auditor catches a wrong dose", why: "The draft says 20mg and cites the real document, so the guardrails lab's citation check passed it. The auditor compares the claim to the source and fails it. A person rejects it.", question: "What is the dose of Cardioza?", flags: { shape: "multi", hcp: "H-1", model: "invent", approve: "n" }, expect: "rejected" },
-    { title: "Multi-agent: a person overrides", why: "Same wrong draft, but the reviewer says yes. The gate is only as good as the person behind it.", question: "What is the dose of Cardioza?", flags: { shape: "multi", hcp: "H-1", model: "invent", approve: "y" }, expect: "approved by person" },
-    { title: "Multi-agent: nothing to audit", why: "The researcher finds no source, so the draft has no cited claim. The auditor fails it and a person decides.", question: "What is the dose of Zorbex?", flags: { shape: "multi", hcp: "H-1", approve: "n" }, expect: "rejected" },
+    { title: "NAIVE: one agent, and nothing checks it", why: "The model writes a wrong dose and cites the real document. One agent has no second pair of eyes, so the wrong dose goes out.", question: "What is the dose of Cardioza?", flags: { shape: "agent", hcp: "dr-lee", model: "invent" }, expect: "answered" },
+    { title: "Workflow: join a doctor's records", why: "No model needed to combine the CRM profile, recent emails and the documents this doctor's country allows.", question: "What do we know about this doctor?", flags: { shape: "workflow", hcp: "dr-weber" }, expect: "joined" },
+    { title: "Workflow: a doctor we do not know", why: "Plain code handles missing data the same way every time. No profile means no allowed documents.", question: "What do we know about this doctor?", flags: { shape: "workflow", hcp: "dr-unknown" }, expect: "joined" },
+    { title: "One agent: three tools in turn", why: "The model looks up the profile, searches approved documents, then checks recent outreach before it answers.", question: "What is the dose of Cardioza?", flags: { shape: "agent", hcp: "dr-lee" }, expect: "answered" },
+    { title: "One agent: a doctor with no recent outreach", why: "Same agent, different doctor. Dr. Weber has no emails, and gets the German dose.", question: "What is the dose of Cardioza?", flags: { shape: "agent", hcp: "dr-weber" }, expect: "answered" },
+    { title: "One agent: no approved document", why: "The agent refuses to guess, but nothing double checks it. That is the gap multi-agent fills.", question: "What is the dose of Zorbex?", flags: { shape: "agent", hcp: "dr-rao" }, expect: "no-source" },
+    { title: "Multi-agent: auditor passes a true draft", why: "The researcher drafts. The auditor finds every cited sentence in its document word for word. No person is needed.", question: "What is the dose of Cardioza?", flags: { shape: "multi", hcp: "dr-lee" }, expect: "passed" },
+    { title: "Multi-agent: auditor catches a wrong dose", why: "The draft says 20mg and cites the real document, so the guardrails lab's citation check passed it. The auditor compares the claim to the source and fails it. A person rejects it.", question: "What is the dose of Cardioza?", flags: { shape: "multi", hcp: "dr-lee", model: "invent", approve: "n" }, expect: "rejected" },
+    { title: "Multi-agent: a person overrides", why: "Same wrong draft, but the reviewer says yes. The gate is only as good as the person behind it.", question: "What is the dose of Cardioza?", flags: { shape: "multi", hcp: "dr-lee", model: "invent", approve: "y" }, expect: "approved by person" },
+    { title: "Multi-agent: nothing to audit", why: "The researcher finds no source, so the draft has no cited claim. The auditor fails it and a person decides.", question: "What is the dose of Zorbex?", flags: { shape: "multi", hcp: "dr-lee", approve: "n" }, expect: "rejected" },
   ],
   play(question, flags, ask) {
     const shape = flags.shape || "agent";
-    const hcpId = flags.hcp || "H-1";
+    const hcpId = flags.hcp || "dr-lee";
     const doctor = CRM[hcpId];
     print(field("Shape", bold(shape), cyan));
     print(field("", SHAPES[shape] || "", dim));
@@ -90,7 +90,7 @@ function showAgent(question: string, hcpId: string, flags: Flags): string {
     print(field("  result", highlight(step.result), dim));
   }
   console.log();
-  if (result.answer.includes("DOC-")) {
+  if (/\[[A-Z]+-[A-Z]+\]/.test(result.answer)) {
     box("ANSWER", field("", highlight(result.answer), green, 0), green);
     return "answered";
   }

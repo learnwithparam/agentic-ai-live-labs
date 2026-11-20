@@ -8,7 +8,7 @@ const ask = "What is the dose of Cardioza?";
 
 function fresh() {
   const file = `${mkdtempSync(`${tmpdir()}/t27-`)}/trace.jsonl`;
-  const traced = answerWithTrace(ask, "H-2", makeModel("ok"), file);
+  const traced = answerWithTrace(ask, "dr-weber", makeModel("ok"), file);
   return { file, head: traced.head };
 }
 
@@ -27,7 +27,7 @@ test("an untouched trace is intact, and it records question, search, result and 
 test("a changed word is caught at its line", () => {
   const { file, head } = fresh();
   const all = lines(file);
-  all[2] = all[2].replace("DOC-102", "DOC-101");
+  all[2] = all[2].replace("CARDIOZA-DE", "CARDIOZA-US");
   writeFileSync(file, all.join("\n") + "\n");
   const checked = verifyTrace(file, head);
   expect(checked.ok).toBe(false);
@@ -57,7 +57,7 @@ test("a full rewrite with new fingerprints is caught by the saved head", () => {
   const rewritten: string[] = [];
   for (const line of lines(file)) {
     const old = JSON.parse(line);
-    const detail = old.detail.replace("DOC-102", "DOC-101");
+    const detail = old.detail.replace("CARDIOZA-DE", "CARDIOZA-US");
     const entry = seal(prev, old.n, old.kind, detail);
     rewritten.push(JSON.stringify(entry));
     prev = entry.hash;
@@ -83,7 +83,7 @@ test("a removed line is caught even when the next line's pointers are repaired",
 test("a line copied in from another trace does not fit, even with its pointer repaired", () => {
   const a = fresh();
   const other = `${mkdtempSync(`${tmpdir()}/t27-`)}/trace.jsonl`;
-  const b = answerWithTrace(ask, "H-1", makeModel("ok"), other);
+  const b = answerWithTrace(ask, "dr-lee", makeModel("ok"), other);
   const mine = lines(a.file);
   const spliced = JSON.parse(lines(other)[3]);
   spliced.prev = JSON.parse(mine[2]).hash;

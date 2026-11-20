@@ -9,12 +9,12 @@
 // The examples and the screen output are in show/25-act-for-user.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun run lab act-for-user --question "What is the Cardioza dose in the US?" --hcp H-2 --naive
-//   bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp H-1
-//   bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp H-2
-//   bun run lab act-for-user --question "What is the Cardioza dose in the US?" --hcp H-2
-//   bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp H-9
-//   bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp H-2 --forge true
+//   bun run lab act-for-user --question "What is the Cardioza dose in the US?" --hcp dr-weber --naive
+//   bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp dr-lee
+//   bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp dr-weber
+//   bun run lab act-for-user --question "What is the Cardioza dose in the US?" --hcp dr-weber
+//   bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp dr-unknown
+//   bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp dr-weber --forge true
 //   bun run lab act-for-user --demo
 
 import type { CallLlm } from "../src/model";

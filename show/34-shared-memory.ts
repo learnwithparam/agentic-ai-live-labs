@@ -21,18 +21,18 @@ export const lab: Lab = {
   promise: "A fact is saved only if it passes the dose check. Each fact keeps its provenance, which is the source it came from.",
   production: "Keep memory in a database with the writer and the source on every row. Let a person delete a poisoned fact, and log every read.",
   cases: [
-    { title: "NAIVE: save whatever a bot says", why: "The first bot makes up a dose and it is saved. The second bot reads it and repeats it.", question: DOSE, flags: { hcp: "H-1", model: "invent", naive: "true" }, expect: "poisoned" },
-    { title: "The second bot reuses a checked fact", why: "The first bot saves a checked dose. The second bot reads it from memory.", question: DOSE, flags: { hcp: "H-1" }, expect: "shared" },
-    { title: "EDGE: a made-up dose is not saved", why: "The first bot makes up a dose. The check refuses to save it, so the second bot finds the real one.", question: DOSE, flags: { hcp: "H-1", model: "invent" }, expect: "clean" },
-    { title: "EDGE: a fact for another country", why: "Dr. Lee is in the US and Dr. Weber is in Germany. The US fact is not used for Dr. Weber.", question: "What is the dose of Cardioza for Dr. Weber?", flags: { hcp: "H-1", then: "H-2" }, expect: "clean" },
-    { title: "EDGE: no approved document", why: "There is no approved document for Zorbex. Nothing is saved, and the second bot says so too.", question: "What is the dose of Zorbex for Dr. Lee?", flags: { hcp: "H-1" }, expect: "no-answer" },
+    { title: "NAIVE: save whatever a bot says", why: "The first bot makes up a dose and it is saved. The second bot reads it and repeats it.", question: DOSE, flags: { hcp: "dr-lee", model: "invent", naive: "true" }, expect: "poisoned" },
+    { title: "The second bot reuses a checked fact", why: "The first bot saves a checked dose. The second bot reads it from memory.", question: DOSE, flags: { hcp: "dr-lee" }, expect: "shared" },
+    { title: "EDGE: a made-up dose is not saved", why: "The first bot makes up a dose. The check refuses to save it, so the second bot finds the real one.", question: DOSE, flags: { hcp: "dr-lee", model: "invent" }, expect: "clean" },
+    { title: "EDGE: a fact for another country", why: "Dr. Lee is in the US and Dr. Weber is in Germany. The US fact is not used for Dr. Weber.", question: "What is the dose of Cardioza for Dr. Weber?", flags: { hcp: "dr-lee", then: "dr-weber" }, expect: "clean" },
+    { title: "EDGE: no approved document", why: "There is no approved document for Zorbex. Nothing is saved, and the second bot says so too.", question: "What is the dose of Zorbex for Dr. Lee?", flags: { hcp: "dr-lee" }, expect: "no-answer" },
   ],
   play(question, flags) {
     const file = `${mkdtempSync(`${tmpdir()}/lab34-`)}/memory.jsonl`;
     const first = modelFrom(flags);
     const second = makeModel("ok");
     print(field("Question", question));
-    const hcpA = flags.hcp || "H-1";
+    const hcpA = flags.hcp || "dr-lee";
     const hcpB = flags.then || hcpA;
     const ask = flags.naive ? answerSharedNaive : answerShared;
     const one = ask(question, hcpA, first, { file, bot: "answer bot" });
@@ -45,7 +45,7 @@ export const lab: Lab = {
       box(badgeRed("POISONED"), [red("The second bot repeated a made-up dose.")], red);
       return "poisoned";
     }
-    if (!two.answer.includes("DOC-")) {
+    if (!/\[[A-Z]+-[A-Z]+\]/.test(two.answer)) {
       box(badgeGreen("NO ANSWER"), [green("No approved source, so no dose.")], green);
       return "no-answer";
     }

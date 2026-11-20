@@ -1,6 +1,6 @@
 # Chains and delegation
 
-Each example is one job for three doctors. Pick the doctors with --hcps, for example H-1,H-2,H-3. The lead splits the job and delegates each doctor to a worker. Each step in the chain feeds the next one.
+Each example is one job for three doctors. Pick the doctors with --hcps, for example dr-lee,dr-weber,dr-rao. The lead splits the job and delegates each doctor to a worker. Each step in the chain feeds the next one.
 
 ## The story in one picture
 
@@ -33,7 +33,7 @@ Copy any line into your terminal. Each one is a real example from this lab.
 ```bash
 bun run lab chain-and-delegate --demo
 bun run lab chain-and-delegate --demo
-bun run lab chain-and-delegate --question "Write the Cardioza update for Dr. Weber please." --hcps H-2
+bun run lab chain-and-delegate --question "Write the Cardioza update for Dr. Weber please." --hcps dr-weber
 bun run lab chain-and-delegate --demo
 bun run lab chain-and-delegate --demo
 ```
@@ -48,7 +48,7 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | --- | --- | --- | --- | --- |
 | 1 | NAIVE: one letter for everyone | One search runs for Dr. Lee's country. Dr. Weber gets the US dose in his letter. | wrong-label | `bun run lab chain-and-delegate --demo` |
 | 2 | Three doctors, three chains | Each worker searches its own doctor's country. Dr. Weber's letter cites the German document. | all-sent | `bun run lab chain-and-delegate --demo` |
-| 3 | One doctor | A job for one doctor is one worker and one chain. | all-sent | `bun run lab chain-and-delegate --question "Write the Cardioza update for Dr. Weber please." --hcps H-2` |
+| 3 | One doctor | A job for one doctor is one worker and one chain. | all-sent | `bun run lab chain-and-delegate --question "Write the Cardioza update for Dr. Weber please." --hcps dr-weber` |
 | 4 | EDGE: one worker has nothing to write from | There is no German Neurovex document. Dr. Weber's worker holds its letter, and the other two still go. | partial | `bun run lab chain-and-delegate --demo` |
 
 ## Stuck points

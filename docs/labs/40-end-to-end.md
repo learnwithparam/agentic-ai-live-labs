@@ -36,8 +36,8 @@ bun run lab end-to-end --demo
 bun run lab end-to-end --demo
 bun run lab end-to-end --question "What is the dose of Cardioza for Dr. Lee?" --model nocite --approve y
 bun run lab end-to-end --question "What is the dose of Cardioza for Dr. Lee?" --model nocite --approve n
-bun run lab end-to-end --question "What is the dose of Cardioza for Dr. Lee?" --withdraw DOC-101
-bun run lab end-to-end --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-9
+bun run lab end-to-end --question "What is the dose of Cardioza for Dr. Lee?" --withdraw CARDIOZA-US
+bun run lab end-to-end --question "What is the dose of Cardioza for Dr. Lee?" --hcp dr-unknown
 bun run lab end-to-end --demo
 ```
 
@@ -50,11 +50,11 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
 | 1 | NAIVE: no guards | The model reads the patient's name and number, and its reply goes out with no check. | sent-unchecked | `bun run lab end-to-end --demo` |
-| 2 | Every guard passes | The private details are hidden, the reply matches DOC-101, and the record is whole. | sent | `bun run lab end-to-end --demo` |
+| 2 | Every guard passes | The private details are hidden, the reply matches CARDIOZA-US, and the record is whole. | sent | `bun run lab end-to-end --demo` |
 | 3 | EDGE: a reply with no source, and a person says yes | The model forgets the citation, so the check fails. The person reads it and approves. | sent-after-approval | `bun run lab end-to-end --question "What is the dose of Cardioza for Dr. Lee?" --model nocite --approve y` |
 | 4 | EDGE: a reply with no source, and a person says no | The same failure, and the person says no. Nothing is sent. | blocked | `bun run lab end-to-end --question "What is the dose of Cardioza for Dr. Lee?" --model nocite --approve n` |
-| 5 | EDGE: the document was withdrawn | DOC-101 is withdrawn, and no other approved document is left. The bot says it has no approved source. That is true, so it goes out. The old dose never does. | sent | `bun run lab end-to-end --question "What is the dose of Cardioza for Dr. Lee?" --withdraw DOC-101` |
-| 6 | EDGE: a doctor we do not know | H-9 is not in the CRM, so the run stops at step 1. | refused | `bun run lab end-to-end --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-9` |
+| 5 | EDGE: the document was withdrawn | CARDIOZA-US is withdrawn, and no other approved document is left. The bot says it has no approved source. That is true, so it goes out. The old dose never does. | sent | `bun run lab end-to-end --question "What is the dose of Cardioza for Dr. Lee?" --withdraw CARDIOZA-US` |
+| 6 | EDGE: a doctor we do not know | dr-unknown is not in the CRM, so the run stops at step 1. | refused | `bun run lab end-to-end --question "What is the dose of Cardioza for Dr. Lee?" --hcp dr-unknown` |
 
 ## Stuck points
 

@@ -2,7 +2,7 @@ import { expect, test } from "bun:test";
 import { makeModel } from "../../src/model";
 import { checkClaims, reviewByModel } from "../../labs/38-fact-checker";
 
-const DOSE = "Cardioza standard adult dose is 10mg once daily with food. [DOC-101]";
+const DOSE = "Cardioza standard adult dose is 10mg once daily with food. [CARDIOZA-US]";
 const GOOD = `Hello Dr. Lee. ${DOSE} Please call us with questions.`;
 
 // PROMISE: every sentence is checked. A claim needs a citation, a document for this country,
@@ -12,14 +12,14 @@ test("a good draft goes out, and plain talk passes", () => {
   expect(result.sent).toBe(true);
   expect(result.rows.length).toBe(3);
   expect(result.rows[0].why).toBe("plain talk");
-  expect(result.rows[1].why).toBe("matches DOC-101");
+  expect(result.rows[1].why).toBe("matches CARDIOZA-US");
 });
 
 test("a claim that the document never makes is blocked", () => {
-  const draft = "Hello Dr. Lee. Cardioza is safe for children under 12. [DOC-101]";
+  const draft = "Hello Dr. Lee. Cardioza is safe for children under 12. [CARDIOZA-US]";
   const result = checkClaims(draft, "US");
   expect(result.sent).toBe(false);
-  expect(result.rows[1].why).toBe("it does not match DOC-101");
+  expect(result.rows[1].why).toBe("it does not match CARDIOZA-US");
 });
 
 test("a claim with no citation is blocked", () => {
@@ -29,18 +29,18 @@ test("a claim with no citation is blocked", () => {
 });
 
 test("a document that does not exist is blocked", () => {
-  const result = checkClaims("Cardioza standard adult dose is 10mg once daily with food. [DOC-999]", "US");
-  expect(result.rows[0].why).toBe("DOC-999 is not an approved document");
+  const result = checkClaims("Cardioza standard adult dose is 10mg once daily with food. [FAKE-LABEL]", "US");
+  expect(result.rows[0].why).toBe("FAKE-LABEL is not an approved document");
 });
 
 test("a document for another country is blocked", () => {
   const result = checkClaims(`Hello Dr. Weber. ${DOSE}`, "DE");
   expect(result.sent).toBe(false);
-  expect(result.rows[1].why).toBe("DOC-101 is not approved for DE");
+  expect(result.rows[1].why).toBe("CARDIOZA-US is not approved for DE");
 });
 
 test("a bad sentence at the end is found, and the good ones are not named", () => {
-  const draft = `${GOOD} Cardioza also works for headaches. [DOC-101]`;
+  const draft = `${GOOD} Cardioza also works for headaches. [CARDIOZA-US]`;
   const result = checkClaims(draft, "US");
   const bad = result.rows.filter((row) => !row.ok);
   expect(bad.length).toBe(1);
@@ -53,11 +53,11 @@ test("a number with no drug name is still a claim", () => {
 });
 
 test("the citation can sit before or after the full stop", () => {
-  const draft = "Cardioza standard adult dose is 10mg once daily with food [DOC-101].";
+  const draft = "Cardioza standard adult dose is 10mg once daily with food [CARDIOZA-US].";
   expect(checkClaims(draft, "US").sent).toBe(true);
 });
 
 test("asking the model sends a bad draft out", () => {
-  const draft = "Cardioza is safe for children under 12. [DOC-101]";
+  const draft = "Cardioza is safe for children under 12. [CARDIOZA-US]";
   expect(reviewByModel(draft, makeModel("ok")).sent).toBe(true);
 });

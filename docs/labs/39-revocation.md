@@ -30,11 +30,11 @@ Each word has one meaning in every lab.
 Copy any line into your terminal. Each one is a real example from this lab.
 
 ```bash
-bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?" --withdraw DOC-101 --naive
-bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?" --withdraw DOC-101
-bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?" --withdraw DOC-102
+bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?" --withdraw CARDIOZA-US --naive
+bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?" --withdraw CARDIOZA-US
+bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?" --withdraw CARDIOZA-DE
 bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?"
-bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?" --late DOC-101
+bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?" --late CARDIOZA-US
 bun run lab revocation --demo
 ```
 
@@ -46,11 +46,11 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
-| 1 | NAIVE: serve the saved answer | DOC-101 is withdrawn after the first answer. The saved answer still holds its dose, and it goes out again. | stale | `bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?" --withdraw DOC-101 --naive` |
-| 2 | A withdrawn document | The saved answer cites DOC-101. It is deleted. Nothing else is approved for Cardioza in the US, so there is no answer. | no-answer | `bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?" --withdraw DOC-101` |
-| 3 | Another country's document | DOC-102 is for Germany. It is withdrawn, but Dr. Lee is in the US, so the saved answer is still good. | cache | `bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?" --withdraw DOC-102` |
+| 1 | NAIVE: serve the saved answer | CARDIOZA-US is withdrawn after the first answer. The saved answer still holds its dose, and it goes out again. | stale | `bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?" --withdraw CARDIOZA-US --naive` |
+| 2 | A withdrawn document | The saved answer cites CARDIOZA-US. It is deleted. Nothing else is approved for Cardioza in the US, so there is no answer. | no-answer | `bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?" --withdraw CARDIOZA-US` |
+| 3 | Another country's document | CARDIOZA-DE is for Germany. It is withdrawn, but Dr. Lee is in the US, so the saved answer is still good. | cache | `bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?" --withdraw CARDIOZA-DE` |
 | 4 | Nothing withdrawn | The second ask is served from the saved answer. It is fast, and it is still approved. | cache | `bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?"` |
-| 5 | EDGE: withdrawn during the run | There is no saved answer. The document is withdrawn after the search and before the send. The last check catches it. | blocked | `bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?" --late DOC-101` |
+| 5 | EDGE: withdrawn during the run | There is no saved answer. The document is withdrawn after the search and before the send. The last check catches it. | blocked | `bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?" --late CARDIOZA-US` |
 
 ## Stuck points
 

@@ -15,7 +15,7 @@ test("the wide version fails Dr. Weber's question and is blocked", () => {
   const decision = decide(results);
   expect(decision.release).toBe(false);
   expect(decision.failed.length).toBe(1);
-  expect(decision.failed[0].hcp).toBe("H-2");
+  expect(decision.failed[0].hcp).toBe("dr-weber");
   expect(shipIfItRuns(results).release).toBe(true);
 });
 
@@ -31,9 +31,9 @@ test("an empty eval set blocks the release", () => {
 
 test("both kinds of fact are checked on their own", () => {
   const ask = "What is the dose of Cardioza?";
-  const lacks = [{ ask, hcp: "H-1", mustHave: ["DOC-999"], mustNot: [] }];
+  const lacks = [{ ask, hcp: "dr-lee", mustHave: ["FAKE-LABEL"], mustNot: [] }];
   expect(decide(runEvals("current", lacks, model)).release).toBe(false);
-  const holds = [{ ask, hcp: "H-2", mustHave: [], mustNot: ["DOC-101"] }];
+  const holds = [{ ask, hcp: "dr-weber", mustHave: [], mustNot: ["CARDIOZA-US"] }];
   expect(decide(runEvals("wide", holds, model)).release).toBe(false);
   expect(decide(runEvals("current", holds, model)).release).toBe(true);
 });

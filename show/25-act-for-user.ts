@@ -14,22 +14,22 @@ export const lab: Lab = {
   file: "25-act-for-user.ts",
   title: "Act for the user",
   about:
-    "Each example is one doctor asking the bot a question. The bot can act for a user, with that user's rights. Pick the doctor with --hcp: H-1 is Dr Lee (US), H-2 is Dr Weber (Germany).",
+    "Each example is one doctor asking the bot a question. The bot can act for a user, with that user's rights. Pick the doctor with --hcp: dr-lee is Dr Lee (US), dr-weber is Dr Weber (Germany).",
   terms: ["act-for-user", "delegation", "service-key"],
   challenge: "A bot on a service key answers as the key allows. No person is on that key, so nobody is named. A German doctor who asks about the US label gets the wrong dose for her.",
   promise: "The bot searches only the country of the doctor its token names. What the doctor or the model types cannot change it. A bad token answers nothing.",
   production: "Issue the delegation token when the doctor signs in, and keep it short. Pass it on every call, and log the doctor with each one.",
   cases: [
-    { title: "NAIVE: the bot's own key", why: "Dr. Weber is in Germany and asks about the US. The service key searches the US, so she gets 10mg, the wrong label for her.", question: US_DOSE, flags: { hcp: "H-2", naive: "true" }, expect: "wrong-label" },
-    { title: "A US doctor", why: "The token names Dr. Lee. The search uses US, and she gets the US label.", question: DOSE, flags: { hcp: "H-1" }, expect: "own-label" },
-    { title: "A German doctor", why: "The token names Dr. Weber. The search uses DE, and she gets 5mg.", question: DOSE, flags: { hcp: "H-2" }, expect: "own-label" },
-    { title: "EDGE: she asks about the US", why: "The country comes from her record, not from her words. She still gets the German label.", question: US_DOSE, flags: { hcp: "H-2" }, expect: "own-label" },
-    { title: "EDGE: a doctor who is not in the CRM", why: "The token is real, but nobody by that id exists. Nothing is searched.", question: DOSE, flags: { hcp: "H-9" }, expect: "denied" },
-    { title: "EDGE: a token changed to another doctor", why: "Someone edits Dr. Weber's token to say H-1. The signature breaks, so nothing runs.", question: DOSE, flags: { hcp: "H-2", forge: "true" }, expect: "denied" },
-    { title: "EDGE: a bot that may not read documents", why: "The report bot's token has no docs.read, even for a real doctor.", question: DOSE, flags: { hcp: "H-1", bot: "report" }, expect: "denied" },
+    { title: "NAIVE: the bot's own key", why: "Dr. Weber is in Germany and asks about the US. The service key searches the US, so she gets 10mg, the wrong label for her.", question: US_DOSE, flags: { hcp: "dr-weber", naive: "true" }, expect: "wrong-label" },
+    { title: "A US doctor", why: "The token names Dr. Lee. The search uses US, and she gets the US label.", question: DOSE, flags: { hcp: "dr-lee" }, expect: "own-label" },
+    { title: "A German doctor", why: "The token names Dr. Weber. The search uses DE, and she gets 5mg.", question: DOSE, flags: { hcp: "dr-weber" }, expect: "own-label" },
+    { title: "EDGE: she asks about the US", why: "The country comes from her record, not from her words. She still gets the German label.", question: US_DOSE, flags: { hcp: "dr-weber" }, expect: "own-label" },
+    { title: "EDGE: a doctor who is not in the CRM", why: "The token is real, but nobody by that id exists. Nothing is searched.", question: DOSE, flags: { hcp: "dr-unknown" }, expect: "denied" },
+    { title: "EDGE: a token changed to another doctor", why: "Someone edits Dr. Weber's token to say dr-lee. The signature breaks, so nothing runs.", question: DOSE, flags: { hcp: "dr-weber", forge: "true" }, expect: "denied" },
+    { title: "EDGE: a bot that may not read documents", why: "The report bot's token has no docs.read, even for a real doctor.", question: DOSE, flags: { hcp: "dr-lee", bot: "report" }, expect: "denied" },
   ],
   play(question, flags) {
-    const hcp = flags.hcp || "H-1";
+    const hcp = flags.hcp || "dr-lee";
     const doctor = CRM[hcp];
     print(field("Question", question));
     print(field("Doctor", doctor ? `${doctor.name}, country ${doctor.country}` : `${hcp} (not in the CRM)`));
@@ -53,7 +53,7 @@ function askedCountry(question: string, fallback: string): string {
 function tokenFor(hcp: string, flags: Record<string, string>): string {
   const token = tokenForUser(flags.bot || "answer", hcp, NOW);
   if (!flags.forge) return token;
-  const claims = { bot: "answer", scopes: ["docs.read"], expires: NOW + 300, user: "H-1" };
+  const claims = { bot: "answer", scopes: ["docs.read"], expires: NOW + 300, user: "dr-lee" };
   return `${Buffer.from(JSON.stringify(claims)).toString("base64url")}.${token.split(".")[1]}`;
 }
 
@@ -62,7 +62,7 @@ function judge(outcome: string, answer: string, country: string): string {
     box(badgeRed("DENIED"), [red("Nothing was searched.")], red);
     return "denied";
   }
-  const wrong = country === "DE" ? "DOC-101" : "DOC-102";
+  const wrong = country === "DE" ? "CARDIOZA-US" : "CARDIOZA-DE";
   if (answer.includes(wrong)) {
     box(badgeRed("WRONG LABEL"), [red("The doctor got a label from another country.")], red);
     return "wrong-label";

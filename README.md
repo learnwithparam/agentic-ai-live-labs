@@ -43,7 +43,7 @@ Every lab has two files.
 
 The steps in the code have numbers. The run prints the same numbers. You can match what you read with what you see.
 
-For example, the crash and resume lab stops the program in the middle of a job. Step 1 in the code checks the ledger. The log prints "Step 1: H-1 is in the ledger, so it is skipped."
+For example, the crash and resume lab stops the program in the middle of a job. Step 1 in the code checks the ledger. The log prints "Step 1: dr-lee is in the ledger, so it is skipped."
 
 ## Three ways to run a lab
 

@@ -27,10 +27,12 @@ export type Decision = { release: boolean; failed: Result[]; reason: string };
 
 // The eval set. Every question is one a real doctor asked, with the facts a right answer holds.
 export const EVALS: Eval[] = [
-  { ask: "What is the dose of Cardioza?", hcp: "H-1", mustHave: ["DOC-101"], mustNot: ["DOC-102"] },
-  { ask: "What is the dose of Cardioza?", hcp: "H-2", mustHave: ["DOC-102"], mustNot: ["DOC-101"] },
-  { ask: "What is the dose of Neurovex?", hcp: "H-1", mustHave: ["DOC-201"], mustNot: [] },
-  { ask: "What is the dose of Zorbex?", hcp: "H-1", mustHave: [], mustNot: ["mg", "DOC-"] },
+  { ask: "What is the dose of Cardioza?", hcp: "dr-lee",
+    mustHave: ["CARDIOZA-US"], mustNot: ["CARDIOZA-DE"] },
+  { ask: "What is the dose of Cardioza?", hcp: "dr-weber",
+    mustHave: ["CARDIOZA-DE"], mustNot: ["CARDIOZA-US"] },
+  { ask: "What is the dose of Neurovex?", hcp: "dr-lee", mustHave: ["NEUROVEX-US"], mustNot: [] },
+  { ask: "What is the dose of Zorbex?", hcp: "dr-lee", mustHave: [], mustNot: ["mg", "["] },
 ];
 
 // Run every eval question through one version. Read the steps in order.

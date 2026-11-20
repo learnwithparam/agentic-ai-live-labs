@@ -9,12 +9,12 @@
 // The examples and the screen output are in show/32-subagent-isolation.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1 --naive
-//   bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1
-//   bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Weber?" --hcp H-2
-//   bun run lab subagent-isolation --question "What is the dose of Zorbex for Dr. Lee?" --hcp H-1
-//   bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1 --model invent
-//   bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1 --model stuck
+//   bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Lee?" --hcp dr-lee --naive
+//   bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Lee?" --hcp dr-lee
+//   bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Weber?" --hcp dr-weber
+//   bun run lab subagent-isolation --question "What is the dose of Zorbex for Dr. Lee?" --hcp dr-lee
+//   bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Lee?" --hcp dr-lee --model invent
+//   bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Lee?" --hcp dr-lee --model stuck
 //   bun run lab subagent-isolation --demo
 
 import { CRM } from "../src/data";

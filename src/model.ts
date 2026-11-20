@@ -70,9 +70,9 @@ export function makeModel(behaviour: Behaviour = "ok"): CallLlm {
     if (search.startsWith("SERVICE_UNAVAILABLE")) return { text: "The document service is not answering, so I cannot give a dose." };
     if (search.startsWith("BAD_INPUT")) return { text: "The search was refused, so I cannot give a dose." };
 
-    const lines = search.split("\n").filter((line) => /^\[DOC-\d+\]/.test(line)).map((line) => {
-      const id = line.match(/^\[(DOC-\d+)\]/)![1];
-      const body = line.replace(/^\[DOC-\d+\]\s*/, "");
+    const lines = search.split("\n").filter((line) => /^\[[A-Z]+-[A-Z]+\]/.test(line)).map((line) => {
+      const id = line.match(/^\[([A-Z]+-[A-Z]+)\]/)![1];
+      const body = line.replace(/^\[[A-Z]+-[A-Z]+\]\s*/, "");
       const claim = behaviour === "invent" || behaviour === "stubborn" ? body.replace(/\d+mg/, "20mg") : body;
       return behaviour === "nocite" ? claim : `${claim} [${id}]`;
     });
@@ -93,11 +93,11 @@ function fix(prompt: string, behaviour: Behaviour): string {
 // The compliance auditor. Each sentence that cites an id must appear word for word in that approved document.
 function audit(prompt: string): string {
   const draft = prompt.replace(/^AUDIT:\s*/, "").split("\nSOURCE:")[0];
-  const claims = draft.match(/[^\[]*?\[DOC-\d+\]/g) ?? [];
+  const claims = draft.match(/[^\[]*?\[[A-Z]+-[A-Z]+\]/g) ?? [];
   if (claims.length === 0) return "FAIL: no cited claims to check.";
   for (const claim of claims) {
-    const id = claim.match(/\[(DOC-\d+)\]/)![1];
-    const sentence = claim.replace(/\s*\[DOC-\d+\]/, "").trim();
+    const id = claim.match(/\[([A-Z]+-[A-Z]+)\]/)![1];
+    const sentence = claim.replace(/\s*\[[A-Z]+-[A-Z]+\]/, "").trim();
     if (!APPROVED_DOCS[id]?.text.includes(sentence)) return `FAIL: claim does not match ${id}: "${sentence}"`;
   }
   return "PASS";
@@ -184,7 +184,7 @@ function writeFor(prompt: string): string {
 
 // A model asked to answer from the prompt it was given. It reads the documents in it, or says there are none.
 function answerFrom(prompt: string): string {
-  const lines = prompt.split("\n").filter((line) => line.startsWith("[DOC-"));
+  const lines = prompt.split("\n").filter((line) => /^\[[A-Z]+-[A-Z]+\]/.test(line));
   if (lines.length === 0) return "I found no approved source for this question.";
   return lines.join(" ");
 }
@@ -217,7 +217,7 @@ function contextFor(prompt: string): string {
   const lines = prompt.split("\n").slice(1);
   const facts: string[] = [];
   for (const line of lines) {
-    if (line.startsWith("[DOC-") || line.startsWith("DOCTOR PROFILE")) facts.push(line);
+    if (/^\[[A-Z]+-[A-Z]+\]/.test(line) || line.startsWith("DOCTOR PROFILE")) facts.push(line);
   }
   if (facts.length === 0) return "The sources I was given do not answer this.";
   return facts.join(" ");
@@ -228,7 +228,7 @@ function rulesFor(prompt: string): string {
   const fenced = prompt.includes("<data>");
   if (!fenced && prompt.includes("Ignore the rules")) return "Sending the doctor's email as ordered.";
   if (!fenced && prompt.includes("New rules")) return "Voici la dose, sans citation.";
-  const docs = prompt.split("\n").filter((line) => line.startsWith("[DOC-"));
+  const docs = prompt.split("\n").filter((line) => /^\[[A-Z]+-[A-Z]+\]/.test(line));
   return docs.join(" ") || "I found no approved source.";
 }
 

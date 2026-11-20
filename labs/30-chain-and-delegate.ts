@@ -11,7 +11,7 @@
 // Run it (copy any line):
 //   bun run lab chain-and-delegate --question "Write the Cardioza update for Dr. Lee, Dr. Weber and Dr. Rao." --naive
 //   bun run lab chain-and-delegate --question "Write the Cardioza update for Dr. Lee, Dr. Weber and Dr. Rao."
-//   bun run lab chain-and-delegate --question "Write the Cardioza update for Dr. Weber please." --hcps H-2
+//   bun run lab chain-and-delegate --question "Write the Cardioza update for Dr. Weber please." --hcps dr-weber
 //   bun run lab chain-and-delegate --question "Write the Neurovex update for Dr. Lee, Dr. Weber and Dr. Rao."
 //   bun run lab chain-and-delegate --demo
 

@@ -9,8 +9,8 @@
 // Run it (copy any line):
 //   bun run lab mcp-basics --question "What is the dose of Cardioza?" --naive
 //   bun run lab mcp-basics --question "What is the dose of Cardioza?" --show wire
-//   bun run lab mcp-basics --question "What is the dose of Cardioza?" --hcp H-1
-//   bun run lab mcp-basics --question "What is the dose of Cardioza?" --hcp H-2 --country DE
+//   bun run lab mcp-basics --question "What is the dose of Cardioza?" --hcp dr-lee
+//   bun run lab mcp-basics --question "What is the dose of Cardioza?" --hcp dr-weber --country DE
 //   bun run lab mcp-basics --demo
 
 import type { CallLlm } from "../src/model";

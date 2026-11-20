@@ -8,24 +8,24 @@ import { checkClaims, reviewByModel } from "../labs/38-fact-checker";
 
 const ASK_LEE = "Please check this email draft for Dr. Lee before it goes out.";
 const HELLO = "Hello Dr. Lee.";
-const DOSE = "Cardioza standard adult dose is 10mg once daily with food. [DOC-101]";
+const DOSE = "Cardioza standard adult dose is 10mg once daily with food. [CARDIOZA-US]";
 const CALL = "Please call us with questions.";
 
 export const lab: Lab = {
   file: "38-fact-checker.ts",
   title: "Check every sentence of a draft",
   about:
-    "Each example is an email draft that a person wrote. Code checks each sentence. A claim needs a citation, such as [DOC-101], and the document's own words, word for word. Give the draft with --draft, and the doctor's country with --country.",
+    "Each example is an email draft that a person wrote. Code checks each sentence. A claim needs a citation, such as [CARDIOZA-US], and the document's own words, word for word. Give the draft with --draft, and the doctor's country with --country.",
   terms: ["claim", "citation", "word-for-word"],
   challenge: "A draft can cite a real document and still say something that document never says. A model that reviews its own draft has no new facts.",
   promise: "Every sentence is checked. A claim needs a citation, a document for this country, and the document's own words. One bad sentence blocks the email.",
   production: "Use a trained claim finder to catch claims that name no drug. Send each blocked sentence to a medical reviewer, and keep the result in the log.",
   cases: [
-    { title: "NAIVE: ask the model if it is fine", why: "The draft says Cardioza is safe for children. The document says nothing like that. The model has no new facts, so it says the draft is fine.", question: ASK_LEE, flags: { draft: `${HELLO} Cardioza is safe for children under 12. [DOC-101] ${CALL}`, naive: "true" }, expect: "self-approved" },
-    { title: "Every sentence is checked", why: "The same draft goes to the claim checker. The sentence about children is not in DOC-101, so the email is blocked.", question: ASK_LEE, flags: { draft: `${HELLO} Cardioza is safe for children under 12. [DOC-101] ${CALL}` }, expect: "blocked" },
-    { title: "A good draft", why: "The dose sentence is word for word in DOC-101. The other two are plain talk.", question: ASK_LEE, flags: { draft: `${HELLO} ${DOSE} ${CALL}` }, expect: "sent" },
-    { title: "EDGE: the wrong country", why: "Dr. Weber is in Germany. DOC-101 is the US label, so its dose is not for him.", question: "Please check this email draft for Dr. Weber before it goes out.", flags: { draft: `Hello Dr. Weber. ${DOSE}`, country: "DE" }, expect: "blocked" },
-    { title: "EDGE: only the last sentence is bad", why: "The first sentences are good. The last one is a new claim. It is found, and it is the only one named.", question: ASK_LEE, flags: { draft: `${HELLO} ${DOSE} Cardioza also works for headaches. [DOC-101]` }, expect: "blocked" },
+    { title: "NAIVE: ask the model if it is fine", why: "The draft says Cardioza is safe for children. The document says nothing like that. The model has no new facts, so it says the draft is fine.", question: ASK_LEE, flags: { draft: `${HELLO} Cardioza is safe for children under 12. [CARDIOZA-US] ${CALL}`, naive: "true" }, expect: "self-approved" },
+    { title: "Every sentence is checked", why: "The same draft goes to the claim checker. The sentence about children is not in CARDIOZA-US, so the email is blocked.", question: ASK_LEE, flags: { draft: `${HELLO} Cardioza is safe for children under 12. [CARDIOZA-US] ${CALL}` }, expect: "blocked" },
+    { title: "A good draft", why: "The dose sentence is word for word in CARDIOZA-US. The other two are plain talk.", question: ASK_LEE, flags: { draft: `${HELLO} ${DOSE} ${CALL}` }, expect: "sent" },
+    { title: "EDGE: the wrong country", why: "Dr. Weber is in Germany. CARDIOZA-US is the US label, so its dose is not for him.", question: "Please check this email draft for Dr. Weber before it goes out.", flags: { draft: `Hello Dr. Weber. ${DOSE}`, country: "DE" }, expect: "blocked" },
+    { title: "EDGE: only the last sentence is bad", why: "The first sentences are good. The last one is a new claim. It is found, and it is the only one named.", question: ASK_LEE, flags: { draft: `${HELLO} ${DOSE} Cardioza also works for headaches. [CARDIOZA-US]` }, expect: "blocked" },
   ],
   play(question, flags) {
     const country = flags.country || "US";

@@ -8,7 +8,7 @@ import {
 import { dosesIn, findProblems } from "../../src/draft-check";
 
 const DOSE = "What is the dose of Cardioza?";
-const SOURCE = "[DOC-101] Cardioza standard adult dose is 10mg once daily with food.";
+const SOURCE = "[CARDIOZA-US] Cardioza standard adult dose is 10mg once daily with food.";
 
 function run(behaviour: Behaviour, question = DOSE) {
   return answerWithCheck(question, "US", makeModel(behaviour));
@@ -17,8 +17,8 @@ function run(behaviour: Behaviour, question = DOSE) {
 // PROMISE: code checks every draft against the source. A fix gets two rounds at most.
 // With no source there is nothing to check.
 test("the check finds a wrong dose and a missing citation", () => {
-  expect(findProblems("Take 10mg once daily. [DOC-101]", SOURCE)).toEqual([]);
-  expect(findProblems("Take 20mg once daily. [DOC-101]", SOURCE)).toEqual(["dose 20mg is not in the source"]);
+  expect(findProblems("Take 10mg once daily. [CARDIOZA-US]", SOURCE)).toEqual([]);
+  expect(findProblems("Take 20mg once daily. [CARDIOZA-US]", SOURCE)).toEqual(["dose 20mg is not in the source"]);
   expect(findProblems("Take 10mg once daily.", SOURCE)).toEqual(["no citation"]);
   expect(dosesIn("Take 10mg daily, or 5mg.")).toEqual(["10mg", "5mg"]);
   expect(answerWithoutCheck(DOSE, "US", makeModel("invent")).outcome).toBe("self-approved");

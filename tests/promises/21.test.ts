@@ -19,29 +19,29 @@ function emailsTo(jobId: string, doctor: string): number {
 test("a kill after the ledger line resumes with the doctors still to do", () => {
   const dir = mkdtempSync(`${tmpdir()}/p21-`);
   process.env.JOBS_DIR = dir;
-  expect(run(dir, "a", "safe", "ledger:H-2").killed).toBe(true);
+  expect(run(dir, "a", "safe", "ledger:dr-weber").killed).toBe(true);
   const second = run(dir, "a", "safe", "");
   expect(second.killed).toBe(false);
-  expect(second.out).toContain("H-1 is in the ledger, so it is skipped");
-  expect(second.out).toContain("H-2 is in the ledger, so it is skipped");
-  for (const doctor of ["H-1", "H-2", "H-3"]) expect(emailsTo("a", doctor)).toBe(1);
+  expect(second.out).toContain("dr-lee is in the ledger, so it is skipped");
+  expect(second.out).toContain("dr-weber is in the ledger, so it is skipped");
+  for (const doctor of ["dr-lee", "dr-weber", "dr-rao"]) expect(emailsTo("a", doctor)).toBe(1);
 });
 
 test("a kill between the send and the ledger never sends twice", () => {
   const dir = mkdtempSync(`${tmpdir()}/p21-`);
   process.env.JOBS_DIR = dir;
-  expect(run(dir, "b", "safe", "send:H-2").killed).toBe(true);
+  expect(run(dir, "b", "safe", "send:dr-weber").killed).toBe(true);
   const second = run(dir, "b", "safe", "");
   expect(second.out).toContain("the key was used before");
-  for (const doctor of ["H-1", "H-2", "H-3"]) expect(emailsTo("b", doctor)).toBe(1);
+  for (const doctor of ["dr-lee", "dr-weber", "dr-rao"]) expect(emailsTo("b", doctor)).toBe(1);
 });
 
 test("the naive restart sends twice, and a finished job does nothing", () => {
   const dir = mkdtempSync(`${tmpdir()}/p21-`);
   process.env.JOBS_DIR = dir;
-  run(dir, "c", "naive", "send:H-2");
+  run(dir, "c", "naive", "send:dr-weber");
   run(dir, "c", "naive", "");
-  expect(emailsTo("c", "H-1")).toBe(2);
+  expect(emailsTo("c", "dr-lee")).toBe(2);
   run(dir, "d", "safe", "");
   const again = run(dir, "d", "safe", "");
   expect(again.out).not.toContain("sent");

@@ -9,11 +9,11 @@
 // The examples and the screen output are in show/39-revocation.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?" --withdraw DOC-101 --naive
-//   bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?" --withdraw DOC-101
-//   bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?" --withdraw DOC-102
+//   bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?" --withdraw CARDIOZA-US --naive
+//   bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?" --withdraw CARDIOZA-US
+//   bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?" --withdraw CARDIOZA-DE
 //   bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?"
-//   bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?" --late DOC-101
+//   bun run lab revocation --question "What is the dose of Cardioza for Dr. Lee?" --late CARDIOZA-US
 //   bun run lab revocation --demo
 
 import { APPROVED_DOCS, KNOWN_DRUGS, NO_DOC } from "../src/data";

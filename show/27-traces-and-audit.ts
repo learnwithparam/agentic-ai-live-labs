@@ -21,15 +21,15 @@ export const lab: Lab = {
   promise: "Every step is written down. Each line holds a fingerprint of the line before it. The chain is checked against the saved head, and it finds any edit.",
   production: "Send each line to storage that cannot be changed. Save the head in a second place with a different owner. Check the chain on a schedule.",
   cases: [
-    { title: "NAIVE: a plain log", why: "Someone changes the document id in the log. The file still reads fine, and nothing notices.", question: ASK, flags: { hcp: "H-2", tamper: "edit", naive: "true" }, expect: "unnoticed" },
-    { title: "Nobody touches the trace", why: "Every line is in order and every fingerprint matches.", question: ASK, flags: { hcp: "H-2" }, expect: "intact" },
-    { title: "EDGE: one word is changed", why: "The document id in the result line is changed. The fingerprint of that line no longer matches.", question: ASK, flags: { hcp: "H-2", tamper: "edit" }, expect: "caught" },
-    { title: "EDGE: a line is removed", why: "The search line is deleted. The next line points at a line that is gone.", question: ASK, flags: { hcp: "H-2", tamper: "delete" }, expect: "caught" },
-    { title: "EDGE: the end is cut off", why: "The answer line is removed. The chain is still fine, but the last fingerprint is not the saved one.", question: ASK, flags: { hcp: "H-2", tamper: "cut" }, expect: "caught" },
-    { title: "EDGE: the whole file is rewritten", why: "Someone edits a line and works every fingerprint out again. The chain is fine, but the head is not the saved one.", question: ASK, flags: { hcp: "H-2", tamper: "rewrite" }, expect: "caught" },
+    { title: "NAIVE: a plain log", why: "Someone changes the document id in the log. The file still reads fine, and nothing notices.", question: ASK, flags: { hcp: "dr-weber", tamper: "edit", naive: "true" }, expect: "unnoticed" },
+    { title: "Nobody touches the trace", why: "Every line is in order and every fingerprint matches.", question: ASK, flags: { hcp: "dr-weber" }, expect: "intact" },
+    { title: "EDGE: one word is changed", why: "The document id in the result line is changed. The fingerprint of that line no longer matches.", question: ASK, flags: { hcp: "dr-weber", tamper: "edit" }, expect: "caught" },
+    { title: "EDGE: a line is removed", why: "The search line is deleted. The next line points at a line that is gone.", question: ASK, flags: { hcp: "dr-weber", tamper: "delete" }, expect: "caught" },
+    { title: "EDGE: the end is cut off", why: "The answer line is removed. The chain is still fine, but the last fingerprint is not the saved one.", question: ASK, flags: { hcp: "dr-weber", tamper: "cut" }, expect: "caught" },
+    { title: "EDGE: the whole file is rewritten", why: "Someone edits a line and works every fingerprint out again. The chain is fine, but the head is not the saved one.", question: ASK, flags: { hcp: "dr-weber", tamper: "rewrite" }, expect: "caught" },
   ],
   play(question, flags) {
-    const hcp = flags.hcp || "H-2";
+    const hcp = flags.hcp || "dr-weber";
     const file = `${mkdtempSync(`${tmpdir()}/lab27-`)}/trace.jsonl`;
     print(field("Question", question));
     const model = modelFrom(flags);
@@ -69,7 +69,7 @@ function tamper(file: string, how: string): void {
   if (how === "") return;
   const lines = readFileSync(file, "utf8").split("\n").filter((line) => line.trim() !== "");
   if (how === "edit" || how === "rewrite") {
-    lines[2] = lines[2].replace("DOC-102", "DOC-101");
+    lines[2] = lines[2].replace("CARDIOZA-DE", "CARDIOZA-US");
   }
   if (how === "delete") lines.splice(1, 1);
   if (how === "cut") lines.pop();

@@ -11,14 +11,14 @@ import { isDone, outboxOf } from "../src/jobs";
 
 const ASK = "Email the Cardioza update to three doctors";
 const FILE = "show/21-crash-and-resume.ts";
-const NAMES: Record<string, string> = { "H-1": "Dr. Lee", "H-2": "Dr. Weber", "H-3": "Dr. Rao" };
+const NAMES: Record<string, string> = { "dr-lee": "Dr. Lee", "dr-weber": "Dr. Weber", "dr-rao": "Dr. Rao" };
 
 // What each scenario does: the runs, in order. A run is "mode:die-point". The die point may be empty.
 const SCENARIOS: Record<string, string[]> = {
-  naive: ["naive:send:H-2", "naive:"],
+  naive: ["naive:send:dr-weber", "naive:"],
   clean: ["safe:"],
-  resume: ["safe:ledger:H-2", "safe:"],
-  between: ["safe:send:H-2", "safe:"],
+  resume: ["safe:ledger:dr-weber", "safe:"],
+  between: ["safe:send:dr-weber", "safe:"],
   done: ["safe:", "safe:"],
 };
 

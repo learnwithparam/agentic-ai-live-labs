@@ -9,12 +9,12 @@
 // The examples and the screen output are in show/27-traces-and-audit.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp H-2 --tamper edit --naive
-//   bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp H-2
-//   bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp H-2 --tamper edit
-//   bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp H-2 --tamper delete
-//   bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp H-2 --tamper cut
-//   bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp H-2 --tamper rewrite
+//   bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp dr-weber --tamper edit --naive
+//   bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp dr-weber
+//   bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp dr-weber --tamper edit
+//   bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp dr-weber --tamper delete
+//   bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp dr-weber --tamper cut
+//   bun run lab traces-and-audit --question "What is the dose of Cardioza?" --hcp dr-weber --tamper rewrite
 //   bun run lab traces-and-audit --demo
 
 import type { CallLlm } from "../src/model";

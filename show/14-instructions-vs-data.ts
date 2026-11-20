@@ -5,7 +5,7 @@ import { modelFrom, type Lab } from "../src/runner";
 import { badgeGreen, badgeRed, badgeYellow, box, dim, field, green, print, red, rule, yellow } from "../src/ui";
 import { fence, hasOrder, naivePrompt, readDocument, safePrompt } from "../labs/14-instructions-vs-data";
 
-const DOC = "[DOC-101] Cardioza standard adult dose is 10mg once daily with food.";
+const DOC = "[CARDIOZA-US] Cardioza standard adult dose is 10mg once daily with food.";
 type Scene = { data: string; hidden: boolean }; // hidden = the demo knows an order is inside
 
 const SCENES: Record<string, Scene> = {

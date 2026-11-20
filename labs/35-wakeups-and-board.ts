@@ -10,7 +10,7 @@
 // Run it (copy any line):
 //   bun run lab wakeups-and-board --question "Check the Cardioza dose for Dr. Lee every day." --times 0,5 --naive
 //   bun run lab wakeups-and-board --question "Check the Cardioza dose for Dr. Lee every day." --times 0,5,25
-//   bun run lab wakeups-and-board --question "Check the Cardioza dose when a new label is posted." --events label-7,label-7
+//   bun run lab wakeups-and-board --question "Check the Cardioza dose when a new label is posted." --events cardioza-label-v2,cardioza-label-v2
 //   bun run lab wakeups-and-board --question "Check the Cardioza dose for Dr. Lee every day." --times 0 --fail true
 //   bun run lab wakeups-and-board --demo
 

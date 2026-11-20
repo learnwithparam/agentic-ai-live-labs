@@ -21,14 +21,14 @@ export const lab: Lab = {
   promise: "All workers start at once. A worker that is late is stopped at the deadline, and one that crashes is named. The brief goes out with the parts that came back.",
   production: "Give each worker its own result file, so none overwrites another. Set the deadline from how long the rep can wait. The merge keeps the parts that came back.",
   cases: [
-    { title: "NAIVE: one system after another", why: "The systems run in a line. Three seconds go by before the brief is ready.", question: ASK, flags: { hcp: "H-1", naive: "true" }, expect: "slow" },
-    { title: "Three workers at once", why: "All three start together. The brief is ready in about one second.", question: ASK, flags: { hcp: "H-1" }, expect: "complete" },
-    { title: "A German doctor", why: "Dr. Weber has no emails. That worker answers that there are none, and the brief is still complete.", question: "Please prepare a call brief for Dr. Weber.", flags: { hcp: "H-2" }, expect: "complete" },
-    { title: "EDGE: one system is stuck", why: "The emails system never answers. The lead stops it at the deadline and sends the rest.", question: ASK, flags: { hcp: "H-1", stuck: "emails" }, expect: "partial" },
-    { title: "EDGE: one worker crashes", why: "The profile worker dies. The brief names the missing part, and the other two come through.", question: ASK, flags: { hcp: "H-1", crash: "profile" }, expect: "partial" },
+    { title: "NAIVE: one system after another", why: "The systems run in a line. Three seconds go by before the brief is ready.", question: ASK, flags: { hcp: "dr-lee", naive: "true" }, expect: "slow" },
+    { title: "Three workers at once", why: "All three start together. The brief is ready in about one second.", question: ASK, flags: { hcp: "dr-lee" }, expect: "complete" },
+    { title: "A German doctor", why: "Dr. Weber has no emails. That worker answers that there are none, and the brief is still complete.", question: "Please prepare a call brief for Dr. Weber.", flags: { hcp: "dr-weber" }, expect: "complete" },
+    { title: "EDGE: one system is stuck", why: "The emails system never answers. The lead stops it at the deadline and sends the rest.", question: ASK, flags: { hcp: "dr-lee", stuck: "emails" }, expect: "partial" },
+    { title: "EDGE: one worker crashes", why: "The profile worker dies. The brief names the missing part, and the other two come through.", question: ASK, flags: { hcp: "dr-lee", crash: "profile" }, expect: "partial" },
   ],
   play(question, flags) {
-    const hcp = flags.hcp || "H-1";
+    const hcp = flags.hcp || "dr-lee";
     const dir = mkdtempSync(`${tmpdir()}/lab31-`);
     process.env.LIVE_FLAG = flags.live || "";
     print(field("Request", question));

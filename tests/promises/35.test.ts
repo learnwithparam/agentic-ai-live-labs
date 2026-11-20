@@ -6,9 +6,9 @@ import { makeModel, type CallLlm } from "../../src/model";
 import { boardOf, wake, wakeNaive, type Plan } from "../../labs/35-wakeups-and-board";
 
 const ASK = "Check the Cardioza dose for Dr. Lee every day.";
-const job = { name: "daily", everyHours: 24, hcpId: "H-1", question: ASK };
+const job = { name: "daily", everyHours: 24, hcpId: "dr-lee", question: ASK };
 const daily: Plan = { jobs: [job], events: [] };
-const label = { id: "label-7", hcpId: "H-1", question: ASK };
+const label = { id: "cardioza-label-v2", hcpId: "dr-lee", question: ASK };
 const fresh = () => `${mkdtempSync(`${tmpdir()}/t35-`)}/board.jsonl`;
 const ok = makeModel("ok");
 const runs = (file: string) => readLines(file).filter((line) => line.status === "running").length;
@@ -43,7 +43,7 @@ test("a finished run is a done card with the answer", () => {
   wake(0, daily, ok, file);
   const card = boardOf(file)[0];
   expect(card.status).toBe("done");
-  expect(card.note).toContain("DOC-101");
+  expect(card.note).toContain("CARDIOZA-US");
 });
 
 test("a failed run is a failed card, not a silent gap", () => {

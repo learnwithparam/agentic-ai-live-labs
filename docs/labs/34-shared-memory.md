@@ -29,11 +29,11 @@ Each word has one meaning in every lab.
 Copy any line into your terminal. Each one is a real example from this lab.
 
 ```bash
-bun run lab shared-memory --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1 --model invent --naive
-bun run lab shared-memory --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1
-bun run lab shared-memory --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1 --model invent
-bun run lab shared-memory --question "What is the dose of Cardioza for Dr. Weber?" --hcp H-1 --then H-2
-bun run lab shared-memory --question "What is the dose of Zorbex for Dr. Lee?" --hcp H-1
+bun run lab shared-memory --question "What is the dose of Cardioza for Dr. Lee?" --hcp dr-lee --model invent --naive
+bun run lab shared-memory --question "What is the dose of Cardioza for Dr. Lee?" --hcp dr-lee
+bun run lab shared-memory --question "What is the dose of Cardioza for Dr. Lee?" --hcp dr-lee --model invent
+bun run lab shared-memory --question "What is the dose of Cardioza for Dr. Weber?" --hcp dr-lee --then dr-weber
+bun run lab shared-memory --question "What is the dose of Zorbex for Dr. Lee?" --hcp dr-lee
 bun run lab shared-memory --demo
 ```
 
@@ -45,11 +45,11 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
-| 1 | NAIVE: save whatever a bot says | The first bot makes up a dose and it is saved. The second bot reads it and repeats it. | poisoned | `bun run lab shared-memory --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1 --model invent --naive` |
-| 2 | The second bot reuses a checked fact | The first bot saves a checked dose. The second bot reads it from memory. | shared | `bun run lab shared-memory --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1` |
-| 3 | EDGE: a made-up dose is not saved | The first bot makes up a dose. The check refuses to save it, so the second bot finds the real one. | clean | `bun run lab shared-memory --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1 --model invent` |
-| 4 | EDGE: a fact for another country | Dr. Lee is in the US and Dr. Weber is in Germany. The US fact is not used for Dr. Weber. | clean | `bun run lab shared-memory --question "What is the dose of Cardioza for Dr. Weber?" --hcp H-1 --then H-2` |
-| 5 | EDGE: no approved document | There is no approved document for Zorbex. Nothing is saved, and the second bot says so too. | no-answer | `bun run lab shared-memory --question "What is the dose of Zorbex for Dr. Lee?" --hcp H-1` |
+| 1 | NAIVE: save whatever a bot says | The first bot makes up a dose and it is saved. The second bot reads it and repeats it. | poisoned | `bun run lab shared-memory --question "What is the dose of Cardioza for Dr. Lee?" --hcp dr-lee --model invent --naive` |
+| 2 | The second bot reuses a checked fact | The first bot saves a checked dose. The second bot reads it from memory. | shared | `bun run lab shared-memory --question "What is the dose of Cardioza for Dr. Lee?" --hcp dr-lee` |
+| 3 | EDGE: a made-up dose is not saved | The first bot makes up a dose. The check refuses to save it, so the second bot finds the real one. | clean | `bun run lab shared-memory --question "What is the dose of Cardioza for Dr. Lee?" --hcp dr-lee --model invent` |
+| 4 | EDGE: a fact for another country | Dr. Lee is in the US and Dr. Weber is in Germany. The US fact is not used for Dr. Weber. | clean | `bun run lab shared-memory --question "What is the dose of Cardioza for Dr. Weber?" --hcp dr-lee --then dr-weber` |
+| 5 | EDGE: no approved document | There is no approved document for Zorbex. Nothing is saved, and the second bot says so too. | no-answer | `bun run lab shared-memory --question "What is the dose of Zorbex for Dr. Lee?" --hcp dr-lee` |
 
 ## Stuck points
 

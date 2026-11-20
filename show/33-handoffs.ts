@@ -18,16 +18,16 @@ export const lab: Lab = {
   promise: "Every message travels in an envelope. It stops at the hop limit, or when it meets a bot twice. Then a person gets it, with the list of bots it met.",
   production: "Put the envelope on a queue, with its id, hop count and path. A loop breaker alerts a person when a message is stopped. Keep the limit small.",
   cases: [
-    { title: "NAIVE: no envelope, no count", why: "The outreach bot and the answer bot pass the message back and forth until we cut it off.", question: LOOP, flags: { hcp: "H-1", naive: "true" }, expect: "looped" },
-    { title: "A dose goes to the answer bot", why: "Intake sends it to the answer bot, which gives the dose.", question: DOSE, flags: { hcp: "H-1" }, expect: "delivered" },
-    { title: "An email goes to the outreach bot", why: "Intake sends it to the outreach bot, which writes the email.", question: "Please email Dr. Weber about the new Cardioza label.", flags: { hcp: "H-2" }, expect: "delivered" },
-    { title: "EDGE: two bots send it back and forth", why: "The envelope sees the outreach bot a second time and stops. A person gets the path.", question: LOOP, flags: { hcp: "H-1" }, expect: "stopped" },
-    { title: "EDGE: a message that fits no bot", why: "The intake bot has no bot for an invoice, so a person gets it at once.", question: "Please call me back about my last invoice.", flags: { hcp: "H-1" }, expect: "human" },
-    { title: "EDGE: the hop limit is tiny", why: "The limit is zero hops. Even the first handoff is refused, though nothing is wrong.", question: DOSE, flags: { hcp: "H-1", limit: "0" }, expect: "stopped" },
+    { title: "NAIVE: no envelope, no count", why: "The outreach bot and the answer bot pass the message back and forth until we cut it off.", question: LOOP, flags: { hcp: "dr-lee", naive: "true" }, expect: "looped" },
+    { title: "A dose goes to the answer bot", why: "Intake sends it to the answer bot, which gives the dose.", question: DOSE, flags: { hcp: "dr-lee" }, expect: "delivered" },
+    { title: "An email goes to the outreach bot", why: "Intake sends it to the outreach bot, which writes the email.", question: "Please email Dr. Weber about the new Cardioza label.", flags: { hcp: "dr-weber" }, expect: "delivered" },
+    { title: "EDGE: two bots send it back and forth", why: "The envelope sees the outreach bot a second time and stops. A person gets the path.", question: LOOP, flags: { hcp: "dr-lee" }, expect: "stopped" },
+    { title: "EDGE: a message that fits no bot", why: "The intake bot has no bot for an invoice, so a person gets it at once.", question: "Please call me back about my last invoice.", flags: { hcp: "dr-lee" }, expect: "human" },
+    { title: "EDGE: the hop limit is tiny", why: "The limit is zero hops. Even the first handoff is refused, though nothing is wrong.", question: DOSE, flags: { hcp: "dr-lee", limit: "0" }, expect: "stopped" },
   ],
   play(question, flags) {
     const callLlm = modelFrom(flags);
-    const hcp = flags.hcp || "H-1";
+    const hcp = flags.hcp || "dr-lee";
     print(field("Message", question));
     let done;
     if (flags.naive) done = handOffNaive(question, hcp, callLlm);

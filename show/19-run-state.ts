@@ -57,7 +57,7 @@ function showRecord(run: Run): string {
 function showStalled(question: string): string {
   const tenMinutesAgo = Date.now() - 600_000;
   const run = openRun(question, tenMinutesAgo);
-  addStep(run, "search", "done", "[DOC-101] found", tenMinutesAgo);
+  addStep(run, "search", "done", "[CARDIOZA-US] found", tenMinutesAgo);
   rule("LOG, STEP BY STEP");
   console.log(dim("Step 1: saved a record with status running."));
   console.log(dim("Step 2: saved one step. Then the program died, ten minutes ago."));

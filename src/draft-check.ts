@@ -10,7 +10,7 @@ function tidy(text: string): string {
 export function findProblems(draft: string, source: string): string[] {
   const problems: string[] = [];
   const text = tidy(draft);
-  if (!text.includes("DOC-")) problems.push("no citation");
+  if (!/\[[A-Z]+-[A-Z]+\]/.test(text)) problems.push("no citation");
   for (const dose of dosesIn(text)) {
     if (!dosesIn(source).includes(dose)) problems.push(`dose ${dose} is not in the source`);
   }

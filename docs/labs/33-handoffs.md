@@ -31,12 +31,12 @@ Each word has one meaning in every lab.
 Copy any line into your terminal. Each one is a real example from this lab.
 
 ```bash
-bun run lab handoffs --question "Please email Dr. Lee the dose of Cardioza." --hcp H-1 --naive
-bun run lab handoffs --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1
+bun run lab handoffs --question "Please email Dr. Lee the dose of Cardioza." --hcp dr-lee --naive
+bun run lab handoffs --question "What is the dose of Cardioza for Dr. Lee?" --hcp dr-lee
 bun run lab handoffs --demo
-bun run lab handoffs --question "Please email Dr. Lee the dose of Cardioza." --hcp H-1
-bun run lab handoffs --question "Please call me back about my last invoice." --hcp H-1
-bun run lab handoffs --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1 --limit 0
+bun run lab handoffs --question "Please email Dr. Lee the dose of Cardioza." --hcp dr-lee
+bun run lab handoffs --question "Please call me back about my last invoice." --hcp dr-lee
+bun run lab handoffs --question "What is the dose of Cardioza for Dr. Lee?" --hcp dr-lee --limit 0
 bun run lab handoffs --demo
 ```
 
@@ -48,12 +48,12 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
-| 1 | NAIVE: no envelope, no count | The outreach bot and the answer bot pass the message back and forth until we cut it off. | looped | `bun run lab handoffs --question "Please email Dr. Lee the dose of Cardioza." --hcp H-1 --naive` |
-| 2 | A dose goes to the answer bot | Intake sends it to the answer bot, which gives the dose. | delivered | `bun run lab handoffs --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1` |
+| 1 | NAIVE: no envelope, no count | The outreach bot and the answer bot pass the message back and forth until we cut it off. | looped | `bun run lab handoffs --question "Please email Dr. Lee the dose of Cardioza." --hcp dr-lee --naive` |
+| 2 | A dose goes to the answer bot | Intake sends it to the answer bot, which gives the dose. | delivered | `bun run lab handoffs --question "What is the dose of Cardioza for Dr. Lee?" --hcp dr-lee` |
 | 3 | An email goes to the outreach bot | Intake sends it to the outreach bot, which writes the email. | delivered | `bun run lab handoffs --demo` |
-| 4 | EDGE: two bots send it back and forth | The envelope sees the outreach bot a second time and stops. A person gets the path. | stopped | `bun run lab handoffs --question "Please email Dr. Lee the dose of Cardioza." --hcp H-1` |
-| 5 | EDGE: a message that fits no bot | The intake bot has no bot for an invoice, so a person gets it at once. | human | `bun run lab handoffs --question "Please call me back about my last invoice." --hcp H-1` |
-| 6 | EDGE: the hop limit is tiny | The limit is zero hops. Even the first handoff is refused, though nothing is wrong. | stopped | `bun run lab handoffs --question "What is the dose of Cardioza for Dr. Lee?" --hcp H-1 --limit 0` |
+| 4 | EDGE: two bots send it back and forth | The envelope sees the outreach bot a second time and stops. A person gets the path. | stopped | `bun run lab handoffs --question "Please email Dr. Lee the dose of Cardioza." --hcp dr-lee` |
+| 5 | EDGE: a message that fits no bot | The intake bot has no bot for an invoice, so a person gets it at once. | human | `bun run lab handoffs --question "Please call me back about my last invoice." --hcp dr-lee` |
+| 6 | EDGE: the hop limit is tiny | The limit is zero hops. Even the first handoff is refused, though nothing is wrong. | stopped | `bun run lab handoffs --question "What is the dose of Cardioza for Dr. Lee?" --hcp dr-lee --limit 0` |
 
 ## Stuck points
 

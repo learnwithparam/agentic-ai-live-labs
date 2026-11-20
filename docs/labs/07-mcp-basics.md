@@ -1,6 +1,6 @@
 # MCP basics
 
-The agent gets its tools from a real MCP server. That server runs as a separate program and speaks JSON-RPC messages. Nothing is hard-coded. Use --hcp H-1, H-2 or H-3 to pick the doctor.
+The agent gets its tools from a real MCP server. That server runs as a separate program and speaks JSON-RPC messages. Nothing is hard-coded. Use --hcp dr-lee, dr-weber or dr-rao to pick the doctor.
 
 ## The story in one picture
 
@@ -31,10 +31,10 @@ Copy any line into your terminal. Each one is a real example from this lab.
 ```bash
 bun run lab mcp-basics --question "What is the dose of Cardioza?" --naive
 bun run lab mcp-basics --question "What is the dose of Cardioza?" --show wire
-bun run lab mcp-basics --question "What is the dose of Cardioza?" --hcp H-1
-bun run lab mcp-basics --question "What is the dose of Cardioza?" --hcp H-2 --country DE
+bun run lab mcp-basics --question "What is the dose of Cardioza?" --hcp dr-lee
+bun run lab mcp-basics --question "What is the dose of Cardioza?" --hcp dr-weber --country DE
 bun run lab mcp-basics --question "What is the dose of Zorbex?"
-bun run lab mcp-basics --question "What is the dose of Cardioza?" --hcp H-9
+bun run lab mcp-basics --question "What is the dose of Cardioza?" --hcp dr-unknown
 bun run lab mcp-basics --question "What is the dose of Cardioza?" --tool delete_everything
 bun run lab mcp-basics --question "What is the dose of Cardioza?" --script src/missing-server.ts
 bun run lab mcp-basics --demo
@@ -50,10 +50,10 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | --- | --- | --- | --- | --- |
 | 1 | NAIVE: a hard-coded tool list | The agent copied one tool into its own code. The server has more. The agent cannot use them, and nobody gets an error. | out-of-date | `bun run lab mcp-basics --question "What is the dose of Cardioza?" --naive` |
 | 2 | See the messages | This is all MCP is: lines of JSON in, lines of JSON out. Read the method names and the tool list. | listed | `bun run lab mcp-basics --question "What is the dose of Cardioza?" --show wire` |
-| 3 | The agent uses the server's tools | The agent finds three tools, then calls them one by one. The answer cites its document. | answered | `bun run lab mcp-basics --question "What is the dose of Cardioza?" --hcp H-1` |
-| 4 | Another country | Same server, a German doctor. The search tool filters by country, so the dose is 5mg. | answered | `bun run lab mcp-basics --question "What is the dose of Cardioza?" --hcp H-2 --country DE` |
+| 3 | The agent uses the server's tools | The agent finds three tools, then calls them one by one. The answer cites its document. | answered | `bun run lab mcp-basics --question "What is the dose of Cardioza?" --hcp dr-lee` |
+| 4 | Another country | Same server, a German doctor. The search tool filters by country, so the dose is 5mg. | answered | `bun run lab mcp-basics --question "What is the dose of Cardioza?" --hcp dr-weber --country DE` |
 | 5 | No approved document | The server says nothing was found. The agent refuses to guess. | no-source | `bun run lab mcp-basics --question "What is the dose of Zorbex?"` |
-| 6 | A tool reports an error | Doctor H-9 does not exist. The server marks the result as an error, and the client passes it on as text. | tool-error | `bun run lab mcp-basics --question "What is the dose of Cardioza?" --hcp H-9` |
+| 6 | A tool reports an error | Doctor dr-unknown does not exist. The server marks the result as an error, and the client passes it on as text. | tool-error | `bun run lab mcp-basics --question "What is the dose of Cardioza?" --hcp dr-unknown` |
 | 7 | A tool the server does not have | The agent asks for delete_everything. The server answers with a protocol error. The call goes nowhere. | tool-error | `bun run lab mcp-basics --question "What is the dose of Cardioza?" --tool delete_everything` |
 | 8 | The server is not there | The path is wrong, so nothing answers. The client finds no tools and says so, instead of hanging. | no-server | `bun run lab mcp-basics --question "What is the dose of Cardioza?" --script src/missing-server.ts` |
 
