@@ -34,6 +34,12 @@ describe("agent loop", () => {
   test("uses the country's own document", () => {
     expect(runAgentLoop("What is the dose of Cardioza?", "DE", makeModel()).answer).toContain("5mg");
   });
+  test("the same call twice stops the loop at once", () => {
+    const stuck = () => ({ toolCall: { name: "search_approved_docs", args: { query: "x", country: "US", hcpId: "none" } } });
+    const result = runAgentLoop("x", "US", stuck, searchOnly, 9);
+    expect(result.why).toBe("same call twice");
+    expect(result.steps.length).toBe(1);
+  });
   test("stops at max steps", () => {
     const stuck = () => ({ toolCall: { name: "search_approved_docs", args: { query: "x", country: "US", hcpId: "none" } } });
     expect(runAgentLoop("x", "US", stuck, searchOnly, 3).stopped).toBe(true);

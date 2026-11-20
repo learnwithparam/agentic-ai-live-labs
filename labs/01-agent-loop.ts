@@ -21,7 +21,7 @@ import { runLab } from "../src/runner";
 export type Tool = { name: string; run(input: ToolInput): string };
 
 export type Step = { kind: string; tool: string; input: string; result: string };
-export type LoopResult = { answer: string; steps: Step[]; stopped: boolean; log: string[] };
+export type LoopResult = { answer: string; steps: Step[]; stopped: boolean; log: string[]; why?: string };
 
 // Answer a question with the loop. Read the steps in order. Step 2 and Step 3 repeat.
 export function runAgentLoop(
@@ -35,6 +35,7 @@ export function runAgentLoop(
   const log: string[] = [];
   const steps: Step[] = [];
   const toolNames: string[] = [];
+  const seen: string[] = [];
   for (const tool of tools) toolNames.push(tool.name);
 
   // Step 1: start the conversation with the rules and the question. The model reads all of it.
@@ -57,6 +58,12 @@ export function runAgentLoop(
 
       // Show the model what the tool returned, so its next answer can use it.
       const input = `query="${call.args.query}" country=${call.args.country}`;
+      // The same call twice will give the same result. That is a loop, so stop it.
+      if (seen.includes(`${call.name} ${input}`)) {
+        log.push(`Step 5: the call ${call.name} ${input} came twice. Stopped.`);
+        return { answer: "STOPPED: the same call came twice.", steps, stopped: true, log, why: "same call twice" };
+      }
+      seen.push(`${call.name} ${input}`);
       steps.push({ kind: "tool", tool: call.name, input, result });
       messages.push({ role: "tool", name: call.name, content: result });
 
@@ -77,7 +84,7 @@ export function runAgentLoop(
 
   // Step 5: the model never finished. Stop it, so a loop can never run forever.
   log.push(`Step 5: stopped after ${maxSteps} rounds. The model did not give an answer.`);
-  return { answer: "STOPPED: max loop steps reached.", steps, stopped: true, log };
+  return { answer: "STOPPED: max loop steps reached.", steps, stopped: true, log, why: "step limit" };
 }
 
 // What the loop calls: the tool.
