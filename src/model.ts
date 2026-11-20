@@ -19,7 +19,7 @@ export type CallLlm = (messages: Message[], toolNames: string[]) => Reply;
 // nocite: the answer is right, but it forgets the citation. A guardrail catches this.
 // invent: it cites a real document but states a wrong dose. Only a check against the document catches this.
 // stubborn: it states a wrong dose, and when asked to fix it, it sends the same draft again.
-export type Behaviour = "ok" | "nocite" | "invent" | "stubborn" | "stuck" | "wanders";
+export type Behaviour = "ok" | "overclaim" | "nocite" | "invent" | "stubborn" | "stuck" | "wanders";
 
 const grab = (text: string, label: string) => text.match(new RegExp(`${label}: ([^.\\n]+)`))?.[1]?.trim() ?? "";
 
@@ -48,6 +48,7 @@ export function makeModel(behaviour: Behaviour = "ok"): CallLlm {
     if (first.startsWith("ACT:")) return { text: actFor(first) };
     if (first.startsWith("ROUTE:")) return { text: routeFor(first) };
     if (first.startsWith("HAND:")) return { text: handFor(first) };
+    if (first.startsWith("CRITIC:")) return { text: criticFor(first) };
     if (first.startsWith("FORM:")) return { text: formFor(first) };
     if (first.startsWith("REVIEW:")) return { text: "Looks good. The draft is fine." };
     if (first.startsWith("FIX:")) return { text: fix(first, behaviour) };
@@ -83,6 +84,7 @@ export function makeModel(behaviour: Behaviour = "ok"): CallLlm {
       const id = line.match(/^\[([A-Z]+-[A-Z]+)\]/)![1];
       const body = line.replace(/^\[[A-Z]+-[A-Z]+\]\s*/, "");
       const claim = behaviour === "invent" || behaviour === "stubborn" ? body.replace(/\d+mg/, "20mg") : body;
+      if (behaviour === "overclaim") return `${claim} [${id}] It is safe for children.`;
       return behaviour === "nocite" ? claim : `${claim} [${id}]`;
     });
     const extra = result("check_recent_outreach");
@@ -300,4 +302,14 @@ function formFor(prompt: string): string {
   if (text.includes("adult")) age = "adult";
   if (text.includes("child")) age = "child";
   return `drug=${drug} age=${age}`;
+}
+
+// The pretend critic. It fails any sentence that claims more than the source says.
+function criticFor(prompt: string): string {
+  const draft = (prompt.split("DRAFT: ")[1] ?? "").split("\nSOURCE: ")[0];
+  const source = prompt.split("SOURCE: ")[1] ?? "";
+  if (draft.includes("safe for children") && !source.includes("children")) {
+    return "FAIL: it says the drug is safe for children. The source does not say that.";
+  }
+  return "PASS";
 }

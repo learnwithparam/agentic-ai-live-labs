@@ -19,6 +19,7 @@ import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";
 import { runAgentLoop, searchApprovedDocs } from "./01-agent-loop";
 import { findProblems } from "../src/draft-check"; // the check in Step 4
+import { afterCritic } from "../src/critic"; // the second reader in Step 6
 
 export const MOST_ROUNDS = 2;
 export type Result = { outcome: string; draft: string; problems: string[]; log: string[] };
@@ -49,7 +50,7 @@ export function answerWithCheck(
   // The check is in src/draft-check.ts.
   let problems = findProblems(draft, source);
   log.push(`Step 4: checked the draft. Problems: ${problems.join(", ") || "none"}`);
-  if (problems.length === 0) return { outcome: "accepted", draft, problems, log };
+  if (problems.length === 0) return afterCritic("accepted", draft, source, callLlm, log);
 
   // Step 5: tell the model what is wrong, and let it fix the draft. Then check again.
   for (let round = 1; round <= MOST_ROUNDS; round++) {
@@ -60,8 +61,8 @@ export function answerWithCheck(
 
     // Step 6: a clean draft is done.
     if (problems.length === 0) {
-      log.push("Step 6: the draft is clean. Done.");
-      return { outcome: "fixed", draft, problems, log };
+      log.push("Step 6: the code check is clean.");
+      return afterCritic("fixed", draft, source, callLlm, log);
     }
   }
 

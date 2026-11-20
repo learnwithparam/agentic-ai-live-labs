@@ -54,3 +54,17 @@ test("the form path uses the newest label and gives both doses when no age is gi
   expect(ask("How much Cardioza should I give?").draft).toContain("Adults take 10mg. Children take 5mg.");
   expect(ask("Is Zorbex safe?").outcome).toBe("no-source");
 });
+
+// PROMISE: a second reader sees only the draft and the source, and a FAIL goes to a person.
+test("the critic fails a claim the source does not back", () => {
+  const result = run("overclaim");
+  expect(result.outcome).toBe("needs-person");
+  expect(result.problems[0]).toContain("safe for children");
+  let seen = "";
+  const spy: CallLlm = (messages, toolNames) => {
+    if (messages[0].content.startsWith("CRITIC:")) seen = messages[0].content;
+    return makeModel("ok")(messages, toolNames);
+  };
+  answerWithCheck(DOSE, "US", spy);
+  expect(seen).not.toContain("What is the dose");
+});

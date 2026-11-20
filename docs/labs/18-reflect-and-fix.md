@@ -1,6 +1,6 @@
 # Check the draft, then fix it
 
-Each example is a doctor's question. The pretend model writes a draft, and sometimes the draft is wrong. Pick how it acts with --model. Use ok, nocite (no citation), invent (a wrong dose) or stubborn (a wrong dose it will not fix). Each fix is one round.
+Each example is a doctor's question. The pretend model writes a draft, and sometimes the draft is wrong. Pick how it acts with --model. Use ok, nocite (no citation), overclaim (an extra claim), invent (a wrong dose) or stubborn. Stubborn is a wrong dose it will not fix.
 
 ## The story in one picture
 
@@ -34,6 +34,7 @@ bun run lab reflect-and-fix --question "What is the dose of Cardioza?"
 bun run lab reflect-and-fix --question "What is the dose of Cardioza?" --model nocite
 bun run lab reflect-and-fix --question "What is the dose of Cardioza?" --model invent
 bun run lab reflect-and-fix --question "What is the dose of Cardioza?" --model stubborn
+bun run lab reflect-and-fix --question "What is the dose of Cardioza?" --model overclaim
 bun run lab reflect-and-fix --question "How much Cardioza should an adult take?" --form
 bun run lab reflect-and-fix --question "How much Cardioza should I give?" --form
 bun run lab reflect-and-fix --question "Is Zorbex safe for children?"
@@ -53,9 +54,10 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 3 | A missing citation | The check finds no citation. The model adds one, and the second check passes. | fixed | `bun run lab reflect-and-fix --question "What is the dose of Cardioza?" --model nocite` |
 | 4 | A wrong dose | The check finds 20mg is not in the document. The model changes it to 10mg. | fixed | `bun run lab reflect-and-fix --question "What is the dose of Cardioza?" --model invent` |
 | 5 | EDGE: a model that will not change | The model sends the same wrong draft twice. After two rounds we stop and give it to a person. | gave-up | `bun run lab reflect-and-fix --question "What is the dose of Cardioza?" --model stubborn` |
-| 6 | A form, then code writes the number | The model fills drug and age. It never writes a dose. Code takes the adult dose from the newest label, version 2. Version 1 said 20mg and is ignored. | from-label | `bun run lab reflect-and-fix --question "How much Cardioza should an adult take?" --form` |
-| 7 | EDGE: no age means both doses | The doctor gave no age. The form says unknown, so code prints the adult dose and the child dose. | from-label | `bun run lab reflect-and-fix --question "How much Cardioza should I give?" --form` |
-| 8 | No approved document | Zorbex has no approved document. With nothing to check against, there is no answer to give. | no-source | `bun run lab reflect-and-fix --question "Is Zorbex safe for children?"` |
+| 6 | A second reader catches what code cannot | The numbers and the citation are right. But the draft adds that the drug is safe for children. The source never says that. The critic sees only the draft and the source, and it fails the draft. | needs-person | `bun run lab reflect-and-fix --question "What is the dose of Cardioza?" --model overclaim` |
+| 7 | A form, then code writes the number | The model fills drug and age. It never writes a dose. Code takes the adult dose from the newest label, version 2. Version 1 said 20mg and is ignored. | from-label | `bun run lab reflect-and-fix --question "How much Cardioza should an adult take?" --form` |
+| 8 | EDGE: no age means both doses | The doctor gave no age. The form says unknown, so code prints the adult dose and the child dose. | from-label | `bun run lab reflect-and-fix --question "How much Cardioza should I give?" --form` |
+| 9 | No approved document | Zorbex has no approved document. With nothing to check against, there is no answer to give. | no-source | `bun run lab reflect-and-fix --question "Is Zorbex safe for children?"` |
 
 ## Stuck points
 
@@ -83,7 +85,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Check what code can check, like numbers and citations. The model fills a small form. Code looks the number up in the newest label. A separate critic with no writer context checks the rest. Send what is left to a person, and keep every round in the log.
+Check what code can check, like numbers and citations. The model fills a small form. Code looks the number up in the newest label. A critic that sees only the draft and the source checks the rest. Send what is left to a person, and keep every round in the log.
 
 ## Read the code
 
