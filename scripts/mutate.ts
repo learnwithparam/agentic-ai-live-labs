@@ -245,6 +245,10 @@ export const BREAKS: Break[] = [
     find: 'if (!/\\[[A-Z]+-[A-Z]+\\]/.test(text))', replace: "if (false)" },
   { lab: 18, file: "18-reflect-and-fix.ts", rule: "fix rounds have no limit",
     find: "round <= MOST_ROUNDS", replace: "round <= 99" },
+  { lab: 18, file: "../src/form-lookup.ts", rule: "an old label version can be used",
+    find: "label.version > best.version", replace: "label.version < best.version" },
+  { lab: 3, file: "03-gates.ts", rule: "a withdrawn document is sent after the wait",
+    find: "if (withdrawn.includes(id)) {", replace: "if (false) {" },
 ];
 
 function testPasses(lab: number): boolean {

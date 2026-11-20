@@ -12,6 +12,14 @@ export const APPROVED_DOCS: Record<string, Doc> = {
   "DERMALIN-US": { drug: "Dermalin", country: "US", text: "Dermalin cream is applied twice daily to clean, dry skin." },
 };
 
+// Every version of a label. The newest version is the only one a reply may use.
+export type Label = { id: string; version: number; adult: string; child: string };
+export const LABELS: Label[] = [
+  { id: "CARDIOZA-US", version: 1, adult: "20mg", child: "5mg" },
+  { id: "CARDIOZA-US", version: 2, adult: "10mg", child: "5mg" },
+  { id: "CARDIOZA-DE", version: 1, adult: "5mg", child: "2.5mg" },
+];
+
 export type Hcp = { name: string; country: string; specialty: string };
 
 export const CRM: Record<string, Hcp> = {

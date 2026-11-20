@@ -48,6 +48,7 @@ export function makeModel(behaviour: Behaviour = "ok"): CallLlm {
     if (first.startsWith("ACT:")) return { text: actFor(first) };
     if (first.startsWith("ROUTE:")) return { text: routeFor(first) };
     if (first.startsWith("HAND:")) return { text: handFor(first) };
+    if (first.startsWith("FORM:")) return { text: formFor(first) };
     if (first.startsWith("REVIEW:")) return { text: "Looks good. The draft is fine." };
     if (first.startsWith("FIX:")) return { text: fix(first, behaviour) };
     const juniper = juniperReply(first, messages, behaviour); // the Juniper Studio labs
@@ -288,4 +289,15 @@ function selectFor(prompt: string): string {
   if (/my profile|who am i|specialty/.test(question)) wanted.push("profile");
   if (/email/.test(question) && !question.includes("never")) wanted.push("emails");
   return wanted.join(", ") || "NONE";
+}
+
+// The form bot only reads the question. It fills drug and age. It never writes a number.
+function formFor(prompt: string): string {
+  const text = (prompt.split("Question: ")[1] ?? "").toLowerCase();
+  let drug = "none";
+  for (const name of KNOWN_DRUGS) if (text.includes(name.toLowerCase())) drug = name;
+  let age = "unknown";
+  if (text.includes("adult")) age = "adult";
+  if (text.includes("child")) age = "child";
+  return `drug=${drug} age=${age}`;
 }

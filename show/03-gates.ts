@@ -3,7 +3,7 @@
 
 import { modelFrom, type Lab } from "../src/runner";
 import { box, dim, field, green, highlight, print, red, rule, verdict, yellow } from "../src/ui";
-import { handleHcpInquiry, handleWithoutGate } from "../labs/03-gates";
+import { pauseForReview, resumeAfterReview, handleHcpInquiry, handleWithoutGate } from "../labs/03-gates";
 
 export const lab: Lab = {
   file: "03-gates.ts",
@@ -21,6 +21,9 @@ export const lab: Lab = {
     { title: "Gate 1, reviewer rejects", why: "Same stop, but the person says no. Nothing is sent.", question: "What is the dose of Zorbex?", flags: { approve: "n" }, expect: "BLOCKED_BY_REVIEWER" },
     { title: "Gate 2, reviewer approves", why: "The model forgot the citation. The output check stops it and a person reads the draft before it can go.", question: "What is the dose of Cardioza?", flags: { model: "nocite", approve: "y" }, expect: "SENT_AFTER_HUMAN_APPROVAL" },
     { title: "Gate 2, reviewer rejects", why: "Same stop, and the person rejects it.", question: "What is the dose of Cardioza?", flags: { model: "nocite", approve: "n" }, expect: "BLOCKED_BY_REVIEWER" },
+    { title: "The run is saved, the reviewer is told, and it waits", why: "The reply has no citation. The run is saved and the reviewer gets a note. The worker stops, so nothing blocks.", question: "What is the dose of Cardioza?", flags: { model: "nocite", later: "wait" }, expect: "WAITING" },
+    { title: "The reviewer answers later and the run resumes", why: "Hours later the yes arrives as an event. The run wakes from its save, checks again at send time, and sends.", question: "What is the dose of Cardioza?", flags: { model: "nocite", later: "y" }, expect: "SENT_AFTER_HUMAN_APPROVAL" },
+    { title: "EDGE: withdrawn while the draft waited", why: "The reviewer said yes, but the document was withdrawn in the meantime. The check at send time stops it.", question: "What is the dose of Cardioza?", flags: { model: "nocite", later: "y", withdrawn: "CARDIOZA-US" }, expect: "BLOCKED_AT_SEND" },
     { title: "Patient details in the question", why: "The note is masked before the search. The reply and the reviewer never see the SSN or the name.", question: "Cardioza dose for Patient: Jane Doe, SSN 123-45-6789", expect: "SENT" },
     { title: "Approved in another country only", why: "Dermalin is approved in the US only. A German doctor hits gate 1.", question: "What is the dose of Dermalin?", flags: { country: "DE", approve: "n" }, expect: "BLOCKED_BY_REVIEWER" },
     { title: "Small talk", why: "No drug, no document. The safe default is to stop and ask a person.", question: "Hello there, can you help me today?", flags: { approve: "n" }, expect: "BLOCKED_BY_REVIEWER" },
@@ -29,6 +32,15 @@ export const lab: Lab = {
     const country = flags.country || "US";
     const callLlm = modelFrom(flags);
     print(field("Question", question));
+    if (flags.later) {
+      const paused = pauseForReview(question, country, callLlm);
+      rule("LOG, STEP BY STEP");
+      for (const line of paused.log) console.log(dim(line));
+      if (paused.saved === undefined || flags.later === "wait") return paused.status;
+      const later = resumeAfterReview(paused.saved, flags.later === "y", flags.withdrawn ? [flags.withdrawn] : []);
+      for (const line of later.log) console.log(dim(line));
+      return later.status;
+    }
     const outcome = flags.naive
       ? handleWithoutGate(question, country, callLlm)
       : handleHcpInquiry(question, country, callLlm, ask);

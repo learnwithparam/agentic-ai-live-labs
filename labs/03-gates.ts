@@ -12,6 +12,8 @@
 //   bun run lab gates --question "What is the dose of Zorbex?" --approve y
 //   bun run lab gates --question "What is the dose of Zorbex?" --approve n
 //   bun run lab gates --question "What is the dose of Cardioza?" --model nocite --approve y
+//   bun run lab gates --question "What is the dose of Cardioza?" --model nocite --later wait
+//   bun run lab gates --question "What is the dose of Cardioza?" --model nocite --later y
 //   bun run lab gates --demo
 
 import { APPROVED_DOCS, NO_DOC } from "../src/data";
@@ -19,6 +21,7 @@ import type { CallLlm } from "../src/model";
 import { showReview } from "../src/review";
 import { runLab, type Ask } from "../src/runner";
 import { runAgentLoop, searchApprovedDocs } from "./01-agent-loop";
+import { idsIn } from "../src/claims";
 import { labelsOf, redactPhi, verifyOutput } from "./02-guardrails";
 
 export type Outcome = {
@@ -64,6 +67,41 @@ export function handleHcpInquiry(
   // Step 5: nothing wrong, so the reply goes out.
   log.push("Step 4: the reply cites an approved document.\nStep 5: sent.");
   return { status: "SENT", reply: answer, log };
+}
+
+// The real way to wait. Do not hold a worker open. Save the run, tell the reviewer, and stop.
+export type Paused = { status: string; saved?: Saved; log: string[] };
+export type Saved = { question: string; country: string; draft: string; notified: string };
+
+export function pauseForReview(question: string, country: string, callLlm: CallLlm): Paused {
+  const { clean } = redactPhi(question);
+  const { answer } = runAgentLoop(clean, country, callLlm);
+  const check = verifyOutput(answer, Object.keys(APPROVED_DOCS));
+  if (check.ok) return { status: "SENT", log: ["Step 1: the reply is fine. Sent."] };
+  const notified = "medical-review queue";
+  const saved: Saved = { question: clean, country, draft: answer, notified };
+  const log = [`Step 1: ${check.reason} The run is saved.`];
+  log.push(`Step 2: the reviewer was told in the ${saved.notified}. The worker stops here.`);
+  return { status: "WAITING", saved, log };
+}
+
+// Later, the reviewer's answer is an event. It wakes the run from the save.
+// Check again at send time. The document may have been withdrawn while the draft waited.
+export function resumeAfterReview(
+  saved: Saved,
+  approved: boolean,
+  withdrawn: string[] = [],
+): Outcome {
+  const log = ["Step 3: the reviewer's answer woke the run from its save."];
+  if (!approved) return { status: "BLOCKED_BY_REVIEWER", reply: "", log };
+  for (const id of idsIn(searchApprovedDocs(saved.question, saved.country))) {
+    if (withdrawn.includes(id)) {
+      log.push(`Step 4: ${id} was withdrawn while the draft waited. Nothing is sent.`);
+      return { status: "BLOCKED_AT_SEND", reply: "", log };
+    }
+  }
+  log.push("Step 4: checked again at send time. Still approved. Sent.");
+  return { status: "SENT_AFTER_HUMAN_APPROVAL", reply: saved.draft, log };
 }
 
 // The same job with no gate. Whatever the model writes goes out.

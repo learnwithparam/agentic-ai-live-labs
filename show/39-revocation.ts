@@ -24,7 +24,7 @@ export const lab: Lab = {
     { title: "A withdrawn document", why: "The saved answer cites CARDIOZA-US. It is deleted. Nothing else is approved for Cardioza in the US, so there is no answer.", question: ASK, flags: { withdraw: "CARDIOZA-US" }, expect: "no-answer" },
     { title: "Another country's document", why: "CARDIOZA-DE is for Germany. It is withdrawn, but Dr. Lee is in the US, so the saved answer is still good.", question: ASK, flags: { withdraw: "CARDIOZA-DE" }, expect: "cache" },
     { title: "Nothing withdrawn", why: "The second ask is served from the saved answer. It is fast, and it is still approved.", question: ASK, flags: {}, expect: "cache" },
-    { title: "EDGE: withdrawn during the run", why: "There is no saved answer. The document is withdrawn after the search and before the send. The last check catches it.", question: ASK, flags: { late: "CARDIOZA-US" }, expect: "blocked" },
+    { title: "EDGE: checked again at the moment of sending", why: "There is no saved answer. The document is withdrawn after the search and before the send. The last check catches it.", question: ASK, flags: { late: "CARDIOZA-US" }, expect: "blocked" },
   ],
   play(question, flags) {
     const dir = mkdtempSync(`${tmpdir()}/lab39-`);

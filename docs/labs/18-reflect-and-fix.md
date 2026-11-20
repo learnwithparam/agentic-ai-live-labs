@@ -34,6 +34,8 @@ bun run lab reflect-and-fix --question "What is the dose of Cardioza?"
 bun run lab reflect-and-fix --question "What is the dose of Cardioza?" --model nocite
 bun run lab reflect-and-fix --question "What is the dose of Cardioza?" --model invent
 bun run lab reflect-and-fix --question "What is the dose of Cardioza?" --model stubborn
+bun run lab reflect-and-fix --question "How much Cardioza should an adult take?" --form
+bun run lab reflect-and-fix --question "How much Cardioza should I give?" --form
 bun run lab reflect-and-fix --question "Is Zorbex safe for children?"
 bun run lab reflect-and-fix --demo
 ```
@@ -51,7 +53,9 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 3 | A missing citation | The check finds no citation. The model adds one, and the second check passes. | fixed | `bun run lab reflect-and-fix --question "What is the dose of Cardioza?" --model nocite` |
 | 4 | A wrong dose | The check finds 20mg is not in the document. The model changes it to 10mg. | fixed | `bun run lab reflect-and-fix --question "What is the dose of Cardioza?" --model invent` |
 | 5 | EDGE: a model that will not change | The model sends the same wrong draft twice. After two rounds we stop and give it to a person. | gave-up | `bun run lab reflect-and-fix --question "What is the dose of Cardioza?" --model stubborn` |
-| 6 | No approved document | Zorbex has no approved document. With nothing to check against, there is no answer to give. | no-source | `bun run lab reflect-and-fix --question "Is Zorbex safe for children?"` |
+| 6 | A form, then code writes the number | The model fills drug and age. It never writes a dose. Code takes the adult dose from the newest label, version 2. Version 1 said 20mg and is ignored. | from-label | `bun run lab reflect-and-fix --question "How much Cardioza should an adult take?" --form` |
+| 7 | EDGE: no age means both doses | The doctor gave no age. The form says unknown, so code prints the adult dose and the child dose. | from-label | `bun run lab reflect-and-fix --question "How much Cardioza should I give?" --form` |
+| 8 | No approved document | Zorbex has no approved document. With nothing to check against, there is no answer to give. | no-source | `bun run lab reflect-and-fix --question "Is Zorbex safe for children?"` |
 
 ## Stuck points
 

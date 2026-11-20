@@ -10,9 +10,11 @@
 //   bun run lab reflect-and-fix --question "What is the dose of Cardioza?"
 //   bun run lab reflect-and-fix --question "What is the dose of Cardioza?" --model nocite
 //   bun run lab reflect-and-fix --question "What is the dose of Cardioza?" --model invent
+//   bun run lab reflect-and-fix --question "Cardioza dose for an adult?" --form true
 //   bun run lab reflect-and-fix --demo
 
 import { NO_DOC } from "../src/data";
+import { newestLabel, readForm } from "../src/form-lookup";
 import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";
 import { runAgentLoop, searchApprovedDocs } from "./01-agent-loop";
@@ -81,6 +83,30 @@ export function answerWithoutCheck(question: string, country: string, callLlm: C
   log.push(`The model said: ${review.text}`);
   log.push(`Our check, which the model never saw, finds: ${missed.join(", ") || "nothing"}`);
   return { outcome: "self-approved", draft, problems: missed, log };
+}
+
+// The better way for a number: the model fills a small form, and code writes the number.
+// The form holds a drug and an age group. It holds no dose, so the model cannot get one wrong.
+export function answerFromForm(question: string, country: string, callLlm: CallLlm): Result {
+  const log: string[] = [];
+  // Step 1: the model fills the form.
+  const said = callLlm([{ role: "user", content: `FORM: Question: ${question}` }], []).text || "";
+  const form = readForm(said);
+  log.push(`Step 1: the model filled the form: drug ${form.drug}, age ${form.age}.`);
+  // Step 2: code finds the newest label for this drug and country. Old versions are ignored.
+  const label = newestLabel(form.drug, country);
+  if (label === undefined) {
+    log.push("Step 2: no label for this drug and country. A person decides.");
+    return { outcome: "no-source", draft: "", problems: [], log };
+  }
+  log.push(`Step 2: the newest label is ${label.id} version ${label.version}.`);
+  // Step 3: code writes the reply from a fixed sentence. No age means both doses.
+  let dose = `Adults take ${label.adult}. Children take ${label.child}.`;
+  if (form.age === "adult") dose = `Adults take ${label.adult}.`;
+  if (form.age === "child") dose = `Children take ${label.child}.`;
+  const draft = `${dose} [${label.id}]`;
+  log.push(`Step 3: code wrote the reply. ${draft}`);
+  return { outcome: "from-label", draft, problems: [], log };
 }
 
 // Ask the model to fix its draft. We send the draft, what is wrong, and the approved source.

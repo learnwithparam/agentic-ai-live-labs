@@ -37,6 +37,9 @@ bun run lab gates --question "What is the dose of Zorbex?" --approve y
 bun run lab gates --question "What is the dose of Zorbex?" --approve n
 bun run lab gates --question "What is the dose of Cardioza?" --model nocite --approve y
 bun run lab gates --question "What is the dose of Cardioza?" --model nocite --approve n
+bun run lab gates --question "What is the dose of Cardioza?" --model nocite --later wait
+bun run lab gates --question "What is the dose of Cardioza?" --model nocite --later y
+bun run lab gates --question "What is the dose of Cardioza?" --model nocite --later y --withdrawn CARDIOZA-US
 bun run lab gates --demo
 bun run lab gates --question "What is the dose of Dermalin?" --country DE --approve n
 bun run lab gates --question "Hello there, can you help me today?" --approve n
@@ -57,9 +60,12 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | 4 | Gate 1, reviewer rejects | Same stop, but the person says no. Nothing is sent. | BLOCKED_BY_REVIEWER | `bun run lab gates --question "What is the dose of Zorbex?" --approve n` |
 | 5 | Gate 2, reviewer approves | The model forgot the citation. The output check stops it and a person reads the draft before it can go. | SENT_AFTER_HUMAN_APPROVAL | `bun run lab gates --question "What is the dose of Cardioza?" --model nocite --approve y` |
 | 6 | Gate 2, reviewer rejects | Same stop, and the person rejects it. | BLOCKED_BY_REVIEWER | `bun run lab gates --question "What is the dose of Cardioza?" --model nocite --approve n` |
-| 7 | Patient details in the question | The note is masked before the search. The reply and the reviewer never see the SSN or the name. | SENT | `bun run lab gates --demo` |
-| 8 | Approved in another country only | Dermalin is approved in the US only. A German doctor hits gate 1. | BLOCKED_BY_REVIEWER | `bun run lab gates --question "What is the dose of Dermalin?" --country DE --approve n` |
-| 9 | Small talk | No drug, no document. The safe default is to stop and ask a person. | BLOCKED_BY_REVIEWER | `bun run lab gates --question "Hello there, can you help me today?" --approve n` |
+| 7 | The run is saved, the reviewer is told, and it waits | The reply has no citation. The run is saved and the reviewer gets a note. The worker stops, so nothing blocks. | WAITING | `bun run lab gates --question "What is the dose of Cardioza?" --model nocite --later wait` |
+| 8 | The reviewer answers later and the run resumes | Hours later the yes arrives as an event. The run wakes from its save, checks again at send time, and sends. | SENT_AFTER_HUMAN_APPROVAL | `bun run lab gates --question "What is the dose of Cardioza?" --model nocite --later y` |
+| 9 | EDGE: withdrawn while the draft waited | The reviewer said yes, but the document was withdrawn in the meantime. The check at send time stops it. | BLOCKED_AT_SEND | `bun run lab gates --question "What is the dose of Cardioza?" --model nocite --later y --withdrawn CARDIOZA-US` |
+| 10 | Patient details in the question | The note is masked before the search. The reply and the reviewer never see the SSN or the name. | SENT | `bun run lab gates --demo` |
+| 11 | Approved in another country only | Dermalin is approved in the US only. A German doctor hits gate 1. | BLOCKED_BY_REVIEWER | `bun run lab gates --question "What is the dose of Dermalin?" --country DE --approve n` |
+| 12 | Small talk | No drug, no document. The safe default is to stop and ask a person. | BLOCKED_BY_REVIEWER | `bun run lab gates --question "Hello there, can you help me today?" --approve n` |
 
 ## Stuck points
 

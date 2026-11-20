@@ -5,7 +5,7 @@ import { makeModel } from "../src/model";
 import { checkCases, type Lab } from "../src/runner";
 import { searchOnly, runAgentLoop } from "../labs/01-agent-loop";
 import { redactPhi, verifyOutput } from "../labs/02-guardrails";
-import { handleHcpInquiry, handleWithoutGate } from "../labs/03-gates";
+import { handleHcpInquiry, handleWithoutGate, pauseForReview, resumeAfterReview } from "../labs/03-gates";
 import { fixAndReview, labelWorkflow, runTriageAgent } from "../labs/04-shapes";
 import { problemsIn } from "../scripts/readable";
 
@@ -80,6 +80,14 @@ describe("gates", () => {
     const outcome = silent(() => handleHcpInquiry("What is the dose of Cardioza?", "US", makeModel("nocite"), no));
     expect(outcome.status).toBe("BLOCKED_BY_REVIEWER");
     expect(outcome.log.join(" ")).toContain("Gate 2 stops the run");
+  });
+  test("a saved run waits, then resumes, and checks again at send time", () => {
+    const paused = pauseForReview("What is the dose of Cardioza?", "US", makeModel("nocite"));
+    expect(paused.status).toBe("WAITING");
+    expect(paused.saved?.notified).toBe("medical-review queue");
+    expect(resumeAfterReview(paused.saved!, true).status).toBe("SENT_AFTER_HUMAN_APPROVAL");
+    expect(resumeAfterReview(paused.saved!, false).status).toBe("BLOCKED_BY_REVIEWER");
+    expect(resumeAfterReview(paused.saved!, true, ["CARDIOZA-US"]).status).toBe("BLOCKED_AT_SEND");
   });
   test("with no gate, an uncited reply is sent", () => {
     const outcome = handleWithoutGate("What is the dose of Cardioza?", "US", makeModel("nocite"));

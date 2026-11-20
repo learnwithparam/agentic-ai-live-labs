@@ -2,9 +2,11 @@ import { expect, test } from "bun:test";
 import { makeModel, type Behaviour, type CallLlm } from "../../src/model";
 import {
   answerWithCheck,
+  answerFromForm,
   answerWithoutCheck,
   MOST_ROUNDS,
 } from "../../labs/18-reflect-and-fix";
+import { newestLabel } from "../../src/form-lookup";
 import { dosesIn, findProblems } from "../../src/draft-check";
 
 const DOSE = "What is the dose of Cardioza?";
@@ -41,4 +43,14 @@ test("fixes pass the check, and the loop is capped", () => {
 test("with no source nothing is checked and no model fix is asked", () => {
   const result = run("ok", "Is Zorbex safe for children?");
   expect(result).toMatchObject({ outcome: "no-source", draft: "" });
+});
+
+// PROMISE: the model never writes a dose. Code reads the newest label and fills a fixed reply.
+test("the form path uses the newest label and gives both doses when no age is given", () => {
+  const ask = (q: string) => answerFromForm(q, "US", makeModel("invent"));
+  expect(newestLabel("Cardioza", "US")?.version).toBe(2);
+  expect(ask("How much Cardioza should an adult take?").draft).toBe("Adults take 10mg. [CARDIOZA-US]");
+  expect(ask("Cardioza dose for a child?").draft).toContain("Children take 5mg");
+  expect(ask("How much Cardioza should I give?").draft).toContain("Adults take 10mg. Children take 5mg.");
+  expect(ask("Is Zorbex safe?").outcome).toBe("no-source");
 });
