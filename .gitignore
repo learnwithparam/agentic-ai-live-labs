@@ -5,3 +5,4 @@ bun.lock
 .spend/
 .notes/
 .claude/worktrees/
+.env
