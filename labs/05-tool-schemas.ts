@@ -1,51 +1,50 @@
 // Tool schemas and structured output
 //
-// Dr. Lee asks: "What is the Cardioza dose in the US?" The model must turn that into a tool call.
-// It writes the call as text. Text can be wrong: a small letter where a capital belongs, a field
-// missing, a number written as a word. A schema says what a good call looks like.
-// Code checks the call before the tool runs.
+// Maya at Juniper Studio sends a receipt to the expense bot: "Font licence, twelve fifty, paid 03/04".
+// The model must turn it into a tool call for the books. It writes the call as text.
+// Text can be wrong: a word where a number belongs, a euro sign, a date that could mean two days.
+// A schema says what a good call looks like. Code checks the call before the books are touched.
 // Add --call to hand the check a call as if the model had written it. That is how we test bad calls.
 // The run prints each step as it happens, with the same number as the step in the code.
 // The examples and the screen output are in show/05-tool-schemas.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun run lab tool-schemas --question "What is the Cardioza dose in the US?" --call '{"drug": "Cardioza", "country": "us"}' --naive
-//   bun run lab tool-schemas --question "What is the Cardioza dose in the US?"
-//   bun run lab tool-schemas --question "What is the Cardioza dose in the US?" --call '{"drug": "Cardioza", "country": "us"}'
-//   bun run lab tool-schemas --question "What is the Cardioza dose in the US?" --call '{"drug": "Cardioza", "country": "FR"}'
-//   bun run lab tool-schemas --question "What is the Cardioza dose in the US?" --call "Please search for Cardioza in the US"
+//   bun run lab tool-schemas --question "Font licence, twelve fifty, paid 03/04" --naive
+//   bun run lab tool-schemas --question "Cloud hosting 31.00 USD, 2026-04-30"
+//   bun run lab tool-schemas --question "Client lunch with Acme, €48.90 on 2026-04-09"
+//   bun run lab tool-schemas --question "Font licence, twelve fifty, paid 03/04"
+//   bun run lab tool-schemas --question "Please book this lunch receipt." --call '{"amount": 12.5, "currency": "USD", "date": "03/04", "category": "software"}'
 //   bun run lab tool-schemas --demo
 
-import { NO_DOC } from "../src/data";
 import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";
-import { searchApprovedDocs } from "./01-agent-loop";
-import { isInSchema, reject, searchSchema, tidy } from "../src/schema"; // the schema and its small fixes
+import { BANK } from "../src/team";
+import { fromSignIn, isInSchema, isIsoDate, reject, expenseSchema, tidy } from "../src/schema"; // the schema and its small fixes
 import type { Args, Field, Verdict } from "../src/schema";
 
 export type Called = { raw: string; verdict: Verdict; result: string; log: string[] };
 
-// Turn a question into a checked tool call. Read the steps in order.
-export function searchWithSchema(question: string, callLlm: CallLlm): Called {
+// Turn a receipt into a checked tool call. Read the steps in order.
+export function bookWithSchema(receipt: string, callLlm: CallLlm, signIn: Args): Called {
   // Step 1: the model writes the tool call as text.
-  const raw = writeCall(question, callLlm);
+  const raw = writeCall(receipt, callLlm);
   const log = [`Step 1: the model wrote the call: ${raw}`];
 
-  // Step 2: check the call against the schema. The tool has not run yet.
-  const { verdict, result } = callWithSchema(raw, searchSchema, searchTool);
+  // Step 2: check the call against the schema. The books have not been touched yet.
+  const { verdict, result } = callWithSchema(raw, expenseSchema, bookExpense, signIn);
   log.push(`Step 2: the check says ${verdict.status}.`);
   for (const note of verdict.notes) log.push(`        ${note}`);
 
   // Step 3: the tool runs only when the call passed.
-  if (verdict.status === "rejected") log.push("Step 3: the tool did not run.");
-  else log.push(`Step 3: the tool ran and found: ${result}`);
+  if (verdict.status === "rejected") log.push("Step 3: the books were not touched.");
+  else log.push(`Step 3: the tool ran: ${result}`);
   return { raw, verdict, result, log };
 }
 
 // Ask the model for the call. A model may add words around it, so keep only the braces and what is inside.
-export function writeCall(question: string, callLlm: CallLlm): string {
-  const rule = "Reply with one JSON object only. Fields: drug, country (US or DE), limit (1 to 5).";
-  const prompt = `CALL: ${rule}\nQuestion: ${question}`;
+export function writeCall(receipt: string, callLlm: CallLlm): string {
+  const rule = "Reply with one JSON object. Fields: amount, currency, date, category, country.";
+  const prompt = `RECEIPT: ${rule}\nReceipt: ${receipt}`;
   const reply = callLlm([{ role: "user", content: prompt }], []);
   const text = reply.text || "";
   const start = text.indexOf("{");
@@ -57,19 +56,26 @@ export function writeCall(question: string, callLlm: CallLlm): string {
 // Check first. The tool runs only when the call passed.
 export type RunTool = { (args: Args): string };
 
-export function callWithSchema(raw: string, schema: Field[], run: RunTool) {
-  const verdict = checkToolCall(raw, schema);
+export function callWithSchema(raw: string, schema: Field[], run: RunTool, signIn: Args = {}) {
+  const verdict = checkToolCall(raw, schema, signIn);
   if (verdict.status === "rejected") return { verdict, result: "" };
   return { verdict, result: run(verdict.args) };
 }
 
-// The tool itself.
-export function searchTool(args: Args): string {
-  return searchApprovedDocs(String(args.drug), String(args.country));
+// The tool itself. It writes to the books and looks for the same payment in the bank lines.
+export function bookExpense(args: Args): string {
+  const what = `${args.amount} ${args.currency} on ${args.date}`;
+  const booked = `Booked ${what} as ${args.category} in ${args.country}.`;
+  for (const line of BANK) {
+    if (line.amount === args.amount && line.currency === args.currency && line.date === args.date) {
+      return `${booked} Matches ${line.id}.`;
+    }
+  }
+  return `${booked} No bank line matches yet.`;
 }
 
 // The check. Parse the text, then test every field against the schema.
-export function checkToolCall(raw: string, schema: Field[]): Verdict {
+export function checkToolCall(raw: string, schema: Field[], signIn: Args = {}): Verdict {
   let parsed: Record<string, unknown> = {};
   try {
     parsed = JSON.parse(raw);
@@ -80,7 +86,9 @@ export function checkToolCall(raw: string, schema: Field[]): Verdict {
   const notes: string[] = [];
   const args: Args = {};
   for (const field of schema) {
-    const value = tidy(field, parsed[field.name], notes);
+    let said = parsed[field.name];
+    if (field.fromSignIn) said = fromSignIn(field, said, signIn, notes);
+    const value = tidy(field, said, notes);
     if (value === undefined && field.required) return reject(`${field.name} is missing`);
     if (value === undefined) continue;
     if (field.kind === "text" && typeof value !== "string") {
@@ -88,6 +96,9 @@ export function checkToolCall(raw: string, schema: Field[]): Verdict {
     }
     if (field.kind === "number" && typeof value !== "number") {
       return reject(`${field.name} must be a number`);
+    }
+    if (field.kind === "date" && !isIsoDate(value)) {
+      return reject(`${field.name} must be a real date like 2026-04-03`);
     }
     if (field.allowed && !field.allowed.includes(String(value))) {
       return reject(`${field.name} must be one of ${field.allowed.join(", ")}`);

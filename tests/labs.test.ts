@@ -6,7 +6,7 @@ import { checkCases, type Lab } from "../src/runner";
 import { searchOnly, runAgentLoop } from "../labs/01-agent-loop";
 import { redactPhi, verifyOutput } from "../labs/02-guardrails";
 import { handleHcpInquiry, handleWithoutGate } from "../labs/03-gates";
-import { hcpContextWorkflow, multiAgentPipeline, singleHcpAgent } from "../labs/04-shapes";
+import { fixAndReview, labelWorkflow, runTriageAgent } from "../labs/04-shapes";
 import { problemsIn } from "../scripts/readable";
 
 const yes = () => "y";
@@ -98,29 +98,17 @@ describe("gates", () => {
 });
 
 describe("shapes", () => {
-  test("workflow joins records with no model", () => {
-    const result = hcpContextWorkflow("dr-weber");
-    expect(result.profile?.country).toBe("DE");
-    expect(result.allowedDocs).toEqual(["CARDIOZA-DE: Cardioza"]);
+  test("workflow labels with no model", () => {
+    expect(labelWorkflow("issue-103").answer).toBe("bug");
+    expect(labelWorkflow("issue-999").answer).toBe("unknown");
   });
-  test("workflow handles an unknown doctor", () => {
-    const result = hcpContextWorkflow("dr-unknown");
-    expect(result.profile).toBeUndefined();
-    expect(result.allowedDocs).toEqual([]);
+  test("one agent reads the issue then the CI log", () => {
+    const result = runTriageAgent("reproduce", "issue-103", makeModel());
+    expect(result.trace.map((turn) => turn.who)).toEqual(["read_issue", "read_ci_log", "agent"]);
   });
-  test("one agent picks three tools", () => {
-    const result = singleHcpAgent("What is the dose of Cardioza?", "dr-lee", makeModel());
-    expect(result.steps.filter((step) => step.kind === "tool").length).toBe(3);
-    expect(result.answer).toContain("Recent outreach");
-  });
-  test("auditor passes a true draft", () => {
-    expect(silent(() => multiAgentPipeline("What is the dose of Cardioza?", "US", makeModel(), no)).reply).toContain("10mg");
-  });
-  test("auditor catches a wrong dose that has a valid citation", () => {
-    const draft = runAgentLoop("What is the dose of Cardioza?", "US", makeModel("invent")).answer;
-    expect(verifyOutput(draft, ids).ok).toBe(true); // the citation check is fooled
-    const result = silent(() => multiAgentPipeline("What is the dose of Cardioza?", "US", makeModel("invent"), no));
-    expect(result.reply).toBe("REJECTED_BY_COMPLIANCE"); // the auditor is not
+  test("auditor passes a true fix and catches a wrong one", () => {
+    expect(silent(() => fixAndReview("issue-103", makeModel(), no)).passed).toBe(true);
+    expect(silent(() => fixAndReview("issue-103", makeModel("invent"), no)).reply).toBe("REJECTED_BY_REVIEW");
   });
 });
 

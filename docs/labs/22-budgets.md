@@ -20,6 +20,7 @@ One email carries a 300 page PDF, and a stuck bot reads it again and again. A co
 
 Each word has one meaning in every lab.
 
+- **budget**: The most we allow ourselves to spend, in tokens, money, steps or time.
 - **millicent**: A thousandth of a cent. Using it keeps every amount a whole number.
 - **cap**: A hard limit we set, such as the money one run may spend.
 - **worst case**: The most one call can cost, if the model uses its longest answer.

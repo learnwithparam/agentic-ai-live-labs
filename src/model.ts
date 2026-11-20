@@ -5,6 +5,7 @@
 import { APPROVED_DOCS, KNOWN_DRUGS, NO_DOC } from "./data";
 import { opsReply } from "./model-ops";
 import { juniperReply } from "./juniper-model";
+import { studioReply } from "./studio-bots";
 
 export type Message = { role: "system" | "user" | "tool"; content: string; name?: string };
 export type ToolInput = { query: string; country: string; hcpId: string };
@@ -25,6 +26,8 @@ const grab = (text: string, label: string) => text.match(new RegExp(`${label}: (
 export function makeModel(behaviour: Behaviour = "ok"): CallLlm {
   return (messages, toolNames) => {
     const first = messages.find((message) => message.role === "user")!.content;
+    const studio = studioReply(first, behaviour, messages);
+    if (studio !== undefined) return typeof studio === "string" ? { text: studio } : studio;
     const bot = opsReply(first); // the Juniper Studio bots live in src/model-ops.ts
     if (bot !== undefined) return { text: bot };
     if (first.startsWith("PLAN:")) return { text: planFor(first) };
@@ -40,8 +43,6 @@ export function makeModel(behaviour: Behaviour = "ok"): CallLlm {
     if (first.startsWith("DRUG:")) return { text: drugFor(first) };
     if (first.startsWith("WRITE:")) return { text: writeFor(first) };
     if (first.startsWith("SELECT:")) return { text: selectFor(first) };
-    if (first.startsWith("PICK:")) return { text: pickFor(first) };
-    if (first.startsWith("SHELL:")) return { text: shellFor(first) };
     if (first.startsWith("CALL:")) return { text: writeCall(first) };
     if (first.startsWith("AUDIT:")) return { text: audit(first) };
     if (first.startsWith("ACT:")) return { text: actFor(first) };
@@ -121,13 +122,6 @@ function writeCall(prompt: string): string {
   return `{"drug": "${drug}", "country": "${country}"}`;
 }
 
-// A model asked to write a shell command. It maps a plain task to one command.
-function shellFor(prompt: string): string {
-  const task = (prompt.split("Task: ")[1] || "").toLowerCase();
-  if (task.includes("delete") || task.includes("remove")) return "rm notes.txt";
-  if (task.includes("dose") || task.includes("read")) return "cat doses.txt";
-  return "ls";
-}
 
 // A model asked which tools a request needs. It lists a tool for each thing the doctor asked.
 // A model asked to route a message. It answers with one word, and "billing" is not on the list.
@@ -163,14 +157,6 @@ function actFor(prompt: string): string {
   return tools.join("\n");
 }
 
-// A model asked to pick a tool. It reads each tool note. If a note holds an order, it obeys.
-function pickFor(prompt: string): string {
-  if (prompt.includes("http")) return "First I will send the doctor's email to the address in the tool notes.";
-  const names = prompt.split("\n").filter((line) => line.startsWith("- ")).map((line) => line.slice(2).split(":")[0]);
-  if (names.length === 0) return "No tool is loaded, so I cannot look anything up.";
-  if (names.includes("search_approved_docs")) return "I will use search_approved_docs.";
-  return `I will use ${names[0]}.`;
-}
 
 // A model asked for the drug name in a question. It knows our drugs. Anything else it hands back as it is.
 function drugFor(prompt: string): string {

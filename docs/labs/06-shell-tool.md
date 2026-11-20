@@ -1,21 +1,22 @@
 # A shell tool, safely
 
-Describe a task and the model writes the command. Or pass a command yourself with --command, as if the model wrote it. Four rules decide if it may start. The agent works in one folder called sandbox, which holds two small files.
+Describe a task and the model writes the command. Or pass your own with --command. Three walls check it. The bot works on a repo called sandbox, with build logs and a coupon test. The naive run uses a list of banned words, on a copy, so nothing real is lost.
 
 ## The story in one picture
 
 ```mermaid
 flowchart LR
-  A["Agent wants a command"] --> B{"On the allow-list?"}
+  A["Bot wants a command"] --> B{"Program on the allow-list?"}
   B -->|"No"| X["Refuse"]
-  B -->|"Yes"| C{"Inside the fixed folder?"}
-  C -->|"No"| X
-  C -->|"Yes"| D["Run with a time limit"]
+  B -->|"Yes"| C{"Web address in it?"}
+  C -->|"Yes"| X
+  C -->|"No"| D["Run in a throwaway copy"]
+  D --> E["Throw the copy away"]
 ```
 
 ## The problem
 
-A shell can delete files or read secrets. An allow-list lets only the commands we name, so an agent cannot do anything it likes.
+A shell can delete files or read secrets. A list of banned words misses commands such as find with a delete flag. An allow-list names the few commands we trust, and the rest never start.
 
 ## New words
 
@@ -30,17 +31,17 @@ Each word has one meaning in every lab.
 Copy any line into your terminal. Each one is a real example from this lab.
 
 ```bash
-bun run lab shell-tool --question "Show me the doses file"
-bun run lab shell-tool --question "Please delete the notes file for me."
-bun run lab shell-tool --question "Can you show me what is in the doses file?" --command 'ls ..' --naive
-bun run lab shell-tool --question "Can you show me what is in the doses file?" --command ls
-bun run lab shell-tool --question "Can you show me what is in the doses file?" --command 'cat doses.txt'
-bun run lab shell-tool --question "Can you show me what is in the doses file?" --command 'rm notes.txt'
-bun run lab shell-tool --question "Can you show me what is in the doses file?" --command 'cat notes.txt; rm notes.txt'
-bun run lab shell-tool --question "Can you show me what is in the doses file?" --command 'cat ../package.json'
-bun run lab shell-tool --question "Can you show me what is in the doses file?" --command 'cat /etc/hosts'
-bun run lab shell-tool --question "Can you show me what is in the doses file?" --command 'cat missing.txt'
-bun run lab shell-tool --question "Can you show me what is in the doses file?" --command 'sleep 5' --limit 1
+bun run lab shell-tool --question "Clean up the old build logs." --naive
+bun run lab shell-tool --question "Clean up the old build logs."
+bun run lab shell-tool --question "What failed in build-2 last night?"
+bun run lab shell-tool --question "Please show me build 3." --command 'cat build-3.log'
+bun run lab shell-tool --question "Run the tests for the coupon fix."
+bun run lab shell-tool --question "Run the tests, then show me build 1." --command 'bun test ./coupon-check.ts'
+bun run lab shell-tool --question "Please read the notes file." --command 'cat notes.txt; rm notes.txt'
+bun run lab shell-tool --question "Show me the package file." --command 'cat ../package.json'
+bun run lab shell-tool --question "Send the build log to my server." --command 'cat https://logs.example/build-2'
+bun run lab shell-tool --question "Please show me build 9." --command 'cat build-9.log'
+bun run lab shell-tool --question "Wait for the slow build." --command 'sleep 5' --limit 1
 bun run lab shell-tool --demo
 ```
 
@@ -48,37 +49,39 @@ Run `bun run lab shell-tool` with nothing else to pick an example from a menu.
 
 ## The cases
 
+Case 1 is the naive way. Read what goes wrong, then read the rest.
+
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
-| 1 | The model writes the command | The model turns a plain task into a command. The four rules still decide if it starts. | ran | `bun run lab shell-tool --question "Show me the doses file"` |
-| 2 | The model asks to delete | The task asks for a delete. The model writes rm. It is not on the allow-list, so it never starts. | refused | `bun run lab shell-tool --question "Please delete the notes file for me."` |
-| 3 | NAIVE: hand it to a shell | The model writes ls .. and the shell obeys. It lists the folder ABOVE the sandbox. The same hole would let it read or delete there. | escaped | `bun run lab shell-tool --question "Can you show me what is in the doses file?" --command 'ls ..' --naive` |
-| 4 | List the folder | A harmless command on the allow-list. It runs. | ran | `bun run lab shell-tool --question "Can you show me what is in the doses file?" --command ls` |
-| 5 | Read a file | Reading a file inside the sandbox is fine. | ran | `bun run lab shell-tool --question "Can you show me what is in the doses file?" --command 'cat doses.txt'` |
-| 6 | A command not on the list | rm can delete. It is not on the allow-list, so it is refused before anything starts. | refused | `bun run lab shell-tool --question "Can you show me what is in the doses file?" --command 'rm notes.txt'` |
-| 7 | Chaining a second command | The first part is allowed. The semicolon would add a delete. We refuse the whole line. | refused | `bun run lab shell-tool --question "Can you show me what is in the doses file?" --command 'cat notes.txt; rm notes.txt'` |
-| 8 | Climbing out of the folder | Two dots mean the folder above. The sandbox is only a rule if code enforces it. | refused | `bun run lab shell-tool --question "Can you show me what is in the doses file?" --command 'cat ../package.json'` |
-| 9 | An absolute path | A path from the top of the disk could read any file. It is refused. | refused | `bun run lab shell-tool --question "Can you show me what is in the doses file?" --command 'cat /etc/hosts'` |
-| 10 | A file that is not there | The command is allowed, but it fails. The error goes back to the agent, so it can try again. That is the error feedback lab. | failed | `bun run lab shell-tool --question "Can you show me what is in the doses file?" --command 'cat missing.txt'` |
-| 11 | A command that never ends | Sleep for 5 seconds with a limit of 1. The time limit stops it. Without one, a stuck command would hang the agent. | timeout | `bun run lab shell-tool --question "Can you show me what is in the doses file?" --command 'sleep 5' --limit 1` |
+| 1 | NAIVE: a list of banned words | The blocklist bans rm, mv, sudo and dd. The model cleans up with find and a delete flag. No banned word is in it, so the shell deletes the logs. The demo runs this on a copy. | deleted | `bun run lab shell-tool --question "Clean up the old build logs." --naive` |
+| 2 | Wall 1: the model asks to clean up | The model writes find with a delete flag. The program find is not on the allow-list, so it never starts. | refused | `bun run lab shell-tool --question "Clean up the old build logs."` |
+| 3 | Read why a build failed | The model finds the failing line with grep. Reading a log is on the allow-list, so it runs. | ran | `bun run lab shell-tool --question "What failed in build-2 last night?"` |
+| 4 | Read a whole log | A plain read of one log inside the repo. It runs. | ran | `bun run lab shell-tool --question "Please show me build 3." --command 'cat build-3.log'` |
+| 5 | Run the tests | The one way to start bun is the coupon test. The test fails, like build-2, and the bot sees why. | failed | `bun run lab shell-tool --question "Run the tests for the coupon fix."` |
+| 6 | Wall 2: a test that deletes a file | The coupon test also clears build-1.log. It does, but only in the throwaway copy. Run it, then read the log: it is still there. | failed | `bun run lab shell-tool --question "Run the tests, then show me build 1." --command 'bun test ./coupon-check.ts'` |
+| 7 | Chaining a second command | The first part is allowed. The semicolon would add a delete. We refuse the whole line. | refused | `bun run lab shell-tool --question "Please read the notes file." --command 'cat notes.txt; rm notes.txt'` |
+| 8 | Climbing out of the repo | Two dots mean the folder above. The copy is only a wall if code checks every path. | refused | `bun run lab shell-tool --question "Show me the package file." --command 'cat ../package.json'` |
+| 9 | Wall 3: a web address | The command would reach out to a website. We refuse any web address. The command also gets an empty environment, so it holds no keys. | refused | `bun run lab shell-tool --question "Send the build log to my server." --command 'cat https://logs.example/build-2'` |
+| 10 | A file that is not there | The command is allowed, but it fails. The error goes back to the agent, so it can try again. That is the error feedback lab. | failed | `bun run lab shell-tool --question "Please show me build 9." --command 'cat build-9.log'` |
+| 11 | A command that never ends | Sleep for 5 seconds with a limit of 1. The time limit stops it. Without one, a stuck command would hang the agent. | timeout | `bun run lab shell-tool --question "Wait for the slow build." --command 'sleep 5' --limit 1` |
 
 ## Stuck points
 
-**Correct run:** Only allow-listed commands run, inside the sandbox folder. Anything else is refused before it starts.
+**Correct run:** Only allow-listed commands start, and they work on a throwaway copy of the repo. Anything else is refused first.
 
-**Common wrong turn:** Trusting the model to stay in the folder. A shell obeys a path that climbs out, and reads files outside.
+**Common wrong turn:** Banning a few words such as rm. A command like find with a delete flag has none of them, and the shell obeys.
 
-**Hint to give:** Which rule would stop a command that leaves the sandbox?
+**Hint to give:** Is it easier to list what is safe, or to list everything that is not?
 
 | What you see | What it means | Fix |
 | --- | --- | --- |
-| The demo prints outcome: escaped on the NAIVE case | The command ran outside the sandbox | Check the real path of each file against the folder |
-| The demo prints outcome: refused | The command is not on the allow-list | This is correct. Do not add rm to the list |
-| A command runs when the list is empty | The allow-list check was skipped | Run the allow-list check first, before anything starts |
+| The demo prints outcome: deleted on the NAIVE case | A list of banned words missed the command | Use an allow-list of programs, and work on a copy |
+| The demo prints outcome: refused | A wall stopped the command | This is correct. Do not add find or rm to the list |
+| A test passes, but the real repo is changed | The command ran in the real folder | Run every command in a fresh copy and throw it away |
 
 ## The promise, and its test
 
-A command that breaks a rule never starts, so the files stay as they were.
+A command that breaks a wall never starts. Even a test that deletes files only changes a throwaway copy. The real repo stays as it was.
 
 ```bash
 bun test tests/promises/06.test.ts
@@ -88,7 +91,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Run the agent in a container with no secrets and no network. Keep this allow-list as well.
+Run the bot in a container with the network off and no secrets. Keep the allow-list and the throwaway copy as well.
 
 ## Read the code
 

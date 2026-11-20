@@ -67,7 +67,7 @@ function expenseAll(): string {
   return "FILED: bank-1 | office";
 }
 
-// TRIAGE: the helper reads many build logs and lists the first failure of each bad one.
+// LOGSCAN: the helper reads many build logs and lists the first failure of each bad one.
 // A stuck helper never finishes. A habit of inventing adds a build that does not exist.
 function triageReply(first: string, behaviour: Behaviour): Reply {
   if (behaviour === "stuck") {
@@ -125,7 +125,7 @@ export function juniperReply(first: string, messages: Message[], behaviour: Beha
   if (first.startsWith("SWEEP:")) return { text: sweepReply(first) };
   if (first.startsWith("NOTES:")) return { text: notesReply(first) };
   if (first.startsWith("PASS:")) return { text: passReply(first) };
-  if (first.startsWith("TRIAGE:")) return triageReply(first, behaviour);
+  if (first.startsWith("LOGSCAN:")) return triageReply(first, behaviour);
   if (first.startsWith("PLAN-TEAM:")) return { text: teamFor(behaviour) };
   if (first.startsWith("EXPENSE:")) return { text: expenseAll() };
   return undefined;

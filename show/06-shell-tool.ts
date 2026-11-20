@@ -1,39 +1,43 @@
 // What you see on screen for the shell tool lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/06-shell-tool.ts.
 
+import { cpSync, existsSync, mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { modelFrom, type Lab } from "../src/runner";
 import { badgeGreen, badgeRed, badgeYellow, box, dim, field, green, print, red, rule, yellow } from "../src/ui";
-import { doTask, runShell, SANDBOX } from "../labs/06-shell-tool";
+import { doTask, runShell, SANDBOX, writeCommand } from "../labs/06-shell-tool";
 import type { ShellResult } from "../labs/06-shell-tool";
 
-const ASK_FILE = "Can you show me what is in the doses file?";
+const BLOCKED = ["rm", "mv", "sudo", "dd"]; // the naive blocklist
+const CLEAN_UP = "Clean up the old build logs.";
 
 export const lab: Lab = {
   file: "06-shell-tool.ts",
   title: "A shell tool, safely",
   about:
-    "Describe a task and the model writes the command. Or pass a command yourself with --command, as if the model wrote it. Four rules decide if it may start. The agent works in one folder called sandbox, which holds two small files.",
+    "Describe a task and the model writes the command. Or pass your own with --command. Three walls check it. The bot works on a repo called sandbox, with build logs and a coupon test. The naive run uses a list of banned words, on a copy, so nothing real is lost.",
   terms: ["shell", "allow-list", "sandbox"],
-  challenge: "A shell can delete files or read secrets. An allow-list lets only the commands we name, so an agent cannot do anything it likes.",
-  promise: "A command that breaks a rule never starts, so the files stay as they were.",
-  production: "Run the agent in a container with no secrets and no network. Keep this allow-list as well.",
+  challenge: "A shell can delete files or read secrets. A list of banned words misses commands such as find with a delete flag. An allow-list names the few commands we trust, and the rest never start.",
+  promise: "A command that breaks a wall never starts. Even a test that deletes files only changes a throwaway copy. The real repo stays as it was.",
+  production: "Run the bot in a container with the network off and no secrets. Keep the allow-list and the throwaway copy as well.",
   cases: [
-    { title: "The model writes the command", why: "The model turns a plain task into a command. The four rules still decide if it starts.", question: "Show me the doses file", expect: "ran" },
-    { title: "The model asks to delete", why: "The task asks for a delete. The model writes rm. It is not on the allow-list, so it never starts.", question: "Please delete the notes file for me.", expect: "refused" },
-    { title: "NAIVE: hand it to a shell", why: "The model writes ls .. and the shell obeys. It lists the folder ABOVE the sandbox. The same hole would let it read or delete there.", question: ASK_FILE, flags: { command: "ls ..", naive: "true" }, expect: "escaped" },
-    { title: "List the folder", why: "A harmless command on the allow-list. It runs.", question: ASK_FILE, flags: { command: "ls"}, expect: "ran" },
-    { title: "Read a file", why: "Reading a file inside the sandbox is fine.", question: ASK_FILE, flags: { command: "cat doses.txt"}, expect: "ran" },
-    { title: "A command not on the list", why: "rm can delete. It is not on the allow-list, so it is refused before anything starts.", question: ASK_FILE, flags: { command: "rm notes.txt"}, expect: "refused" },
-    { title: "Chaining a second command", why: "The first part is allowed. The semicolon would add a delete. We refuse the whole line.", question: ASK_FILE, flags: { command: "cat notes.txt; rm notes.txt"}, expect: "refused" },
-    { title: "Climbing out of the folder", why: "Two dots mean the folder above. The sandbox is only a rule if code enforces it.", question: ASK_FILE, flags: { command: "cat ../package.json"}, expect: "refused" },
-    { title: "An absolute path", why: "A path from the top of the disk could read any file. It is refused.", question: ASK_FILE, flags: { command: "cat /etc/hosts"}, expect: "refused" },
-    { title: "A file that is not there", why: "The command is allowed, but it fails. The error goes back to the agent, so it can try again. That is the error feedback lab.", question: ASK_FILE, flags: { command: "cat missing.txt"}, expect: "failed" },
-    { title: "A command that never ends", why: "Sleep for 5 seconds with a limit of 1. The time limit stops it. Without one, a stuck command would hang the agent.", question: ASK_FILE, flags: { command: "sleep 5", limit: "1" }, expect: "timeout" },
+    { title: "NAIVE: a list of banned words", why: "The blocklist bans rm, mv, sudo and dd. The model cleans up with find and a delete flag. No banned word is in it, so the shell deletes the logs. The demo runs this on a copy.", question: CLEAN_UP, flags: { naive: "true" }, expect: "deleted" },
+    { title: "Wall 1: the model asks to clean up", why: "The model writes find with a delete flag. The program find is not on the allow-list, so it never starts.", question: CLEAN_UP, expect: "refused" },
+    { title: "Read why a build failed", why: "The model finds the failing line with grep. Reading a log is on the allow-list, so it runs.", question: "What failed in build-2 last night?", expect: "ran" },
+    { title: "Read a whole log", why: "A plain read of one log inside the repo. It runs.", question: "Please show me build 3.", flags: { command: "cat build-3.log" }, expect: "ran" },
+    { title: "Run the tests", why: "The one way to start bun is the coupon test. The test fails, like build-2, and the bot sees why.", question: "Run the tests for the coupon fix.", expect: "failed" },
+    { title: "Wall 2: a test that deletes a file", why: "The coupon test also clears build-1.log. It does, but only in the throwaway copy. Run it, then read the log: it is still there.", question: "Run the tests, then show me build 1.", flags: { command: "bun test ./coupon-check.ts" }, expect: "failed" },
+    { title: "Chaining a second command", why: "The first part is allowed. The semicolon would add a delete. We refuse the whole line.", question: "Please read the notes file.", flags: { command: "cat notes.txt; rm notes.txt" }, expect: "refused" },
+    { title: "Climbing out of the repo", why: "Two dots mean the folder above. The copy is only a wall if code checks every path.", question: "Show me the package file.", flags: { command: "cat ../package.json" }, expect: "refused" },
+    { title: "Wall 3: a web address", why: "The command would reach out to a website. We refuse any web address. The command also gets an empty environment, so it holds no keys.", question: "Send the build log to my server.", flags: { command: "cat https://logs.example/build-2" }, expect: "refused" },
+    { title: "A file that is not there", why: "The command is allowed, but it fails. The error goes back to the agent, so it can try again. That is the error feedback lab.", question: "Please show me build 9.", flags: { command: "cat build-9.log" }, expect: "failed" },
+    { title: "A command that never ends", why: "Sleep for 5 seconds with a limit of 1. The time limit stops it. Without one, a stuck command would hang the agent.", question: "Wait for the slow build.", flags: { command: "sleep 5", limit: "1" }, expect: "timeout" },
   ],
   play(question, flags) {
-    const limit = Number(flags.limit || 2);
+    const limit = Number(flags.limit || 5);
     print(field("Task", question));
-    if (flags.naive) return playNaive(flags.command);
+    if (flags.naive) return playNaive(question);
     if (flags.command) return showCommand(flags.command, runShell(flags.command, SANDBOX, limit));
     const ran = doTask(question, modelFrom(flags), limit);
     rule("LOG, STEP BY STEP");
@@ -45,7 +49,7 @@ export const lab: Lab = {
 
 function showCommand(command: string, result: ShellResult): string {
   print(field("Command", command));
-  rule("FOUR RULES");
+  rule("THREE WALLS");
   const badge = {
     ran: badgeGreen("RAN"),
     failed: badgeYellow("FAILED"),
@@ -59,21 +63,31 @@ function showCommand(command: string, result: ShellResult): string {
   return result.status;
 }
 
-// The NAIVE way: hand the whole text to a shell and hope.
-function naiveShell(command: string): string {
-  const run = Bun.spawnSync(["sh", "-c", command], { cwd: SANDBOX });
-  const text = run.stdout.toString() + run.stderr.toString();
-  return text.trim();
-}
-
-function playNaive(command: string): string {
-  rule("NO RULES");
-  const output = naiveShell(command);
-  print(field("output", output, dim));
-  if (output.includes("package.json")) {
-    box("ESCAPED", [yellow("It listed the folder above the sandbox, and it could have changed it.")], yellow);
-    return "escaped";
+// The NAIVE way: a blocklist, then hand the whole text to a shell and hope.
+function blocked(command: string): boolean {
+  for (const word of command.split(" ")) {
+    if (BLOCKED.includes(word)) return true;
   }
-  return "ran";
+  return false;
 }
 
+function playNaive(question: string): string {
+  const command = writeCommand(question, modelFrom({}));
+  print(field("Command", command));
+  rule("A LIST OF BANNED WORDS");
+  if (blocked(command)) {
+    box("BLOCKED", [red("A banned word was in the command.")], red);
+    return "blocked";
+  }
+  const copy = mkdtempSync(join(tmpdir(), "naive-"));
+  try {
+    cpSync(SANDBOX, copy, { recursive: true });
+    Bun.spawnSync(["sh", "-c", command], { cwd: copy });
+    print(field("logs left", existsSync(join(copy, "build-2.log")) ? "build-2.log is there" : "none: every log is gone", dim));
+    if (existsSync(join(copy, "build-2.log"))) return "ran";
+    box("DELETED", [yellow("No banned word was in the command, yet it deleted the build logs.")], yellow);
+    return "deleted";
+  } finally {
+    rmSync(copy, { recursive: true, force: true });
+  }
+}

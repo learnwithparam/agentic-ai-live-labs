@@ -1,78 +1,73 @@
 // What you see on screen for the MCP basics lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/07-mcp-basics.ts.
 
-import { CRM } from "../src/data";
 import { modelFrom, type Lab } from "../src/runner";
 import { box, cyan, dim, field, green, highlight, print, red, rule, yellow } from "../src/ui";
-import { askWithMcp, callMcpTool, discoverTools, HELLO, rpc, SERVER, talk } from "../labs/07-mcp-basics";
-import { searchOnly } from "../labs/01-agent-loop";
+import { askInbox, askNaive, callMcpTool, serverFor } from "../labs/07-mcp-basics";
+import { HELLO, rpc, talk } from "../src/mcp-client";
 
 export const lab: Lab = {
   file: "07-mcp-basics.ts",
   title: "MCP basics",
   about:
-    "The agent gets its tools from a real MCP server. That server runs as a separate program and speaks JSON-RPC messages. Nothing is hard-coded. Use --hcp dr-lee, dr-weber or dr-rao to pick the doctor.",
+    "Maya's inbox manager has three MCP servers: Gmail, Slack and Drive. Each runs as a separate program and speaks JSON-RPC. Each has a search tool and a get_user tool. The agent lists the tools, picks the best two, and lets the model choose between them.",
   terms: ["mcp", "mcp-server", "json-rpc"],
-  challenge: "Every new tool means new glue code in every agent. Tool lists go out of date.",
-  promise: "The agent learns its tools from the server, so a new server tool needs no agent change.",
-  production: "Use the official MCP SDK and keep the server running. Add sign-in and a time limit to every call.",
+  challenge: "Three servers give six tools, and two pairs share a name. Sending every tool on every call costs tokens and sends a call to the wrong server.",
+  promise: "The model sees at most two tools. Each call goes to the server that owns the tool, and small talk sends no tools at all.",
+  production: "Use the official MCP SDK and keep each server running. Search the tool descriptions, and show the model only the top few.",
   cases: [
-    { title: "NAIVE: a hard-coded tool list", why: "The agent copied one tool into its own code. The server has more. The agent cannot use them, and nobody gets an error.", question: "What is the dose of Cardioza?", flags: { naive: "true" }, expect: "out-of-date" },
-    { title: "See the messages", why: "This is all MCP is: lines of JSON in, lines of JSON out. Read the method names and the tool list.", question: "What is the dose of Cardioza?", flags: { show: "wire" }, expect: "listed" },
-    { title: "The agent uses the server's tools", why: "The agent finds three tools, then calls them one by one. The answer cites its document.", question: "What is the dose of Cardioza?", flags: { hcp: "dr-lee" }, expect: "answered" },
-    { title: "Another country", why: "Same server, a German doctor. The search tool filters by country, so the dose is 5mg.", question: "What is the dose of Cardioza?", flags: { hcp: "dr-weber", country: "DE" }, expect: "answered" },
-    { title: "No approved document", why: "The server says nothing was found. The agent refuses to guess.", question: "What is the dose of Zorbex?", expect: "no-source" },
-    { title: "A tool reports an error", why: "Doctor dr-unknown does not exist. The server marks the result as an error, and the client passes it on as text.", question: "What is the dose of Cardioza?", flags: { hcp: "dr-unknown" }, expect: "tool-error" },
-    { title: "A tool the server does not have", why: "The agent asks for delete_everything. The server answers with a protocol error. The call goes nowhere.", question: "What is the dose of Cardioza?", flags: { tool: "delete_everything" }, expect: "tool-error" },
-    { title: "The server is not there", why: "The path is wrong, so nothing answers. The client finds no tools and says so, instead of hanging.", question: "What is the dose of Cardioza?", flags: { script: "src/missing-server.ts" }, expect: "no-server" },
+    { title: "NAIVE: every tool on every call", why: "Six tools go to the model, and two are called get_user. The call goes to the first server with that name. That is Gmail, not Slack.", question: "Who is Dana on Slack?", flags: { naive: "true" }, expect: "wrong-server" },
+    { title: "Two tools, the right server", why: "The tool search keeps two tools, and the Slack one is first. The call goes to Slack.", question: "Who is Dana on Slack?", expect: "answered" },
+    { title: "Find an email", why: "The words signed and email point at the Gmail tools. The model sees only two tools.", question: "Find the signed contract email", expect: "answered" },
+    { title: "Find a file", why: "Drive holds the brand guide. The Drive search tool is one of the two the model sees.", question: "Which file has the brand guide?", expect: "answered" },
+    { title: "Who owns a file", why: "A who question picks the get_user tool. It is the Drive one, so the answer is the owner.", question: "Who owns the brand guide file?", expect: "answered" },
+    { title: "Small talk", why: "A cheap check sees a greeting. No tool text is sent to the model, so the call costs almost nothing.", question: "Hello there, how are you?", expect: "no-tools" },
+    { title: "Nothing found", why: "The tool runs but finds nothing. The bot says so, and does not make something up.", question: "Find the holiday thread in my mail", expect: "no-match" },
+    { title: "A tool reports an error", why: "No mail has that word. The server marks the result as an error, and the client passes it on as text.", question: "Who sent the refund mail?", expect: "tool-error" },
+    { title: "See the messages", why: "This is all MCP is: lines of JSON in, lines of JSON out. Read the method names and the tool list.", question: "Who is Dana on Slack?", flags: { show: "wire" }, expect: "listed" },
+    { title: "A tool the server does not have", why: "The agent asks Slack for delete_everything. The server answers with a protocol error. The call goes nowhere.", question: "Delete all the Slack messages.", flags: { tool: "delete_everything" }, expect: "tool-error" },
+    { title: "The servers are not there", why: "The path is wrong, so nothing answers. The client finds no tools and says so, instead of hanging.", question: "Who is Dana on Slack?", flags: { script: "src/missing-server.ts" }, expect: "no-server" },
   ],
   play(question, flags) {
-    const script = flags.script || SERVER;
-    const hcpId = flags.hcp || "dr-lee";
-    const country = flags.country || (CRM[hcpId] ? CRM[hcpId].country : "US");
-    if (flags.naive) return showNaive(script);
-    if (flags.show === "wire") return showWire(script);
+    print(field("Question", question));
+    if (flags.show === "wire") return showWire();
     if (flags.tool) {
-      const result = callMcpTool(flags.tool, { query: question, country, hcpId }, script);
+      const result = callMcpTool(flags.tool, { text: question }, serverFor("slack"));
       print(field("call", flags.tool, cyan));
       print(field("result", result, result.startsWith("ERROR") ? red : green));
       return result.startsWith("ERROR") ? "tool-error" : "ran";
     }
-    print(field("Server", script));
-    const asked = askWithMcp(question, country, hcpId, modelFrom(flags), script);
-    if (asked.tools.length === 0) {
-      box("NO SERVER", [red("No tools were found. Is the server there?")], red);
-      return "no-server";
+    if (flags.naive) return showNaive(question, flags);
+    const asked = askInbox(question, modelFrom(flags), flags.script || "");
+    if (asked.outcome === "no-server") {
+      box("NO SERVER", [red("No tools were found. Are the servers there?")], red);
+      return asked.outcome;
     }
     rule("LOG, STEP BY STEP");
     for (const line of asked.log) console.log(dim(line));
     console.log();
-    const failed = asked.log.join(" ").includes("returned: ERROR");
-    if (failed) {
-      box("A TOOL FAILED", [yellow(asked.answer)], yellow);
-      return "tool-error";
-    }
-    const cited = /\[[A-Z]+-[A-Z]+\]/.test(asked.answer);
-    box(cited ? "ANSWER" : "NO APPROVED SOURCE", field("", highlight(asked.answer), cited ? green : yellow, 0), cited ? green : yellow);
-    return cited ? "answered" : "no-source";
+    if (asked.shown.length > 0) print(field("tokens", `${asked.tokens} for the tools the model saw`, dim));
+    const good = asked.outcome === "answered";
+    box(good ? "ANSWER" : asked.outcome.toUpperCase(), field("", highlight(asked.answer), good ? green : yellow, 0), good ? green : yellow);
+    return asked.outcome;
   },
 };
 
-function showNaive(script: string): string {
-  const fixed = searchOnly.map((tool) => tool.name);
-  const real = discoverTools(script);
-  print(field("hard-coded", fixed.join(", "), yellow));
-  print(field("on server", real.join(", "), cyan));
-  const missing = real.filter((name) => !fixed.includes(name));
-  box("OUT OF DATE", [yellow(`The agent cannot use: ${missing.join(", ")}`)], yellow);
-  return missing.length > 0 ? "out-of-date" : "same";
+function showNaive(question: string, flags: Record<string, string>): string {
+  const asked = askNaive(question, modelFrom(flags));
+  rule("EVERY TOOL, EVERY CALL");
+  for (const line of asked.log) console.log(dim(line));
+  print(field("tokens", `${asked.tokens} for six tools, on every call`, yellow));
+  print(field("result", asked.answer, red));
+  box("WRONG SERVER", [yellow("The question was about Slack. Gmail answered.")], yellow);
+  return asked.outcome;
 }
 
-function showWire(script: string): string {
+function showWire(): string {
   const requests = HELLO.concat([rpc(2, "tools/list")]);
   rule("WE SEND");
   for (const request of requests) console.log(dim(JSON.stringify(request).slice(0, 90)));
-  rule("THE SERVER ANSWERS");
-  for (const line of talk(requests, script)) console.log(highlight(line.slice(0, 90)) + dim(" ..."));
+  rule("THE SLACK SERVER ANSWERS");
+  for (const line of talk(requests, serverFor("slack"))) console.log(highlight(line.slice(0, 90)) + dim(" ..."));
   return "listed";
 }

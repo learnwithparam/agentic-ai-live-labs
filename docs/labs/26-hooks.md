@@ -1,20 +1,21 @@
 # Hooks
 
-Each example asks the bot to use tools. The model says which tools. A before hook can block a call, and an after hook cleans what comes back. The first example runs with no hooks, to show the harm.
+Each example gives the Coding Agent a task. The model says which tool calls it needs. A before hook can block a call, such as a force push to main. An after hook cleans what comes back, such as a key in a file. The first example runs with no hooks, to show the harm.
 
 ## The story in one picture
 
 ```mermaid
 flowchart LR
-  A["Agent wants to send an email"] --> B["Before hook checks it"]
-  B -->|"Clean"| C["Send the email"]
-  C --> D["After hook checks what left"]
-  B -->|"Dirty"| X["Block the call"]
+  A["Agent runs git push --force origin main"] --> B["Before hook checks it"]
+  B -->|"Not main, or no force"| C["Tool runs"]
+  B -->|"Force push to main"| X["Block the call"]
+  C --> D["After hook hides secrets"]
+  D --> E["Model reads the clean output"]
 ```
 
 ## The problem
 
-A rule written in the prompt can be ignored. The model can email a note with an SSN to a private mailbox, and nothing stops it.
+A rule written in the prompt can be ignored. The agent can force push to main. It can read an API key into the chat. Nothing stops it.
 
 ## New words
 
@@ -31,10 +32,13 @@ Copy any line into your terminal. Each one is a real example from this lab.
 
 ```bash
 bun run lab hooks --demo
-bun run lab hooks --question "Can you read the last call note for Dr. Lee?"
 bun run lab hooks --demo
+bun run lab hooks --question "Push the coupon fix to branch fix-coupon"
+bun run lab hooks --question "Force push my rebased branch fix-coupon"
 bun run lab hooks --demo
-bun run lab hooks --question "What is the dose of Cardioza?"
+bun run lab hooks --question "Read .env to see which Stripe mode is on"
+bun run lab hooks --question "Show me why build 3 failed"
+bun run lab hooks --question "Please run the coupon test now"
 bun run lab hooks --demo
 bun run lab hooks --demo
 ```
@@ -47,24 +51,27 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
-| 1 | NAIVE: no hooks | The note is read and emailed to a private mailbox, with the patient name and SSN in it. | leaked | `bun run lab hooks --demo` |
-| 2 | Read the note, clean | The tool returns the note. The after hook swaps the private details for tokens. | clean | `bun run lab hooks --question "Can you read the last call note for Dr. Lee?"` |
-| 3 | Email to the hospital | The address is on an approved domain, and the text is already clean. The email goes. | sent-clean | `bun run lab hooks --demo` |
-| 4 | Email to a private mailbox | The before hook sees the domain is not approved. The email never goes. | blocked | `bun run lab hooks --demo` |
-| 5 | A question that needs no hook | A plain dose search. No hook has anything to say, and the answer comes through. | clean | `bun run lab hooks --question "What is the dose of Cardioza?"` |
-| 6 | EDGE: a hook that crashes | A buggy hook throws an error. We do not let the call through. Every call is blocked. | blocked | `bun run lab hooks --demo` |
+| 1 | NAIVE: no hooks | The agent force pushes to main, and the API key from .env reaches the model. Nothing stops either one. | unsafe | `bun run lab hooks --demo` |
+| 2 | A force push to main | The before hook sees a force push aimed at main. The push never runs. The test run before it is fine. | blocked | `bun run lab hooks --demo` |
+| 3 | A plain push to a branch | A normal push to the fix branch is allowed. A hook that blocks everything would be useless. | pushed | `bun run lab hooks --question "Push the coupon fix to branch fix-coupon"` |
+| 4 | A force push to a branch | A rebased branch needs a force push. It is not main, so the hook lets it through. | pushed | `bun run lab hooks --question "Force push my rebased branch fix-coupon"` |
+| 5 | Two pushes in one command | The agent joins a safe push and a force push to main with &&. The hook reads the whole command, so it still blocks. | blocked | `bun run lab hooks --demo` |
+| 6 | A key in .env | The agent reads .env to check the Stripe mode. The after hook swaps the key for a token before the model sees it. | clean | `bun run lab hooks --question "Read .env to see which Stripe mode is on"` |
+| 7 | A token in a build log | A log holds a GitHub token from a failed request. The after hook hides it. The useful lines stay. | clean | `bun run lab hooks --question "Show me why build 3 failed"` |
+| 8 | A task that needs no hook | A plain test run. No hook has anything to say, and the output comes through. | clean | `bun run lab hooks --question "Please run the coupon test now"` |
+| 9 | EDGE: a hook that crashes | A buggy hook throws an error. We do not let the call through. Every call is blocked. | blocked | `bun run lab hooks --demo` |
 
 ## Stuck points
 
 **Correct run:** Run a before hook on every call and an after hook on every output. A hook that crashes blocks the call.
 
-**Common wrong turn:** Writing the rule only in the prompt. The model can ignore it and email the note.
+**Common wrong turn:** Writing the rule only in the prompt. The agent can ignore it, force push to main and read a key.
 
 **Hint to give:** Where could a check run that the model cannot skip?
 
 | What you see | What it means | Fix |
 | --- | --- | --- |
-| The demo prints outcome: leaked on the NAIVE case | No hook ran, and the note was emailed | Add a before hook that checks each email |
+| The demo prints outcome: unsafe on the NAIVE case | No hook ran, so the push and the key got through | Add a before hook for pushes and an after hook for secrets |
 | A call is blocked by a hook | The before hook said no | This is correct. Read the hook name in the log |
 | Every call is blocked | A hook crashed, and fail closed blocks the call | Fix the crash. Do not remove the hook |
 

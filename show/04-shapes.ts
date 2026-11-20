@@ -1,120 +1,112 @@
 // What you see on screen for the shapes lab: the examples and the printing.
 // You do not need to read this file to learn the lab. The lesson is in labs/04-shapes.ts.
 
-import { CRM } from "../src/data";
-import { modelFrom, type Ask, type Flags, type Lab } from "../src/runner";
-import { badgeBlue, badgeCyan, badgeMagenta, bold, box, cyan, dim, field, green } from "../src/ui";
-import { highlight, print, red, rule, verdict, yellow } from "../src/ui";
-import { hcpContextWorkflow, multiAgentPipeline, singleHcpAgent } from "../labs/04-shapes";
+import { modelFrom, type Ask, type Lab } from "../src/runner";
+import { badgeBlue, badgeMagenta, bold, box, cyan, dim, field, green } from "../src/ui";
+import { print, red, rule, verdict, yellow } from "../src/ui";
+import { ISSUE_LABELS, findIssue } from "../src/studio-bots";
+import { fixAndReview, labelWorkflow, runTriageAgent } from "../labs/04-shapes";
+import type { Triage, Turn } from "../labs/04-shapes";
 
 const SHAPES: Record<string, string> = {
   workflow: "Plain code decides every step. The model is never called. Cheap, predictable, easy to test.",
   agent: "One model chooses among several tools and decides when it is done. Flexible, less predictable.",
-  multi: "Two roles. A researcher drafts, an auditor checks every claim, and a person decides on any doubt.",
+  multi: "A reproducer, a fixer and an auditor. A person decides on any doubt.",
 };
 
 export const lab: Lab = {
   file: "04-shapes.ts",
   title: "Three ways to build one job",
   about:
-    "Three ways to build the same helper. A workflow runs fixed steps. One agent picks its own tools. Many agents pass work between them. Pick the shape with --shape workflow, agent or multi, and the doctor with --hcp dr-lee, dr-weber or dr-rao.",
+    "Plain code labels a new issue. One agent reproduces it. Many agents fix and check it. Pick the shape with --shape workflow, agent or multi, and the issue with --issue issue-101, issue-102 or issue-103. For an agent, pick the job with --task label or reproduce.",
   terms: ["workflow", "agent", "many-agents", "auditor"],
-  challenge: "One agent has no second pair of eyes. It can write a wrong dose and cite a real document, and nothing stops it. An auditor is a second model that checks the first one.",
-  promise: "Pick the simplest shape that does the job. When a wrong answer is costly, an auditor checks it and a person decides on any doubt.",
-  production: "Use a workflow when the steps never change. Add an agent only where the path must change. Add an auditor where a mistake would cost real money or safety.",
+  challenge: "An agent used for plain labels costs far more than code. It can give a label that is not on the list. Use an agent only where the path must change.",
+  promise: "Labels come from code and never vary. An agent pays for every round. An auditor stops a fix that names the wrong test, and a person decides on any doubt.",
+  production: "Label with a workflow, because the rules never change. Use one agent where the path changes, such as reproducing a bug. Add an auditor and a person where a bad fix would reach the main branch.",
   cases: [
-    { title: "NAIVE: one agent, and nothing checks it", why: "The model writes a wrong dose and cites the real document. One agent has no second pair of eyes, so the wrong dose goes out.", question: "What is the dose of Cardioza?", flags: { shape: "agent", hcp: "dr-lee", model: "invent" }, expect: "answered" },
-    { title: "Workflow: join a doctor's records", why: "No model needed to combine the CRM profile, recent emails and the documents this doctor's country allows.", question: "What do we know about this doctor?", flags: { shape: "workflow", hcp: "dr-weber" }, expect: "joined" },
-    { title: "Workflow: a doctor we do not know", why: "Plain code handles missing data the same way every time. No profile means no allowed documents.", question: "What do we know about this doctor?", flags: { shape: "workflow", hcp: "dr-unknown" }, expect: "joined" },
-    { title: "One agent: three tools in turn", why: "The model looks up the profile, searches approved documents, then checks recent outreach before it answers.", question: "What is the dose of Cardioza?", flags: { shape: "agent", hcp: "dr-lee" }, expect: "answered" },
-    { title: "One agent: a doctor with no recent outreach", why: "Same agent, different doctor. Dr. Weber has no emails, and gets the German dose.", question: "What is the dose of Cardioza?", flags: { shape: "agent", hcp: "dr-weber" }, expect: "answered" },
-    { title: "One agent: no approved document", why: "The agent refuses to guess, but nothing double checks it. That is the gap multi-agent fills.", question: "What is the dose of Zorbex?", flags: { shape: "agent", hcp: "dr-rao" }, expect: "no-source" },
-    { title: "Multi-agent: auditor passes a true draft", why: "The researcher drafts. The auditor finds every cited sentence in its document word for word. No person is needed.", question: "What is the dose of Cardioza?", flags: { shape: "multi", hcp: "dr-lee" }, expect: "passed" },
-    { title: "Multi-agent: auditor catches a wrong dose", why: "The draft says 20mg and cites the real document, so the guardrails lab's citation check passed it. The auditor compares the claim to the source and fails it. A person rejects it.", question: "What is the dose of Cardioza?", flags: { shape: "multi", hcp: "dr-lee", model: "invent", approve: "n" }, expect: "rejected" },
-    { title: "Multi-agent: a person overrides", why: "Same wrong draft, but the reviewer says yes. The gate is only as good as the person behind it.", question: "What is the dose of Cardioza?", flags: { shape: "multi", hcp: "dr-lee", model: "invent", approve: "y" }, expect: "approved by person" },
-    { title: "Multi-agent: nothing to audit", why: "The researcher finds no source, so the draft has no cited claim. The auditor fails it and a person decides.", question: "What is the dose of Zorbex?", flags: { shape: "multi", hcp: "dr-lee", approve: "n" }, expect: "rejected" },
+    { title: "NAIVE: an agent for a plain label", why: "The agent reads the issue, the label list and a CI log it did not need. It pays for every round, to do what three lines of code do.", question: "A new issue came in. Please label it.", flags: { shape: "agent", task: "label", issue: "issue-102", naive: "true" }, expect: "agent-labelled" },
+    { title: "Workflow: label a bug", why: "The rules find the word fails in the issue. The label is bug, every time, with no model call.", question: "Checkout shows a 500 after the coupon. Label this issue.", flags: { shape: "workflow", issue: "issue-103" }, expect: "labelled" },
+    { title: "Workflow: label a request", why: "No bug word in the text, so the label is feature. The same input always gives the same label.", question: "Someone asked for a dark theme. What label is that?", flags: { shape: "workflow", issue: "issue-102" }, expect: "labelled" },
+    { title: "Workflow: an issue we do not have", why: "Plain code handles missing data the same way each time. No issue means no label.", question: "Label issue 999 for me.", flags: { shape: "workflow", issue: "issue-999" }, expect: "unknown" },
+    { title: "One agent: a label off the list", why: "This model wanders and invents a label. Our board has only bug and feature, so the label is wrong. Code cannot do this.", question: "Triage the blurry logo report.", flags: { shape: "agent", task: "label", issue: "issue-101", model: "wanders" }, expect: "off-list" },
+    { title: "One agent: reproduce a bug", why: "The path changes. The agent reads the issue, then the CI log, then reports the failing test.", question: "Can you reproduce the checkout error?", flags: { shape: "agent", task: "reproduce", issue: "issue-103" }, expect: "reproduced" },
+    { title: "One agent: a bug that will not reproduce", why: "The CI log for the logo issue is green. The agent says so, and does not make up a failure.", question: "Can you reproduce the blurry logo?", flags: { shape: "agent", task: "reproduce", issue: "issue-101" }, expect: "not-reproduced" },
+    { title: "Many agents: a fix the auditor passes", why: "The fix names tests/coupon.test.ts. The auditor finds that test failing in the CI log, so the fix goes on.", question: "Please fix the checkout error.", flags: { shape: "multi", issue: "issue-103" }, expect: "passed" },
+    { title: "Many agents: the auditor catches a wrong test", why: "The fixer names a test that never failed. A single agent would ship it. The auditor checks the log, and a person says no.", question: "Fix the checkout error for me.", flags: { shape: "multi", issue: "issue-103", model: "invent", approve: "n" }, expect: "rejected" },
+    { title: "Many agents: a person overrides", why: "Same wrong fix, but the person says yes. The gate is only as good as the person behind it.", question: "Please fix the coupon problem.", flags: { shape: "multi", issue: "issue-103", model: "invent", approve: "y" }, expect: "approved by person" },
+    { title: "Many agents: nothing to fix", why: "The CI log is green, so there is no failing test to aim at. The auditor fails the empty fix and a person decides.", question: "Please fix the blurry logo.", flags: { shape: "multi", issue: "issue-101", approve: "n" }, expect: "rejected" },
   ],
   play(question, flags, ask) {
     const shape = flags.shape || "agent";
-    const hcpId = flags.hcp || "dr-lee";
-    const doctor = CRM[hcpId];
+    const issueId = flags.issue || "issue-103";
     print(field("Shape", bold(shape), cyan));
     print(field("", SHAPES[shape] || "", dim));
-    if (doctor) print(field("Doctor", `${hcpId} (${doctor.name}, ${doctor.country})`));
-    else print(field("Doctor", `${hcpId} (unknown)`));
+    print(field("Issue", findIssue(issueId) ? `${issueId}: ${findIssue(issueId)!.title}` : `${issueId} (unknown)`));
+    print(field("Question", question));
     console.log();
-
     if (!SHAPES[shape]) {
       box("ERROR", [red(`Unknown shape "${shape}". Use workflow, agent or multi.`)], red);
       return "error";
     }
-    if (shape === "workflow") return showWorkflow(hcpId);
-    if (!doctor) {
-      box("ERROR", [red(`Unknown doctor ${hcpId}. Use one of: ${Object.keys(CRM).join(", ")}`)], red);
-      return "error";
-    }
-    print(field("Question", question));
-    if (shape === "agent") return showAgent(question, hcpId, flags);
-    return showMultiAgent(question, doctor.country, flags, ask);
+    if (shape === "workflow") return showWorkflow(issueId);
+    if (shape === "agent") return showAgent(flags.task || "label", issueId, flags);
+    return showMulti(issueId, flags, ask);
   },
 };
 
-function showWorkflow(hcpId: string): string {
-  const result = hcpContextWorkflow(hcpId);
+function showTrace(trace: Turn[]) {
+  for (const turn of trace) console.log(`${badgeBlue(turn.who.toUpperCase())} ${dim(turn.text)}`);
+}
+
+function showWorkflow(issueId: string): string {
+  const result = labelWorkflow(issueId);
   console.log(`${badgeBlue("CODE")} ${bold("no model call")}`);
-  if (!result.profile) {
-    const lines = [red("No CRM profile for this doctor, so no documents are allowed.")];
-    box("DOCTOR CONTEXT", lines, green);
-    return "joined";
+  if (result.answer === "unknown") {
+    box("NO SUCH ISSUE", [yellow("There is no label for an issue we do not have.")], yellow);
+    return "unknown";
   }
-  const { name, specialty, country } = result.profile;
-  const emails = result.recentEmails.join("; ") || "none";
-  const lines = [
-    ...field("profile", `${name}, ${specialty}, ${country}`, cyan),
-    ...field("emails", emails, cyan),
-    ...field("allowed", result.allowedDocs.join(", ") || "none", cyan),
-  ];
-  box("DOCTOR CONTEXT", lines, green);
-  return "joined";
+  showTrace(result.trace);
+  box("LABEL", [...field("label", result.answer, green), ...field("tokens", "0", dim)], green);
+  return "labelled";
 }
 
-function showAgent(question: string, hcpId: string, flags: Flags): string {
-  const result = singleHcpAgent(question, hcpId, modelFrom(flags));
-  for (const [index, step] of result.steps.entries()) {
-    console.log();
-    if (step.kind === "answer") {
-      console.log(`${badgeCyan(`STEP ${index + 1}`)} ${bold("model answers")}`);
-      continue;
-    }
-    console.log(`${badgeBlue(`STEP ${index + 1}`)} ${bold("tool")} ${cyan(step.tool)}`);
-    print(field("  result", highlight(step.result), dim));
-  }
+function showAgent(task: string, issueId: string, flags: Record<string, string>): string {
+  const result: Triage = runTriageAgent(task, issueId, modelFrom(flags));
+  showTrace(result.trace);
   console.log();
-  if (/\[[A-Z]+-[A-Z]+\]/.test(result.answer)) {
-    box("ANSWER", field("", highlight(result.answer), green, 0), green);
-    return "answered";
+  print(field("Tokens paid", String(result.tokens), dim));
+  if (task === "label") {
+    const good = ISSUE_LABELS.includes(result.answer);
+    if (!good) {
+      box("OFF THE LIST", [red(`The agent said "${result.answer}". The board has: ${ISSUE_LABELS.join(", ")}.`)], red);
+      return "off-list";
+    }
+    box("LABEL", [green(`${result.answer}, after ${result.trace.length} tool calls.`)], green);
+    return "agent-labelled";
   }
-  box("NO APPROVED SOURCE", field("", highlight(result.answer), yellow, 0), yellow);
-  return "no-source";
+  if (result.answer.startsWith("Reproduced")) {
+    box("REPRODUCED", [green(result.answer)], green);
+    return "reproduced";
+  }
+  box("NOT REPRODUCED", [yellow(result.answer)], yellow);
+  return "not-reproduced";
 }
 
-function showMultiAgent(question: string, country: string, flags: Flags, ask: Ask): string {
-  const result = multiAgentPipeline(question, country, modelFrom(flags), ask);
+function showMulti(issueId: string, flags: Record<string, string>, ask: Ask): string {
+  const result = fixAndReview(issueId, modelFrom(flags), ask);
   for (const turn of result.trace) {
-    const badge = turn.who === "researcher" ? badgeBlue("RESEARCHER") : badgeMagenta("AUDITOR");
-    console.log(`${badge} ${highlight(turn.text)}`);
+    const badge = turn.who === "auditor" ? badgeMagenta("AUDITOR") : badgeBlue(turn.who.toUpperCase());
+    console.log(`${badge} ${dim(turn.text)}`);
   }
   rule();
-  if (result.reply === "REJECTED_BY_COMPLIANCE") {
-    box("REJECTED BY COMPLIANCE", [verdict.blocked("Nothing was sent.")], red);
+  if (result.reply === "REJECTED_BY_REVIEW") {
+    box("FIX REJECTED", [verdict.blocked("Nothing was merged.")], red);
     return "rejected";
   }
-  const reply = field("", highlight(result.reply), green, 0);
   if (result.passed) {
-    box("SENT", [...reply, verdict.safe("Auditor passed every claim.")], green);
+    box("FIX GOES TO REVIEW", [green(result.reply), verdict.safe("The auditor found the failing test in the log.")], green);
     return "passed";
   }
-  const warning = verdict.person("A wrong claim went out because the reviewer said yes.");
-  box("SENT AFTER A PERSON OVERRODE THE AUDITOR", [...field("", highlight(result.reply), yellow, 0), warning], yellow);
+  box("MERGED AFTER A PERSON OVERRODE THE AUDITOR", [yellow(result.reply), verdict.person("A wrong fix went on because the person said yes.")], yellow);
   return "approved by person";
 }

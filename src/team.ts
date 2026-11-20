@@ -105,3 +105,6 @@ export function emailOf(leadId: string): string {
   if (found === undefined) return "";
   return found.email;
 }
+
+// ---- Client booking chat: Juniper's own price list, in USD ----
+export const PRICES: Record<string, number> = { logo: 1200, "brand-kit": 4800, website: 9000 };

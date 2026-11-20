@@ -16,7 +16,7 @@ export const lab: Lab = {
   title: "Money caps",
   about:
     "Each example reads one email with the Inbox Manager bot. The run cap is 1 cent and the day cap is 3 cents, so you see them hit. Change them with --run and --day, in whole cents. Also use --mail, --before (millicents spent today), --hops and --again.",
-  terms: ["millicent", "cap", "worst-case", "hop"],
+  terms: ["budget", "millicent", "cap", "worst-case", "hop"],
   challenge: "One email carries a 300 page PDF, and a stuck bot reads it again and again. A count of tokens does not stop a company bill.",
   promise: "A call never starts if its worst case would pass a cap. What a call really cost is written to disk. A run with too many hops is refused.",
   production: "Price the worst case before each call. Refuse any call that would pass the run cap or the day cap. Keep the ledger in a shared database, and tell Maya when a cap is hit.",

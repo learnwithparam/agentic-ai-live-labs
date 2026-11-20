@@ -48,8 +48,6 @@ export const GLOSSARY: Record<string, Word> = {
 
   // Function, CLI or MCP lab
   door: { word: "door", meaning: "One way an agent reaches a tool: a function, a command or an MCP server." },
-  latency: { word: "latency", meaning: "How long one call takes, from the ask to the answer." },
-  structured: { word: "structured", meaning: "Has named fields that a program can read." },
 
   // The context budget lab
   "context-window": { word: "context window", meaning: "The most text a model can read at one time, counted in tokens." },
@@ -81,7 +79,6 @@ export const GLOSSARY: Record<string, Word> = {
 
   // Stop conditions lab
   step: { word: "step", meaning: "One trip round the loop: the model acts, then the code reacts." },
-  "stuck-call": { word: "stuck call", meaning: "The same tool call, with the same input, made again and again with no progress." },
 
   // Error feedback and retries lab
   retry: { word: "retry", meaning: "Try the same call again after it failed." },

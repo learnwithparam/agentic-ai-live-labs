@@ -1,20 +1,21 @@
 # MCP basics
 
-The agent gets its tools from a real MCP server. That server runs as a separate program and speaks JSON-RPC messages. Nothing is hard-coded. Use --hcp dr-lee, dr-weber or dr-rao to pick the doctor.
+Maya's inbox manager has three MCP servers: Gmail, Slack and Drive. Each runs as a separate program and speaks JSON-RPC. Each has a search tool and a get_user tool. The agent lists the tools, picks the best two, and lets the model choose between them.
 
 ## The story in one picture
 
 ```mermaid
 flowchart LR
-  A["Our agent"] -->|"what tools do you have?"| B["MCP server"]
-  B -->|"list of tools"| A
-  A -->|"call one tool"| B
-  B -->|"result"| A
+  A["Question"] --> B{"Small talk?"}
+  B -->|"Yes"| X["Reply, no tools"]
+  B -->|"No"| C["Search the tool descriptions"]
+  C --> D["Model sees the top 2 tools"]
+  D --> E["Call the server that owns the tool"]
 ```
 
 ## The problem
 
-Every new tool means new glue code in every agent. Tool lists go out of date.
+Three servers give six tools, and two pairs share a name. Sending every tool on every call costs tokens and sends a call to the wrong server.
 
 ## New words
 
@@ -29,14 +30,17 @@ Each word has one meaning in every lab.
 Copy any line into your terminal. Each one is a real example from this lab.
 
 ```bash
-bun run lab mcp-basics --question "What is the dose of Cardioza?" --naive
-bun run lab mcp-basics --question "What is the dose of Cardioza?" --show wire
-bun run lab mcp-basics --question "What is the dose of Cardioza?" --hcp dr-lee
-bun run lab mcp-basics --question "What is the dose of Cardioza?" --hcp dr-weber --country DE
-bun run lab mcp-basics --question "What is the dose of Zorbex?"
-bun run lab mcp-basics --question "What is the dose of Cardioza?" --hcp dr-unknown
-bun run lab mcp-basics --question "What is the dose of Cardioza?" --tool delete_everything
-bun run lab mcp-basics --question "What is the dose of Cardioza?" --script src/missing-server.ts
+bun run lab mcp-basics --question "Who is Dana on Slack?" --naive
+bun run lab mcp-basics --question "Who is Dana on Slack?"
+bun run lab mcp-basics --question "Find the signed contract email"
+bun run lab mcp-basics --question "Which file has the brand guide?"
+bun run lab mcp-basics --question "Who owns the brand guide file?"
+bun run lab mcp-basics --question "Hello there, how are you?"
+bun run lab mcp-basics --question "Find the holiday thread in my mail"
+bun run lab mcp-basics --question "Who sent the refund mail?"
+bun run lab mcp-basics --question "Who is Dana on Slack?" --show wire
+bun run lab mcp-basics --question "Delete all the Slack messages." --tool delete_everything
+bun run lab mcp-basics --question "Who is Dana on Slack?" --script src/missing-server.ts
 bun run lab mcp-basics --demo
 ```
 
@@ -48,32 +52,35 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
-| 1 | NAIVE: a hard-coded tool list | The agent copied one tool into its own code. The server has more. The agent cannot use them, and nobody gets an error. | out-of-date | `bun run lab mcp-basics --question "What is the dose of Cardioza?" --naive` |
-| 2 | See the messages | This is all MCP is: lines of JSON in, lines of JSON out. Read the method names and the tool list. | listed | `bun run lab mcp-basics --question "What is the dose of Cardioza?" --show wire` |
-| 3 | The agent uses the server's tools | The agent finds three tools, then calls them one by one. The answer cites its document. | answered | `bun run lab mcp-basics --question "What is the dose of Cardioza?" --hcp dr-lee` |
-| 4 | Another country | Same server, a German doctor. The search tool filters by country, so the dose is 5mg. | answered | `bun run lab mcp-basics --question "What is the dose of Cardioza?" --hcp dr-weber --country DE` |
-| 5 | No approved document | The server says nothing was found. The agent refuses to guess. | no-source | `bun run lab mcp-basics --question "What is the dose of Zorbex?"` |
-| 6 | A tool reports an error | Doctor dr-unknown does not exist. The server marks the result as an error, and the client passes it on as text. | tool-error | `bun run lab mcp-basics --question "What is the dose of Cardioza?" --hcp dr-unknown` |
-| 7 | A tool the server does not have | The agent asks for delete_everything. The server answers with a protocol error. The call goes nowhere. | tool-error | `bun run lab mcp-basics --question "What is the dose of Cardioza?" --tool delete_everything` |
-| 8 | The server is not there | The path is wrong, so nothing answers. The client finds no tools and says so, instead of hanging. | no-server | `bun run lab mcp-basics --question "What is the dose of Cardioza?" --script src/missing-server.ts` |
+| 1 | NAIVE: every tool on every call | Six tools go to the model, and two are called get_user. The call goes to the first server with that name. That is Gmail, not Slack. | wrong-server | `bun run lab mcp-basics --question "Who is Dana on Slack?" --naive` |
+| 2 | Two tools, the right server | The tool search keeps two tools, and the Slack one is first. The call goes to Slack. | answered | `bun run lab mcp-basics --question "Who is Dana on Slack?"` |
+| 3 | Find an email | The words signed and email point at the Gmail tools. The model sees only two tools. | answered | `bun run lab mcp-basics --question "Find the signed contract email"` |
+| 4 | Find a file | Drive holds the brand guide. The Drive search tool is one of the two the model sees. | answered | `bun run lab mcp-basics --question "Which file has the brand guide?"` |
+| 5 | Who owns a file | A who question picks the get_user tool. It is the Drive one, so the answer is the owner. | answered | `bun run lab mcp-basics --question "Who owns the brand guide file?"` |
+| 6 | Small talk | A cheap check sees a greeting. No tool text is sent to the model, so the call costs almost nothing. | no-tools | `bun run lab mcp-basics --question "Hello there, how are you?"` |
+| 7 | Nothing found | The tool runs but finds nothing. The bot says so, and does not make something up. | no-match | `bun run lab mcp-basics --question "Find the holiday thread in my mail"` |
+| 8 | A tool reports an error | No mail has that word. The server marks the result as an error, and the client passes it on as text. | tool-error | `bun run lab mcp-basics --question "Who sent the refund mail?"` |
+| 9 | See the messages | This is all MCP is: lines of JSON in, lines of JSON out. Read the method names and the tool list. | listed | `bun run lab mcp-basics --question "Who is Dana on Slack?" --show wire` |
+| 10 | A tool the server does not have | The agent asks Slack for delete_everything. The server answers with a protocol error. The call goes nowhere. | tool-error | `bun run lab mcp-basics --question "Delete all the Slack messages." --tool delete_everything` |
+| 11 | The servers are not there | The path is wrong, so nothing answers. The client finds no tools and says so, instead of hanging. | no-server | `bun run lab mcp-basics --question "Who is Dana on Slack?" --script src/missing-server.ts` |
 
 ## Stuck points
 
-**Correct run:** The agent asks the server for its tools when it starts, then calls them. Nothing is copied into the code.
+**Correct run:** The agent lists the tools, ranks them, and shows the model only the best two. Each call goes to the owning server.
 
-**Common wrong turn:** Copying the tool list into the code. New server tools are then never used, and nobody gets an error.
+**Common wrong turn:** Sending every tool on every call. It costs tokens, and a name that two servers share goes to the wrong one.
 
-**Hint to give:** Where should the agent learn its tool list from?
+**Hint to give:** Which server owns the tool the model named?
 
 | What you see | What it means | Fix |
 | --- | --- | --- |
-| The demo prints outcome: out-of-date on the NAIVE case | The agent used a list copied from the server | Ask the server for its tools when the agent starts |
-| The result is marked as an error | The server reported a failure, such as an unknown doctor | Read the error text, then fix the input |
+| The demo prints outcome: wrong-server on the NAIVE case | Two servers share the name get_user | Put the server name in front of each tool name |
+| The result is marked as an error | The server reported a failure, such as no match | Read the error text, then fix the input |
 | The server runs but no tools appear | The client never asked for the tool list | Ask for the list first, then call a tool |
 
 ## The promise, and its test
 
-The agent learns its tools from the server, so a new server tool needs no agent change.
+The model sees at most two tools. Each call goes to the server that owns the tool, and small talk sends no tools at all.
 
 ```bash
 bun test tests/promises/07.test.ts
@@ -83,7 +90,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Use the official MCP SDK and keep the server running. Add sign-in and a time limit to every call.
+Use the official MCP SDK and keep each server running. Search the tool descriptions, and show the model only the top few.
 
 ## Read the code
 

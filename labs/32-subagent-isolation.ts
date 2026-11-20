@@ -51,7 +51,7 @@ export function answerAlone(question: string, callLlm: CallLlm, logs = allLogs()
 }
 
 function helperRead(logs: Record<string, string>, callLlm: CallLlm): Work {
-  let prompt = "TRIAGE:";
+  let prompt = "LOGSCAN:";
   let chars = 0;
   for (const id in logs) {
     prompt += `\n[${id}]\n${logs[id]}`;

@@ -27,9 +27,9 @@ export const PICTURES: Record<string, string> = {
   E -->|"No"| F["Drop it"]`,
 
   shapes: `flowchart TB
-  A1["Workflow: fixed steps"] --> A2["Step 1"] --> A3["Step 2"] --> A4["Step 3"]
-  B1["One agent: picks its tools"] --> B2["Loop until done"]
-  C1["Many agents: pass work on"] --> C2["Writer"] --> C3["Checker"]`,
+  A1["Workflow: label an issue"] --> A2["Rules in code"] --> A3["Label"]
+  B1["One agent: reproduce it"] --> B2["Picks tools in a loop"]
+  C1["Many agents: fix it"] --> C2["Fixer"] --> C3["Auditor"] --> C4["Person"]`,
 
   "tool-schemas": `flowchart LR
   A["Model asks for a tool"] --> B{"Matches the schema?"}
@@ -39,32 +39,37 @@ export const PICTURES: Record<string, string> = {
   B -->|"No"| E["Reject and say why"]`,
 
   "shell-tool": `flowchart LR
-  A["Agent wants a command"] --> B{"On the allow-list?"}
+  A["Bot wants a command"] --> B{"Program on the allow-list?"}
   B -->|"No"| X["Refuse"]
-  B -->|"Yes"| C{"Inside the fixed folder?"}
-  C -->|"No"| X
-  C -->|"Yes"| D["Run with a time limit"]`,
+  B -->|"Yes"| C{"Web address in it?"}
+  C -->|"Yes"| X
+  C -->|"No"| D["Run in a throwaway copy"]
+  D --> E["Throw the copy away"]`,
 
   "mcp-basics": `flowchart LR
-  A["Our agent"] -->|"what tools do you have?"| B["MCP server"]
-  B -->|"list of tools"| A
-  A -->|"call one tool"| B
-  B -->|"result"| A`,
+  A["Question"] --> B{"Small talk?"}
+  B -->|"Yes"| X["Reply, no tools"]
+  B -->|"No"| C["Search the tool descriptions"]
+  C --> D["Model sees the top 2 tools"]
+  D --> E["Call the server that owns the tool"]`,
 
   "mcp-trust": `flowchart LR
   A["Server sends its tools"] --> B{"Server approved?"}
   B -->|"No"| X["Ignore the server"]
   B -->|"Yes"| C{"Same fingerprint as before?"}
-  C -->|"Yes"| D["Load the tool"]
-  C -->|"No, it changed"| Y["Stop and review"]`,
+  C -->|"No, it changed"| Y["Stop and review"]
+  C -->|"Yes"| D["Model reads the tool text"]
+  D --> E{"Plan reads or sends outside the list?"}
+  E -->|"Yes"| Z["Stop the plan"]
+  E -->|"No"| F["Run it"]`,
 
   "three-doors": `flowchart LR
-  Job["One job: find a dose"] --> F["Door 1: a function"]
-  Job --> S["Door 2: a command"]
-  Job --> M["Door 3: an MCP server"]
-  F --> R["Same answer, compare risk"]
-  S --> R
-  M --> R`,
+  Chat["Client chat"] --> F["Price list: a function"]
+  Chat --> M["Calendar and payment link: MCP"]
+  Chat --> S["Repo and builds: a command"]
+  F --> R["Reply with a source tag"]
+  M --> R
+  S --> U["Output has no tag"]`,
 
   "context-budget": `flowchart LR
   A["Big result: mail, calls, contract"] --> B["Save in full on disk"]
@@ -103,11 +108,11 @@ export const PICTURES: Record<string, string> = {
   T --> S["Tool: never outside the company"]`,
 
   "stop-conditions": `flowchart LR
-  A["Loop runs a step"] --> B{"Done?"}
-  B -->|"Yes"| Z["Stop: answer"]
-  B -->|"No"| C{"Step cap reached?"}
-  C -->|"Yes"| Y["Stop: too many steps"]
-  C -->|"No"| D{"Same call again and again?"}
+  A["Coding Agent: one more round"] --> B{"Tests pass and done?"}
+  B -->|"Yes"| Z["Stop: answered"]
+  B -->|"No"| C{"Step, time or money cap hit?"}
+  C -->|"Yes"| Y["Stop: print the reason"]
+  C -->|"No"| D{"Same call as before?"}
   D -->|"Yes"| Y
   D -->|"No"| A`,
 
@@ -183,10 +188,11 @@ export const PICTURES: Record<string, string> = {
   C -->|"No, send"| E["Bot refuses, even if an email says so"]`,
 
   hooks: `flowchart LR
-  A["Agent wants to send an email"] --> B["Before hook checks it"]
-  B -->|"Clean"| C["Send the email"]
-  C --> D["After hook checks what left"]
-  B -->|"Dirty"| X["Block the call"]`,
+  A["Agent runs git push --force origin main"] --> B["Before hook checks it"]
+  B -->|"Not main, or no force"| C["Tool runs"]
+  B -->|"Force push to main"| X["Block the call"]
+  C --> D["After hook hides secrets"]
+  D --> E["Model reads the clean output"]`,
 
   "traces-and-audit": `flowchart LR
   A["Record 1"] -->|"fingerprint"| B["Record 2"]
