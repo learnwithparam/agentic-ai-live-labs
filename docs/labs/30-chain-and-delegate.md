@@ -1,21 +1,22 @@
 # Chains and delegation
 
-Each example is one job for three doctors. Pick the doctors with --hcps, for example dr-lee,dr-weber,dr-rao. The lead splits the job and delegates each doctor to a worker. Each step in the chain feeds the next one.
+Each example files receipts for Juniper Studio. The lead hands each receipt to a worker, and each step in the chain feeds the next one. Pick receipts with --receipts. Add --open true for a lead that plans its own workers.
 
 ## The story in one picture
 
 ```mermaid
 flowchart LR
-  A["Big job"] --> B["Step 1: find facts"]
-  B --> C["Step 2: write draft"]
-  C --> D["Step 3: check draft"]
-  A -->|"hand one part to"| W["Worker"]
-  W --> C
+  A["Receipt"] --> B["Match a bank line"]
+  B -->|"No match"| P["A person looks"]
+  B -->|"Match"| C["Pick a label"]
+  C --> D["File it"]
+  A -->|"hand each receipt to"| W["Worker"]
+  W --> B
 ```
 
 ## The problem
 
-One bot, one search and one letter for three doctors. The search ran for one country, so the others get the wrong label.
+One long prompt matches, labels and files at once. It grabs the first bank line, so the books fill with wrong entries that look right.
 
 ## New words
 
@@ -31,10 +32,13 @@ Each word has one meaning in every lab.
 Copy any line into your terminal. Each one is a real example from this lab.
 
 ```bash
-bun run lab chain-and-delegate --demo
-bun run lab chain-and-delegate --demo
-bun run lab chain-and-delegate --question "Write the Cardioza update for Dr. Weber please." --hcps dr-weber
-bun run lab chain-and-delegate --demo
+bun run lab chain-and-delegate --question "File all the April receipts" --naive
+bun run lab chain-and-delegate --question "Match the April receipts to the bank and file them"
+bun run lab chain-and-delegate --question "File the font licence from the email" --receipts receipt-fontshop
+bun run lab chain-and-delegate --question "Where did the Acme client lunch go in the bank?" --receipts receipt-lunch
+bun run lab chain-and-delegate --question "Label the font licence for the books" --receipts receipt-fontshop --model invent
+bun run lab chain-and-delegate --question "Plan the filing for the cloud bill" --receipts receipt-cloud --open
+bun run lab chain-and-delegate --question "Plan the filing for the cloud bill, with checks" --receipts receipt-cloud --open --model wanders
 bun run lab chain-and-delegate --demo
 ```
 
@@ -46,28 +50,31 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
-| 1 | NAIVE: one letter for everyone | One search runs for Dr. Lee's country. Dr. Weber gets the US dose in his letter. | wrong-label | `bun run lab chain-and-delegate --demo` |
-| 2 | Three doctors, three chains | Each worker searches its own doctor's country. Dr. Weber's letter cites the German document. | all-sent | `bun run lab chain-and-delegate --demo` |
-| 3 | One doctor | A job for one doctor is one worker and one chain. | all-sent | `bun run lab chain-and-delegate --question "Write the Cardioza update for Dr. Weber please." --hcps dr-weber` |
-| 4 | EDGE: one worker has nothing to write from | There is no German Neurovex document. Dr. Weber's worker holds its letter, and the other two still go. | partial | `bun run lab chain-and-delegate --demo` |
+| 1 | NAIVE: one long prompt | One prompt must match, label and file all the April receipts. It grabs the first bank line each time. Two entries are wrong, and the euro lunch is filed anyway. | wrong-filing | `bun run lab chain-and-delegate --question "File all the April receipts" --naive` |
+| 2 | Three receipts, three chains | The font licence and the cloud bill match and are filed. The Acme lunch is in euros. The bank line is in dollars. So it goes to a person. | partial | `bun run lab chain-and-delegate --question "Match the April receipts to the bank and file them"` |
+| 3 | One receipt | One worker matches the font licence to bank-1 and files it as software. | all-filed | `bun run lab chain-and-delegate --question "File the font licence from the email" --receipts receipt-fontshop` |
+| 4 | EDGE: nothing matches | The Acme lunch has no bank line in euros. The worker will not guess. It hands the receipt to Maya. | to-a-person | `bun run lab chain-and-delegate --question "Where did the Acme client lunch go in the bank?" --receipts receipt-lunch` |
+| 5 | EDGE: a label the books do not use | The model calls the font licence gadgets. The books have no such label, so the worker holds it. | to-a-person | `bun run lab chain-and-delegate --question "Label the font licence for the books" --receipts receipt-fontshop --model invent` |
+| 6 | An open ended lead | This lead plans its own workers. It asks for match, categorize and file, which is three. That fits the cap. | all-filed | `bun run lab chain-and-delegate --question "Plan the filing for the cloud bill" --receipts receipt-cloud --open` |
+| 7 | EDGE: a plan with too many workers | The lead plans six workers and repeats the same ones. The cap is three, so the code refuses the plan. | capped | `bun run lab chain-and-delegate --question "Plan the filing for the cloud bill, with checks" --receipts receipt-cloud --open --model wanders` |
 
 ## Stuck points
 
-**Correct run:** Split the job, give each doctor to a worker, and pass each result along the chain. Each letter uses its doctor's country.
+**Correct run:** Hand each receipt to a worker that matches, labels and files it in order. A receipt that does not match goes to a person.
 
-**Common wrong turn:** One search for all doctors. The others get the wrong country's label.
+**Common wrong turn:** One long prompt for every step. It grabs the first bank line, and the books fill with wrong entries.
 
-**Hint to give:** Which country should this doctor's letter use?
+**Hint to give:** Which bank line holds this receipt's money, and does the label exist in the books?
 
 | What you see | What it means | Fix |
 | --- | --- | --- |
-| The demo prints outcome: wrong-label on the NAIVE case | One search ran for one country | Give each doctor a worker with its own search |
-| A worker is named as failed | That worker's step failed | Retry it once, then hand it to a person. The others still go |
-| A letter does not pass the check | The draft is not from the right document | Check the letter before it is sent |
+| The demo prints outcome: wrong-filing on the NAIVE case | One long prompt did every step | Give each receipt a worker with a fixed chain |
+| A receipt prints outcome: to-a-person | No bank line fits it, or the label is not in the books | Maya decides. Never let the worker guess |
+| A plan prints outcome: capped | An open ended lead asked for more than three workers | Cap the workers in code, and fix the plan |
 
 ## The promise, and its test
 
-Each doctor's letter is written from a document of the doctor's own country, and it passes a check. A worker that fails is named and the others still go.
+Each receipt is matched to a real bank line and given a label the books use. One that does not match is held for a person. The other receipts still go. A lead that plans its own workers is capped at three.
 
 ```bash
 bun test tests/promises/30.test.ts
@@ -77,7 +84,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Give each worker only what its part needs. Log each worker's result by name. Retry a failed worker once, then hand it to a person.
+Run the same chain for every receipt, and hand each to its own worker. Never guess a match. Send what does not fit to Maya, with the reason. Cap how many workers an open ended lead may start.
 
 ## Read the code
 

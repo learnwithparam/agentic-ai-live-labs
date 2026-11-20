@@ -1,23 +1,22 @@
 # Which model answers
 
-Each example has a small model and a strong model. Our code routes each question to one, then checks the answer. The cascade tries the small model first. Pretend habits: --small and --big can be ok, nocite or invent.
+Each example has a small and a strong model. The small one sorts 500 emails. Then it drafts a reply, and our code checks it. Small first, then strong, is a cascade. Set --small and --big to ok, nocite or invent, and pick the email with --mail.
 
 ## The story in one picture
 
 ```mermaid
 flowchart LR
-  A["Question"] --> B{"Easy?"}
-  B -->|"Yes"| C["Small cheap model"]
-  B -->|"No"| D["Strong model"]
+  A["500 emails"] --> B["Small model sorts them"]
+  B --> C["Small model drafts the reply"]
   C --> E{"Check passes?"}
-  E -->|"No"| D
+  E -->|"No, twice"| D["Strong model drafts it"]
   E -->|"Yes"| F["Send"]
   D --> F
 ```
 
 ## The problem
 
-The strong model costs ten times more. Using it for every question wastes money. Using the small one alone sends wrong doses to doctors.
+The strong model costs ten times more. Using it for all 500 emails wastes money. Using the small one alone can put a wrong total in a contract reply.
 
 ## New words
 
@@ -32,12 +31,11 @@ Each word has one meaning in every lab.
 Copy any line into your terminal. Each one is a real example from this lab.
 
 ```bash
-bun run lab model-routing --question "What is the dose of Cardioza?" --naive
-bun run lab model-routing --question "What is the dose of Cardioza?"
-bun run lab model-routing --question "What is the dose of Cardioza?" --small nocite
-bun run lab model-routing --question "What is the dose of Cardioza?" --small invent
-bun run lab model-routing --question "What is the dose of Cardioza?" --small nocite --big nocite
-bun run lab model-routing --question "What is the dose of Zorbex?"
+bun run lab model-routing --question "Sort the week's 500 emails and reply to Acme" --mail mail-contract --naive
+bun run lab model-routing --question "Reply to Sam about moving the call to Thursday" --mail mail-meeting
+bun run lab model-routing --question "Reply to the signed Acme contract" --mail mail-contract --small nocite
+bun run lab model-routing --question "Confirm the Acme total in the reply" --mail mail-contract --small invent
+bun run lab model-routing --question "Draft the contract thank-you for Maya" --mail mail-contract --small invent --big invent
 bun run lab model-routing --demo
 ```
 
@@ -49,16 +47,15 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
-| 1 | NAIVE: always the strong model | Every question goes to the strong model, and nobody checks the answer. It works, but it costs ten times more than it needs to. | always-big | `bun run lab model-routing --question "What is the dose of Cardioza?" --naive` |
-| 2 | The small model is good enough | The small answer cites its source and the dose matches. It is sent as it is, and the strong model is never called. | small | `bun run lab model-routing --question "What is the dose of Cardioza?"` |
-| 3 | The small model forgets the citation | The check fails: no citation. We ask the strong model, and its answer passes. | big | `bun run lab model-routing --question "What is the dose of Cardioza?" --small nocite` |
-| 4 | EDGE: the small model invents a dose | It says 20mg. The document says 10mg. The check catches it in code, and the strong model answers. | big | `bun run lab model-routing --question "What is the dose of Cardioza?" --small invent` |
-| 5 | EDGE: both models fail | Neither answer passes the check. We send nothing, and a person looks at it. | refused | `bun run lab model-routing --question "What is the dose of Cardioza?" --small nocite --big nocite` |
-| 6 | EDGE: no approved document | There is no source for Zorbex. The small model says so, and no dose is made up. That is a good answer. | small | `bun run lab model-routing --question "What is the dose of Zorbex?"` |
+| 1 | NAIVE: always the strong model | All 500 emails and the Acme reply go to the strong model, and nobody checks the reply. It works, but it costs ten times more than it needs to. | always-big | `bun run lab model-routing --question "Sort the week's 500 emails and reply to Acme" --mail mail-contract --naive` |
+| 2 | The small model is good enough | Sam asks to move a call. The small reply is polite, signed and has no amounts to check. It is sent as it is. | small | `bun run lab model-routing --question "Reply to Sam about moving the call to Thursday" --mail mail-meeting` |
+| 3 | The small model forgets the total | The Acme reply leaves out the 18000 total. The check names the problem, the small model tries again, and the second try passes. | small-retry | `bun run lab model-routing --question "Reply to the signed Acme contract" --mail mail-contract --small nocite` |
+| 4 | EDGE: the small model invents a total | It writes 19000 each time. The check catches it in code, twice. Like a junior who fails twice, the job moves up to the strong model. | big | `bun run lab model-routing --question "Confirm the Acme total in the reply" --mail mail-contract --small invent` |
+| 5 | EDGE: every model fails | Neither the small nor the strong model passes the check. We send nothing, and Maya looks at it. | refused | `bun run lab model-routing --question "Draft the contract thank-you for Maya" --mail mail-contract --small invent --big invent` |
 
 ## Stuck points
 
-**Correct run:** The small model answers first. Only a failed check sends the question to the strong model.
+**Correct run:** The small model drafts first and gets a second try. Only two failed checks send the job to the strong model.
 
 **Common wrong turn:** Always using the strong model. It works, but it costs about ten times more than it needs.
 
@@ -67,12 +64,12 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 | What you see | What it means | Fix |
 | --- | --- | --- |
 | The demo prints outcome: always-big on the NAIVE case | The strong model answered every question | Try the small model first, then check its answer |
-| The small answer is not sent | It failed the check | This is correct. The check stopped a bad answer |
+| The demo prints outcome: small-retry | The first small draft failed the check | This is correct. The check named the problem, and the retry passed |
 | Nothing is sent after both fail | Neither answer passed the check | This is correct. A person should decide |
 
 ## The promise, and its test
 
-The small model answers first. An answer that fails the check is never sent. The strong model is asked only after a failed check. If both fail, nothing is sent.
+The small model goes first, and a reply that fails the check is never sent. A small model that fails twice moves the job up. If the strong model fails too, nothing is sent.
 
 ```bash
 bun test tests/promises/23.test.ts
@@ -82,7 +79,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Log which tier answered each question. Watch how often the small model fails the check, and move the line when it changes.
+Route the sorting to the small model, and check each draft in code. After two failed small tries, route the job to the strong model. Log which tier answered.
 
 ## Read the code
 

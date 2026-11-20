@@ -4,6 +4,7 @@
 // Swap callLlm for a real provider and nothing else changes.
 import { APPROVED_DOCS, KNOWN_DRUGS, NO_DOC } from "./data";
 import { opsReply } from "./model-ops";
+import { juniperReply } from "./juniper-model";
 
 export type Message = { role: "system" | "user" | "tool"; content: string; name?: string };
 export type ToolInput = { query: string; country: string; hcpId: string };
@@ -48,6 +49,8 @@ export function makeModel(behaviour: Behaviour = "ok"): CallLlm {
     if (first.startsWith("HAND:")) return { text: handFor(first) };
     if (first.startsWith("REVIEW:")) return { text: "Looks good. The draft is fine." };
     if (first.startsWith("FIX:")) return { text: fix(first, behaviour) };
+    const juniper = juniperReply(first, messages, behaviour); // the Juniper Studio labs
+    if (juniper !== undefined) return juniper;
 
     const country = grab(first, "Country");
     const hcpId = grab(first, "HCP");

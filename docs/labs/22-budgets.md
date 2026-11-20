@@ -1,6 +1,6 @@
 # Money caps
 
-Each example runs the loop with a cost cap. The run cap is 1 cent and the day cap is 3 cents, so you see them hit. Change them with --run and --day, in whole cents. Also use --before (millicents spent today), --hops and --again.
+Each example reads one email with the Inbox Manager bot. The run cap is 1 cent and the day cap is 3 cents, so you see them hit. Change them with --run and --day, in whole cents. Also use --mail, --before (millicents spent today), --hops and --again.
 
 ## The story in one picture
 
@@ -14,7 +14,7 @@ flowchart LR
 
 ## The problem
 
-A stuck model keeps spending, and one person can start many runs in a day. A count of tokens does not stop a company bill.
+One email carries a 300 page PDF, and a stuck bot reads it again and again. A count of tokens does not stop a company bill.
 
 ## New words
 
@@ -30,12 +30,13 @@ Each word has one meaning in every lab.
 Copy any line into your terminal. Each one is a real example from this lab.
 
 ```bash
-bun run lab budgets --question "What is the dose of Zorbex?" --model stuck --naive
-bun run lab budgets --question "What is the dose of Cardioza?"
-bun run lab budgets --question "What is the dose of Zorbex?" --model stuck
-bun run lab budgets --question "What is the dose of Cardioza?" --before 2500
-bun run lab budgets --question "What is the dose of Cardioza?" --hops 3
-bun run lab budgets --question "What is the dose of Cardioza?" --again 3 --day 1
+bun run lab budgets --question "Read the Acme report and note what it says" --mail mail-report --model stuck --naive
+bun run lab budgets --question "Note Sam's request about Thursday" --mail mail-meeting
+bun run lab budgets --question "Write a one line note for the receipt" --mail mail-receipt --model stuck
+bun run lab budgets --question "Does the Acme report mention the logo?" --mail mail-report
+bun run lab budgets --question "Is the contract email signed?" --mail mail-contract --before 2800
+bun run lab budgets --question "Pass this invoice note to the Expense Manager" --mail mail-receipt --hops 3
+bun run lab budgets --question "Sort the morning emails, one by one" --mail mail-spam --again 3 --day 1
 bun run lab budgets --demo
 ```
 
@@ -47,12 +48,13 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
-| 1 | NAIVE: no money cap | The model keeps making the same call, and nothing in our code counts money. The demo cuts it at 200 rounds, and the bill is long. | never-stopped | `bun run lab budgets --question "What is the dose of Zorbex?" --model stuck --naive` |
-| 2 | A normal question | Two rounds, a fraction of a cent. No cap is touched. | answered | `bun run lab budgets --question "What is the dose of Cardioza?"` |
-| 3 | A stuck model and a run cap | Each round sends the whole chat again, so each round costs more. The run cap of 1 cent stops it before the call that would pass it. | run-cap | `bun run lab budgets --question "What is the dose of Zorbex?" --model stuck` |
-| 4 | EDGE: today's money is already used | This person spent 2500 millicents earlier today. The day cap is 3000. The worst case of the next call does not fit, so no call starts. | day-cap | `bun run lab budgets --question "What is the dose of Cardioza?" --before 2500` |
-| 5 | EDGE: handed on too many times | This run is the third hand-over, and the cap is three hops. It is refused before any money is spent. | hop-cap | `bun run lab budgets --question "What is the dose of Cardioza?" --hops 3` |
-| 6 | EDGE: many runs in one day | Each run is small. The ledger on disk adds them up. The day cap stops the second run in a row. | day-cap | `bun run lab budgets --question "What is the dose of Cardioza?" --again 3 --day 1` |
+| 1 | NAIVE: no money cap | Maya got a 300 page PDF from Acme. The bot is stuck and opens it again and again. Our code does not count money. The demo cuts it at 200 rounds, and the bill is huge. | never-stopped | `bun run lab budgets --question "Read the Acme report and note what it says" --mail mail-report --model stuck --naive` |
+| 2 | A normal email | Sam asks to move a call. Two rounds, a fraction of a cent. No cap is touched. | answered | `bun run lab budgets --question "Note Sam's request about Thursday" --mail mail-meeting` |
+| 3 | A stuck bot and a run cap | Each round sends the whole chat again, so each round costs more. The run cap of 1 cent stops it before the call that would pass it. | run-cap | `bun run lab budgets --question "Write a one line note for the receipt" --mail mail-receipt --model stuck` |
+| 4 | EDGE: the 300 page PDF, worst case first | The bot is fine, but the PDF is 150000 tokens. The worst case of that call is over two dollars. The call is refused before it starts. | run-cap | `bun run lab budgets --question "Does the Acme report mention the logo?" --mail mail-report` |
+| 5 | EDGE: today's money is already used | Maya's bots spent 2800 millicents earlier today. The day cap is 3000. The worst case of the next call does not fit, so no call starts. | day-cap | `bun run lab budgets --question "Is the contract email signed?" --mail mail-contract --before 2800` |
+| 6 | EDGE: handed on too many times | This run is the third hand-over, and the cap is three hops. It is refused before any money is spent. | hop-cap | `bun run lab budgets --question "Pass this invoice note to the Expense Manager" --mail mail-receipt --hops 3` |
+| 7 | EDGE: many runs in one day | Each run is small. The ledger on disk adds them up. The day cap stops a later run. | day-cap | `bun run lab budgets --question "Sort the morning emails, one by one" --mail mail-spam --again 3 --day 1` |
 
 ## Stuck points
 
@@ -64,7 +66,7 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | What you see | What it means | Fix |
 | --- | --- | --- |
-| The demo prints outcome: never-stopped on the NAIVE case | No money cap in the code | Add a run cap and a day cap, checked before each call |
+| The demo prints outcome: never-stopped on the NAIVE case | No money cap, so a stuck bot rereads the PDF | Add a run cap and a day cap, checked before each call |
 | A call is refused before any money is spent | Its worst case passed a cap | This is correct. Raise a cap only with a reason |
 | A run is refused as too many hops | The hop limit was reached | Shorten the hand-overs, or raise the hop limit |
 
@@ -80,7 +82,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Take the price list from your provider. Keep the ledger in a database that every server shares. Alert a person when a cap is hit.
+Price the worst case before each call. Refuse any call that would pass the run cap or the day cap. Keep the ledger in a shared database, and tell Maya when a cap is hit.
 
 ## Read the code
 

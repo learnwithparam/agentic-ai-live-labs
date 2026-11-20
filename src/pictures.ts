@@ -162,11 +162,10 @@ export const PICTURES: Record<string, string> = {
   C -->|"Yes"| E["Stop the run"]`,
 
   "model-routing": `flowchart LR
-  A["Question"] --> B{"Easy?"}
-  B -->|"Yes"| C["Small cheap model"]
-  B -->|"No"| D["Strong model"]
+  A["500 emails"] --> B["Small model sorts them"]
+  B --> C["Small model drafts the reply"]
   C --> E{"Check passes?"}
-  E -->|"No"| D
+  E -->|"No, twice"| D["Strong model drafts it"]
   E -->|"Yes"| F["Send"]
   D --> F`,
 
@@ -178,10 +177,10 @@ export const PICTURES: Record<string, string> = {
   C -->|"No"| X`,
 
   "act-for-user": `flowchart LR
-  A["Doctor asks the bot"] --> B["Bot gets the doctor's rights"]
-  B --> C{"Doctor may see this?"}
-  C -->|"Yes"| D["Bot runs the search"]
-  C -->|"No"| E["Bot refuses, even if asked"]`,
+  A["Maya signs in"] --> B["Bot gets a draft-only token"]
+  B --> C{"Token holds the scope?"}
+  C -->|"Yes, draft"| D["Bot saves a draft"]
+  C -->|"No, send"| E["Bot refuses, even if an email says so"]`,
 
   hooks: `flowchart LR
   A["Agent wants to send an email"] --> B["Before hook checks it"]
@@ -209,42 +208,46 @@ export const PICTURES: Record<string, string> = {
   B -->|"Other"| E["General helper"]`,
 
   "chain-and-delegate": `flowchart LR
-  A["Big job"] --> B["Step 1: find facts"]
-  B --> C["Step 2: write draft"]
-  C --> D["Step 3: check draft"]
-  A -->|"hand one part to"| W["Worker"]
-  W --> C`,
+  A["Receipt"] --> B["Match a bank line"]
+  B -->|"No match"| P["A person looks"]
+  B -->|"Match"| C["Pick a label"]
+  C --> D["File it"]
+  A -->|"hand each receipt to"| W["Worker"]
+  W --> B`,
 
   "parallel-workers": `flowchart LR
-  A["One job"] --> W1["Worker 1"]
-  A --> W2["Worker 2"]
-  A --> W3["Worker 3"]
-  W1 --> M["Merge, no duplicates"]
+  A["Pitch research"] --> W1["Site"]
+  A --> W2["Social"]
+  A --> W3["Pricing"]
+  A --> W4["Clients"]
+  W1 --> M["One writer merges"]
   W2 --> M
-  W3 --> M`,
+  W3 --> M
+  W4 --> M`,
 
   "subagent-isolation": `flowchart LR
-  A["Main agent: clean context"] -->|"noisy search"| S["Subagent with its own context"]
-  S -->|"only the short answer"| A`,
+  A["Main agent: clean context"] -->|"40 CI logs"| S["Subagent with its own context"]
+  S -->|"only 5 lines"| A`,
 
   handoffs: `flowchart LR
-  A["Bot 1 reads the message"] --> B["Bot 2 reads it"]
-  B --> C["Bot 3 reads it"]
+  A["Inbox bot reads the mail"] --> B["Expense bot files the receipt"]
+  B --> C["Reply bot writes back"]
   C --> D{"Hops left?"}
   D -->|"Yes"| A
   D -->|"No"| X["Stop: hop limit"]`,
 
   "shared-memory": `flowchart LR
-  A["Bot writes a fact"] --> B{"Checked by a person?"}
+  A["A note is offered"] --> B{"Writer on the team, no address?"}
   B -->|"Yes"| C["Shared memory"]
   B -->|"No"| X["Keep it out"]
-  C --> D["Every bot reads checked facts"]`,
+  C --> D["Inbox, expense and triage bots read it"]`,
 
   "wakeups-and-board": `flowchart LR
-  A["Timer or event"] --> B["Wake the agent"]
-  B --> C["Agent does its job"]
-  C --> D["Post the result on the board"]
-  D --> E["People see the board"]`,
+  A["9am timer or GitHub issue"] --> B{"Key already on the board?"}
+  B -->|"No"| C["Bot does its job"]
+  B -->|"Yes"| X["Skip it"]
+  C --> D["Card: done, waiting or failed"]
+  D --> E["Maya's yes wakes the run"]`,
 
   "hcp-360": `flowchart LR
   A["CRM"] --> M["Match by NPI number"]

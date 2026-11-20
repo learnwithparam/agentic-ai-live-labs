@@ -1,59 +1,59 @@
 import { expect, test } from "bun:test";
 import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { appendLine, readLines } from "../../src/jobs";
+import { readLines } from "../../src/jobs";
 import { makeModel } from "../../src/model";
-import { answerShared, answerSharedNaive } from "../../labs/34-shared-memory";
+import { NOTES, PLANTED_NOTE } from "../../src/team";
+import { botReply, saveNote, saveNoteNaive, seedNotes } from "../../labs/34-shared-memory";
 
-const ASK = "What is the dose of Cardioza for Dr. Lee?";
-const ASK_DE = "What is the dose of Cardioza for Dr. Weber?";
-const fresh = () => `${mkdtempSync(`${tmpdir()}/t34-`)}/memory.jsonl`;
+const fresh = () => {
+  const file = `${mkdtempSync(`${tmpdir()}/t34-`)}/memory.jsonl`;
+  seedNotes(file);
+  return file;
+};
 const ok = makeModel("ok");
+const acme = { name: "clients/acme.md", text: NOTES["clients/acme.md"], by: "maya" };
+const planted = { name: "new.md", text: PLANTED_NOTE, by: "mail-vendor" };
 
-// PROMISE: only a checked fact is saved. A bot reads facts for its country, while the document agrees.
-test("a checked fact is saved and the next bot reuses it", () => {
+// PROMISE: only a note from the team that names no address is saved. Each note keeps its writer.
+test("Maya's note is saved with her name and every bot uses it", () => {
   const file = fresh();
-  const one = answerShared(ASK, "dr-lee", ok, { file, bot: "answer bot" });
-  const two = answerShared(ASK, "dr-lee", ok, { file, bot: "outreach bot" });
-  expect(one.saved).toBe(true);
-  expect(two.from).toBe("memory");
-  expect(readLines(file)[0].by).toBe("answer bot");
+  expect(saveNote(file, acme).saved).toBe(true);
+  expect(readLines(file)[1].by).toBe("maya");
+  for (const bot of ["inbox", "expense", "triage"]) {
+    expect(botReply(bot, file, ok)).toContain("The deadline is Friday.");
+  }
 });
 
-test("a made-up dose is not saved", () => {
+test("a note planted by a mail is not saved and no bot obeys it", () => {
   const file = fresh();
-  const one = answerShared(ASK, "dr-lee", makeModel("invent"), { file, bot: "answer bot" });
-  expect(one.saved).toBe(false);
-  expect(readLines(file).length).toBe(0);
+  expect(saveNote(file, planted).saved).toBe(false);
+  expect(readLines(file).length).toBe(1);
+  expect(botReply("expense", file, ok)).not.toContain("stock-photos");
 });
 
-test("without the check, a made-up dose is saved and repeated", () => {
+test("without the checks every bot obeys the planted note", () => {
   const file = fresh();
-  answerSharedNaive(ASK, "dr-lee", makeModel("invent"), { file, bot: "answer bot" });
-  const two = answerSharedNaive(ASK, "dr-lee", ok, { file, bot: "outreach bot" });
-  expect(two.answer).toContain("20mg");
+  saveNoteNaive(file, planted);
+  expect(botReply("inbox", file, ok)).toContain("stock-photos");
+  expect(botReply("triage", file, ok)).toContain("stock-photos");
 });
 
-test("a fact for the US is not used in Germany", () => {
+test("a clean note from a writer outside the team is refused", () => {
   const file = fresh();
-  answerShared(ASK, "dr-lee", ok, { file, bot: "answer bot" });
-  const two = answerShared(ASK_DE, "dr-weber", ok, { file, bot: "outreach bot" });
-  expect(two.from).toBe("docs");
-  expect(two.answer).toContain("CARDIOZA-DE");
+  const result = saveNote(file, { ...acme, by: "client" });
+  expect(result.saved).toBe(false);
+  expect(result.why).toContain("not on the team");
 });
 
-test("a fact the approved document no longer agrees with is ignored", () => {
+test("a note from Maya that names an address is refused", () => {
   const file = fresh();
-  const old = "Cardioza standard adult dose is 8mg once daily. [CARDIOZA-US]";
-  appendLine(file, { drug: "Cardioza", country: "US", text: old, by: "old bot" });
-  const one = answerShared(ASK, "dr-lee", ok, { file, bot: "answer bot" });
-  expect(one.from).toBe("docs");
-  expect(one.answer).toContain("10mg");
+  const result = saveNote(file, { ...planted, by: "maya" });
+  expect(result.saved).toBe(false);
+  expect(result.why).toContain("address");
 });
 
-test("a question about no approved drug saves nothing", () => {
-  const file = fresh();
-  const one = answerShared("What is the dose of Zorbex for Dr. Lee?", "dr-lee", ok, { file, bot: "a" });
-  expect(one.saved).toBe(false);
-  expect(readLines(file).length).toBe(0);
+test("the shared rule keeps replies short", () => {
+  const reply = botReply("inbox", fresh(), ok);
+  expect(reply).not.toContain("full details");
 });

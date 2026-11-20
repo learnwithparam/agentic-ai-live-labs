@@ -1,22 +1,24 @@
 # Parallel workers
 
-Each example prepares a call brief from three systems. A worker reads each system, and the workers run in parallel. Pick the doctor with --hcp. Make a system fail with --stuck or --crash, and name it: docs, profile or emails.
+Each example researches a prospect's rival for a pitch. A worker reads each of four sources, and the workers run in parallel. Pick the prospect with --prospect. Make a source fail with --stuck or --crash, and name it: site, social, pricing or clients.
 
 ## The story in one picture
 
 ```mermaid
 flowchart LR
-  A["One job"] --> W1["Worker 1"]
-  A --> W2["Worker 2"]
-  A --> W3["Worker 3"]
-  W1 --> M["Merge, no duplicates"]
+  A["Pitch research"] --> W1["Site"]
+  A --> W2["Social"]
+  A --> W3["Pricing"]
+  A --> W4["Clients"]
+  W1 --> M["One writer merges"]
   W2 --> M
   W3 --> M
+  W4 --> M
 ```
 
 ## The problem
 
-Three slow systems one after another take three seconds. One stuck system holds up the whole brief, and the rep walks into the call with nothing.
+Four slow sources one after another take four seconds. One stuck source holds up the whole note, and the team walks into the pitch with nothing.
 
 ## New words
 
@@ -32,11 +34,11 @@ Each word has one meaning in every lab.
 Copy any line into your terminal. Each one is a real example from this lab.
 
 ```bash
-bun run lab parallel-workers --question "Please prepare a call brief for Dr. Lee." --hcp dr-lee --naive
-bun run lab parallel-workers --question "Please prepare a call brief for Dr. Lee." --hcp dr-lee
-bun run lab parallel-workers --question "Please prepare a call brief for Dr. Weber." --hcp dr-weber
-bun run lab parallel-workers --question "Please prepare a call brief for Dr. Lee." --hcp dr-lee --stuck emails
-bun run lab parallel-workers --question "Please prepare a call brief for Dr. Lee." --hcp dr-lee --crash profile
+bun run lab parallel-workers --question "Research the rival of the bakery before Friday." --prospect prospect-bakery --naive
+bun run lab parallel-workers --question "Research the rival of the bakery before Friday." --prospect prospect-bakery
+bun run lab parallel-workers --question "Research the rival of the gym before Friday." --prospect prospect-gym
+bun run lab parallel-workers --question "Research the rival of the bakery before Friday." --prospect prospect-bakery --stuck social
+bun run lab parallel-workers --question "Research the rival of the bakery before Friday." --prospect prospect-bakery --crash pricing
 bun run lab parallel-workers --demo
 ```
 
@@ -48,29 +50,29 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
-| 1 | NAIVE: one system after another | The systems run in a line. Three seconds go by before the brief is ready. | slow | `bun run lab parallel-workers --question "Please prepare a call brief for Dr. Lee." --hcp dr-lee --naive` |
-| 2 | Three workers at once | All three start together. The brief is ready in about one second. | complete | `bun run lab parallel-workers --question "Please prepare a call brief for Dr. Lee." --hcp dr-lee` |
-| 3 | A German doctor | Dr. Weber has no emails. That worker answers that there are none, and the brief is still complete. | complete | `bun run lab parallel-workers --question "Please prepare a call brief for Dr. Weber." --hcp dr-weber` |
-| 4 | EDGE: one system is stuck | The emails system never answers. The lead stops it at the deadline and sends the rest. | partial | `bun run lab parallel-workers --question "Please prepare a call brief for Dr. Lee." --hcp dr-lee --stuck emails` |
-| 5 | EDGE: one worker crashes | The profile worker dies. The brief names the missing part, and the other two come through. | partial | `bun run lab parallel-workers --question "Please prepare a call brief for Dr. Lee." --hcp dr-lee --crash profile` |
+| 1 | NAIVE: one source after another | The sources run in a line. Four seconds go by before the note is ready. | slow | `bun run lab parallel-workers --question "Research the rival of the bakery before Friday." --prospect prospect-bakery --naive` |
+| 2 | Four workers at once | All four start together. The note is ready in about one second. | complete | `bun run lab parallel-workers --question "Research the rival of the bakery before Friday." --prospect prospect-bakery` |
+| 3 | A different prospect | The gym has a rival with a busy social feed. The same four workers still run at once. | complete | `bun run lab parallel-workers --question "Research the rival of the gym before Friday." --prospect prospect-gym` |
+| 4 | EDGE: one source is stuck | The social feed never answers. The lead stops that worker at the deadline and sends the rest. | partial | `bun run lab parallel-workers --question "Research the rival of the bakery before Friday." --prospect prospect-bakery --stuck social` |
+| 5 | EDGE: one worker crashes | The pricing worker dies. The note names the missing part, and the other three come through. | partial | `bun run lab parallel-workers --question "Research the rival of the bakery before Friday." --prospect prospect-bakery --crash pricing` |
 
 ## Stuck points
 
-**Correct run:** Start all workers at once. Stop a late worker at the deadline, and send the brief with the parts that came back.
+**Correct run:** Start all workers at once. Stop a late worker at the deadline, and send the note with the parts that came back.
 
-**Common wrong turn:** Running the systems one after another. A stuck system then holds up the whole brief.
+**Common wrong turn:** Running the sources one after another. A stuck source then holds up the whole note.
 
-**Hint to give:** What happens to the brief if one system never answers?
+**Hint to give:** What happens to the note if one source never answers?
 
 | What you see | What it means | Fix |
 | --- | --- | --- |
-| The demo prints outcome: slow on the NAIVE case | The systems ran one after another | Start all workers at the same time |
-| A part is missing from the brief | That worker missed the deadline | This is correct. Say which part is missing |
-| A worker crashed | The crash is named in the brief | Read the name, then fix that system |
+| The demo prints outcome: slow on the NAIVE case | The sources ran one after another | Start all workers at the same time |
+| A part is missing from the note | That worker missed the deadline | This is correct. Say which part is missing |
+| A worker crashed | The crash is named in the note | Read the name, then fix that source |
 
 ## The promise, and its test
 
-All workers start at once. A worker that is late is stopped at the deadline, and one that crashes is named. The brief goes out with the parts that came back.
+All workers start at once. A worker that is late is stopped at the deadline, and one that crashes is named. One writer merges the parts that came back.
 
 ```bash
 bun test tests/promises/31.test.ts
@@ -80,7 +82,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Give each worker its own result file, so none overwrites another. Set the deadline from how long the rep can wait. The merge keeps the parts that came back.
+Give each worker its own result file, so none overwrites another. Set the deadline from how long the team can wait. The merge keeps the parts that came back.
 
 ## Read the code
 

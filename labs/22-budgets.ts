@@ -1,27 +1,26 @@
 // Money caps
 //
-// A model that is stuck keeps calling a paid model. The stop conditions lab stopped it by counting tokens.
-// A company pays in money, not tokens, and one person can start many runs in a day.
-// So we keep three caps in whole cents: one for a run, one for a person's day, one for the hops.
+// Juniper Studio has an Inbox Manager bot. It reads Maya's mail and writes a short note for each one.
+// One email carries a 300 page PDF. A bot that reads it on the big model pays for 150000 tokens.
+// A stuck bot that reads it again and again can burn the month in one run.
+// So we keep three caps in whole cents: one for a run, one for a day, one for the hops.
 // A hop is one agent handing work to another. Too many hops means two agents are passing a ball.
 // We check the cap before each call, using the worst case cost. A call never starts if it may not fit.
 // The run prints each step as it happens, with the same number as the step in the code.
 // The examples and the screen output are in show/22-budgets.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun run lab budgets --question "What is the dose of Zorbex?" --model stuck --naive
-//   bun run lab budgets --question "What is the dose of Cardioza?"
-//   bun run lab budgets --question "What is the dose of Zorbex?" --model stuck --run 1
-//   bun run lab budgets --question "What is the dose of Cardioza?" --before 2900
-//   bun run lab budgets --question "What is the dose of Cardioza?" --hops 3
-//   bun run lab budgets --question "What is the dose of Cardioza?" --again 3
+//   bun run lab budgets --question "Read the PDF report from Acme" --mail mail-report --model stuck --naive
+//   bun run lab budgets --question "Note the meeting request for Maya" --mail mail-meeting
+//   bun run lab budgets --question "Note the PDF report for Maya" --mail mail-report
+//   bun run lab budgets --question "Note the meeting request for Maya" --mail mail-meeting --hops 3
 //   bun run lab budgets --demo
 
 import type { CallLlm, Message } from "../src/model";
 import { runLab } from "../src/runner";
 import { charge, costOf, PRICES, spentOn } from "../src/spend"; // money in whole millicents
 import { countTokens } from "./10-context-budget"; // the estimate, used when the provider sends no count
-import { searchApprovedDocs } from "./01-agent-loop";
+import { mailText, pdfTokens } from "../src/juniper";
 
 export type Caps = { run: number; day: number; hops: number; rounds: number; maxOut: number };
 export type Who = { user: string; day: string; hops: number };
@@ -30,7 +29,7 @@ export type Run = { answer: string; stopped: string; rounds: number; cost: numbe
 // Run the loop inside three caps. Every way out says why it stopped. Read the steps in order.
 export function runWithBudget(
   question: string,
-  country: string,
+  mailId: string,
   callLlm: CallLlm,
   caps: Caps,
   who: Who,
@@ -47,8 +46,8 @@ export function runWithBudget(
   log.push(`Step 2: ${who.user} spent ${before} millicents today. The day cap is ${caps.day}.`);
 
   const messages: Message[] = [
-    { role: "system", content: "Use ONLY the approved documents. Cite their ids." },
-    { role: "user", content: `Country: ${country}. HCP: none. Question: ${question}` },
+    { role: "system", content: "You are the Inbox Manager for Juniper Studio. Keep notes short." },
+    { role: "user", content: `OPEN: ${mailId}. Task: ${question}` },
   ];
   for (let round = 1; round <= caps.rounds; round++) {
     // Step 3: price the worst case before the call: this prompt plus the longest answer we allow.
@@ -57,7 +56,7 @@ export function runWithBudget(
     if (before + cost + worst > caps.day) return stop("day-cap", round, cost, log);
 
     // Step 4: ask the model, then charge what the call really cost, and write it down at once.
-    const reply = callLlm(messages, ["search_approved_docs"]);
+    const reply = callLlm(messages, ["open_mail"]);
     const guess = { tokensIn: tokensIn(messages), tokensOut: countTokens(reply.text || "") };
     const used = reply.usage || guess;
     const paid = costOf(PRICES.big, used.tokensIn, used.tokensOut);
@@ -66,17 +65,18 @@ export function runWithBudget(
     log.push(`Step 4: round ${round} cost ${paid} millicents. Run total ${cost}.`);
     if (!reply.toolCall) return finish(reply.text || "", round, cost, log);
 
-    // Step 5: run the tool, and show the model what it returned.
+    // Step 5: open the mail, and show the model what is in it.
     const call = reply.toolCall;
-    const found = searchApprovedDocs(call.args.query, call.args.country);
-    messages.push({ role: "tool", name: call.name, content: found });
+    messages.push({ role: "tool", name: call.name, content: mailText(call.args.query) });
   }
   return stop("max-steps", caps.rounds, cost, log);
 }
 
 function tokensIn(messages: Message[]): number {
   let tokens = 0;
-  for (const message of messages) tokens += countTokens(message.content);
+  for (const message of messages) {
+    tokens += countTokens(message.content) + pdfTokens(message.content);
+  }
   return tokens;
 }
 
@@ -90,10 +90,10 @@ function stop(why: string, rounds: number, cost: number, log: string[]): Run {
   return { answer: `STOPPED: ${why}`, stopped: why, rounds, cost, log };
 }
 
-// The naive way: no money cap. We trust the model to stop. The demo cuts it at 200 rounds.
-export function runUncapped(question: string, country: string, callLlm: CallLlm, who: Who): Run {
-  const caps = { run: 1e12, day: 1e12, hops: 99, rounds: 200, maxOut: 100 };
-  const run = runWithBudget(question, country, callLlm, caps, who);
+// The naive way: no money cap. We trust the bot to stop. The demo cuts it at 200 rounds.
+export function runUncapped(question: string, mailId: string, callLlm: CallLlm, who: Who): Run {
+  const caps = { run: 1e12, day: 1e12, hops: 99, rounds: 200, maxOut: 60 };
+  const run = runWithBudget(question, mailId, callLlm, caps, who);
   if (run.stopped === "max-steps") run.stopped = "never-stopped";
   return run;
 }

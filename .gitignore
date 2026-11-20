@@ -4,3 +4,4 @@ bun.lock
 .jobs/
 .spend/
 .notes/
+.claude/worktrees/

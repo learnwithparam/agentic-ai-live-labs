@@ -13,7 +13,7 @@ export const lab: Lab = {
   terms: ["loop", "tool", "step"],
   challenge: "A model's memory can be wrong or old. It needs a tool that looks up the approved facts.",
   production:
-    "A step is one trip round the loop. A turn is one reply to the doctor. One turn can hold many steps. Real loops stop on four things: too many steps, too much time, too much money, or the same call twice. Start the caps high. After a week of traces, shrink them to fit.",
+    "A step is one trip round the loop. A turn is one reply, and it can hold many steps. A real loop stops on four things: steps, time, money, or a repeat call. Start the caps high, then shrink them after a week of traces.",
   cases: [
     { title: "A normal question", why: "The happy path. One search, then an answer that cites its source.", question: "What is the dose of Cardioza?", expect: "answered" },
     { title: "Same question, different country", why: "Approved text differs by country. Germany gets 5mg and the US gets 10mg. The tool filters by country, so the model cannot override it.", question: "What is the dose of Cardioza?", flags: { country: "DE" }, expect: "answered" },

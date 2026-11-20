@@ -39,6 +39,7 @@ bun run lab agent-loop --question "What is the dose of Dermalin?" --country DE
 bun run lab agent-loop --question "What is the dose of Cardiozza?"
 bun run lab agent-loop --question "Hi there, how are you doing today?"
 bun run lab agent-loop --question "What is the dose of Cardioza?" --steps 1
+bun run lab agent-loop --question "What is the dose of Cardioza?" --model stuck
 bun run lab agent-loop --demo
 ```
 
@@ -57,6 +58,7 @@ Run `bun run lab agent-loop` with nothing else to pick an example from a menu.
 | 7 | A spelling mistake | Search needs the exact drug name. A typo finds nothing. A real system would match close spellings or ask the doctor to confirm. | no-source | `bun run lab agent-loop --question "What is the dose of Cardiozza?"` |
 | 8 | Not a drug question at all | Small talk has no approved source. The loop still ends safely. | no-source | `bun run lab agent-loop --question "Hi there, how are you doing today?"` |
 | 9 | The loop hits its step limit | We allow only 1 step. The model gets one tool call and no turn left to answer. A step limit stops a model that never finishes. | stopped | `bun run lab agent-loop --question "What is the dose of Cardioza?" --steps 1` |
+| 10 | The same call twice stops the loop | A model that asks for the same search again gets the same result. The loop sees the repeat and stops. It does not wait for the step limit. | stopped | `bun run lab agent-loop --question "What is the dose of Cardioza?" --model stuck` |
 
 ## Stuck points
 
@@ -71,6 +73,10 @@ Run `bun run lab agent-loop` with nothing else to pick an example from a menu.
 | The demo prints outcome: stopped on the step-limit case | The loop hit its step limit before the model answered | Find the step where the model never finishes, or raise --steps |
 | The demo prints outcome: no-source | The search found no approved document | Check the drug name and the country. Refusing is correct |
 | The log shows STOPPED after several rounds | The model asked for a tool every round | Read the log. Each round should bring new information |
+
+## In production
+
+A step is one trip round the loop. A turn is one reply, and it can hold many steps. A real loop stops on four things: steps, time, money, or a repeat call. Start the caps high, then shrink them after a week of traces.
 
 ## Read the code
 

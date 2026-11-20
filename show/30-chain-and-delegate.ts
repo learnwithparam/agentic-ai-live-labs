@@ -2,63 +2,77 @@
 // You do not need to read this file to learn the lab. The lesson is in labs/30-chain-and-delegate.ts.
 
 import { modelFrom, type Lab } from "../src/runner";
-import { badgeGreen, badgeRed, box, dim, field, green, print, red, rule } from "../src/ui";
-import { updateDoctors, updateNaive } from "../labs/30-chain-and-delegate";
-import { APPROVED_DOCS, CRM } from "../src/data";
+import { badgeGreen, badgeRed, badgeYellow, box, dim, field, green, print, red, rule, yellow } from "../src/ui";
+import { fileNaive, fileReceipts, type Filing } from "../labs/30-chain-and-delegate";
 
-const ALL = "Write the Cardioza update for Dr. Lee, Dr. Weber and Dr. Rao.";
+const APRIL = "receipt-fontshop,receipt-lunch,receipt-cloud";
+
+// The right answer for each receipt. The lunch is in euros, so only a person can match it.
+const TRUTH: Record<string, string> = {
+  "receipt-fontshop": "bank-1 software",
+  "receipt-lunch": "none",
+  "receipt-cloud": "bank-3 hosting",
+};
 
 export const lab: Lab = {
   file: "30-chain-and-delegate.ts",
   title: "Chains and delegation",
   about:
-    "Each example is one job for three doctors. Pick the doctors with --hcps, for example dr-lee,dr-weber,dr-rao. The lead splits the job and delegates each doctor to a worker. Each step in the chain feeds the next one.",
+    "Each example files receipts for Juniper Studio. The lead hands each receipt to a worker, and each step in the chain feeds the next one. Pick receipts with --receipts. Add --open true for a lead that plans its own workers.",
   terms: ["chain", "delegate", "lead", "worker"],
-  challenge: "One bot, one search and one letter for three doctors. The search ran for one country, so the others get the wrong label.",
-  promise: "Each doctor's letter is written from a document of the doctor's own country, and it passes a check. A worker that fails is named and the others still go.",
-  production: "Give each worker only what its part needs. Log each worker's result by name. Retry a failed worker once, then hand it to a person.",
+  challenge: "One long prompt matches, labels and files at once. It grabs the first bank line, so the books fill with wrong entries that look right.",
+  promise: "Each receipt is matched to a real bank line and given a label the books use. One that does not match is held for a person. The other receipts still go. A lead that plans its own workers is capped at three.",
+  production: "Run the same chain for every receipt, and hand each to its own worker. Never guess a match. Send what does not fit to Maya, with the reason. Cap how many workers an open ended lead may start.",
   cases: [
-    { title: "NAIVE: one letter for everyone", why: "One search runs for Dr. Lee's country. Dr. Weber gets the US dose in his letter.", question: ALL, flags: { naive: "true" }, expect: "wrong-label" },
-    { title: "Three doctors, three chains", why: "Each worker searches its own doctor's country. Dr. Weber's letter cites the German document.", question: ALL, expect: "all-sent" },
-    { title: "One doctor", why: "A job for one doctor is one worker and one chain.", question: "Write the Cardioza update for Dr. Weber please.", flags: { hcps: "dr-weber" }, expect: "all-sent" },
-    { title: "EDGE: one worker has nothing to write from", why: "There is no German Neurovex document. Dr. Weber's worker holds its letter, and the other two still go.", question: "Write the Neurovex update for Dr. Lee, Dr. Weber and Dr. Rao.", expect: "partial" },
+    { title: "NAIVE: one long prompt", why: "One prompt must match, label and file all the April receipts. It grabs the first bank line each time. Two entries are wrong, and the euro lunch is filed anyway.", question: "File all the April receipts", flags: { naive: "true" }, expect: "wrong-filing" },
+    { title: "Three receipts, three chains", why: "The font licence and the cloud bill match and are filed. The Acme lunch is in euros. The bank line is in dollars. So it goes to a person.", question: "Match the April receipts to the bank and file them", expect: "partial" },
+    { title: "One receipt", why: "One worker matches the font licence to bank-1 and files it as software.", question: "File the font licence from the email", flags: { receipts: "receipt-fontshop" }, expect: "all-filed" },
+    { title: "EDGE: nothing matches", why: "The Acme lunch has no bank line in euros. The worker will not guess. It hands the receipt to Maya.", question: "Where did the Acme client lunch go in the bank?", flags: { receipts: "receipt-lunch" }, expect: "to-a-person" },
+    { title: "EDGE: a label the books do not use", why: "The model calls the font licence gadgets. The books have no such label, so the worker holds it.", question: "Label the font licence for the books", flags: { receipts: "receipt-fontshop", model: "invent" }, expect: "to-a-person" },
+    { title: "An open ended lead", why: "This lead plans its own workers. It asks for match, categorize and file, which is three. That fits the cap.", question: "Plan the filing for the cloud bill", flags: { receipts: "receipt-cloud", open: "true" }, expect: "all-filed" },
+    { title: "EDGE: a plan with too many workers", why: "The lead plans six workers and repeats the same ones. The cap is three, so the code refuses the plan.", question: "Plan the filing for the cloud bill, with checks", flags: { receipts: "receipt-cloud", open: "true", model: "wanders" }, expect: "capped" },
   ],
   play(question, flags) {
-    const hcps = (flags.hcps || "dr-lee,dr-weber,dr-rao").split(",");
+    const ids = (flags.receipts || APRIL).split(",");
     print(field("Job", question));
     const model = modelFrom(flags);
-    let letters;
-    if (flags.naive) letters = updateNaive(question, hcps, model);
-    else letters = updateDoctors(question, hcps, model);
+    let filings: Filing[];
+    if (flags.naive) filings = fileNaive(ids, model);
+    else filings = fileReceipts(ids, model, Boolean(flags.open));
     rule("LOG, STEP BY STEP");
-    for (const letter of letters) for (const line of letter.log) console.log(dim(line));
+    for (const filing of filings) for (const line of filing.log) console.log(dim(line));
     console.log();
-    let wrong = 0;
-    let held = 0;
-    for (const letter of letters) {
-      const name = CRM[letter.hcp].name;
-      if (!letter.sent) held += 1;
-      if (letter.sent && !ownDoc(letter.hcp, letter.text)) wrong += 1;
-      if (letter.sent) print(field(name, letter.text.slice(0, 90)));
-      else print(field(name, "held, no letter"));
-    }
-    if (wrong > 0) {
-      box(badgeRed("WRONG LABEL"), [red(`${wrong} doctor got another country's label.`)], red);
-      return "wrong-label";
-    }
-    if (held > 0) {
-      box(badgeGreen("PARTIAL"), [green(`${held} held, the rest sent and correct.`)], green);
-      return "partial";
-    }
-    box(badgeGreen("ALL SENT"), [green("Every letter cites its own country's document.")], green);
-    return "all-sent";
+    return judge(filings);
   },
 };
 
-// Does the letter cite a document of the doctor's own country?
-function ownDoc(hcp: string, text: string): boolean {
-  for (const id of Object.keys(APPROVED_DOCS)) {
-    if (text.includes(id) && APPROVED_DOCS[id].country === CRM[hcp].country) return true;
+function judge(filings: Filing[]): string {
+  let wrong = 0;
+  let held = 0;
+  let capped = 0;
+  for (const filing of filings) {
+    const got = filing.filed ? `${filing.bank} ${filing.category}` : "none";
+    if (got !== TRUTH[filing.receipt]) wrong += 1;
+    if (!filing.filed) held += 1;
+    if (!filing.filed && filing.log[0].includes("cap")) capped += 1;
+    print(field(filing.receipt, filing.filed ? got : "held for a person"));
   }
-  return false;
+  if (wrong > 0 && held === 0) {
+    box(badgeRed("WRONG FILING"), [red(`${wrong} entries do not match the truth.`)], red);
+    return "wrong-filing";
+  }
+  if (capped > 0) {
+    box(badgeYellow("CAPPED"), [yellow("The plan asked for more than three workers.")], yellow);
+    return "capped";
+  }
+  if (held === filings.length) {
+    box(badgeYellow("TO A PERSON"), [yellow("Nothing was filed. Maya decides.")], yellow);
+    return "to-a-person";
+  }
+  if (held > 0) {
+    box(badgeGreen("PARTIAL"), [green(`${held} held for a person. The rest are filed and right.`)], green);
+    return "partial";
+  }
+  box(badgeGreen("ALL FILED"), [green("Every receipt is matched and labelled.")], green);
+  return "all-filed";
 }

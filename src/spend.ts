@@ -38,3 +38,9 @@ export function charge(user: string, day: string, millicents: number): void {
 export function showCents(millicents: number): string {
   return `${(millicents / 1000).toFixed(2)} cents`;
 }
+
+// Small amounts in cents, big amounts in dollars, so a 300 page bill is easy to read.
+export function showMoney(millicents: number): string {
+  if (millicents < 100000) return showCents(millicents);
+  return `${(millicents / 100000).toFixed(2)} dollars`;
+}

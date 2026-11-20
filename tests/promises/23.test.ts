@@ -6,28 +6,30 @@ function neverCalled(): never {
   throw new Error("the strong model was called");
 }
 
-const ask = "What is the dose of Cardioza?";
-
-// PROMISE: the small model answers first. An answer that fails our check is never sent.
-// The strong model is asked only after a failed check. If both fail, nothing is sent.
-test("a good small answer is sent and the strong model is never called", () => {
-  const run = answerRouted(ask, "US", makeModel("ok"), neverCalled);
+// PROMISE: the small model goes first. A reply that fails our check is never sent.
+// A small model that fails twice moves the job up. If the strong model fails too, nothing is sent.
+test("a good small reply is sent and the strong model is never called", () => {
+  const run = answerRouted("mail-contract", makeModel("ok"), neverCalled, 60);
   expect(run.tier).toBe("small");
-  expect(run.answer).toContain("10mg");
+  expect(run.answer).toContain("18000");
+  expect(run.cost).toBeLessThan(run.bigOnly);
 });
 
-test("a missing citation or a wrong dose goes to the strong model, and the bad answer is not sent", () => {
-  for (const habit of ["nocite", "invent"] as const) {
-    const run = answerRouted(ask, "US", makeModel(habit), makeModel("ok"));
-    expect(run.tier).toBe("big");
-    expect(run.answer).not.toContain("20mg");
-    expect(run.answer).toContain("CARDIOZA-US");
-  }
+test("a forgotten total is fixed on the small model's second try", () => {
+  const run = answerRouted("mail-contract", makeModel("nocite"), neverCalled, 60);
+  expect(run.tier).toBe("small-retry");
+  expect(run.answer).toContain("18000");
 });
 
-test("when both fail nothing is sent, and no source means no dose is a good answer", () => {
-  const both = answerRouted(ask, "US", makeModel("invent"), makeModel("invent"));
-  expect(both.tier).toBe("refused");
-  expect(both.answer).not.toContain("mg");
-  expect(answerRouted("What is the dose of Zorbex?", "US", makeModel("ok"), neverCalled).tier).toBe("small");
+test("a made up total fails twice, moves up, and the bad reply is never sent", () => {
+  const run = answerRouted("mail-contract", makeModel("invent"), makeModel("ok"), 60);
+  expect(run.tier).toBe("big");
+  expect(run.answer).not.toContain("19000");
+  expect(run.answer).toContain("18000");
+});
+
+test("when every model fails nothing is sent", () => {
+  const run = answerRouted("mail-contract", makeModel("invent"), makeModel("invent"), 60);
+  expect(run.tier).toBe("refused");
+  expect(run.answer).not.toContain("19000");
 });

@@ -1,44 +1,44 @@
 // Handing work between bots
 //
-// A doctor writes: "Email Dr. Lee the dose of Cardioza." The intake bot sorts the message.
-// The outreach bot writes emails. It needs a dose, so it hands the message to the answer bot.
-// The answer bot gives doses, but the message asks for an email, so it hands it back.
+// A mail comes in: "File the receipt and reply to the sender." The inbox bot sorts the message.
+// The expense bot files receipts. It also needs a reply, so it hands the message to the inbox bot.
+// The inbox bot writes replies, but the message holds a receipt, so it hands it back.
 // Without a guard, the two bots pass the message back and forth for ever.
-// So every message travels in an envelope. The envelope counts the hops and lists the bots it met.
+// So every message travels in an envelope. It is a typed packet with the receipt and its amount.
+// The envelope counts the hops and lists the bots it met. A pasted chat log would lose the amount.
 // Too many hops, or a bot met twice, and the message goes to a person.
 // The run prints each step as it happens, with the same number as the step in the code.
 // The examples and the screen output are in show/33-handoffs.ts. You do not need them to learn.
 //
 // Run it (copy any line):
-//   bun run lab handoffs --question "Please email Dr. Lee the dose of Cardioza." --hcp dr-lee --naive
-//   bun run lab handoffs --question "What is the dose of Cardioza for Dr. Lee?" --hcp dr-lee
-//   bun run lab handoffs --question "Please email Dr. Weber about the new Cardioza label." --hcp dr-weber
-//   bun run lab handoffs --question "Please email Dr. Lee the dose of Cardioza." --hcp dr-lee
-//   bun run lab handoffs --question "Please call me back about my last invoice." --hcp dr-lee
-//   bun run lab handoffs --question "What is the dose of Cardioza for Dr. Lee?" --hcp dr-lee --limit 0
+//   bun run lab handoffs --question "File the receipt and reply to the sender." --mail mail-receipt --naive
+//   bun run lab handoffs --question "File the receipt from FontShop." --mail mail-receipt --chat true
+//   bun run lab handoffs --question "File the receipt from FontShop." --mail mail-receipt
+//   bun run lab handoffs --question "Reply to the client who sent the contract." --mail mail-contract
+//   bun run lab handoffs --question "File the receipt and reply to the sender." --mail mail-receipt
+//   bun run lab handoffs --question "File the receipt from FontShop." --mail mail-receipt --limit 0
 //   bun run lab handoffs --demo
 
-import { CRM } from "../src/data";
 import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";
-import { runAgentLoop } from "./01-agent-loop";
-import { draftDoctorEmail } from "../src/mailtools";
+import { draftReply, receiptForMail } from "../src/juniper";
 
-export type Envelope = { id: string; task: string; hcpId: string; hops: number; path: string[] };
+export type Envelope = {
+  task: string; mailId: string; amount: string; hops: number; path: string[];
+};
 export type Handled = { outcome: string; reply: string; envelope: Envelope; log: string[] };
-const NAMES = ["answer", "outreach", "human", "done"];
+const NAMES = ["expense", "inbox", "human", "done"];
 const JOBS: Record<string, string> = {
-  intake: "You only sort messages. Say outreach for an email, answer for a dose, else human.",
-  answer: "You give doses. Say done if the message only needs a dose. For an email, say outreach.",
-  outreach: "You write emails. Say done if it needs only an email. For a dose, say answer.",
+  intake: "You only sort messages. Say expense for a receipt, inbox for a reply, else human.",
+  expense: "You file receipts. Say done if it only needs filing. For a reply, say inbox.",
+  inbox: "You write replies. Say done if it needs only a reply. For a receipt, say expense.",
 };
 
 // Pass a message from bot to bot. Read the steps in order.
-export function handOff(task: string, hcpId: string, callLlm: CallLlm, limit = 4): Handled {
-  // Step 1: wrap the task in an envelope. It starts at the intake bot, with no hops yet.
-  const id = `msg-${Date.now()}`;
-  const envelope: Envelope = { id, task, hcpId, hops: 0, path: ["intake"] };
-  const log = ["Step 1: sealed the message in an envelope at the intake bot."];
+export function handOff(task: string, mailId: string, callLlm: CallLlm, limit = 4): Handled {
+  // Step 1: wrap the task in an envelope. The receipt and its amount ride in typed fields.
+  const envelope = seal(task, mailId);
+  const log = ["Step 1: sealed the message in an envelope at the inbox bot."];
   let bot = "intake";
   while (true) {
     // Step 2: ask the bot who comes next. The model must reply with one word.
@@ -58,9 +58,16 @@ export function handOff(task: string, hcpId: string, callLlm: CallLlm, limit = 4
   }
 }
 
+function seal(task: string, mailId: string): Envelope {
+  let amount = "none";
+  const receipt = receiptForMail(mailId);
+  if (receipt !== undefined) amount = `${receipt.amount} ${receipt.currency}`;
+  return { task, mailId, amount, hops: 0, path: ["intake"] };
+}
+
 function askBot(bot: string, task: string, callLlm: CallLlm): string {
-  const rule = "Reply with one word: answer, outreach, human or done.";
-  const prompt = `HAND: You are the ${bot} bot. ${JOBS[bot]}\n${rule}\nMessage: ${task}`;
+  const rule = "Reply with one word: expense, inbox, human or done.";
+  const prompt = `PASS: You are the ${bot} bot. ${JOBS[bot]}\n${rule}\nMessage: ${task}`;
   return callLlm([{ role: "user", content: prompt }], []).text || "";
 }
 
@@ -71,12 +78,10 @@ function nameFrom(said: string, bot: string): string {
   return "human";
 }
 
-// The bot that said done does its own work, and its work is the reply.
+// The bot that said done does its own work. The expense bot reads the typed fields.
 function finish(bot: string, envelope: Envelope, callLlm: CallLlm, log: string[]): Handled {
-  const country = CRM[envelope.hcpId].country;
-  let reply = draftDoctorEmail(envelope.hcpId, callLlm);
-  const { task, hcpId } = envelope;
-  if (bot === "answer") reply = runAgentLoop(task, country, callLlm, undefined, 5, hcpId).answer;
+  let reply = draftReply(envelope.mailId, callLlm);
+  if (bot === "expense") reply = `Filed the receipt in ${envelope.mailId} for ${envelope.amount}.`;
   log.push(`Step 6: the ${bot} bot finished after ${envelope.hops} hops.`);
   return { outcome: "delivered", reply, envelope, log };
 }
@@ -87,8 +92,8 @@ function stopped(why: string, envelope: Envelope, log: string[], outcome = "stop
 }
 
 // The naive way: no envelope, no count. A safety stop of 12 rounds is the only end.
-export function handOffNaive(task: string, hcpId: string, callLlm: CallLlm): Handled {
-  const envelope: Envelope = { id: "none", task, hcpId, hops: 0, path: ["intake"] };
+export function handOffNaive(task: string, mailId: string, callLlm: CallLlm): Handled {
+  const envelope = seal(task, mailId);
   let bot = "intake";
   for (let round = 1; round <= 12; round++) {
     const next = nameFrom(askBot(bot, task, callLlm), bot);
@@ -99,6 +104,15 @@ export function handOffNaive(task: string, hcpId: string, callLlm: CallLlm): Han
   }
   const reply = "The message was still moving when we cut it off.";
   return { outcome: "looped", reply, envelope, log: [] };
+}
+
+// The other naive way: paste the chat so far into the next bot. The amount is not in the chat.
+export function handOffChat(task: string, mailId: string): Handled {
+  const envelope = seal(task, mailId);
+  const reply = `Filed from the chat log: ${task}`;
+  let outcome = "lost";
+  if (reply.includes(envelope.amount)) outcome = "delivered";
+  return { outcome, reply, envelope, log: ["The expense bot got a pasted chat log."] };
 }
 
 function ended(envelope: Envelope): Handled {

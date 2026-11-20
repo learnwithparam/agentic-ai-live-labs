@@ -1,47 +1,36 @@
 import { expect, test } from "bun:test";
 import { makeModel } from "../../src/model";
-import { updateDoctors, updateNaive } from "../../labs/30-chain-and-delegate";
+import { fileNaive, fileReceipts } from "../../labs/30-chain-and-delegate";
 
-const model = makeModel("ok");
-const job = "Write the Cardioza update for Dr. Lee, Dr. Weber and Dr. Rao.";
-const all = ["dr-lee", "dr-weber", "dr-rao"];
+const ok = makeModel("ok");
+const april = ["receipt-fontshop", "receipt-lunch", "receipt-cloud"];
 
-// PROMISE: each letter comes from a document of the doctor's own country, and passes a check.
-// A worker that fails is held and named, and the others still go.
-test("each doctor's letter cites the document of the doctor's country", () => {
-  const letters = updateDoctors(job, all, model);
-  expect(letters.every((letter) => letter.sent)).toBe(true);
-  expect(letters[0].text).toContain("CARDIOZA-US");
-  expect(letters[1].text).toContain("CARDIOZA-DE");
-  expect(letters[2].text).toContain("CARDIOZA-US");
-  expect(updateNaive(job, all, model)[1].text).toContain("CARDIOZA-US");
+// PROMISE: each receipt is matched to a real bank line and given a label the books use.
+// A receipt that does not match is held for a person, and the others still go.
+test("each receipt is matched to its own bank line and filed under the right label", () => {
+  const filings = fileReceipts(april, ok);
+  expect(filings[0]).toMatchObject({ filed: true, bank: "bank-1", category: "software" });
+  expect(filings[2]).toMatchObject({ filed: true, bank: "bank-3", category: "hosting" });
+  expect(fileNaive(april, ok)[2].bank).toBe("bank-1");
 });
 
-test("a worker with no document is held and the others still go", () => {
-  const letters = updateDoctors("Write the Neurovex update for all three.", all, model);
-  expect(letters.map((letter) => letter.sent)).toEqual([true, false, true]);
-  expect(letters[1].log[0]).toContain("Dr. Weber");
-  expect(letters[1].log[0]).toContain("no approved");
+test("a receipt with no bank line is held, named, and the others still go", () => {
+  const filings = fileReceipts(april, ok);
+  expect(filings.map((filing) => filing.filed)).toEqual([true, false, true]);
+  expect(filings[1].log[0]).toContain("receipt-lunch");
+  expect(filings[1].log[0]).toContain("no bank line");
 });
 
-test("a letter with a dose that is not in its source is held", () => {
-  function wrongDose(messages: any, names: any) {
-    if (messages[0].content.startsWith("MAIL:")) return { text: "Dear doctor, take 99mg. [CARDIOZA-US]" };
-    return model(messages, names);
-  }
-  const letters = updateDoctors(job, ["dr-lee"], wrongDose);
-  expect(letters[0].sent).toBe(false);
-  function noCite(messages: any, names: any) {
-    if (messages[0].content.startsWith("MAIL:")) return { text: "Dear doctor, take 10mg daily." };
-    return model(messages, names);
-  }
-  expect(updateDoctors(job, ["dr-lee"], noCite)[0].sent).toBe(false);
+test("a label the books do not use is held", () => {
+  const filings = fileReceipts(["receipt-fontshop"], makeModel("invent"));
+  expect(filings[0].filed).toBe(false);
+  expect(filings[0].log[0]).toContain("gadgets");
 });
 
-test("a letter that cites another country's document is held", () => {
-  function other(messages: any, names: any) {
-    if (messages[0].content.startsWith("MAIL:")) return { text: "Dear doctor, take 10mg daily. [CARDIOZA-DE]" };
-    return model(messages, names);
-  }
-  expect(updateDoctors(job, ["dr-lee"], other)[0].sent).toBe(false);
+test("an open ended lead is capped at three workers", () => {
+  const fine = fileReceipts(["receipt-cloud"], ok, true);
+  expect(fine[0].filed).toBe(true);
+  const runaway = fileReceipts(["receipt-cloud"], makeModel("wanders"), true);
+  expect(runaway[0].filed).toBe(false);
+  expect(runaway[0].log[0]).toContain("cap");
 });

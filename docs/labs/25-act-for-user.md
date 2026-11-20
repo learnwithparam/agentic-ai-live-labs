@@ -1,20 +1,20 @@
 # Act for the user
 
-Each example is one doctor asking the bot a question. The bot can act for a user, with that user's rights. Pick the doctor with --hcp: dr-lee is Dr Lee (US), dr-weber is Dr Weber (Germany).
+Each example is one email that the Inbox Manager handles for Maya. The bot can act for a user, with that user's rights. Maya gives it a delegation. Pick the email with --mail, the person with --user, and the bot with --bot. Add --forge to edit the token.
 
 ## The story in one picture
 
 ```mermaid
 flowchart LR
-  A["Doctor asks the bot"] --> B["Bot gets the doctor's rights"]
-  B --> C{"Doctor may see this?"}
-  C -->|"Yes"| D["Bot runs the search"]
-  C -->|"No"| E["Bot refuses, even if asked"]
+  A["Maya signs in"] --> B["Bot gets a draft-only token"]
+  B --> C{"Token holds the scope?"}
+  C -->|"Yes, draft"| D["Bot saves a draft"]
+  C -->|"No, send"| E["Bot refuses, even if an email says so"]
 ```
 
 ## The problem
 
-A bot on a service key answers as the key allows. No person is on that key, so nobody is named. A German doctor who asks about the US label gets the wrong dose for her.
+A bot on a service key can do anything the key allows. No person is on that key, so nobody is named. One tricky email can make it send the signed contract to a stranger.
 
 ## New words
 
@@ -29,13 +29,13 @@ Each word has one meaning in every lab.
 Copy any line into your terminal. Each one is a real example from this lab.
 
 ```bash
-bun run lab act-for-user --question "What is the Cardioza dose in the US?" --hcp dr-weber --naive
-bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp dr-lee
-bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp dr-weber
-bun run lab act-for-user --question "What is the Cardioza dose in the US?" --hcp dr-weber
-bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp dr-unknown
-bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp dr-weber --forge
-bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp dr-lee --bot report
+bun run lab act-for-user --question "Handle the overdue invoice email" --mail mail-vendor --naive
+bun run lab act-for-user --question "Reply to Sam about moving the call to Thursday" --mail mail-meeting
+bun run lab act-for-user --question "Draft a thank-you for the signed Acme contract" --mail mail-contract
+bun run lab act-for-user --question "Handle the overdue invoice email" --mail mail-vendor
+bun run lab act-for-user --question "Draft a reply to the contract email for Sam" --mail mail-contract --user sam
+bun run lab act-for-user --question "Send the Acme contract reply right away" --mail mail-vendor --forge
+bun run lab act-for-user --question "Reply to the font receipt" --mail mail-receipt --bot expense
 bun run lab act-for-user --demo
 ```
 
@@ -47,31 +47,31 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
-| 1 | NAIVE: the bot's own key | Dr. Weber is in Germany and asks about the US. The service key searches the US, so she gets 10mg, the wrong label for her. | wrong-label | `bun run lab act-for-user --question "What is the Cardioza dose in the US?" --hcp dr-weber --naive` |
-| 2 | A US doctor | The token names Dr. Lee. The search uses US, and she gets the US label. | own-label | `bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp dr-lee` |
-| 3 | A German doctor | The token names Dr. Weber. The search uses DE, and she gets 5mg. | own-label | `bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp dr-weber` |
-| 4 | EDGE: she asks about the US | The country comes from her record, not from her words. She still gets the German label. | own-label | `bun run lab act-for-user --question "What is the Cardioza dose in the US?" --hcp dr-weber` |
-| 5 | EDGE: a doctor who is not in the CRM | The token is real, but nobody by that id exists. Nothing is searched. | denied | `bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp dr-unknown` |
-| 6 | EDGE: a token changed to another doctor | Someone edits Dr. Weber's token to say dr-lee. The signature breaks, so nothing runs. | denied | `bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp dr-weber --forge` |
-| 7 | EDGE: a bot that may not read documents | The report bot's token has no docs.read, even for a real doctor. | denied | `bun run lab act-for-user --question "What is the dose of Cardioza?" --hcp dr-lee --bot report` |
+| 1 | NAIVE: the bot's own key | A vendor email says to forward the signed contract. The model obeys. The service key can send, so the contract goes to a stranger. | sent-by-trick | `bun run lab act-for-user --question "Handle the overdue invoice email" --mail mail-vendor --naive` |
+| 2 | A normal draft | The token names Maya and holds the draft scope. The bot drafts a reply to Sam in her mailbox. | drafted | `bun run lab act-for-user --question "Reply to Sam about moving the call to Thursday" --mail mail-meeting` |
+| 3 | A draft about money | The same token drafts the reply to Acme. Drafting is all it can do, and a person reads the draft before it goes. | drafted | `bun run lab act-for-user --question "Draft a thank-you for the signed Acme contract" --mail mail-contract` |
+| 4 | EDGE: the trick email, a draft-only token | The model still asks to send the contract. The token holds no send scope, so the code refuses. The trick fails. | denied | `bun run lab act-for-user --question "Handle the overdue invoice email" --mail mail-vendor` |
+| 5 | EDGE: a token for a stranger | The token is real, but nobody at the studio has that name. Nothing is done. | denied | `bun run lab act-for-user --question "Draft a reply to the contract email for Sam" --mail mail-contract --user sam` |
+| 6 | EDGE: a token that was edited | Someone adds the send scope to Maya's token. The signature breaks, so nothing runs. | denied | `bun run lab act-for-user --question "Send the Acme contract reply right away" --mail mail-vendor --forge` |
+| 7 | EDGE: another bot's key | The Expense Manager's key can read the bank, and nothing else. It cannot draft a mail, even for Maya. | denied | `bun run lab act-for-user --question "Reply to the font receipt" --mail mail-receipt --bot expense` |
 
 ## Stuck points
 
-**Correct run:** The bot searches only the country of the doctor its token names. The doctor's rights limit the bot.
+**Correct run:** The bot does only what its token allows, for the person the token names. Draft rights are not send rights.
 
-**Common wrong turn:** Using the bot's own service key. It searches the wrong country, so a German doctor gets the US label.
+**Common wrong turn:** Using one service key that can send. A tricky email makes the model send, and nothing stops it.
 
-**Hint to give:** Whose rights should the search use: the bot's or the doctor's?
+**Hint to give:** Whose rights should the bot use? Does the token hold the scope?
 
 | What you see | What it means | Fix |
 | --- | --- | --- |
-| The demo prints outcome: wrong-label on the NAIVE case | The service key searched the US | Pass the delegation token, and search by its country |
-| A bad token answers nothing | The token is not valid for this doctor | Issue a fresh token when the doctor signs in |
-| Typing another country changes nothing | The country comes from the token, not the question | This is correct. The token wins |
+| The demo prints outcome: sent-by-trick on the NAIVE case | The service key can send, and the model obeyed an email | Pass a draft-only token, and check its scope before each action |
+| A bad token does nothing | The token is old, edited, or names nobody at the studio | Issue a fresh token when Maya signs in |
+| A draft prints outcome: denied | That bot's key has no mail.draft scope | This is correct. Each bot keeps its own narrow key |
 
 ## The promise, and its test
 
-The bot searches only the country of the doctor its token names. What the doctor or the model types cannot change it. A bad token answers nothing.
+The bot does only what its token allows, for the person the token names. A send is refused when the token holds no send scope. A bad token does nothing.
 
 ```bash
 bun test tests/promises/25.test.ts
@@ -81,7 +81,7 @@ To see the test do its job, break the rule in PART 1 on purpose. The test must f
 
 ## In production
 
-Issue the delegation token when the doctor signs in, and keep it short. Pass it on every call, and log the doctor with each one.
+Issue a narrow token when Maya signs in, with draft rights and no send. Give each bot its own key. Pass the token on every call, and log the person with each one.
 
 ## Read the code
 

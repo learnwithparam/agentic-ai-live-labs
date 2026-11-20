@@ -1,18 +1,18 @@
 # Keep noisy work apart
 
-Each example asks for a dose. The document search returns many old drafts with wrong doses. A helper reads that noise in its own context, and sends back a short report. Pick the doctor with --hcp, and how the model acts with --model.
+Each example triages forty CI build logs for the Bug Triage bot. A helper reads all the logs in its own context, and sends back a short report. Choose how the model acts with --model.
 
 ## The story in one picture
 
 ```mermaid
 flowchart LR
-  A["Main agent: clean context"] -->|"noisy search"| S["Subagent with its own context"]
-  S -->|"only the short answer"| A
+  A["Main agent: clean context"] -->|"40 CI logs"| S["Subagent with its own context"]
+  S -->|"only 5 lines"| A
 ```
 
 ## The problem
 
-A search can return pages of old and wrong text. If the main agent reads it all, its context is full of junk. It may copy a wrong dose.
+Forty logs hold pages of quiet lines. If the main agent reads them all, its context is full of junk. The real failures are hard to find.
 
 ## New words
 
@@ -27,12 +27,12 @@ Each word has one meaning in every lab.
 Copy any line into your terminal. Each one is a real example from this lab.
 
 ```bash
-bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Lee?" --hcp dr-lee --naive
-bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Lee?" --hcp dr-lee
-bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Weber?" --hcp dr-weber
-bun run lab subagent-isolation --question "What is the dose of Zorbex for Dr. Lee?" --hcp dr-lee
-bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Lee?" --hcp dr-lee --model invent
-bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Lee?" --hcp dr-lee --model stuck
+bun run lab subagent-isolation --question "Triage this week's CI logs." --naive
+bun run lab subagent-isolation --question "Which builds failed this week, and why?"
+bun run lab subagent-isolation --question "Why did the coupon test break?"
+bun run lab subagent-isolation --question "Did anything time out overnight?"
+bun run lab subagent-isolation --question "Which builds failed for Acme?" --model invent
+bun run lab subagent-isolation --question "Which builds failed before the launch?" --model stuck
 bun run lab subagent-isolation --demo
 ```
 
@@ -44,30 +44,30 @@ Case 1 is the naive way. Read what goes wrong, then read the rest.
 
 | # | Case | Why it matters | Result | Run it alone |
 | --- | --- | --- | --- | --- |
-| 1 | NAIVE: the main agent reads everything | The main agent searches by itself. Forty old drafts fill its space. | flooded | `bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Lee?" --hcp dr-lee --naive` |
-| 2 | A helper does the search | The helper reads the drafts. The main agent keeps one short report. | clean | `bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Lee?" --hcp dr-lee` |
-| 3 | A German doctor | Dr. Weber is in Germany, so the report holds the German dose. | clean | `bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Weber?" --hcp dr-weber` |
-| 4 | EDGE: no approved document | There is no approved document for Zorbex. The helper says so, and the main agent makes nothing up. | no-answer | `bun run lab subagent-isolation --question "What is the dose of Zorbex for Dr. Lee?" --hcp dr-lee` |
-| 5 | EDGE: the helper makes up a dose | The helper writes a dose that no approved document has. The main agent checks the report and refuses it. | no-answer | `bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Lee?" --hcp dr-lee --model invent` |
-| 6 | EDGE: the helper gets stuck | The helper never finishes. The main agent gets a short failure note, not the helper's whole log. | no-answer | `bun run lab subagent-isolation --question "What is the dose of Cardioza for Dr. Lee?" --hcp dr-lee --model stuck` |
+| 1 | NAIVE: the main agent reads everything | The main agent reads all forty logs by itself. Its space fills with quiet lines. | flooded | `bun run lab subagent-isolation --question "Triage this week's CI logs." --naive` |
+| 2 | A helper reads the logs | The helper reads the forty logs. The main agent keeps three short lines. | clean | `bun run lab subagent-isolation --question "Which builds failed this week, and why?"` |
+| 3 | A question about one test | The report names the coupon test in build-2 and build-3. It stays three short lines. | clean | `bun run lab subagent-isolation --question "Why did the coupon test break?"` |
+| 4 | A question about time outs | The helper finds one build that timed out. The main agent keeps the same short report. | clean | `bun run lab subagent-isolation --question "Did anything time out overnight?"` |
+| 5 | EDGE: the helper makes up a build | The helper lists a build that is not in the logs. The main agent checks the report and refuses it. | no-answer | `bun run lab subagent-isolation --question "Which builds failed for Acme?" --model invent` |
+| 6 | EDGE: the helper gets stuck | The helper never finishes. The main agent gets a short failure note, not the helper's whole log. | no-answer | `bun run lab subagent-isolation --question "Which builds failed before the launch?" --model stuck` |
 
 ## Stuck points
 
-**Correct run:** The helper reads the noisy search. The main agent keeps only the short report, then checks it.
+**Correct run:** The helper reads the forty logs. The main agent keeps only the short report, then checks it.
 
-**Common wrong turn:** Letting the main agent read everything. Its context fills with old drafts, and it may copy a wrong dose.
+**Common wrong turn:** Letting the main agent read every log. Its context fills with quiet lines, and it may trust a made-up failure.
 
-**Hint to give:** Which text does the main agent really need to answer?
+**Hint to give:** Which lines does the main agent really need to answer?
 
 | What you see | What it means | Fix |
 | --- | --- | --- |
-| The demo prints outcome: flooded on the NAIVE case | The main agent read all of the search | Hand the noisy search to a helper |
+| The demo prints outcome: flooded on the NAIVE case | The main agent read all forty logs | Hand the logs to a helper |
 | The report is cut to the limit | The helper wrote more than the limit | This is correct. Read the report, not the log |
-| A made-up dose is refused | The check found a dose the source does not have | This is correct. The check did its job |
+| A made-up build is refused | The check found a build that has no failure in the logs | This is correct. The check did its job |
 
 ## The promise, and its test
 
-The helper reads the noise, and the main agent keeps only a short report. It checks the report against the approved source before it answers.
+The helper reads the logs, and the main agent keeps only a short report. It checks every line of the report against the real logs before it answers.
 
 ```bash
 bun test tests/promises/32.test.ts
