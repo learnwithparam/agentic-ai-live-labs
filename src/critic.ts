@@ -4,7 +4,8 @@ import type { CallLlm } from "./model";
 
 // Ask the critic. It answers PASS, or FAIL and the claim the source does not back.
 export function criticSays(draft: string, source: string, callLlm: CallLlm): string {
-  const prompt = `CRITIC: DRAFT: ${draft}\nSOURCE: ${source}`;
+  const rule = "Reply PASS if every claim in the draft is in the source. Else reply FAIL and say why.";
+  const prompt = `CRITIC: ${rule}\nDRAFT: ${draft}\nSOURCE: ${source}`;
   return (callLlm([{ role: "user", content: prompt }], []).text || "FAIL: no answer").trim();
 }
 

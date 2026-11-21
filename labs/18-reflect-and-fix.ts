@@ -14,7 +14,7 @@
 //   bun run lab reflect-and-fix --demo
 
 import { NO_DOC } from "../src/data";
-import { newestLabel, readForm } from "../src/form-lookup";
+import { formPrompt, newestLabel, readForm } from "../src/form-lookup";
 import type { CallLlm } from "../src/model";
 import { runLab } from "../src/runner";
 import { runAgentLoop, searchApprovedDocs } from "./01-agent-loop";
@@ -91,7 +91,7 @@ export function answerWithoutCheck(question: string, country: string, callLlm: C
 export function answerFromForm(question: string, country: string, callLlm: CallLlm): Result {
   const log: string[] = [];
   // Step 1: the model fills the form.
-  const said = callLlm([{ role: "user", content: `FORM: Question: ${question}` }], []).text || "";
+  const said = callLlm([{ role: "user", content: formPrompt(question) }], []).text || "";
   const form = readForm(said);
   log.push(`Step 1: the model filled the form: drug ${form.drug}, age ${form.age}.`);
   // Step 2: code finds the newest label for this drug and country. Old versions are ignored.
