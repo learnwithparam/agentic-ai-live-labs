@@ -20,7 +20,7 @@ import type { CallLlm, Reply } from "../src/model";
 import { runLab } from "../src/runner";
 import { costOf, PRICES } from "../src/spend"; // prices in whole millicents, from the budgets lab
 import { countTokens } from "./10-context-budget"; // the estimate, used when the provider sends no count
-import { bigInbox, draftReply, mailById, replyProblems, sortInbox } from "../src/juniper";
+import { bigInbox, draftReply, mailById, remembered, replyProblems, sortInbox } from "../src/juniper";
 
 export type Meter = { calls: number; tokensIn: number; tokensOut: number };
 export type Routed = { answer: string; tier: string; cost: number; bigOnly: number; log: string[] };
@@ -47,7 +47,7 @@ export function answerRouted(mailId: string, small: CallLlm, big: CallLlm, count
   const mail = mailById(mailId);
   let body = "";
   if (mail) body = mail.body;
-  const cheap = metered(small, meters.small);
+  const cheap = metered(remembered(small), meters.small);
 
   // Step 1: the small model sorts every email. This is easy work, and it is most of the volume.
   log.push(`Step 1: the small model sorted ${count} emails: ${sortInbox(bigInbox(count), cheap)}.`);
@@ -101,7 +101,7 @@ function done(
 // The naive way: sort and draft on the strong model, and nobody checks the reply.
 export function answerAlwaysBig(mailId: string, big: CallLlm, count = 500): Routed {
   const meter = newMeter();
-  const strong = metered(big, meter);
+  const strong = metered(remembered(big), meter);
   const sorted = sortInbox(bigInbox(count), strong);
   const answer = draftReply(mailId, strong);
   const cost = costOf(PRICES.big, meter.tokensIn, meter.tokensOut);

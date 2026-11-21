@@ -17,7 +17,7 @@ function openReply(first: string, messages: Message[], behaviour: Behaviour): Re
 
 // SORT: the cheap model gives one label to an email, by its subject.
 function sortLabel(first: string): string {
-  const text = first.slice("SORT: ".length).toLowerCase();
+  const text = first.slice(first.indexOf("SUBJECT: ") + "SUBJECT: ".length).toLowerCase();
   if (text.includes("contract")) return "contract";
   if (text.includes("receipt")) return "receipt";
   if (text.includes("thursday") || text.includes("talk")) return "meeting";

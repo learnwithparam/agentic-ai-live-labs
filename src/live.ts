@@ -85,8 +85,20 @@ function post(body: Record<string, unknown>, endpoint = ENDPOINT): any {
   return JSON.parse(run.stdout.toString());
 }
 
+// A run may make this many live calls, then it stops. That costs about one cent at most.
+export const MOST_LIVE_CALLS = 100;
+
+export function capped(callLlm: CallLlm, most = MOST_LIVE_CALLS): CallLlm {
+  let calls = 0;
+  return (messages, toolNames) => {
+    calls += 1;
+    if (calls > most) throw new Error(`Stopped: more than ${most} live calls in one run.`);
+    return callLlm(messages, toolNames);
+  };
+}
+
 export function makeLiveModel(model = LIVE_MODEL): CallLlm {
-  return (messages, toolNames) => replyFrom(post(buildBody(messages, toolNames, model)));
+  return capped((messages, toolNames) => replyFrom(post(buildBody(messages, toolNames, model))));
 }
 
 // Real embeddings: one list of numbers for each text. Two texts with the same meaning get close lists.

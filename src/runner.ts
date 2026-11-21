@@ -13,6 +13,14 @@ import { print, red, rule, wrap, yellow } from "./ui";
 // A gate asks a person a question and gets text back. null means no answer.
 export type Ask = (prompt: string) => string | null;
 
+// Plain words for the common flags: demo, naive or live. A word right after a --flag is its value.
+const EASY: Record<string, string> = { demo: "--demo", naive: "--naive", live: "--live" };
+export function easyWords(words: string[]): string[] {
+  const easyFlags = Object.values(EASY);
+  const takesValue = (word?: string) => !!word?.startsWith("--") && !easyFlags.includes(word);
+  return words.map((word, i) => (takesValue(words[i - 1]) ? word : EASY[word] || word));
+}
+
 // Flags look like --name value. A flag with no value is "true".
 export function flags(argv = process.argv.slice(2)): Record<string, string> {
   const out: Record<string, string> = {};

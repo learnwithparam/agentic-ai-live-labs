@@ -2,7 +2,8 @@ import { describe, expect, test } from "bun:test";
 import { existsSync, readdirSync } from "node:fs";
 import { APPROVED_DOCS } from "../src/data";
 import { makeModel } from "../src/model";
-import { checkCases, type Lab } from "../src/runner";
+import { capped, MOST_LIVE_CALLS } from "../src/live";
+import { checkCases, easyWords, type Lab } from "../src/runner";
 import { searchOnly, runAgentLoop } from "../labs/01-agent-loop";
 import { redactPhi, verifyOutput } from "../labs/02-guardrails";
 import { handleHcpInquiry, handleWithoutGate, pauseForReview, resumeAfterReview } from "../labs/03-gates";
@@ -145,4 +146,20 @@ describe("the readable gate", () => {
     const text = "// PART 1: x\nfunction add(first: number, second: number) {\n  return first + second;\n}\n// PART 2: y\n";
     expect(problemsIn("x.ts", text)).toEqual([]);
   });
+});
+
+// The CLI turns the plain words demo, naive and live into flags, but never a flag's own value.
+test("a plain word after a value flag stays a value", () => {
+  expect(easyWords(["--scenario", "naive"])).toEqual(["--scenario", "naive"]);
+  expect(easyWords(["--question", "q", "naive", "live"])).toEqual(["--question", "q", "--naive", "--live"]);
+  expect(easyWords(["--demo", "naive"])).toEqual(["--demo", "--naive"]);
+});
+
+// A live run is capped, so a loop can never run up a bill.
+test("a capped model stops after its call cap", () => {
+  const model = capped(() => ({ text: "x" }), 2);
+  model([], []);
+  model([], []);
+  expect(() => model([], [])).toThrow("Stopped");
+  expect(MOST_LIVE_CALLS).toBeLessThanOrEqual(100);
 });

@@ -4,6 +4,7 @@
 // A short word from the name works too, if only one lab matches it: bun run lab mcp
 import { LABS, TRACKS, slugFromFile } from "../src/roadmap";
 import { isReady, labFile } from "./path";
+import { easyWords } from "../src/runner";
 import { bold, cyan, dim } from "../src/ui";
 
 // The concept name is the main way in. An exact name always wins over a partial match.
@@ -14,9 +15,7 @@ const lab =
   LABS.find((item) => named !== "" && item.slug.includes(named));
 
 // Plain words for the common flags: bun run lab agent-loop demo, naive or live.
-const EASY: Record<string, string> = { demo: "--demo", naive: "--naive", live: "--live" };
-const extra: string[] = [];
-for (const word of process.argv.slice(3)) extra.push(EASY[word] || word);
+const extra = easyWords(process.argv.slice(3));
 
 if (!process.argv[2]) {
   const width = Math.max(...LABS.map((item) => item.slug.length));

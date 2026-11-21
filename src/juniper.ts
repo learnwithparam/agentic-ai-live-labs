@@ -1,6 +1,6 @@
 // More Juniper Studio data for the labs on budgets, routing, acting for a user and teamwork.
 // All of it is invented. Each lab's promise test checks its answer against it.
-import type { CallLlm } from "./model";
+import type { CallLlm, Reply } from "./model";
 import { BANK, CI_LOGS, INBOX, RECEIPTS, type Email, type Receipt } from "./team";
 
 // ---- A mail with a very long PDF (budgets lab) ----
@@ -53,10 +53,23 @@ export function bigInbox(count: number): Email[] {
 }
 
 // The small model sorts each email by its subject. We count the labels.
+const SORT_RULE =
+  "SORT: Reply with one word: contract, receipt, meeting, spam or other.\nSUBJECT: ";
+
+// Ask once per message. The 500 emails repeat, so a live model is called once per subject.
+export function remembered(callLlm: CallLlm): CallLlm {
+  const seen = new Map<string, Reply>();
+  return (messages, toolNames) => {
+    const key = JSON.stringify(messages);
+    if (!seen.has(key)) seen.set(key, callLlm(messages, toolNames));
+    return seen.get(key) as Reply;
+  };
+}
+
 export function sortInbox(emails: Email[], callLlm: CallLlm): string {
   const counts: Record<string, number> = {};
   for (const mail of emails) {
-    const reply = callLlm([{ role: "user", content: "SORT: " + mail.subject }], []);
+    const reply = callLlm([{ role: "user", content: SORT_RULE + mail.subject }], []);
     const label = reply.text || "other";
     counts[label] = (counts[label] || 0) + 1;
   }
@@ -95,7 +108,10 @@ export function replyProblems(reply: string, body: string): string[] {
 
 // Ask a model to draft the reply. A second try names the problems of the first.
 export function draftReply(mailId: string, callLlm: CallLlm, problems: string[] = []): string {
+  const mail = mailById(mailId);
   let prompt = "REPLY: " + mailId;
+  prompt += "\nWrite a short reply. Thank the sender, name the amount, sign Juniper Studio.";
+  if (mail) prompt += "\nEMAIL: " + mail.body;
   if (problems.length > 0) prompt += "\nPROBLEMS: " + problems.join("; ");
   return callLlm([{ role: "user", content: prompt }], []).text || "";
 }
