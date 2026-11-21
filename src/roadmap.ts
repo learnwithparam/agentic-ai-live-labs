@@ -39,7 +39,7 @@ export const LABS: RoadmapLab[] = [
   { number: 8, slug: "mcp-trust", track: "tools", title: "Trusting an MCP server", idea: "Pin tool schemas and allow-list servers, so a changed or hostile tool is caught." },
   { number: 9, slug: "three-doors", track: "tools", title: "Function, CLI or MCP", idea: "Do the same job through three doors and compare them." },
   { number: 10, slug: "context-budget", track: "context", title: "The context budget", idea: "Fit the prompt in the window by counting and ordering what goes in." },
-  { number: 11, slug: "history-trimming", track: "context", title: "Trimming long history", idea: "Keep the pinned facts and summarise the old turns." },
+  { number: 11, slug: "history-trimming", track: "context", title: "Trimming long history", idea: "Keep the pinned facts and drop the old turns." },
   { number: 12, slug: "retrieval", track: "context", title: "Retrieval", idea: "Find the right passages, cite them, and see where keyword search fails." },
   { number: 13, slug: "pick-context", track: "context", title: "Picking the right context", idea: "Choose documents by rule, so the wrong country or topic never reaches the model." },
   { number: 14, slug: "instructions-vs-data", track: "context", title: "Instructions versus data", idea: "Label untrusted text as data, so an email cannot give orders." },

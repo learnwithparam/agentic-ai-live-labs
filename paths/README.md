@@ -44,7 +44,7 @@ What the model reads, and how to choose it.
 | Lab | What it teaches |
 | --- | --- |
 | The context budget | Fit the prompt in the window by counting and ordering what goes in. |
-| Trimming long history | Keep the pinned facts and summarise the old turns. |
+| Trimming long history | Keep the pinned facts and drop the old turns. |
 | Retrieval | Find the right passages, cite them, and see where keyword search fails. |
 | Picking the right context | Choose documents by rule, so the wrong country or topic never reaches the model. |
 | Instructions versus data | Label untrusted text as data, so an email cannot give orders. |
